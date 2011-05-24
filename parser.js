@@ -1,33 +1,33 @@
 var WParser = {
-	templates : {
-	             'język polski' : 'pl',
-	             'język angielski' : 'en',
-	             'język niemiecki' : 'de',
-	             'język francuski' : 'fr',
-	             'język włoski' : 'it',
-	             'język czeski' : 'cs'
-	},
-	
 	getSections :
 		function(code) {
 			code = code.replace(/\s*==\s*([^=]+)\s*==\s*/g, '<BE>$1<EN>');
 			var sections = code.split('<BE>');
 			var reta = [];
 			for (s in sections) {
+				if (!sections[s].length) {
+					continue;
+				}
 				sec = sections[s].split('<EN>');
-				var template = this.insideTemplate(sec[0]);
-				var code = this.getLanguageCode(template);
-				reta.push({
-					'title' : sec.length > 1 ? sec[0] : '',
-					'content' : $.trim(sec.length > 1 ? sec[1] : sec[0]),
-					'short' : sec.length > 1 ? template : '...',
-					'lang' : code ? code : ''
-				});
+				
+				if (sec.length == 1) {
+					// sekcja zerowa
+					reta['0000'] = {
+						'title' : '',
+						'content' : $.trim(sec[0]),
+						'short' : WedConstants.INTRO
+					};
+				}
+				else {
+					reta[this.getAlphabetical(sec[0])] = {
+						'title' : sec[0],
+						'content' : $.trim(sec[1]),
+						'short' : this.insideTemplate(sec[0]).replace(/język /, '')
+					};
+					
+				}
 			}
 
-			if (!sections[0].length) {
-				delete reta[0];
-			}
 			return reta;
 		},
 
@@ -36,8 +36,20 @@ var WParser = {
 			return str.replace(/.*\{\{(.*)\}\}.*/g, '$1');
 		},
 		
-	getLanguageCode :
-		function(template) {
-			return this.templates[template];
+	getAlphabetical :
+		function(str) {
+			if (str.indexOf('użycie międzynarodowe') != -1) {
+				return '0001';
+			}
+			var template = this.insideTemplate(str);
+			if (template == 'język polski') {
+				return '0002';
+			}
+			return template.replace(/język /, '')
+				.replace('ą', 'azz').replace('ć', 'czz')
+				.replace('ę', 'ezz').replace('ł', 'lzz')
+				.replace('ń', 'nzz').replace('ó', 'ozz')
+				.replace('ś', 'szz').replace('ź', 'zzy')
+				.replace('ż', 'zzz').replace(' ', '_');
 		}
 };
