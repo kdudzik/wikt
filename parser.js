@@ -16,6 +16,7 @@ var WParser = {
 						'title' : '',
 						'content' : $.trim(sec[0]),
 						'short' : WedConstants.INTRO
+						// TODO asynchro
 					};
 				}
 				else {
@@ -44,6 +45,9 @@ var WParser = {
 			var template = this.insideTemplate(str);
 			if (template == 'język polski') {
 				return '0002';
+			}
+			else if (template == 'termin obcy w języku polskim') {
+				return '0003';
 			}
 			return template.replace(/język /, '')
 				.replace('ą', 'azz').replace('ć', 'czz')
