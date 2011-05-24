@@ -39,6 +39,10 @@ ul#wed_menu li.active {
 	background: yellow;
 }
 
+#wed_menuitemnew {
+	font-weight: bold;
+}
+
 #wed_content {
 	clear: left;
 	padding: 7px;
