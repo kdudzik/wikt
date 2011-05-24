@@ -8,9 +8,13 @@ var WParser = {
 				sec = sections[s].split('<EN>');
 				reta.push({
 					'title' : sec.length > 1 ? sec[0] : '',
-					'content' : sec.length > 1 ? sec[1] : sec[0],
-					'short' : sec.length > 1 ? insideTemplate(sec[0]) : '...',
+					'content' : $.trim(sec.length > 1 ? sec[1] : sec[0]),
+					'short' : sec.length > 1 ? insideTemplate(sec[0]) : '...'
 				});
+			}
+
+			if (!sections[0].length) {
+				delete reta[0];
 			}
 			return reta;
 		}

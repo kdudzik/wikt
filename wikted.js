@@ -11,13 +11,20 @@ var wed = {
 	content : {},
 	
 	prepareForm :
-		function(tbox, newform) {
+		function(oldform, newform) {
 			newform.css({
-				'width' : tbox.css('width'),
-				'height' : tbox.css('height')
+				'width' : oldform.css('width'),
+				'height' : oldform.css('height')
 			});
-			tbox.before(newform).hide();
+			oldform.before(newform).hide();
 			newform.show();
+
+			var toggleEditor = $('<a href="#" id="toggleEditor">Przełącz edytor</a>');
+			toggleEditor.insertAfter('h1:first').click(function() {
+				oldform.toggle();
+				newform.toggle();
+				return false;
+			});
 		},
 		
 	parseContent :
@@ -28,14 +35,14 @@ var wed = {
 		
 	fillForm :
 		function(newform) {
-			//newform.html(wed.content.html);
 			var menu = newform.find('#wed_menu');
 			var content = newform.find('#wed_content');
 			for (var s in wed.content['sections']) {
 				var sec = wed.content['sections'][s];
 				content.append('<textarea class="wed_section" id="wed_section' + s + '">'+ sec['content'] + '</textarea>');
-				$('<li id="wed_menuitem' + s + '" title="' + sec['title'] + '">' + sec['short'] + '</li>')
-					.appendTo(menu)
+				
+				var item = '<li id="wed_menuitem' + s + '" title="' + sec['title'] + '">' + sec['short'] + '</li>';
+				$(item).appendTo(menu)
 					.data('section', 'wed_section' + s)
 					.click(function() {
 						content.find('.wed_section').removeClass('active');
@@ -43,15 +50,21 @@ var wed = {
 						$(this).addClass('active').siblings().removeClass('active');
 					});
 			};
+			$("#wed_menuitem1").click();
 		
 		},
 
 	init :
 		function() {
 			var tbox = $('#wpTextbox1'),
-				newform = $('<div id="wed"><ul id="wed_menu"/><div id="wed_content"/></div>');
+				oldform = $('.wikiEditor-ui-left'),
+				newform = $('\
+					<div id="wed">					\
+						<ul id="wed_menu"/>			\
+						<div id="wed_content"/>		\
+					</div>');
 			wed.code = tbox.val();
-			wed.prepareForm(tbox, newform);
+			wed.prepareForm(oldform, newform);
 			
 			wed.parseContent();
 			wed.fillForm(newform);
@@ -66,16 +79,3 @@ if (mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit'
 		setTimeout(wed.init, 200);
 	});
 }
-
-/*
-$.getJSON(
-  mw.util.wikiScript( 'api' ), {
-    'format': 'json',
-    'action': 'query',
-    'titles': 'Main Page',
-    'prop': 'revisions'
-  }, function( data ) {
-    // data.query...
-  }
-);
-*/
