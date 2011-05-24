@@ -1,0 +1,45 @@
+
+#wed {
+	overflow : auto;
+	background-color: #EEEEEE;
+	padding: 0;
+	display: none;
+	line-height: 1.3;
+}
+
+.wed_section {
+	display: none;
+}
+
+.wed_section.active {
+	display: block;
+	height: 400px;
+}
+
+ul#wed_menu {
+	background-color: white !important;
+	width: 100%;
+	display: block;
+	list-style: none;
+	margin: 0;
+	float: left;
+}
+
+ul#wed_menu li {
+	float: left;
+	padding: 5px;
+	background: white;
+	border-width: 0 1px 1px 0;
+	border-style: solid;
+	border-color: #EEEEEE;
+	cursor: pointer;
+}
+
+ul#wed_menu li.active {
+	background: yellow;
+}
+
+#wed_content {
+	clear: left;
+	padding: 7px;
+}
