@@ -14,7 +14,7 @@ var wed = {
 		function(tbox, newform) {
 			newform.css({
 				'width' : tbox.css('width'),
-				'height' : tbox.css('height'),
+				'height' : tbox.css('height')
 			});
 			tbox.before(newform).hide();
 			newform.show();
@@ -63,8 +63,8 @@ var wed = {
 
 if (mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit') {
 	$(document).ready(function() {
-		setTimeout(wed.init, 200)
-	})
+		setTimeout(wed.init, 200);
+	});
 }
 
 /*
