@@ -59,7 +59,7 @@ window.EParser = {
 			else if (template == EdStr.CHINESE_SIGN) {
 				return '0004';
 			}
-			return template.replace(/język /, '')
+			return template.replace(/język /, '').replace('|', '_')
 				.replace('ą', 'azz').replace('ć', 'czz')
 				.replace('ę', 'ezz').replace('ł', 'lzz')
 				.replace('ń', 'nzz').replace('ó', 'ozz')

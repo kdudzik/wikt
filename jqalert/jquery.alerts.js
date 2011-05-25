@@ -33,31 +33,31 @@
 		verticalOffset: -75,                // vertical offset of the dialog from center screen, in pixels
 		horizontalOffset: 0,                // horizontal offset of the dialog from center screen, in pixels/
 		repositionOnResize: true,           // re-centers the dialog on window resize
-		overlayOpacity: .01,                // transparency level of overlay
-		overlayColor: '#FFF',               // base color of overlay
+		overlayOpacity: .2,                // transparency level of overlay
+		overlayColor: '#000',               // base color of overlay
 		draggable: true,                    // make the dialogs draggable (requires UI Draggables plugin)
 		okButton: '&nbsp;OK&nbsp;',         // text for the OK button
-		cancelButton: '&nbsp;Cancel&nbsp;', // text for the Cancel button
+		cancelButton: '&nbsp;Anuluj&nbsp;', // text for the Cancel button
 		dialogClass: null,                  // if specified, this class will be applied to all dialogs
 		
 		// Public methods
 		
 		alert: function(message, title, callback) {
-			if( title == null ) title = 'Alert';
+			if( title == null ) title = 'Ostrzeżenie';
 			$.alerts._show(title, message, null, 'alert', function(result) {
 				if( callback ) callback(result);
 			});
 		},
 		
 		confirm: function(message, title, callback) {
-			if( title == null ) title = 'Confirm';
+			if( title == null ) title = 'Potwierdzenie';
 			$.alerts._show(title, message, null, 'confirm', function(result) {
 				if( callback ) callback(result);
 			});
 		},
 			
 		prompt: function(message, value, title, callback) {
-			if( title == null ) title = 'Prompt';
+			if( title == null ) title = 'Pytanie';
 			$.alerts._show(title, message, value, 'prompt', function(result) {
 				if( callback ) callback(result);
 			});

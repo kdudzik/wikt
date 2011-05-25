@@ -3,7 +3,7 @@
  */
 
 window.EdConstants = {
-	INTRO : '...'
+	INTRO : '»'
 };
 
 window.EdStr = {

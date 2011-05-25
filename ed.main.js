@@ -39,7 +39,7 @@ window.Ed = {
 			}
 			menu.children(":not(#ed_menuitem_0000)").first().click();
 			
-			var item = '<li id="ed_menuitemnew">' + EdStr.ADD + '</li>';
+			var item = '<li id="ed_menuitem_new">' + EdStr.ADD + '</li>';
 			$(item).appendTo(menu).click(function() {
 				Ed.addNewSection(menu, content);
 			});
@@ -76,6 +76,7 @@ window.Ed = {
 						Ed.addSection(alpha, menu, content);
 						$('#ed_menuitem_' + alpha).click();
 					});
+			// TODO: Spr. czy istnieje
 		},
 		
 	addSection :
@@ -96,7 +97,7 @@ window.Ed = {
 			
 			var added = false;
 			menu.children("li").each(function() {
-				if ($(this).attr('id') > item.attr('id')) {
+				if ($(this).attr('id') > item.attr('id') || $(this).attr('id') == 'ed_menuitem_new') {
 					item.insertBefore($(this));
 					added = true;
 					return false;
