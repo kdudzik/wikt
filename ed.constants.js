@@ -26,7 +26,9 @@ window.EdStr = {
 	POLISH : 
 		'język polski',
 	POLISH_FOREIGN : 
-		'termin obcy w języku polskim'
+		'termin obcy w języku polskim',
+	CHINESE_SIGN :
+		'znak chiński'
 };
 
 

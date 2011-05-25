@@ -1,4 +1,4 @@
-var EParser = {
+window.EParser = {
 	getSections :
 		function(code) {
 			code = code.replace(/\s*==\s*([^=]+)\s*==\s*/g, '<BE>$1<EN>');
@@ -56,6 +56,9 @@ var EParser = {
 			else if (template == EdStr.POLISH_FOREIGN) {
 				return '0003';
 			}
+			else if (template == EdStr.CHINESE_SIGN) {
+				return '0004';
+			}
 			return template.replace(/język /, '')
 				.replace('ą', 'azz').replace('ć', 'czz')
 				.replace('ę', 'ezz').replace('ł', 'lzz')
@@ -63,6 +66,32 @@ var EParser = {
 				.replace('ś', 'szz').replace('ź', 'zzy')
 				.replace('ż', 'zzz').replace(' ', '_');
 		}
+};
+
+window.ESectionParser = {
+	subsections :
+		{
+			'pl' :
+			 	['wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
+			 	 'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
+			 	 'uwagi', 'tłumaczenia', 'źródła'],
+			'en' :
+			 	['wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
+			 	 'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
+			 	 'uwagi', 'źródła'],
+			'ru' :
+			 	['transliteracja', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
+			 	 'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
+			 	 'uwagi', 'źródła'],
+			'sr' :
+			 	['ortografie', 'transliteracja', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
+			 	 'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
+			 	 'uwagi', 'źródła'],
+			'zh' :
+				['klucz', 'kreski', 'warianty', 'kolejność', 'znaczenia', 'etymologia', 'kody', 'słowniki',
+				 'uwagi', 'źródła']
+		}
+
 };
 
 window.EdFilesLoaded++;
