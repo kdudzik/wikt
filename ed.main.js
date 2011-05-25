@@ -81,7 +81,9 @@ window.Ed = {
 	addSection :
 		function(alpha, menu, content) {
 			var sec = Ed.content['sections'][alpha];
-			content.append('<textarea class="ed_section" id="ed_section_' + alpha + '">'+ sec['content'] + '</textarea>');
+			var fset = $('<fieldset class="ed_section" id="ed_section_' + alpha + '"/>');
+			
+			fset.appendTo(content).html('<textarea>' + sec['content'] + '</textarea>');
 			
 			var item = $('<li id="ed_menuitem_' + alpha + '" title="' 
 							+ sec['title'] + '">' + sec['short'] + '</li>');
