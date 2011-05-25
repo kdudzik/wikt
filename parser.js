@@ -1,4 +1,4 @@
-var WParser = {
+var EParser = {
 	getSections :
 		function(code) {
 			code = code.replace(/\s*==\s*([^=]+)\s*==\s*/g, '<BE>$1<EN>');
@@ -15,21 +15,28 @@ var WParser = {
 					reta['0000'] = {
 						'title' : '',
 						'content' : $.trim(sec[0]),
-						'short' : WedConstants.INTRO
-						// TODO asynchro
+						'short' : EdConstants.INTRO
 					};
 				}
 				else {
-					reta[this.getAlphabetical(sec[0])] = {
-						'title' : sec[0],
-						'content' : $.trim(sec[1]),
-						'short' : this.insideTemplate(sec[0]).replace(/język /, '')
-					};
-					
+					var section = this.getSectionFromString(sec[0]);
+					var alphacode = section['alpha'];
+					reta[alphacode] = section;
+					reta[alphacode]['content'] = $.trim(sec[1]);					
 				}
 			}
 
 			return reta;
+		},
+		
+	getSectionFromString :
+		function(str) {
+			return {
+				'title' : str,
+				'short' : this.insideTemplate(str).replace(/język /, ''),
+				'content' : '',
+				'alpha' : this.getAlphabetical(str)
+			};
 		},
 
 	insideTemplate  :
@@ -39,14 +46,14 @@ var WParser = {
 		
 	getAlphabetical :
 		function(str) {
-			if (str.indexOf('użycie międzynarodowe') != -1) {
+			if (str.indexOf(EdStr.INTERNATIONAL_USAGE) != -1) {
 				return '0001';
 			}
 			var template = this.insideTemplate(str);
-			if (template == 'język polski') {
+			if (template == EdStr.POLISH) {
 				return '0002';
 			}
-			else if (template == 'termin obcy w języku polskim') {
+			else if (template == EdStr.POLISH_FOREIGN) {
 				return '0003';
 			}
 			return template.replace(/język /, '')
@@ -58,5 +65,5 @@ var WParser = {
 		}
 };
 
-window.WedFilesLoaded++;
-window.WedTryInit();
+window.EdFilesLoaded++;
+window.EdTryInit();

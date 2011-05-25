@@ -1,40 +1,27 @@
-if (typeof Wed !== 'undefined') {
-	alert('Błąd krytyczny - jeden ze skryptów używa jako nazwy globalnej "Wed".');
-}
-
 mw.loader.load('http://localhost/wikt/wikted.css', 'text/css');
+mw.loader.load('http://localhost/wikt/jqalert/jquery.alerts.css', 'text/css');
 
-window.WedFiles = [
-	'http://localhost/wikt/parser.js'
+window.EdFiles = [
+                'http://localhost/wikt/parser.js',
+                'http://localhost/wikt/constants.js',
+            	'http://localhost/wikt/jqalert/jquery.alerts.js'
 ];
-window.WedFilesLoaded = 0;
-window.WedFilesToLoad = window.WedFiles.length + 1;
-window.WedTryInit = function() {
+window.EdFilesLoaded = 0;
+window.EdFilesToLoad = window.EdFiles.length + 1;
+
+window.EdTryInit = function() {
 	if (mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit') {
-		if (window.WedFilesLoaded == window.WedFilesToLoad) {
-			$(document).ready(Wed.init);
+		if (window.EdFilesLoaded == window.EdFilesToLoad) {
+			$(document).ready(Ed.init);
 		}
 	}
 };
 
-for (i in window.WedFiles) {
-	mw.loader.load(window.WedFiles[i]);
+for (i in window.EdFiles) {
+	mw.loader.load(window.EdFiles[i]);
 }
 
-window.WedConstants = {
-	templates : {
-        'język polski' : 'pl',
-        'język angielski' : 'en',
-        'język niemiecki' : 'de',
-        'język francuski' : 'fr',
-        'język włoski' : 'it',
-        'język czeski' : 'cs'
-	},
-	INTRO : '...'
-
-};
-
-window.Wed = {
+window.Ed = {
 	
 	code : '',
 	content : {},
@@ -48,7 +35,7 @@ window.Wed = {
 			oldform.before(newform).hide();
 			newform.show();
 
-			var toggleEditor = $('<a href="#" id="toggleEditor">Przełącz edytor</a>');
+			var toggleEditor = $('<a href="#" id="toggleEditor">' + EdStr.TOGGLE_EDITOR + '</a>');
 			toggleEditor.insertAfter('h1:first').click(function() {
 				oldform.toggle();
 				newform.toggle();
@@ -58,21 +45,23 @@ window.Wed = {
 		
 	parseContent :
 		function() {
-			Wed.content['txt'] = Wed.code;
-			Wed.content['sections'] = WParser.getSections(Wed.code);
+			Ed.content['txt'] = Ed.code;
+			Ed.content['sections'] = EParser.getSections(Ed.code);
 		},
 		
 	fillForm :
 		function(newform) {
-			var menu = newform.find('#wed_menu');
-			var content = newform.find('#wed_content');
-			for (var alpha in Wed.content['sections']) {
-				Wed.addSection(alpha, menu, content);				
+			var menu = newform.find('#ed_menu');
+			var content = newform.find('#ed_content');
+			for (var alpha in Ed.content['sections']) {
+				Ed.addSection(alpha, menu, content);				
 			}
-			menu.children(":not(#wed_menuitem_0000)").first().click();
+			menu.children(":not(#ed_menuitem_0000)").first().click();
 			
-			var item = '<li id="wed_menuitemnew">+ dodaj</li>';
-			$(item).appendTo(menu).click(Wed.addNewSection);
+			var item = '<li id="ed_menuitemnew">' + EdStr.ADD + '</li>';
+			$(item).appendTo(menu).click(function() {
+				Ed.addNewSection(menu, content);
+			});
 		
 		},
 
@@ -81,33 +70,43 @@ window.Wed = {
 			var tbox = $('#wpTextbox1'),
 				oldform = $('.wikiEditor-ui-left'),
 				newform = $('\
-					<div id="wed">					\
-						<ul id="wed_menu"/>			\
-						<div id="wed_content"/>		\
+					<div id="ed">					\
+						<ul id="ed_menu"/>			\
+						<div id="ed_content"/>		\
 					</div>');
-			Wed.code = tbox.val();
-			Wed.prepareForm(oldform, newform);
+			Ed.code = tbox.val();
+			Ed.prepareForm(oldform, newform);
 			
-			Wed.parseContent();
-			Wed.fillForm(newform);
+			Ed.parseContent();
+			Ed.fillForm(newform);
 			
 		},
 		
 	addNewSection :
-		function() {
-			var title = prompt('Podaj tytuł', mw.config.get('wgPageName') + ' {{język ...}}');
+		function(menu, content) {
+			jPrompt(EdStr.ADD_SECTION_MESSAGE, mw.config.get('wgPageName') + EdStr.ADD_SECTION_TEMPLATE, 
+					EdStr.ADD_SECTION_TITLE, function(val) {
+						if (!val) {
+							return false;
+						}
+						var newSection = EParser.getSectionFromString(val);
+						var alpha = newSection['alpha'];
+						Ed.content['sections'][alpha] = newSection;
+						Ed.addSection(alpha, menu, content);
+						$('#ed_menuitem_' + alpha).click();
+					});
 		},
 		
 	addSection :
 		function(alpha, menu, content) {
-			var sec = Wed.content['sections'][alpha];
-			content.append('<textarea class="wed_section" id="wed_section' + alpha + '">'+ sec['content'] + '</textarea>');
+			var sec = Ed.content['sections'][alpha];
+			content.append('<textarea class="ed_section" id="ed_section_' + alpha + '">'+ sec['content'] + '</textarea>');
 			
-			var item = $('<li id="wed_menuitem_' + alpha + '" title="' 
+			var item = $('<li id="ed_menuitem_' + alpha + '" title="' 
 							+ sec['title'] + '">' + sec['short'] + '</li>');
-			item.data('section', 'wed_section' + alpha)
+			item.data('section', 'ed_section_' + alpha)
 				.click(function() {
-					content.find('.wed_section').removeClass('active');
+					content.find('.ed_section').removeClass('active');
 					content.find('#' + $(this).data('section')).addClass('active');
 					$(this).addClass('active').siblings().removeClass('active');
 				});
@@ -129,5 +128,5 @@ window.Wed = {
 	
 };
 
-window.WedFilesLoaded++;
-window.WedTryInit();
+window.EdFilesLoaded++;
+window.EdTryInit();
