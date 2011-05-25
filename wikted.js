@@ -2,6 +2,25 @@ if (typeof Wed !== 'undefined') {
 	alert('Błąd krytyczny - jeden ze skryptów używa jako nazwy globalnej "Wed".');
 }
 
+mw.loader.load('http://localhost/wikt/wikted.css', 'text/css');
+
+window.WedFiles = [
+	'http://localhost/wikt/parser.js'
+];
+window.WedFilesLoaded = 0;
+window.WedFilesToLoad = window.WedFiles.length + 1;
+window.WedTryInit = function() {
+	if (mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit') {
+		if (window.WedFilesLoaded == window.WedFilesToLoad) {
+			$(document).ready(Wed.init);
+		}
+	}
+};
+
+for (i in window.WedFiles) {
+	mw.loader.load(window.WedFiles[i]);
+}
+
 window.WedConstants = {
 	templates : {
         'język polski' : 'pl',
@@ -14,9 +33,6 @@ window.WedConstants = {
 	INTRO : '...'
 
 };
-
-mw.loader.load('http://localhost/wikt/parser.js');
-mw.loader.load('http://localhost/wikt/wikted.css', 'text/css');
 
 window.Wed = {
 	
@@ -113,8 +129,5 @@ window.Wed = {
 	
 };
 
-if (mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit') {
-	$(document).ready(function() {
-		setTimeout(Wed.init, 200);
-	});
-}
+window.WedFilesLoaded++;
+window.WedTryInit();

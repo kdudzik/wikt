@@ -57,3 +57,6 @@ var WParser = {
 				.replace('ż', 'zzz').replace(' ', '_');
 		}
 };
+
+window.WedFilesLoaded++;
+window.WedTryInit();
