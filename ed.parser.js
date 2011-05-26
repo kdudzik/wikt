@@ -13,13 +13,11 @@ window.EParser = {
 				if (sec.length == 1) {
 					// sekcja zerowa
 					reta['0000'] = {
-						'title' : '',
-						'content' : $.trim(sec[0]),
-						'short' : EdConstants.INTRO
+						'content' : $.trim(sec[0])
 					};
 				}
 				else {
-					var section = this.getSectionFromString(sec[0]);
+					var section = this.getSectionFromString($.trim(sec[0]));
 					var alphacode = section['alpha'];
 					reta[alphacode] = section;
 					reta[alphacode]['content'] = $.trim(sec[1]);					
@@ -35,62 +33,59 @@ window.EParser = {
 				'title' : str,
 				'short' : this.insideTemplate(str).replace(/język /, ''),
 				'content' : '',
-				'alpha' : this.getAlphabetical(str)
+				'alpha' : this.getAlphabetical(str),
+				'code'  : this.getCode(str)
 			};
 		},
 
 	insideTemplate  :
 		function(str) {
-			return str.replace(/.*\{\{(.*)\}\}.*/g, '$1');
+			return str.replace(/.*\{\{(.*?)(\}\}|\|).*/g, '$1');
 		},
 		
 	getAlphabetical :
 		function(str) {
-			if (str.indexOf(EdStr.INTERNATIONAL_USAGE) != -1) {
+			var template = this.insideTemplate(str);
+			if (template == EdStr.INTERNATIONAL_USAGE) {
 				return '0001';
 			}
-			var template = this.insideTemplate(str);
-			if (template == EdStr.POLISH) {
+			else if (template == EdStr.POLISH) {
 				return '0002';
 			}
 			else if (template == EdStr.POLISH_FOREIGN) {
 				return '0003';
 			}
-			else if (template == EdStr.CHINESE_SIGN) {
+			else if (template == EdStr.LATIN_FOREIGN) {
 				return '0004';
 			}
-			return template.replace(/język /, '').replace('|', '_')
-				.replace('ą', 'azz').replace('ć', 'czz')
-				.replace('ę', 'ezz').replace('ł', 'lzz')
-				.replace('ń', 'nzz').replace('ó', 'ozz')
-				.replace('ś', 'szz').replace('ź', 'zzy')
-				.replace('ż', 'zzz').replace(' ', '_');
+			else if (template == EdStr.CHINESE_SIGN) {
+				return '0005';
+			}
+			return template.replace(/język /, '')
+				.replace(/[ąáåã]/, 'azz').replace('ć', 'czz')
+				.replace(/[ęè]/, 'ezz').replace('ł', 'lzz')
+				.replace('ń', 'nzz').replace(/[óõ]/, 'ozz')
+				.replace('ś', 'szz').replace('ü', 'uzz')
+				.replace('ź', 'zzy').replace('ż', 'zzz')
+				.replace(/[ \|!]/, '_');
+		},
+		
+	getCode :
+		function(str) {
+			var template = this.insideTemplate(str);
+			var code;
+			if (template.indexOf('język ') != -1) {
+				template = template.replace(/język /, '');
+				code = EdConstants.LANG_CODES_LONG[template];
+			}
+			else {
+				code = EdConstants.LANG_CODES_SHORT[template];
+			}
+			return code ? code : '';			
 		}
 };
 
 window.ESectionParser = {
-	subsections :
-		{
-			'pl' :
-			 	['wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
-			 	 'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
-			 	 'uwagi', 'tłumaczenia', 'źródła'],
-			'en' :
-			 	['wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
-			 	 'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
-			 	 'uwagi', 'źródła'],
-			'ru' :
-			 	['transliteracja', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
-			 	 'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
-			 	 'uwagi', 'źródła'],
-			'sr' :
-			 	['ortografie', 'transliteracja', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
-			 	 'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
-			 	 'uwagi', 'źródła'],
-			'zh' :
-				['klucz', 'kreski', 'warianty', 'kolejność', 'znaczenia', 'etymologia', 'kody', 'słowniki',
-				 'uwagi', 'źródła']
-		}
 
 };
 

@@ -11,6 +11,7 @@ window.EdFiles =
 window.EdFilesLoaded = 0;
 window.EdFilesToLoad = window.EdFiles.length + 1;
 
+
 window.EdTryInit = function() {
 	if (mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit') {
 		if (window.EdFilesLoaded == window.EdFilesToLoad) {

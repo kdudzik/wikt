@@ -86,9 +86,17 @@ window.Ed = {
 			
 			fset.appendTo(content).html('<textarea>' + sec['content'] + '</textarea>');
 			
+			if (alpha == '0000') {
+				sec['title'] = EdConstants.INTRO;
+			}
+			
+			var caption = sec['code'] ? sec['code'] : sec['title'];
 			var item = $('<li id="ed_menuitem_' + alpha + '" title="' 
-							+ sec['title'] + '">' + sec['short'] + '</li>');
-			item.data('section', 'ed_section_' + alpha)
+							+ sec['title'] + '">' + caption + '</li>');
+			item.data({
+					'section' : 'ed_section_' + alpha,
+					'code' : sec['code']
+				})
 				.click(function() {
 					content.find('.ed_section').removeClass('active');
 					content.find('#' + $(this).data('section')).addClass('active');
