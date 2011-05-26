@@ -10,8 +10,8 @@ window.Ed = {
 	prepareForm :
 		function(oldform, newform) {
 			newform.css({
-				'width' : oldform.css('width'),
-				'height' : oldform.css('height')
+				'width' : oldform.width(),
+				'height' : 'auto'// oldform.find('textarea').height() + 100
 			});
 			oldform.before(newform).hide();
 			newform.show();
@@ -49,7 +49,7 @@ window.Ed = {
 	init :
 		function() {
 			var tbox = $('#wpTextbox1'),
-				oldform = $('.wikiEditor-ui-left'),
+				oldform = $('.wikiEditor-ui'),
 				newform = $('\
 					<div id="ed">					\
 						<ul id="ed_menu"/>			\
@@ -70,11 +70,24 @@ window.Ed = {
 						if (!val) {
 							return false;
 						}
-						var newSection = EParser.getSectionFromString(val);
-						var alpha = newSection['alpha'];
-						Ed.content['sections'][alpha] = newSection;
-						Ed.addSection(alpha, menu, content);
-						$('#ed_menuitem_' + alpha).click();
+						var newSection = EParser.getSectionFromInput(val);
+						
+						if (newSection['code']) {
+							var alpha = newSection['alpha'];
+							if (Ed.content['sections'][alpha] !== undefined) {
+								jAlert(EdStr.ADD_SECTION_ALREADY, EdStr.ADD_SECTION_ALREADY_TITLE);
+							}
+							else {
+								Ed.content['sections'][alpha] = newSection;
+								Ed.addSection(alpha, menu, content);
+							}
+							$('#ed_menuitem_' + alpha).click();
+						}
+						else {
+							jAlert(EdStr.ADD_SECTION_NONEXISTENT, EdStr.ADD_SECTION_NONEXISTENT_TITLE, function() {
+								Ed.addNewSection(menu, content);
+							});							
+						}
 					});
 			// TODO: Spr. czy istnieje
 		},

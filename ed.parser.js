@@ -37,6 +37,15 @@ window.EParser = {
 				'code'  : this.getCode(str)
 			};
 		},
+		
+	getSectionFromInput :
+		function(str) {
+			var langname = EdConstants.CODE_TO_LANG[str];
+			if (langname !== undefined) {
+				str = mw.config.get('wgPageName') + ' {{' + langname + '}}';
+			}
+			return this.getSectionFromString(str);
+		},
 
 	insideTemplate  :
 		function(str) {
