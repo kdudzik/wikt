@@ -47,10 +47,9 @@ window.Ed = {
 		
 	parseSectionsToSubsections :
 		function() {
-			for (var alpha in Ed.content.sections) {
-				var sec = Ed.content.sections[alpha];
-				var subsections = ESectionParser.getSubsections(sec, alpha);
-				sec.subsections = subsections;
+			for (var alphaname in Ed.content.sections) {
+				var sec = Ed.content.sections[alphaname];
+				ESectionParser.parse(sec, alphaname);
 			}
 			console.log(Ed.content.sections);
 		},
@@ -110,21 +109,21 @@ window.Ed = {
 		},
 		
 	addSection :
-		function(alpha, menu, content) {
-			var sec = Ed.content.sections[alpha];
-			var fset = $('<fieldset class="ed_section" id="ed_section_' + alpha + '"/>');
+		function(alphaname, menu, content) {
+			var sec = Ed.content.sections[alphaname];
+			var fset = $('<fieldset class="ed_section" id="ed_section_' + alphaname + '"/>');
 			
 			fset.appendTo(content).html('<textarea>' + sec['content'] + '</textarea>');
 			
-			if (alpha == '0000') {
+			if (alphaname == '0000') {
 				sec['title'] = EdConstants.INTRO;
 			}
 			
 			var caption = sec['code'] ? sec['code'] : sec['title'];
-			var item = $('<li id="ed_menuitem_' + alpha + '" title="' 
+			var item = $('<li id="ed_menuitem_' + alphaname + '" title="' 
 							+ sec['title'] + '">' + caption + '</li>');
 			item.data({
-					'section' : 'ed_section_' + alpha,
+					'section' : 'ed_section_' + alphaname,
 					'code' : sec['code']
 				})
 				.click(function() {

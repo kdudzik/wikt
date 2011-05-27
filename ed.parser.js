@@ -96,12 +96,64 @@ window.EParser = {
 
 window.ESectionParser = {
 		
-		getSubsections :
-			function(section, alpha) {
+		parse:
+			function(section, alphaname) {
 				var subsections = [];
-				var str = section.content;
+				var mode = '';
+				var code = section.code;
 				
-				return subsections;
+				if (code === undefined) {
+					mode = 'INTRO';
+				}
+				else if (code == 'pl') {
+					mode = 'POLISH';
+				}
+				else if (code == 'zh-char') {
+					mode = 'CHINESE';
+				}
+				else if (code == 'egy') {
+					mode = 'EGYPTIAN';
+				}
+				else if ($.inArray(code, EdConstants.NON_LATIN_LANGS) != -1) {
+					mode = 'NON_LATIN';
+				}
+				else if ($.inArray(code, EdConstants.DOUBLE_LANGS) != -1) {
+					mode = 'DOUBLE';
+				}
+				else {
+					mode = 'LATIN';
+				}
+				subsections.push({ title: '', content: '' });
+				
+				var titlesArray;
+				switch (mode) {
+				case 'INTRO':
+					titlesArray = []; break;
+				case 'POLISH':
+					titlesArray = EdConstants.SUBSECTIONS.POLISH; break;
+				case 'CHINESE':
+					titlesArray = EdConstants.SUBSECTIONS.CHINESE; break;
+				case 'EGYPTIAN':
+					titlesArray = EdConstants.SUBSECTIONS.EGYPTIAN; break;
+				case 'NON_LATIN':
+					titlesArray = EdConstants.SUBSECTIONS.NON_LATIN; break;
+				case 'DOUBLE':
+					titlesArray = EdConstants.SUBSECTIONS.DOUBLE; break;
+				case 'LATIN':
+					titlesArray = EdConstants.SUBSECTIONS.LATIN; break;
+				}
+				for (i in titlesArray) {
+					subsections.push({ title: titlesArray[i], content: '' });
+				}
+				
+				section.subsections = subsections;
+				section.mode = mode; 
+				this.parsePreparedSubsections(section.content, section.subsections);
+			},
+			
+		parsePreparedSubsections :
+			function(str, subsections) {
+				
 			}
 };
 
