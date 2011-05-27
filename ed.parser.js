@@ -3,7 +3,7 @@ window.EParser = {
 		function(code) {
 			code = code.replace(/\s*==\s*([^=]+)\s*==\s*/g, '<BE>$1<EN>');
 			var sections = code.split('<BE>');
-			var reta = [];
+			var reta = {};
 			for (s in sections) {
 				if (!sections[s].length) {
 					continue;
@@ -18,9 +18,9 @@ window.EParser = {
 				}
 				else {
 					var section = this.getSectionFromString($.trim(sec[0]));
-					var alphacode = section['alpha'];
+					var alphacode = section.alpha;
 					reta[alphacode] = section;
-					reta[alphacode]['content'] = $.trim(sec[1]);					
+					reta[alphacode].content = $.trim(sec[1]);					
 				}
 			}
 
@@ -95,7 +95,14 @@ window.EParser = {
 };
 
 window.ESectionParser = {
-
+		
+		getSubsections :
+			function(section, alpha) {
+				var subsections = [];
+				var str = section.content;
+				
+				return subsections;
+			}
 };
 
 window.EdFilesLoaded++;

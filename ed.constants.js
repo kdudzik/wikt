@@ -23,9 +23,24 @@ window.EdConstants = {
 			 	 'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
 			 	 'uwagi', 'źródła'],
 			CHINESE :
+				// zh-char
 				['klucz', 'kreski', 'warianty', 'kolejność', 'znaczenia', 'etymologia', 'kody', 'słowniki',
-				 'uwagi', 'źródła']
+				 'uwagi', 'źródła'],
+			EGYPTIAN :
+				// egy
+				['zapis hieroglificzny', 'transliteracja', 'transkrypcja', 'znaczenia', 'determinatywy',
+				 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne',
+				 'frazeologia', 'etymologia', 'uwagi', 'źródła']
 		},
+	NON_LATIN_LANGS :
+		['ru', 'uk', 'kk', 'be', 'hy', 'ka', 'he', 'yi', 'ar', 'fa', 'jp', 'ko', 'th', 'ur',
+		 'hi', 'zh', 'bg', 'mk', 'el', 'gr', 'bo', 'cau', 'ab', 'ady', 'akk', 'am', 'arc',
+		 'as', 'bn', 'av', 'ba', 'bal', 'my', 'gez', 'gu', 'got', 'myv', 'ky', 'dz', 'cv', 
+		 'ce', 'kjh', 'bs', 'ta', 'inh', 'iu', 'kn', 'ks', 'mr', 'km', 'kv', 'kok', 'cr',
+		 'ku', 'lo', 'lez', 'ml', 'dv', 'mn', 'ne', 'new', 'os', 'ps', 'pa', 'rom', 'sa',
+		 'sd', 'ckb', 'cu', 'sux', 'si', 'tab', 'tg', 'tzm', 'te', 'zrp'],
+	DOUBLE_LANGS :
+		['sr', 'tut', 'jdt', 'lad', 'tt', 'tk', 'ug'],
 	LANG_CODES_SHORT :
 		{
 			'dżuhuri' : 'jdt', 'esperanto' : 'eo', 'ewe' : 'ee', 'hindi' : 'hi', 
@@ -112,7 +127,7 @@ window.EdConstants = {
 			'roa' : 'język arumuński', 'as' : 'język assamski', 'ast' : 'język asturyjski', 'av' : 'język awarski',
 			'az' : 'język azerski', 'bm' : 'język bambara', 'map' : 'język banjumasański', 'eu' : 'język baskijski',
 			'ba' : 'język baszkirski', 'gem' : 'język bawarski', 'bal' : 'język beludżi', 'bn' : 'język bengalski',
-			'be' : 'język białoruski', 'be' : 'język białoruski (taraszkiewica)', 'my' : 'język birmański', 'egl' : 'język boloński',
+			'be' : 'język białoruski', 'my' : 'język birmański', 'egl' : 'język boloński',
 			'bs' : 'język bośniacki', 'bg' : 'język bułgarski', 'br' : 'język bretoński', 'ceb' : 'język cebuano',
 			'kjh' : 'język chakaski', 'nai' : 'język chickasaw', 'zh' : 'język chiński standardowy', 'hr' : 'język chorwacki',
 			'chg' : 'język czagatajski', 'ch' : 'język czarnogórski', 'ce' : 'język czeczeński', 'cs' : 'język czeski',
@@ -137,7 +152,7 @@ window.EdConstants = {
 			'lt' : 'język litewski', 'lmo' : 'język lombardzki', 'lb' : 'język luksemburski', 'luo' : 'język luo',
 			'mk' : 'język macedoński', 'ml' : 'język malajalam', 'ms' : 'język malajski', 'dv' : 'język malediwski',
 			'mg' : 'język malgaski', 'mt' : 'język maltański', 'mi' : 'język maoryski', 'mic' : 'język mikmak',
-			'zh' : 'język minnan', 'mn' : 'język mongolski', 'mo' : 'język mołdawski', 'nah' : 'język nahuatl',
+			'mn' : 'język mongolski', 'mo' : 'język mołdawski', 'nah' : 'język nahuatl',
 			'na' : 'język nauruański', 'nv' : 'język nawaho', 'nap' : 'język neapolitański', 'ne' : 'język nepalski',
 			'de' : 'język niemiecki', 'nb' : 'język norweski (bokmål)', 'nn' : 'język norweski (nynorsk)', 'el' : 'język nowogrecki',
 			'hy' : 'język ormiański', 'om' : 'język oromo', 'os' : 'język osetyjski', 'pi' : 'język pali',

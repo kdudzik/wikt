@@ -24,16 +24,15 @@ window.Ed = {
 			});
 		},
 		
-	parseContent :
+	parseContentToSections :
 		function() {
-			Ed.content['txt'] = Ed.code;
-			Ed.content['sections'] = EParser.getSections(Ed.code);
+			Ed.content.sections = EParser.getSections(Ed.code);
 		},
 		
-	fillForm :
-		function(newform) {
-			var menu = newform.find('#ed_menu');
-			var content = newform.find('#ed_content');
+	prepareFormSections :
+		function(form) {
+			var menu = form.find('#ed_menu');
+			var content = form.find('#ed_content');
 			for (var alpha in Ed.content['sections']) {
 				Ed.addSection(alpha, menu, content);				
 			}
@@ -44,6 +43,21 @@ window.Ed = {
 				Ed.addNewSection(menu, content);
 			});
 		
+		},
+		
+	parseSectionsToSubsections :
+		function() {
+			for (var alpha in Ed.content.sections) {
+				var sec = Ed.content.sections[alpha];
+				var subsections = ESectionParser.getSubsections(sec, alpha);
+				sec.subsections = subsections;
+			}
+			console.log(Ed.content.sections);
+		},
+		
+	prepareFormSubsections :
+		function(form) {
+			
 		},
 
 	init :
@@ -58,8 +72,12 @@ window.Ed = {
 			Ed.code = tbox.val();
 			Ed.prepareForm(oldform, newform);
 			
-			Ed.parseContent();
-			Ed.fillForm(newform);
+			Ed.parseContentToSections();
+			Ed.prepareFormSections(newform);
+			
+			Ed.parseSectionsToSubsections();
+			Ed.prepareFormSubsections(newform);
+			
 			
 		},
 		
@@ -89,12 +107,11 @@ window.Ed = {
 							});							
 						}
 					});
-			// TODO: Spr. czy istnieje
 		},
 		
 	addSection :
 		function(alpha, menu, content) {
-			var sec = Ed.content['sections'][alpha];
+			var sec = Ed.content.sections[alpha];
 			var fset = $('<fieldset class="ed_section" id="ed_section_' + alpha + '"/>');
 			
 			fset.appendTo(content).html('<textarea>' + sec['content'] + '</textarea>');
