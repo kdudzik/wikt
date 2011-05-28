@@ -153,7 +153,36 @@ window.ESectionParser = {
 			
 		parsePreparedSubsections :
 			function(str, subsections) {
+				var positions = [];
+				for (i in subsections) {
+					var title = subsections[i].title;
+					positions.push({
+						index: title == '' ? 0 : str.indexOf('{{' + title),
+						title: title
+					});
+				}
+				positions.sort(function(a, b) {
+					return a.index - b.index;
+				});
 				
+				for (i in subsections) {
+					var sub = subsections[i];
+					for (j in positions) {
+						j = parseInt(j);
+						var pos = positions[j];
+						if (pos.title == sub.title) {
+							if (pos.index != -1) {
+								if (j < positions.length - 1) {
+									sub.content = str.substring(pos.index, positions[j + 1].index);
+								}
+								else {
+									sub.content = str.substring(pos.index);
+								}
+							}
+							break;
+						}
+					}
+				}
 			}
 };
 
