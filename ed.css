@@ -17,7 +17,7 @@ fieldset.ed_section {
 
 fieldset.ed_section.active {
 	display: block;
-	height: 450px;
+	min-height: 400px;
 }
 
 fieldset.ed_section textarea {

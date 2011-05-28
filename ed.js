@@ -12,7 +12,8 @@ window.EdFiles =
 	'http://localhost/wikt/ed.constants.js',
 	'http://localhost/wikt/ed.ui.js',
 	'http://localhost/wikt/jqalert/jquery.alerts.js',
-	'http://localhost/wikt/tinytips/jquery.tinytips.js'
+	'http://localhost/wikt/tinytips/jquery.tinytips.js',
+	'http://localhost/wikt/jquery.autoresize.js',
 ];
 window.EdFilesLoaded = 0;
 window.EdFilesToLoad = window.EdFiles.length + 1;

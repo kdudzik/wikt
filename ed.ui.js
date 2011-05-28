@@ -41,6 +41,7 @@ window.EdUi = {
 		var fset = $('<fieldset class="ed_section" id="ed_section_' + alphaname + '"/>');
 		
 		fset.appendTo(EdUi.content).html('<textarea>' + sec['content'] + '</textarea>');
+		fset.find('textarea').autoResize();
 		
 		if (alphaname == '0000') {
 			sec['code'] = EdConstants.INTRO;
