@@ -223,7 +223,11 @@ window.EdStr = {
 	ADD_SECTION_ALREADY:
 		'W haśle istnieje już sekcja odpowiadająca wpisanemu przez Ciebie językowi. Sekcja ta została otwarta.',
 	ADD_SECTION_ALREADY_TITLE:
-		'Język już istnieje'
+		'Język już istnieje',
+	INTRO_SECTION:
+		'Sekcja wstępna:<br/>Interwiki, szablony ogólne',
+	ADD_SECTION:
+		'Dodaj nową sekcję językową'
 };
 
 

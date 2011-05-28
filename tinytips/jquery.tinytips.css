@@ -1,0 +1,10 @@
+﻿.tinyTip { 
+	padding: 5px;
+	display: block;
+	background-color: lemonchiffon;
+	border: 1px solid darkkhaki;
+}
+.tinyTip .content {
+	padding: 0px;
+	color: saddlebrown;
+}

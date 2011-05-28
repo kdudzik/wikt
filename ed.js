@@ -1,12 +1,17 @@
 mw.loader.load('http://localhost/wikt/ed.css', 'text/css');
 mw.loader.load('http://localhost/wikt/jqalert/jquery.alerts.css', 'text/css');
+mw.loader.load('http://localhost/wikt/tinytips/jquery.tinytips.css', 'text/css');
+if (console == undefined) {
+	console = { log: function(x) {} };
+}
 
 window.EdFiles =
 [
 	'http://localhost/wikt/ed.main.js',
 	'http://localhost/wikt/ed.parser.js',
 	'http://localhost/wikt/ed.constants.js',
-	'http://localhost/wikt/jqalert/jquery.alerts.js'
+	'http://localhost/wikt/jqalert/jquery.alerts.js',
+	'http://localhost/wikt/tinytips/jquery.tinytips.js'
 ];
 window.EdFilesLoaded = 0;
 window.EdFilesToLoad = window.EdFiles.length + 1;

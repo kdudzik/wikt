@@ -38,10 +38,10 @@ window.Ed = {
 			}
 			menu.children(":not(#ed_menuitem_0000)").first().click();
 			
-			var item = '<li id="ed_menuitem_new">' + EdStr.ADD + '</li>';
+			var item = '<li id="ed_menuitem_new" class="tip">' + EdStr.ADD + '</li>';
 			$(item).appendTo(menu).click(function() {
 				Ed.addNewSection(menu, content);
-			});
+			}).data('tip', EdStr.ADD_SECTION);
 		
 		},
 		
@@ -77,7 +77,9 @@ window.Ed = {
 			Ed.parseSectionsToSubsections();
 			Ed.prepareFormSubsections(newform);
 			
-			
+			$(document).ready(function() {
+	            $('.tip').tooltip('tip');
+	        });			
 		},
 		
 	addNewSection :
@@ -98,7 +100,7 @@ window.Ed = {
 								Ed.content['sections'][alpha] = newSection;
 								Ed.addSection(alpha, menu, content);
 							}
-							$('#ed_menuitem_' + alpha).click();
+							$('#ed_menuitem_' + alpha).click().tooltip('tip');
 						}
 						else {
 							jAlert(EdStr.ADD_SECTION_NONEXISTENT, EdStr.ADD_SECTION_NONEXISTENT_TITLE, function() {
@@ -116,15 +118,18 @@ window.Ed = {
 			fset.appendTo(content).html('<textarea>' + sec['content'] + '</textarea>');
 			
 			if (alphaname == '0000') {
-				sec['title'] = EdConstants.INTRO;
+				sec['code'] = EdConstants.INTRO;
+				sec['title'] = '';
 			}
 			
-			var caption = sec['code'] ? sec['code'] : sec['title'];
-			var item = $('<li id="ed_menuitem_' + alphaname + '" title="' 
-							+ sec['title'] + '">' + caption + '</li>');
+			var item = $('<li id="ed_menuitem_' + alphaname + '" class="tip">' + sec['code'] + '</li>');
+			var tip = alphaname == '0000'
+					? EdStr.INTRO_SECTION
+					: EParser.insideTemplate(sec['title']) + '\<br/><small>tytuł sekcji: <tt>' + sec['title'] + '</tt></small>';
 			item.data({
 					'section' : 'ed_section_' + alphaname,
-					'code' : sec['code']
+					'code' : sec['code'],
+					'tip' : tip 
 				})
 				.click(function() {
 					content.find('.ed_section').removeClass('active');
