@@ -89,16 +89,19 @@ window.EdUi = {
 					if (!val) {
 						return false;
 					}
-					var newSection = EParser.getSectionFromInput(val);
+					var sec = EParser.getSectionFromInput(val);
 					
-					if (newSection['code']) {
-						var alpha = newSection['alpha'];
+					if (sec['code']) {
+						var alpha = sec['alpha'];
 						if (Ed.content['sections'][alpha] !== undefined) {
 							jAlert(EdStr.ADD_SECTION_ALREADY, EdStr.ADD_SECTION_ALREADY_TITLE);
 						}
 						else {
-							Ed.content['sections'][alpha] = newSection;
+							Ed.content.sections[alpha] = sec;
+							ESectionParser.parse(sec, alpha);
+							
 							EdUi.addSection(alpha);
+							EdUi.prepareFormSubsections(alpha);
 						}
 						$('#ed_menuitem_' + alpha).click().tooltip('tip');
 					}
