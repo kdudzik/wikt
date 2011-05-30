@@ -14,6 +14,7 @@ window.EdFiles =
 	'http://localhost/wikt/jqalert/jquery.alerts.js',
 	'http://localhost/wikt/tinytips/jquery.tinytips.js',
 	'http://localhost/wikt/jquery.autoresize.js',
+	'http://localhost/wikt/jquery.livequery.js',
 ];
 window.EdFilesLoaded = 0;
 window.EdFilesToLoad = window.EdFiles.length + 1;

@@ -31,9 +31,9 @@ window.Ed = {
 		Ed.parseSectionsToSubsections();
 		
 		EdUi.prepareForm(oldform);
-		
-		$(document).ready(function() {
-            $('.tip').tooltip('tip');
+
+        $('.tip').livequery(function() {
+			$(this).tooltip('tip');
         });			
 	}
 	

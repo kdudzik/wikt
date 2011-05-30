@@ -36,7 +36,7 @@ window.EdUi = {
 			EdUi.addNewSection();
 		}).data('tip', EdStr.ADD_SECTION);
 		
-		$('fieldset.ed_section textarea').autoResize().trigger('change');
+		$('textarea.newform').autoResize().trigger('change');
 		EdUi.menu.children(":not(#ed_menuitem_0000)").first().click();
 	},
 		
@@ -65,7 +65,7 @@ window.EdUi = {
 				EdUi.content.find('.ed_section').removeClass('active');
 				EdUi.content.find('#' + $(this).data('section')).addClass('active');
 				$(this).addClass('active').siblings().removeClass('active');
-				$('fieldset.ed_section textarea').trigger('change');
+				$('textarea.newform').trigger('change');
 			});
 		
 		// insert alphabetically
@@ -103,7 +103,7 @@ window.EdUi = {
 							EdUi.addSection(alpha);
 							EdUi.prepareFormSubsections(alpha);
 						}
-						$('#ed_menuitem_' + alpha).click().tooltip('tip');
+						$('#ed_menuitem_' + alpha).click();
 						$('#ed_section_' + alpha + ' textarea').autoResize().trigger('change');
 					}
 					else {
@@ -125,8 +125,8 @@ window.EdUi = {
 
 	labeledInput :
 	function(name, label, value) {
-		return '<label for="' + name + '">' + label + '</label>\
-				<textarea name="' + name + '" id="' + name + '">' + value + '</textarea><br/>';
+		return '<label class="newform" for="' + name + '">' + label + '</label>\
+				<textarea class="newform" name="' + name + '" id="' + name + '">' + value + '</textarea><br/>';
 	},
 	
 	getSubsectionObj :

@@ -70,8 +70,8 @@ fieldset.ed_section input, fieldset.ed_section textarea {
 	border: 1px solid khaki;
 }
 
-fieldset.ed_section textarea{
-	
+fieldset.ed_section textarea {
+	height: auto;
 }
 
 fieldset.ed_section p {
