@@ -5,8 +5,7 @@
 window.Ed = {
 	
 	code : '',
-	content : {},
-	
+	content : {},	
 		
 	parseContentToSections :
 	function() {
@@ -25,14 +24,12 @@ window.Ed = {
 	function() {
 		var tbox = $('#wpTextbox1'),
 			oldform = $('.wikiEditor-ui');
-		Ed.code = tbox.val();
-		var newform = EdUi.prepareForm(oldform);
 		
+		Ed.code = tbox.val();		
 		Ed.parseContentToSections();
-		EdUi.prepareFormSections();
-		
 		Ed.parseSectionsToSubsections();
-		EdUi.prepareFormSubsections();
+		
+		EdUi.prepareForm(oldform);
 		
 		$(document).ready(function() {
             $('.tip').tooltip('tip');

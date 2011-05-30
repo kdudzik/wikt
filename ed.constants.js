@@ -44,6 +44,35 @@ window.EdConstants = {
 			'frazeologia', 'etymologia', 'uwagi', 'źródła'
 		]
 	},
+	SUBSECTION_TITLE :
+	{
+		'transliteracja' : 'Transliteracja',
+		'wymowa' : 'Wymowa',
+		'znaczenia' : 'Znaczenia',
+		'odmiana' : 'Odmiana',
+		'przykłady' : 'Przykłady użycia',
+		'składnia' : 'Składnia',
+		'kolokacje' : 'Kolokacje',
+		'synonimy' : 'Synonimy',
+		'antonimy' : 'Antonimy',
+		'pokrewne' : 'Wyrazy pokrewne',
+		'frazeologia' : 'Związki frazeologiczne',
+		'etymologia' : 'Etymologia',
+		'ortografie' : 'Zapisy w ortografiach alternatywnych',
+		'tłumaczenia' : 'Tłumaczenia',
+		'uwagi' : 'Uwagi',
+		'źródła' : 'Źródła',
+		'klucz' : 'Klucz',
+		'kreski' : 'Liczba kresek',
+		'warianty' : 'Warianty',
+		'kolejność' : 'Kolejność kresek',
+		'kody' : 'Kodowanie',
+		'słowniki' : 'Słowniki',
+		'zapis hieroglificzny' : 'Zapis hieroglificzny',
+		'transkrypcja' : 'Transkrypcja',
+		'determinatywy' : 'Determinatywy',
+		'' : 'Sekcja wstępna'
+	},
 	NON_LATIN_LANGS :
 		['ru', 'uk', 'kk', 'be', 'hy', 'ka', 'he', 'yi', 'ar', 'fa', 'jp', 'ko', 'th', 'ur',
 		 'hi', 'zh', 'bg', 'mk', 'el', 'gr', 'bo', 'cau', 'ab', 'ady', 'akk', 'am', 'arc',
@@ -52,7 +81,7 @@ window.EdConstants = {
 		 'ku', 'lo', 'lez', 'ml', 'dv', 'mn', 'ne', 'new', 'os', 'ps', 'pa', 'rom', 'sa',
 		 'sd', 'ckb', 'cu', 'sux', 'si', 'tab', 'tg', 'tzm', 'te', 'zrp'],
 	DOUBLE_LANGS :
-		['sr', 'tut', 'jdt', 'lad', 'tt', 'tk', 'ug'],
+		['sr', 'tut', 'jdt', 'lad', 'tt', 'tk', 'ug', 'slovio'],
 	LANG_CODES_SHORT :
 	{
 		'dżuhuri' : 'jdt', 'esperanto' : 'eo', 'ewe' : 'ee', 'hindi' : 'hi', 
@@ -239,7 +268,9 @@ window.EdStr = {
 	INTRO_SECTION:
 		'Sekcja wstępna:<br/>Interwiki, szablony ogólne',
 	ADD_SECTION:
-		'Dodaj nową sekcję językową'
+		'Dodaj nową sekcję językową',
+	INTRO:
+		'Sekcja wstępna'
 };
 
 

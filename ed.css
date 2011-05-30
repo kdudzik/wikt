@@ -13,19 +13,11 @@ fieldset.ed_section {
 	display: none;
 	margin: 0;
 	border: 1px solid khaki;
+	min-height: 250px;
 }
 
 fieldset.ed_section.active {
 	display: block;
-	min-height: 400px;
-}
-
-fieldset.ed_section textarea {
-	height: 100%;
-	margin: 5px;
-	float: right;
-	width: 40%;
-	font-size: 0.95em;
 }
 
 ul#ed_menu {
@@ -62,4 +54,31 @@ ul#ed_menu li.active {
 #ed_content {
 	clear: left;
 	padding: 0;
+}
+
+
+fieldset.ed_section label {
+	float: left;
+	width: 150px;
+	padding-top: 2px;
+	line-height: 0.98;
+	clear: left;
+}
+
+fieldset.ed_section input, fieldset.ed_section textarea {
+	width: 500px;
+	border: 1px solid khaki;
+}
+
+fieldset.ed_section textarea{
+	
+}
+
+fieldset.ed_section p {
+	clear: left;
+	margin: 3px 0 0 0;
+}
+
+br {
+	
 }

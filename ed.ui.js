@@ -19,20 +19,25 @@ window.EdUi = {
 			EdUi.form.toggle();
 			return false;
 		});
+		
+		EdUi.prepareFormSections();
 	},
 
 		
 	prepareFormSections :
 	function() {
 		for (var alpha in Ed.content['sections']) {
-			EdUi.addSection(alpha);				
+			EdUi.addSection(alpha);
+			EdUi.prepareFormSubsections(alpha);
 		}
-		EdUi.menu.children(":not(#ed_menuitem_0000)").first().click();
 		
 		var item = '<li id="ed_menuitem_new" class="tip">' + EdStr.ADD + '</li>';
 		$(item).appendTo(EdUi.menu).click(function() {
 			EdUi.addNewSection();
-		}).data('tip', EdStr.ADD_SECTION);		
+		}).data('tip', EdStr.ADD_SECTION);
+		
+		$('fieldset.ed_section textarea').autoResize().trigger('change');
+		EdUi.menu.children(":not(#ed_menuitem_0000)").first().click();
 	},
 		
 	addSection :
@@ -40,8 +45,7 @@ window.EdUi = {
 		var sec = Ed.content.sections[alphaname];
 		var fset = $('<fieldset class="ed_section" id="ed_section_' + alphaname + '"/>');
 		
-		fset.appendTo(EdUi.content).html('<textarea>' + sec['content'] + '</textarea>');
-		fset.find('textarea').autoResize();
+		fset.appendTo(EdUi.content);
 		
 		if (alphaname == '0000') {
 			sec['code'] = EdConstants.INTRO;
@@ -61,8 +65,10 @@ window.EdUi = {
 				EdUi.content.find('.ed_section').removeClass('active');
 				EdUi.content.find('#' + $(this).data('section')).addClass('active');
 				$(this).addClass('active').siblings().removeClass('active');
+				$('fieldset.ed_section textarea').trigger('change');
 			});
 		
+		// insert alphabetically
 		var added = false;
 		EdUi.menu.children("li").each(function() {
 			if ($(this).attr('id') > item.attr('id') || $(this).attr('id') == 'ed_menuitem_new') {
@@ -105,8 +111,38 @@ window.EdUi = {
 	},
 		
 	prepareFormSubsections :
-	function() {
-		
+	function(alpha) {
+		var section = Ed.content['sections'][alpha];
+		for (i = 0; i < section.subsections.length; i++) {
+			var obj = EdUi.getSubsectionObj(alpha, section.subsections[i]);
+			$('#ed_section_' + alpha).append(obj);
+		}
+	},
+
+	labeledInput :
+	function(name, label, value) {
+		return '<label for="' + name + '">' + label + '</label>\
+				<textarea name="' + name + '" id="' + name + '">' + value + '</textarea><br/>';
+	},
+	
+	getSubsectionObj :
+	function(alpha, subsection) {
+		switch (subsection.title) {
+		case '':
+			//return EdUi.getSubsectionIntro(alpha, subsection.content);
+		default:
+			var p = $('<p id="ed_subsection_' + alpha + '_' + subsection.title + '"/>');
+			p.append(EdUi.labeledInput('ed_' + alpha + '_' + subsection.title, 
+					EdConstants.SUBSECTION_TITLE[subsection.title], subsection.content));
+			return p;
+		}
+	},
+	
+	getSubsectionIntro :
+	function(alpha, content) {
+		var p = $('<p id="ed_subsection_' + alpha + '_intro"/>');
+		p.append(EdUi.labeledInput('ed_' + alpha + '_intro', EdStr.INTRO, content));
+		return p;
 	}
 };
 

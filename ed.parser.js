@@ -102,7 +102,7 @@ window.ESectionParser = {
 		var mode = '';
 		var code = section.code;
 		
-		if (code === undefined) {
+		if (!section.title) {
 			mode = 'INTRO';
 		}
 		else if (code == 'pl') {
@@ -173,10 +173,10 @@ window.ESectionParser = {
 				if (pos.title == sub.title) {
 					if (pos.index != -1) {
 						if (j < positions.length - 1) {
-							sub.content = str.substring(pos.index, positions[j + 1].index);
+							sub.content = $.trim(str.substring(pos.index, positions[j + 1].index));
 						}
 						else {
-							sub.content = str.substring(pos.index);
+							sub.content = $.trim(str.substring(pos.index));
 						}
 					}
 					break;
