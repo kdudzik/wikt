@@ -104,6 +104,7 @@ window.EdUi = {
 							EdUi.prepareFormSubsections(alpha);
 						}
 						$('#ed_menuitem_' + alpha).click().tooltip('tip');
+						$('#ed_section_' + alpha + ' textarea').autoResize().trigger('change');
 					}
 					else {
 						jAlert(EdStr.ADD_SECTION_NONEXISTENT, EdStr.ADD_SECTION_NONEXISTENT_TITLE, function() {
