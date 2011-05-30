@@ -5,7 +5,8 @@
 window.Ed = {
 	
 	code : '',
-	content : {},	
+	content : {},
+	
 		
 	parseContentToSections :
 	function() {
@@ -24,8 +25,8 @@ window.Ed = {
 	function() {
 		var tbox = $('#wpTextbox1'),
 			oldform = $('.wikiEditor-ui');
+		Ed.code = tbox.val();
 		
-		Ed.code = tbox.val();		
 		Ed.parseContentToSections();
 		Ed.parseSectionsToSubsections();
 		

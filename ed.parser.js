@@ -123,7 +123,7 @@ window.ESectionParser = {
 		else {
 			mode = 'LATIN';
 		}
-		subsections.push({ title: '', content: '' });
+		subsections.push({ title: '', content: '', shortened: false });
 		
 		var titlesArray;
 		switch (mode) {
@@ -143,7 +143,7 @@ window.ESectionParser = {
 			titlesArray = EdConstants.SUBSECTIONS.LATIN; break;
 		}
 		for (i in titlesArray) {
-			subsections.push({ title: titlesArray[i], content: '' });
+			subsections.push({ title: titlesArray[i], content: '', shortened: false });
 		}
 		
 		section.subsections = subsections;
@@ -178,6 +178,12 @@ window.ESectionParser = {
 						else {
 							sub.content = $.trim(str.substring(pos.index));
 						}
+					}
+					var repl = new RegExp('\{\{' + sub.title + '\}\}');
+					var changed = sub.content.replace(repl, '');
+					if (changed != sub.content) {
+						sub.content = $.trim(changed);
+						sub.shortened = true;
 					}
 					break;
 				}
