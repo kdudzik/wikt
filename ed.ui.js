@@ -1,5 +1,7 @@
 window.EdUi = {
 	
+	oldform :
+		undefined,
 	form :
 		$('<div id="ed"/>'),
 	menu :
@@ -9,6 +11,7 @@ window.EdUi = {
 
 	prepareForm :
 	function(oldform) {
+		this.oldform = oldform;
 		EdUi.form.append(EdUi.menu).append(EdUi.content);
 		oldform.before(EdUi.form).hide();
 		EdUi.form.show();
@@ -21,6 +24,7 @@ window.EdUi = {
 		});
 		
 		EdUi.prepareFormSections();
+		EdUi.rebindFormActions();
 	},
 
 		
@@ -147,6 +151,17 @@ window.EdUi = {
 		var p = $('<p id="ed_subsection_' + alpha + '_intro"/>');
 		p.append(EdUi.labeledInput('ed_' + alpha + '_intro', EdStr.INTRO, content));
 		return p;
+	},
+	
+	rebindFormActions :
+	function() {
+		this.form.find('textarea').removeAttr('name');
+		var newVal = '';
+		this.form.parent('form').submit(function() {
+			newVal = EPrinter.recalculateCode(this.form);
+			EdUi.oldform.find('textarea').val(newVal);
+			return true;
+		});
 	}
 };
 

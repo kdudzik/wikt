@@ -9,6 +9,7 @@ window.EdFiles =
 [
 	'http://localhost/wikt/ed.main.js',
 	'http://localhost/wikt/ed.parser.js',
+	'http://localhost/wikt/ed.printer.js',
 	'http://localhost/wikt/ed.constants.js',
 	'http://localhost/wikt/ed.ui.js',
 	'http://localhost/wikt/jqalert/jquery.alerts.js',
