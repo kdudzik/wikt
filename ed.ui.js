@@ -8,6 +8,8 @@ window.EdUi = {
 		$('<ul id="ed_menu"/>'),
 	content :
 		$('<div id="ed_content"/>'),
+	usingNew :
+		true,
 
 	prepareForm :
 	function(oldform) {
@@ -20,6 +22,13 @@ window.EdUi = {
 		toggleEditor.insertAfter('h1:first').click(function() {
 			oldform.toggle();
 			EdUi.form.toggle();
+			if (EdUi.usingNew) {
+				EdUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
+			}
+			else {
+				// TODO update forms
+			}
+			EdUi.usingNew = !EdUi.usingNew;
 			return false;
 		});
 		
@@ -139,8 +148,8 @@ window.EdUi = {
 		case '':
 			//return EdUi.getSubsectionIntro(alpha, subsection.content);
 		default:
-			var p = $('<p id="ed_subsection_' + alpha + '_' + subsection.title + '"/>');
-			p.append(EdUi.labeledInput('ed_' + alpha + '_' + subsection.title, 
+			var p = $('<p id="ed_subsection_' + alpha + '_' + subsection.title.replace(' ', '_') + '"/>');
+			p.append(EdUi.labeledInput('ed_' + alpha + '_' + subsection.title.replace(' ', '_'), 
 					EdConstants.SUBSECTION_TITLE[subsection.title], subsection.content));
 			return p;
 		}
@@ -156,10 +165,10 @@ window.EdUi = {
 	rebindFormActions :
 	function() {
 		this.form.find('textarea').removeAttr('name');
-		var newVal = '';
 		this.form.parent('form').submit(function() {
-			newVal = EPrinter.recalculateCode(this.form);
-			EdUi.oldform.find('textarea').val(newVal);
+			if (EdUi.usingNew) {
+				EdUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
+			}
 			return true;
 		});
 	}

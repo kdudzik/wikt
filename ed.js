@@ -20,19 +20,18 @@ window.EdFiles =
 window.EdFilesLoaded = 0;
 window.EdFilesToLoad = window.EdFiles.length + 1;
 
-
 window.EdTryInit = function() {
-	if (mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit') {
-		if (window.EdFilesLoaded == window.EdFilesToLoad) {
-			$(document).ready(Ed.init);
-		}
+	if (window.EdFilesLoaded == window.EdFilesToLoad) {
+		$(document).ready(Ed.init);
 	}
 };
 
-for (i in window.EdFiles) {
-	mw.loader.load(window.EdFiles[i]);
+if ((mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit')
+		&& mw.config.get('wgNamespaceNumber') == 0) {	
+	for (i in window.EdFiles) {
+		mw.loader.load(window.EdFiles[i]);
+	}
+		
+	window.EdFilesLoaded++;
+	window.EdTryInit();
 }
-
-
-window.EdFilesLoaded++;
-window.EdTryInit();
