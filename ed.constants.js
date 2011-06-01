@@ -86,7 +86,7 @@ window.EdConstants = {
 		 'ku', 'lo', 'lez', 'ml', 'dv', 'mn', 'ne', 'new', 'os', 'ps', 'pa', 'rom', 'sa',
 		 'sd', 'ckb', 'cu', 'sux', 'si', 'tab', 'tg', 'tzm', 'te', 'zrp'],
 	DOUBLE_LANGS :
-		['sr', 'tut', 'jdt', 'lad', 'tt', 'tk', 'ug', 'slovio'],
+		['sr', 'tut', 'jdt', 'lad', 'tt', 'tk', 'ug', 'slovio', 'az', 'crh', 'be'],
 	LANG_CODES_SHORT :
 	{
 		'dżuhuri' : 'jdt', 'esperanto' : 'eo', 'ewe' : 'ee', 'hindi' : 'hi', 
@@ -240,13 +240,14 @@ window.EdStr = {
 		'Przełącz edytor',
 	ADD : 
 		'+ dodaj',
-	ADD_SECTION_MESSAGE : 
-		'Podaj tytuł sekcji nowego języka.\n\
-		Zamiast wielokropka wstaw odpowiednią nazwę języka.\n\
+	ADD_SECTION_MESSAGE :
+		'Dodajesz nową sekcję językową.<br/>\
+		Podaj nazwę języka (np. <tt>polski</tt>, <tt>tatarski</tt>) lub jego kod ISO (<tt>pl</tt>, <tt>tt</tt>).<br/>\
 		<small>Zobacz też: \
 		<a href="http://pl.wiktionary.org/wiki/Wikis%C5%82ownik:Zasady_tworzenia_hase%C5%82#Nag.C5.82.C3.B3wek" \
-		target="_blank">Zasady tworzenia haseł: Nagłówek</a>.\n\
-		Jeśli znasz kod ISO języka, który chcesz dodać, wystarczy, że wpiszesz go w poniższe pole.</small>',
+		target="_blank">Zasady tworzenia haseł: Nagłówek</a>.<br/>\
+		Możesz też dodać niestandardowy nagłówek (np. akcenty, linki do poszczególnych wyrazów). Żeby to \
+		osiągnąć, wpisz cały kod nagłówka jak poniżej (bez znaków ==).</small>',
 	ADD_SECTION_TEMPLATE : 
 		' {{język …}}',
 	ADD_SECTION_TITLE : 

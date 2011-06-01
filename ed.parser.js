@@ -13,7 +13,8 @@ window.EParser = {
 			if (sec.length == 1) {
 				// sekcja zerowa
 				reta['0000'] = {
-					'content' : $.trim(sec[0])
+					content : $.trim(sec[0]),
+					title : ''
 				};
 			}
 			else {
@@ -42,7 +43,16 @@ window.EParser = {
 	function(str) {
 		var langname = EdConstants.CODE_TO_LANG[str];
 		if (langname !== undefined) {
-			str = mw.config.get('wgPageName') + ' {{' + langname + '}}';
+			return this.getSectionFromString(mw.config.get('wgPageName') + ' {{' + langname + '}}');
+		}
+		
+		var code = EdConstants.LANG_CODES_SHORT[str];
+		if (code !== undefined) {
+			return this.getSectionFromString(mw.config.get('wgPageName') + ' {{' + str + '}}');
+		}
+		code = EdConstants.LANG_CODES_LONG[str];
+		if (code !== undefined) {
+			return this.getSectionFromString(str = mw.config.get('wgPageName') + ' {{język ' + str + '}}');
 		}
 		return this.getSectionFromString(str);
 	},
@@ -64,11 +74,11 @@ window.EParser = {
 		else if (template == EdStr.POLISH_FOREIGN) {
 			return '0003';
 		}
-		else if (template == EdStr.LATIN_FOREIGN) {
-			return '0004';
-		}
 		else if (template == EdStr.CHINESE_SIGN) {
 			return '0005';
+		}
+		else if (template == EdStr.LATIN_FOREIGN) {
+			return 'lzzacinzzski2';
 		}
 		return template.replace(/język /, '')
 			.replace(/[ąáåã]/g, 'azz').replace(/ć/g, 'czz')

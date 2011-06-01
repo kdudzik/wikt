@@ -131,14 +131,14 @@ window.EdUi = {
 	function(alpha) {
 		var section = Ed.content['sections'][alpha];
 		for (i = 0; i < section.subsections.length; i++) {
-			var obj = EdUi.getSubsectionObj(section, section.subsections[i]);
+			var obj = EdUi.getSubsectionObj(alpha, section, section.subsections[i]);
 			$('#ed_section_' + alpha).append(obj);
 		}
 	},
 	
 	getSubsectionObj :
-	function(section, subsection) {
-		var name = section.alpha + '_' + subsection.title.replace(' ', '_');
+	function(alpha, section, subsection) {
+		var name = alpha + '_' + subsection.title.replace(' ', '_');
 		
 		var p = $('<p id="ed_subsection_' + name + '"/>');
 		var caption = EdConstants.SUBSECTION_TITLE[subsection.title];
