@@ -131,28 +131,27 @@ window.EdUi = {
 	function(alpha) {
 		var section = Ed.content['sections'][alpha];
 		for (i = 0; i < section.subsections.length; i++) {
-			var obj = EdUi.getSubsectionObj(alpha, section.subsections[i]);
+			var obj = EdUi.getSubsectionObj(section, section.subsections[i]);
 			$('#ed_section_' + alpha).append(obj);
 		}
 	},
-
-	labeledInput :
-	function(name, label, value) {
-		return '<label class="newform" for="' + name + '">' + label + '</label>\
-				<textarea class="newform" name="' + name + '" id="' + name + '">' + value + '</textarea><br/>';
-	},
 	
 	getSubsectionObj :
-	function(alpha, subsection) {
-		switch (subsection.title) {
-		case '':
-			//return EdUi.getSubsectionIntro(alpha, subsection.content);
-		default:
-			var p = $('<p id="ed_subsection_' + alpha + '_' + subsection.title.replace(' ', '_') + '"/>');
-			p.append(EdUi.labeledInput('ed_' + alpha + '_' + subsection.title.replace(' ', '_'), 
-					EdConstants.SUBSECTION_TITLE[subsection.title], subsection.content));
-			return p;
+	function(section, subsection) {
+		var name = section.alpha + '_' + subsection.title.replace(' ', '_');
+		
+		var p = $('<p id="ed_subsection_' + name + '"/>');
+		var caption = EdConstants.SUBSECTION_TITLE[subsection.title];
+		var label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>');
+		var textarea = $('<textarea class="newform" name="ed_' + name + '" id="ed_' + name + '">'
+				+ subsection.content + '</textarea>');
+		if (ESectionParser.obligatorySubsection(subsection.title, section.mode)) {
+			label.addClass('oblig').append(EdStr.OBLIGATORY_SUBSECTION);
+			textarea.addClass('oblig');
 		}
+		p.append(label).append(textarea);
+		
+		return p;
 	},
 	
 	getSubsectionIntro :

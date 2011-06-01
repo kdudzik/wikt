@@ -13,7 +13,7 @@
         var settings = $.extend({
             onResize : function(){},
             animate : false,
-            animateDuration : 150,
+            animateDuration : 10,
             animateCallback : function(){},
             extraSpace : 5,
             limit: 1000

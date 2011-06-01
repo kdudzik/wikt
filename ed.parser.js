@@ -71,12 +71,12 @@ window.EParser = {
 			return '0005';
 		}
 		return template.replace(/język /, '')
-			.replace(/[ąáåã]/, 'azz').replace('ć', 'czz')
-			.replace(/[ęè]/, 'ezz').replace('ł', 'lzz')
-			.replace('ń', 'nzz').replace(/[óõ]/, 'ozz')
-			.replace('ś', 'szz').replace('ü', 'uzz')
-			.replace('ź', 'zzy').replace('ż', 'zzz')
-			.replace(/[ \|!]/, '_');
+			.replace(/[ąáåã]/g, 'azz').replace(/ć/g, 'czz')
+			.replace(/[ęè]/g, 'ezz').replace(/ł/g, 'lzz')
+			.replace(/ń/g, 'nzz').replace(/[óõ]/g, 'ozz')
+			.replace(/ś/g, 'szz').replace(/ü/g, 'uzz')
+			.replace(/ź/g, 'zzy').replace(/ż/g, 'zzz')
+			.replace(/[ \|!\(\)]/g, '_');
 	},
 		
 	getCode :
@@ -114,6 +114,12 @@ window.ESectionParser = {
 		else if (code == 'egy') {
 			mode = 'EGYPTIAN';
 		}
+		else if (code == 'ko') {
+			mode = 'KOREAN';
+		}
+		else if (code == 'ja') {
+			mode = 'JAPANESE';
+		}
 		else if ($.inArray(code, EdConstants.NON_LATIN_LANGS) != -1) {
 			mode = 'NON_LATIN';
 		}
@@ -133,6 +139,10 @@ window.ESectionParser = {
 			titlesArray = EdConstants.SUBSECTIONS.POLISH; break;
 		case 'CHINESE':
 			titlesArray = EdConstants.SUBSECTIONS.CHINESE; break;
+		case 'KOREAN':
+			titlesArray = EdConstants.SUBSECTIONS.KOREAN; break;
+		case 'JAPANESE':
+			titlesArray = EdConstants.SUBSECTIONS.JAPANESE; break;
 		case 'EGYPTIAN':
 			titlesArray = EdConstants.SUBSECTIONS.EGYPTIAN; break;
 		case 'NON_LATIN':
@@ -189,6 +199,11 @@ window.ESectionParser = {
 				}
 			}
 		}
+	},
+	
+	obligatorySubsection :
+	function(title, mode) {
+		return (title == 'znaczenia') && (mode != 'CHINESE');
 	}
 };
 

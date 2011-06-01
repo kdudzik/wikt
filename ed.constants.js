@@ -6,39 +6,41 @@ window.EdConstants = {
 	INTRO : '«',
 	SUBSECTIONS :
 	{
-		POLISH :
-		[
+		POLISH : [
 		 	'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
 		 	'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
 		 	'uwagi', 'tłumaczenia', 'źródła'
 		],
-		LATIN :
-		[
+		LATIN : [
 		 	'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
 		 	'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
 		 	'uwagi', 'źródła'
 		],
-		NON_LATIN :
-		[
+		NON_LATIN : [
 		 	'transliteracja', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
 		 	'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
 		 	'uwagi', 'źródła'
 		],
-		DOUBLE :
-		[
+		DOUBLE : [
 		 	'ortografie', 'transliteracja', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
 		 	'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
 		 	'uwagi', 'źródła'
 		],
-		CHINESE :
-			// zh-char
-		[
+		CHINESE : [ // zh-char
 		 	'klucz', 'kreski', 'warianty', 'kolejność', 'znaczenia', 'etymologia', 'kody', 'słowniki',
 			'uwagi', 'źródła'
 		],
-		EGYPTIAN :
-			// egy
-		[
+		KOREAN: [ // ko
+		 	'transliteracja', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
+		 	'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia', 'hanja', //'hanja-kreski'?
+		 	'uwagi', 'źródła'
+		],
+		JAPANESE: [ // ja
+		 	'transliteracja', 'czytania', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
+		 	'synonimy', 'antonimy', 'złożenia', 'pokrewne', 'frazeologia', 'etymologia',
+		 	'uwagi', 'źródła'		
+		],
+		EGYPTIAN : [ // egy
 		 	'zapis hieroglificzny', 'transliteracja', 'transkrypcja', 'znaczenia', 'determinatywy',
 			'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne',
 			'frazeologia', 'etymologia', 'uwagi', 'źródła'
@@ -71,10 +73,13 @@ window.EdConstants = {
 		'zapis hieroglificzny' : 'Zapis hieroglificzny',
 		'transkrypcja' : 'Transkrypcja',
 		'determinatywy' : 'Determinatywy',
+		'czytania' : 'Czytania',
+		'złożenia' : 'Złożenia',
+		'hanja' : 'Hanja',
 		'' : 'Sekcja wstępna'
 	},
 	NON_LATIN_LANGS :
-		['ru', 'uk', 'kk', 'be', 'hy', 'ka', 'he', 'yi', 'ar', 'fa', 'jp', 'ko', 'th', 'ur',
+		['ru', 'uk', 'kk', 'be', 'hy', 'ka', 'he', 'yi', 'ar', 'fa', 'ja', 'ko', 'th', 'ur',
 		 'hi', 'zh', 'bg', 'mk', 'el', 'gr', 'bo', 'cau', 'ab', 'ady', 'akk', 'am', 'arc',
 		 'as', 'bn', 'av', 'ba', 'bal', 'my', 'gez', 'gu', 'got', 'myv', 'ky', 'dz', 'cv', 
 		 'ce', 'kjh', 'bs', 'ta', 'inh', 'iu', 'kn', 'ks', 'mr', 'km', 'kv', 'kok', 'cr',
@@ -270,7 +275,9 @@ window.EdStr = {
 	ADD_SECTION:
 		'Dodaj nową sekcję językową',
 	INTRO:
-		'Sekcja wstępna'
+		'Sekcja wstępna',
+	OBLIGATORY_SUBSECTION:
+		'<br />(sekcja obowiązkowa)'
 };
 
 

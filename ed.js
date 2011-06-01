@@ -1,9 +1,6 @@
 mw.loader.load('http://localhost/wikt/ed.css', 'text/css');
 mw.loader.load('http://localhost/wikt/jqalert/jquery.alerts.css', 'text/css');
 mw.loader.load('http://localhost/wikt/tinytips/jquery.tinytips.css', 'text/css');
-if (console == undefined) {
-	console = { log: function(x) {} };
-}
 
 window.EdFiles =
 [
