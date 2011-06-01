@@ -2,6 +2,8 @@ window.EdUi = {
 	
 	oldform :
 		undefined,
+	instruction :
+		undefined,
 	form :
 		$('<div id="ed"/>'),
 	menu :
@@ -12,15 +14,18 @@ window.EdUi = {
 		true,
 
 	prepareForm :
-	function(oldform) {
+	function(oldform, instruction) {
 		this.oldform = oldform;
+		this.instruction = instruction;
 		EdUi.form.append(EdUi.menu).append(EdUi.content);
 		oldform.before(EdUi.form).hide();
+		instruction.hide();
 		EdUi.form.show();
 
 		var toggleEditor = $('<a href="#" id="toggleEditor">' + EdStr.TOGGLE_EDITOR + '</a>');
 		toggleEditor.insertAfter('h1:first').click(function() {
 			oldform.toggle();
+			instruction.toggle();
 			EdUi.form.toggle();
 			if (EdUi.usingNew) {
 				EdUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
@@ -39,18 +44,28 @@ window.EdUi = {
 		
 	prepareFormSections :
 	function() {
-		for (var alpha in Ed.content['sections']) {
+		for (var alpha in Ed.content.sections) {
 			EdUi.addSection(alpha);
 			EdUi.prepareFormSubsections(alpha);
 		}
 		
-		var item = '<li id="ed_menuitem_new" class="tip">' + EdStr.ADD + '</li>';
-		$(item).appendTo(EdUi.menu).click(function() {
+		var addItem = $('<li id="ed_menuitem_new" class="tip">' + EdStr.ADD + '</li>');
+		addItem.appendTo(EdUi.menu).click(function() {
 			EdUi.addNewSection();
 		}).data('tip', EdStr.ADD_SECTION);
 		
 		$('textarea.newform').autoResize().trigger('change');
-		EdUi.menu.children(":not(#ed_menuitem_0000)").first().click();
+		
+		var firstTab = EdUi.menu.children(":not(#ed_menuitem_0000)").first();
+		if (firstTab.attr('id') != 'ed_menuitem_new') {
+			firstTab.click();
+		}
+		else if (Ed.content.sections['0000'] != undefined) {
+			$('#ed_menuitem_0000').click();
+		}
+		else {
+			$('#ed_menuitem_new').click();
+		}
 	},
 		
 	addSection :
@@ -97,34 +112,36 @@ window.EdUi = {
 
 	addNewSection :
 	function() {
-		jPrompt(EdStr.ADD_SECTION_MESSAGE, mw.config.get('wgPageName') + EdStr.ADD_SECTION_TEMPLATE, 
-				EdStr.ADD_SECTION_TITLE, function(val) {
-					if (!val) {
-						return false;
-					}
-					var sec = EParser.getSectionFromInput(val);
-					
-					if (sec['code']) {
-						var alpha = sec['alpha'];
-						if (Ed.content['sections'][alpha] !== undefined) {
-							jAlert(EdStr.ADD_SECTION_ALREADY, EdStr.ADD_SECTION_ALREADY_TITLE);
-						}
-						else {
-							Ed.content.sections[alpha] = sec;
-							ESectionParser.parse(sec, alpha);
-							
-							EdUi.addSection(alpha);
-							EdUi.prepareFormSubsections(alpha);
-						}
-						$('#ed_menuitem_' + alpha).click();
-						$('#ed_section_' + alpha + ' textarea').autoResize().trigger('change');
+		var defaultLang = EUtil.getSection();
+		var defaultText = defaultLang ? defaultLang : mw.config.get('wgPageName') + EdStr.ADD_SECTION_TEMPLATE;
+		jPrompt(EdStr.ADD_SECTION_MESSAGE, defaultText, EdStr.ADD_SECTION_TITLE,
+			function(val) {
+				if (!val) {
+					return false;
+				}
+				var sec = EParser.getSectionFromInput(val);
+				
+				if (sec['code']) {
+					var alpha = sec['alpha'];
+					if (Ed.content['sections'][alpha] !== undefined) {
+						jAlert(EdStr.ADD_SECTION_ALREADY, EdStr.ADD_SECTION_ALREADY_TITLE);
 					}
 					else {
-						jAlert(EdStr.ADD_SECTION_NONEXISTENT, EdStr.ADD_SECTION_NONEXISTENT_TITLE, function() {
-							EdUi.addNewSection();
-						});							
+						Ed.content.sections[alpha] = sec;
+						ESectionParser.parse(sec, alpha);
+						
+						EdUi.addSection(alpha);
+						EdUi.prepareFormSubsections(alpha);
 					}
-				});
+					$('#ed_menuitem_' + alpha).click();
+					$('#ed_section_' + alpha + ' textarea').autoResize().trigger('change');
+				}
+				else {
+					jAlert(EdStr.ADD_SECTION_NONEXISTENT, EdStr.ADD_SECTION_NONEXISTENT_TITLE, function() {
+						EdUi.addNewSection();
+					});							
+				}
+			});
 	},
 		
 	prepareFormSubsections :

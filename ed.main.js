@@ -24,13 +24,14 @@ window.Ed = {
 	init :
 	function() {
 		var tbox = $('#wpTextbox1'),
-			oldform = $('.wikiEditor-ui');
+			oldform = $('.wikiEditor-ui'),
+			instruction = $('#nat-instrukcja');
 		Ed.code = tbox.val();
 		
 		Ed.parseContentToSections();
 		Ed.parseSectionsToSubsections();
 		
-		EdUi.prepareForm(oldform);
+		EdUi.prepareForm(oldform, instruction);
 
         $('.tip').livequery(function() {
 			$(this).tooltip('tip');
@@ -38,6 +39,24 @@ window.Ed = {
 	}
 	
 	
+};
+
+window.EUtil = {
+	getParameterByName : function(name)
+	{
+	  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+	  var regexS = "[\\?&]"+name+"=([^&#]*)";
+	  var regex = new RegExp( regexS );
+	  var results = regex.exec( window.location.href );
+	  if( results == null )
+	    return "";
+	  else
+	    return decodeURIComponent(results[1].replace(/\+/g, " "));
+	},
+	
+	getSection : function() {
+		return self.document.location.hash.replace('#', '');
+	}
 };
 
 window.EdFilesLoaded++;
