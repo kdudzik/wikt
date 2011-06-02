@@ -8,21 +8,18 @@ window.Ed = {
 	content : {},
 	
 		
-	parseContentToSections :
-	function() {
+	parseContentToSections : function() {
 		Ed.content.sections = EParser.getSections(Ed.code);
 	},
 		
-	parseSectionsToSubsections :
-	function() {
+	parseSectionsToSubsections : function() {
 		for (var alphaname in Ed.content.sections) {
 			var sec = Ed.content.sections[alphaname];
 			ESectionParser.parse(sec, alphaname);
 		}
 	},
 
-	init :
-	function() {
+	init : function() {
 		var tbox = $('#wpTextbox1'),
 			oldform = $('.wikiEditor-ui'),
 			instruction = $('#nat-instrukcja');
@@ -42,7 +39,7 @@ window.Ed = {
 };
 
 window.EUtil = {
-	getParameterByName : function(name)
+	getParameter : function(name)
 	{
 	  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
 	  var regexS = "[\\?&]"+name+"=([^&#]*)";

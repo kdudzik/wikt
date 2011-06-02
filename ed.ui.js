@@ -1,20 +1,13 @@
 window.EdUi = {
 	
-	oldform :
-		undefined,
-	instruction :
-		undefined,
-	form :
-		$('<div id="ed"/>'),
-	menu :
-		$('<ul id="ed_menu"/>'),
-	content :
-		$('<div id="ed_content"/>'),
-	usingNew :
-		true,
+	oldform : undefined,
+	instruction : undefined,
+	form : $('<div id="ed"/>'),
+	menu : $('<ul id="ed_menu"/>'),
+	content : $('<div id="ed_content"/>'),
+	usingNew : true,
 
-	prepareForm :
-	function(oldform, instruction) {
+	prepareForm : function(oldform, instruction) {
 		this.oldform = oldform;
 		this.instruction = instruction;
 		EdUi.form.append(EdUi.menu).append(EdUi.content);
@@ -42,8 +35,7 @@ window.EdUi = {
 	},
 
 		
-	prepareFormSections :
-	function() {
+	prepareFormSections : function() {
 		for (var alpha in Ed.content.sections) {
 			EdUi.addSection(alpha);
 			EdUi.prepareFormSubsections(alpha);
@@ -68,8 +60,7 @@ window.EdUi = {
 		}
 	},
 		
-	addSection :
-	function(alphaname) {
+	addSection : function(alphaname) {
 		var sec = Ed.content.sections[alphaname];
 		var fset = $('<fieldset class="ed_section" id="ed_section_' + alphaname + '"/>');
 		
@@ -110,8 +101,7 @@ window.EdUi = {
 		}			
 	},
 
-	addNewSection :
-	function() {
+	addNewSection : function() {
 		var defaultLang = EUtil.getSection();
 		var defaultText = defaultLang ? defaultLang : mw.config.get('wgPageName') + EdStr.ADD_SECTION_TEMPLATE;
 		jPrompt(EdStr.ADD_SECTION_MESSAGE, defaultText, EdStr.ADD_SECTION_TITLE,
@@ -144,8 +134,7 @@ window.EdUi = {
 			});
 	},
 		
-	prepareFormSubsections :
-	function(alpha) {
+	prepareFormSubsections : function(alpha) {
 		var section = Ed.content['sections'][alpha];
 		for (i = 0; i < section.subsections.length; i++) {
 			var obj = EdUi.getSubsectionObj(alpha, section, section.subsections[i]);
@@ -153,8 +142,7 @@ window.EdUi = {
 		}
 	},
 	
-	getSubsectionObj :
-	function(alpha, section, subsection) {
+	getSubsectionObj : function(alpha, section, subsection) {
 		var name = alpha + '_' + subsection.title.replace(' ', '_');
 		
 		var p = $('<p id="ed_subsection_' + name + '"/>');
@@ -171,15 +159,7 @@ window.EdUi = {
 		return p;
 	},
 	
-	getSubsectionIntro :
-	function(alpha, content) {
-		var p = $('<p id="ed_subsection_' + alpha + '_intro"/>');
-		p.append(EdUi.labeledInput('ed_' + alpha + '_intro', EdStr.INTRO, content));
-		return p;
-	},
-	
-	rebindFormActions :
-	function() {
+	rebindFormActions : function() {
 		this.form.find('textarea').removeAttr('name');
 		this.form.parent('form').submit(function() {
 			if (EdUi.usingNew) {

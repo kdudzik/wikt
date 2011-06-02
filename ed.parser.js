@@ -1,6 +1,5 @@
 window.EParser = {
-	getSections :
-	function(code) {
+	getSections : function(code) {
 		code = code.replace(/\s*==\s*([^=]+)\s*==\s*/g, '<BE>$1<EN>');
 		var sections = code.split('<BE>');
 		var reta = {};
@@ -28,8 +27,7 @@ window.EParser = {
 		return reta;
 	},
 		
-	getSectionFromString :
-	function(str) {
+	getSectionFromString : function(str) {
 		return {
 			'title' : str,
 			'short' : this.insideTemplate(str).replace(/język /, ''),
@@ -39,8 +37,7 @@ window.EParser = {
 		};
 	},
 		
-	getSectionFromInput :
-	function(str) {
+	getSectionFromInput : function(str) {
 		var langname = EdConstants.CODE_TO_LANG[str];
 		if (langname !== undefined) {
 			return this.getSectionFromString(mw.config.get('wgPageName') + ' {{' + langname + '}}');
@@ -57,13 +54,11 @@ window.EParser = {
 		return this.getSectionFromString(str);
 	},
 
-	insideTemplate  :
-	function(str) {
+	insideTemplate  : function(str) {
 		return str.replace(/.*\{\{(.*?)(\}\}|\|).*/g, '$1');
 	},
 		
-	getAlphabetical :
-	function(str) {
+	getAlphabetical : function(str) {
 		var template = this.insideTemplate(str);
 		if (template == EdStr.INTERNATIONAL_USAGE) {
 			return '0001';
@@ -89,8 +84,7 @@ window.EParser = {
 			.replace(/[ \|!\(\)]/g, '_');
 	},
 		
-	getCode :
-	function(str) {
+	getCode : function(str) {
 		var template = this.insideTemplate(str);
 		var code;
 		if (template.indexOf('język ') != -1) {
@@ -106,8 +100,7 @@ window.EParser = {
 
 window.ESectionParser = {
 		
-	parse:
-	function(section, alphaname) {
+	parse: function(section, alphaname) {
 		var subsections = [];
 		var mode = '';
 		var code = section.code;
@@ -171,8 +164,7 @@ window.ESectionParser = {
 		this.parsePreparedSubsections(section.content, section.subsections);
 	},
 		
-	parsePreparedSubsections :
-	function(str, subsections) {
+	parsePreparedSubsections : function(str, subsections) {
 		var positions = [];
 		for (i in subsections) {
 			var title = subsections[i].title;
@@ -211,8 +203,7 @@ window.ESectionParser = {
 		}
 	},
 	
-	obligatorySubsection :
-	function(title, mode) {
+	obligatorySubsection : function(title, mode) {
 		return (title == 'znaczenia') && (mode != 'CHINESE');
 	}
 };
