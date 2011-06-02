@@ -278,7 +278,15 @@ window.EdStr = {
 	INTRO:
 		'Sekcja wstępna',
 	OBLIGATORY_SUBSECTION:
-		'<br />(sekcja obowiązkowa)'
+		'<br />(sekcja obowiązkowa)',
+	EDIT_SECTION_TITLE:
+		'Edytuj nagłówek sekcji językowej',
+	EDIT_SECTION_TITLE_MESSAGE:
+		'Podaj nową zawartość nagłówka sekcji językowej (bez znaków <tt>==</tt>)',
+	DELETE_SECTION:
+		'Usuń sekcję językową',
+	DELETE_SECTION_MESSAGE:
+		'Czy na pewno usunąć sekcję językową?'
 };
 
 

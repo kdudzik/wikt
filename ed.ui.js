@@ -34,6 +34,18 @@ window.EdUi = {
 		EdUi.rebindFormActions();
 	},
 
+	clickSection : function() {
+		var firstTab = EdUi.menu.children(":not(#ed_menuitem_0000)").first();
+		if (firstTab.attr('id') != 'ed_menuitem_new') {
+			firstTab.click();
+		}
+		else if (Ed.content.sections['0000'] != undefined) {
+			$('#ed_menuitem_0000').click();
+		}
+		else {
+			$('#ed_menuitem_new').click();
+		}
+	},
 		
 	prepareFormSections : function() {
 		for (var alpha in Ed.content.sections) {
@@ -49,17 +61,7 @@ window.EdUi = {
 		}
 		
 		$('textarea.newform').autoResize().trigger('change');
-		
-		var firstTab = EdUi.menu.children(":not(#ed_menuitem_0000)").first();
-		if (firstTab.attr('id') != 'ed_menuitem_new') {
-			firstTab.click();
-		}
-		else if (Ed.content.sections['0000'] != undefined) {
-			$('#ed_menuitem_0000').click();
-		}
-		else {
-			$('#ed_menuitem_new').click();
-		}
+		EdUi.clickSection();
 	},
 		
 	addSection : function(alphaname) {
@@ -69,14 +71,14 @@ window.EdUi = {
 		fset.appendTo(EdUi.content);
 		
 		if (alphaname == '0000') {
-			sec['code'] = EdConstants.INTRO;
-			sec['title'] = '';
+			sec.code = EdConstants.INTRO;
+			sec.title = '';
 		}
 		
-		var item = $('<li id="ed_menuitem_' + alphaname + '" class="tip">' + sec['code'] + '</li>');
+		var item = $('<li id="ed_menuitem_' + alphaname + '" class="tip">' + sec.code + '</li>');
 		var tip = alphaname == '0000'
 				? EdStr.INTRO_SECTION
-				: EParser.insideTemplate(sec['title']) + '\<br/><small>tytuł sekcji: <tt>' + sec['title'] + '</tt></small>';
+				: EParser.insideTemplate(sec.title) + '\<br/><small>tytuł sekcji: <tt>' + sec.title + '</tt></small>';
 		item.data({
 				'section' : 'ed_section_' + alphaname,
 				'code' : sec['code'],
@@ -135,12 +137,49 @@ window.EdUi = {
 				}
 			});
 	},
+	
+	editSectionTitle : function(alpha, section) {
+		jPrompt(EdStr.EDIT_SECTION_TITLE_MESSAGE, section.title, EdStr.EDIT_SECTION_TITLE, function(res) {
+			if (!res) {
+				return;
+			}
+			section.title = res;
+			var tip = EParser.insideTemplate(res) + '\<br/><small>tytuł sekcji: <tt>' + res + '</tt></small>';
+			$('#ed_menuitem_' + alpha).data('tip', tip);
+		});
+	},
+	
+	deleteSection : function(alpha, section) {
+		jConfirm(EdStr.DELETE_SECTION_MESSAGE, EdStr.DELETE_SECTION_TITLE, function(res) {
+			if (!res) {
+				return;
+			}
+			delete Ed.content['sections'][alpha];
+			$('#ed_menuitem_' + alpha).remove();
+			$('#ed_section_' + alpha).remove();
+			EdUi.clickSection();
+		});
+	},
 		
 	prepareFormSubsections : function(alpha) {
 		var section = Ed.content['sections'][alpha];
+		var fset = $('#ed_section_' + alpha);
+				
+		if (alpha != '0000') {
+			var editlink = $('<a href="#"/>').text(EdStr.EDIT_SECTION_TITLE).click(function() {
+				EdUi.editSectionTitle(alpha, section);
+				return false;
+			});
+			var deletelink = $('<a href="#"/>').text(EdStr.DELETE_SECTION).click(function() {
+				EdUi.deleteSection(alpha, section);
+				return false;
+			});
+			fset.append($('<p class="top"/>').append(editlink).append(deletelink));
+		}
+		
 		for (i = 0; i < section.subsections.length; i++) {
 			var obj = EdUi.getSubsectionObj(alpha, section, section.subsections[i]);
-			$('#ed_section_' + alpha).append(obj);
+			fset.append(obj);
 		}
 	},
 	

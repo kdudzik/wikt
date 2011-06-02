@@ -79,6 +79,25 @@ fieldset.ed_section p {
 	margin: 3px 0 0 0;
 }
 
+fieldset.ed_section p.top {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+fieldset.ed_section a {	
+	font-weight: normal !important;
+	color: #0645AD !important;
+}
+
+fieldset.ed_section p.top a {
+	border-bottom: 1px dotted darkkhaki;
+	margin-right: 15px;
+}
+
+fieldset.ed_section p.top a:hover {
+	border-bottom: 1px solid darkkhaki;
+}
+
 label.oblig {
 	color: #CC0000;
 	font-weight: bold;

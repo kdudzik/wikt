@@ -28,7 +28,7 @@
 **************************************************************************/
 
 (function($){  
-	$.fn.tooltip = function (supCont) {
+	$.fn.tooltip = function () {
 		
 		/* User settings
 		**********************************/
@@ -60,11 +60,8 @@
 			// Grab the content for the tooltip from the title attribute (or the supplied content) and
 			// inject it into the markup for the current tooltip. NOTE: title attribute is used unless
 			// other content is supplied instead.
-			if (supCont === 'tip') {
-				var tipCont = $(this).data('tip');
-			} else if (supCont !== 'tip') {
-				var tipCont = supCont;
-			}
+			var tipCont = $(this).data('tip');
+
 			$('.tinyTip .content').html(tipCont);
 			tText = $(this).data('tip');
 			

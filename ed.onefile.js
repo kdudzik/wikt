@@ -1338,7 +1338,7 @@ $.extend($.livequery, {
 				
 				// Return the original methods result
 				return r;
-			}
+			};
 		});
 	},
 	
