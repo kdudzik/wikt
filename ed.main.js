@@ -20,6 +20,10 @@ window.Ed = {
 	},
 
 	init : function() {
+		if (EUtil.getParameter('oldid') && EUtil.getParameter('oldid') != mw.config.get('wgCurRevisionId')) {
+			return;
+		}
+			
 		var tbox = $('#wpTextbox1'),
 			oldform = $('.wikiEditor-ui'),
 			instruction = $('#nat-instrukcja');

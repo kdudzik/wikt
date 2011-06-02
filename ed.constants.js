@@ -263,8 +263,8 @@ window.EdStr = {
 	CHINESE_SIGN :
 		'znak chiński',
 	ADD_SECTION_NONEXISTENT:
-		// TODO kat
-		'Podałeś nieistniejący język. Sprawdź <a>listę dostępnych języków</a>.',
+		'Brak języka. Sprawdź <a href="http://pl.wiktionary.org/wiki/Kategoria:Szablony_indeksuj%C4%85ce_j%C4%99zyk%C3%B3w"\
+		target="_new">listę dostępnych języków</a>.',
 	ADD_SECTION_NONEXISTENT_TITLE:
 		'Nieprawidłowa wartość języka',
 	ADD_SECTION_ALREADY:

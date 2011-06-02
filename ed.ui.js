@@ -41,10 +41,12 @@ window.EdUi = {
 			EdUi.prepareFormSubsections(alpha);
 		}
 		
-		var addItem = $('<li id="ed_menuitem_new" class="tip">' + EdStr.ADD + '</li>');
-		addItem.appendTo(EdUi.menu).click(function() {
-			EdUi.addNewSection();
-		}).data('tip', EdStr.ADD_SECTION);
+		if (EUtil.getParameter('section') == '') {
+			var addItem = $('<li id="ed_menuitem_new" class="tip">' + EdStr.ADD + '</li>');
+			addItem.appendTo(EdUi.menu).click(function() {
+				EdUi.addNewSection();
+			}).data('tip', EdStr.ADD_SECTION);
+		}
 		
 		$('textarea.newform').autoResize().trigger('change');
 		
