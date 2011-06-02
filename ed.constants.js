@@ -246,8 +246,16 @@ window.EdStr = {
 		<small>Zobacz też: \
 		<a href="http://pl.wiktionary.org/wiki/Wikis%C5%82ownik:Zasady_tworzenia_hase%C5%82#Nag.C5.82.C3.B3wek" \
 		target="_blank">Zasady tworzenia haseł: Nagłówek</a>.<br/>\
-		Możesz też dodać niestandardowy nagłówek (np. akcenty, linki do poszczególnych wyrazów). Żeby to \
-		osiągnąć, wpisz cały kod nagłówka jak poniżej (bez znaków ==).</small>',
+		Możesz też dodać niestandardowy nagłówek (np. akcenty, linki do poszczególnych wyrazów). W tym celu \
+		wpisz cały kod nagłówka jak poniżej (bez znaków ==).</small>',
+	ADD_SECTION_MESSAGE_DEFAULT :
+		'Dodajesz nową sekcję językową.<br/>\
+		Podaj nazwę języka (np. <tt>polski</tt>, <tt>tatarski</tt>) lub jego kod ISO (<tt>pl</tt>, <tt>tt</tt>).<br/>\
+		<small>Zobacz też: \
+		<a href="http://pl.wiktionary.org/wiki/Wikis%C5%82ownik:Zasady_tworzenia_hase%C5%82#Nag.C5.82.C3.B3wek" \
+		target="_blank">Zasady tworzenia haseł: Nagłówek</a>.<br/>\
+		Możesz też dodać niestandardowy nagłówek (np. akcenty, linki do poszczególnych wyrazów). W tym celu \
+		wpisz cały kod nagłówka (bez znaków ==).</small>',
 	ADD_SECTION_TEMPLATE : 
 		' {{język …}}',
 	ADD_SECTION_TITLE : 
@@ -280,13 +288,13 @@ window.EdStr = {
 	OBLIGATORY_SUBSECTION:
 		'<br />(sekcja obowiązkowa)',
 	EDIT_SECTION_TITLE:
-		'Edytuj nagłówek sekcji językowej',
+		'Edytuj nagłówek tej sekcji językowej',
 	EDIT_SECTION_TITLE_MESSAGE:
-		'Podaj nową zawartość nagłówka sekcji językowej (bez znaków <tt>==</tt>)',
+		'Podaj nową zawartość nagłówka bieżącej sekcji językowej (bez znaków <tt>==</tt>)',
 	DELETE_SECTION:
-		'Usuń sekcję językową',
+		'Usuń tę sekcję językową',
 	DELETE_SECTION_MESSAGE:
-		'Czy na pewno usunąć sekcję językową?'
+		'Czy na pewno usunąć bieżącą sekcję językową?'
 };
 
 

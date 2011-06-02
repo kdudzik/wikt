@@ -11,9 +11,13 @@ window.EdUi = {
 		this.oldform = oldform;
 		this.instruction = instruction;
 		EdUi.form.append(EdUi.menu).append(EdUi.content);
-		oldform.before(EdUi.form).hide();
-		instruction.hide();
-		EdUi.form.show();
+		oldform.before(EdUi.form);
+		
+		if ($.cookie('usenew') == null || $.cookie('usenew') == 1) {
+			oldform.hide();
+			instruction.hide();
+			EdUi.form.show();
+		}
 
 		var toggleEditor = $('<a href="#" id="toggleEditor">' + EdStr.TOGGLE_EDITOR + '</a>');
 		toggleEditor.insertAfter('h1:first').click(function() {
@@ -27,6 +31,7 @@ window.EdUi = {
 				// TODO update forms
 			}
 			EdUi.usingNew = !EdUi.usingNew;
+			$.cookie('usenew', +EdUi.usingNew);
 			return false;
 		});
 		
@@ -60,6 +65,7 @@ window.EdUi = {
 			}).data('tip', EdStr.ADD_SECTION);
 		}
 		
+		// FIXME Change nie działa przy przełączeniu usenew 0->1
 		$('textarea.newform').autoResize().trigger('change');
 		EdUi.clickSection();
 	},
@@ -107,8 +113,13 @@ window.EdUi = {
 
 	addNewSection : function() {
 		var defaultLang = EUtil.getSection();
+		if (!defaultLang) {
+			defaultLang = $.cookie('lastAdded');
+		}
 		var defaultText = defaultLang ? defaultLang : mw.config.get('wgPageName') + EdStr.ADD_SECTION_TEMPLATE;
-		jPrompt(EdStr.ADD_SECTION_MESSAGE, defaultText, EdStr.ADD_SECTION_TITLE,
+		var message = defaultLang ? EdStr.ADD_SECTION_MESSAGE_DEFAULT : EdStr.ADD_SECTION_MESSAGE; 
+		
+		jPrompt(message, defaultText, EdStr.ADD_SECTION_TITLE,
 			function(val) {
 				if (!val) {
 					return false;
@@ -126,6 +137,7 @@ window.EdUi = {
 						
 						EdUi.addSection(alpha);
 						EdUi.prepareFormSubsections(alpha);
+						$.cookie('lastAdded', sec['code']);
 					}
 					$('#ed_menuitem_' + alpha).click();
 					$('#ed_section_' + alpha + ' textarea').autoResize().trigger('change');
@@ -149,16 +161,36 @@ window.EdUi = {
 		});
 	},
 	
-	deleteSection : function(alpha, section) {
-		jConfirm(EdStr.DELETE_SECTION_MESSAGE, EdStr.DELETE_SECTION_TITLE, function(res) {
-			if (!res) {
-				return;
-			}
-			delete Ed.content['sections'][alpha];
+	deleteSection : function(alpha, section, force) {
+		var del = function() {
+			delete Ed.content.sections[alpha];
 			$('#ed_menuitem_' + alpha).remove();
 			$('#ed_section_' + alpha).remove();
 			EdUi.clickSection();
-		});
+		};
+		if (force) {
+			del();
+		}
+		else {
+			jConfirm(EdStr.DELETE_SECTION_MESSAGE, EdStr.DELETE_SECTION_TITLE, function(res) {
+				if (res) { del(); }
+			});
+		}
+	},
+	
+	deleteEmptySections : function() {
+		for (var alpha in Ed.content.sections) {
+			var sec = Ed.content.sections[alpha];
+			var empty = true;
+			$('#ed_section_' + alpha).find('textarea').each(function() {
+				if ($(this).val()) {
+					empty = false;
+				}
+			});
+			if (empty) {
+				EdUi.deleteSection(alpha, sec, 1);
+			}
+		}
 	},
 		
 	prepareFormSubsections : function(alpha) {
@@ -204,6 +236,7 @@ window.EdUi = {
 		this.form.find('textarea').removeAttr('name');
 		this.form.parent('form').submit(function() {
 			if (EdUi.usingNew) {
+				EdUi.deleteEmptySections();
 				EdUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
 			}
 			return true;
