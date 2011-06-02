@@ -12,8 +12,9 @@ window.EdUi = {
 		this.instruction = instruction;
 		EdUi.form.append(EdUi.menu).append(EdUi.content);
 		oldform.before(EdUi.form);
+		EdUi.usingNew = $.cookie('usenew') == null || $.cookie('usenew') == 1;
 		
-		if ($.cookie('usenew') == null || $.cookie('usenew') == 1) {
+		if (EdUi.usingNew) {
 			oldform.hide();
 			instruction.hide();
 			EdUi.form.show();
@@ -29,6 +30,7 @@ window.EdUi = {
 			}
 			else {
 				// TODO update forms
+				$('textarea.newform').trigger('change');
 			}
 			EdUi.usingNew = !EdUi.usingNew;
 			$.cookie('usenew', +EdUi.usingNew);
@@ -66,8 +68,8 @@ window.EdUi = {
 		}
 		
 		// FIXME Change nie działa przy przełączeniu usenew 0->1
-		$('textarea.newform').autoResize().trigger('change');
 		EdUi.clickSection();
+		$('textarea.newform').autoResize().trigger('change');
 	},
 		
 	addSection : function(alphaname) {
