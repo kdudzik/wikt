@@ -17,7 +17,7 @@ window.EParser = {
 				};
 			}
 			else {
-				var section = this.getSectionFromString($.trim(sec[0]));
+				var section = this.getSectionFromTitle($.trim(sec[0]));
 				var alphacode = section.alpha;
 				reta[alphacode] = section;
 				reta[alphacode].content = $.trim(sec[1]);					
@@ -27,7 +27,7 @@ window.EParser = {
 		return reta;
 	},
 		
-	getSectionFromString : function(str) {
+	getSectionFromTitle : function(str) {
 		return {
 			'title' : str,
 			'short' : this.insideTemplate(str).replace(/język /, ''),
@@ -36,22 +36,64 @@ window.EParser = {
 			'code'  : this.getCode(str)
 		};
 	},
+	
+	getSectionFromCodeAndLang : function(code, lang) {
+		var pagename = mw.config.get('wgPageName');
+		if (code == 'zh-char' || code == 'zh') {
+			pagename = '{{zh|' + pagename + '}}';
+		}
+		else if (code == 'ja' || code == 'ko') {
+			pagename = '{{' + code + '|' + pagename + '}}';
+		}
+		return {
+			'title' : pagename + ' {{' + lang + '}}',
+			'short' : lang.replace(/język /, ''),
+			'content' : '',
+			'alpha' : this.alphabetize(lang),
+			'code'	: code
+		};
+	},
+	
+	alphabetize : function(langname) {
+		if (langname == EdStr.INTERNATIONAL_USAGE) {
+			return '0001';
+		}
+		else if (langname == EdStr.POLISH) {
+			return '0002';
+		}
+		else if (langname == EdStr.POLISH_FOREIGN) {
+			return '0003';
+		}
+		else if (langname == EdStr.CHINESE_SIGN) {
+			return '0005';
+		}
+		else if (langname == EdStr.LATIN_FOREIGN) {
+			return 'lzzacinzzski2';
+		}
+		return langname.replace(/język /, '')
+			.replace(/[ąáåã]/g, 'azz').replace(/ć/g, 'czz')
+			.replace(/[ęè]/g, 'ezz').replace(/ł/g, 'lzz')
+			.replace(/ń/g, 'nzz').replace(/[óõ]/g, 'ozz')
+			.replace(/ś/g, 'szz').replace(/ü/g, 'uzz')
+			.replace(/ź/g, 'zzy').replace(/ż/g, 'zzz')
+			.replace(/[ \|!\(\)]/g, '_');
+	},
 		
 	getSectionFromInput : function(str) {
 		var langname = EdConstants.CODE_TO_LANG[str];
 		if (langname !== undefined) {
-			return this.getSectionFromString(mw.config.get('wgPageName') + ' {{' + langname + '}}');
+			return this.getSectionFromCodeAndLang(str, langname);
 		}
 		
 		var code = EdConstants.LANG_CODES_SHORT[str];
 		if (code !== undefined) {
-			return this.getSectionFromString(mw.config.get('wgPageName') + ' {{' + str + '}}');
+			return this.getSectionFromCodeAndLang(code, str);
 		}
 		code = EdConstants.LANG_CODES_LONG[str];
 		if (code !== undefined) {
-			return this.getSectionFromString(str = mw.config.get('wgPageName') + ' {{język ' + str + '}}');
+			return this.getSectionFromCodeAndLang(code, 'język ' + str);
 		}
-		return this.getSectionFromString(str);
+		return this.getSectionFromTitle(str);
 	},
 
 	insideTemplate  : function(str) {
@@ -60,28 +102,7 @@ window.EParser = {
 		
 	getAlphabetical : function(str) {
 		var template = this.insideTemplate(str);
-		if (template == EdStr.INTERNATIONAL_USAGE) {
-			return '0001';
-		}
-		else if (template == EdStr.POLISH) {
-			return '0002';
-		}
-		else if (template == EdStr.POLISH_FOREIGN) {
-			return '0003';
-		}
-		else if (template == EdStr.CHINESE_SIGN) {
-			return '0005';
-		}
-		else if (template == EdStr.LATIN_FOREIGN) {
-			return 'lzzacinzzski2';
-		}
-		return template.replace(/język /, '')
-			.replace(/[ąáåã]/g, 'azz').replace(/ć/g, 'czz')
-			.replace(/[ęè]/g, 'ezz').replace(/ł/g, 'lzz')
-			.replace(/ń/g, 'nzz').replace(/[óõ]/g, 'ozz')
-			.replace(/ś/g, 'szz').replace(/ü/g, 'uzz')
-			.replace(/ź/g, 'zzy').replace(/ż/g, 'zzz')
-			.replace(/[ \|!\(\)]/g, '_');
+		return this.alphabetize(template);
 	},
 		
 	getCode : function(str) {
