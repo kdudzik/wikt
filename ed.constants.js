@@ -300,6 +300,8 @@ window.EdStr = {
 		'Sekcja wstępna',
 	OBLIGATORY_SUBSECTION:
 		'<br />(sekcja obowiązkowa)',
+	BOT_SUBSECTION:
+		'<br />(dodaje automatycznie <a href="http://pl.wiktionary.org/wiki/Wikipedysta:Olafbot" target="_blank">bot</a>)',
 	EDIT_SECTION_TITLE:
 		'Edytuj nagłówek tej sekcji językowej',
 	EDIT_SECTION_TITLE_MESSAGE:

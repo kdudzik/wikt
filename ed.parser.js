@@ -38,7 +38,7 @@ window.EParser = {
 	},
 	
 	getSectionFromCodeAndLang : function(code, lang) {
-		var pagename = mw.config.get('wgPageName');
+		var pagename = mw.config.get('wgPageName').replace('_', ' ');
 		if (code == 'zh-char' || code == 'zh') {
 			pagename = '{{zh|' + pagename + '}}';
 		}
@@ -246,8 +246,12 @@ window.ESectionParser = {
 		}
 	},
 	
-	obligatorySubsection : function(title, mode) {
-		return (title == 'znaczenia') && (mode != 'CHINESE');
+	obligatorySubsection : function(subsection, section) {
+		return (subsection.title == 'znaczenia') && (section.mode != 'CHINESE');
+	},
+	
+	botSubsection : function(subsection, section) {
+		return (subsection.title == 'wymowa') && (section.mode == 'POLISH') && !subsection.content;
 	}
 };
 

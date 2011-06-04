@@ -59,9 +59,9 @@ ul#ed_menu li.active {
 
 fieldset.ed_section label {
 	float: left;
-	width: 150px;
+	width: 180px;
 	padding-top: 2px;
-	line-height: 0.98;
+	line-height: 1;
 	clear: left;
 }
 
@@ -97,7 +97,7 @@ fieldset.ed_section p.top a:hover {
 	border-bottom: 1px solid darkkhaki;
 }
 
-label.oblig {
+label.oblig_subsection {
 	color: #CC0000;
 	font-weight: bold;
 }

@@ -227,9 +227,13 @@ window.EdUi = {
 		var label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>');
 		var textarea = $('<textarea class="newform" name="ed_' + name + '" id="ed_' + name + '">'
 				+ subsection.content + '</textarea>');
-		if (ESectionParser.obligatorySubsection(subsection.title, section.mode)) {
-			label.addClass('oblig').append(EdStr.OBLIGATORY_SUBSECTION);
-			textarea.addClass('oblig');
+		if (ESectionParser.obligatorySubsection(subsection, section)) {
+			label.addClass('oblig_subsection').append(EdStr.OBLIGATORY_SUBSECTION);
+			textarea.addClass('oblig_subsection');
+		}
+		else if (ESectionParser.botSubsection(subsection, section)) {
+			label.addClass('bot_subsection').append(EdStr.BOT_SUBSECTION);
+			textarea.addClass('bot_subsection');
 		}
 		p.append(label).append(textarea);
 		
