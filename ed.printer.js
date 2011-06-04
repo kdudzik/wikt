@@ -1,9 +1,17 @@
 window.EPrinter = {
 	recalculateCode : function(form) {
 		var code = '';
+		var sortableSections = [];
 		for (alpha in Ed.content.sections) {
-			var sec = Ed.content.sections[alpha];
-			if (alpha == '0000') {
+			sortableSections.push(Ed.content.sections[alpha]);
+		}
+		sortableSections.sort(function(a, b) {
+			return a.alpha > b.alpha ? 1 : -1;
+		});
+		console.log(sortableSections)
+		for (i in sortableSections) {
+			var sec = sortableSections[i];
+			if (sec.alpha == '0000') {
 				code = $('#ed_0000_').val();
 				code = $.trim(code) + '\n';
 			}
@@ -14,7 +22,7 @@ window.EPrinter = {
 					if (!subs.active) {
 						continue;
 					}
-					subs.content = $('#ed_' + alpha + '_' + subs.title.replace(' ', '_')).val();
+					subs.content = $('#ed_' + sec.alpha + '_' + subs.title.replace(' ', '_')).val();
 					if (subs.title == '' && subs.content != '') {
 						code += $.trim(subs.content) + '\n';
 					}

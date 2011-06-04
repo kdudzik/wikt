@@ -51,7 +51,7 @@
                 })(),
                 lastScrollTop = null,
                 updateSize = function() {
-					
+            		clone.scrollTop()
                     // Prepare the clone:
                     clone.height(0).val($(this).val()).scrollTop(10000);
 					

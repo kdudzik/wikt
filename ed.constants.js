@@ -245,7 +245,8 @@ window.EConstants = {
 		'inter' : 'użycie międzynarodowe', 'vo' : 'volapük', 'zh-char' : 'znak chiński', 'yi' : 'jidysz',
 		'roa' : 'jèrriais', 'termin obcy w języku polskim' : 'termin obcy w języku polskim',
 		'termin obcy w języku łacińskim' : 'termin obcy w języku łacińskim'
-	}
+	},
+	ONELINE_SECTIONS : 20
 };
 
 window.EStr = {

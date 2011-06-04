@@ -55,16 +55,23 @@ window.EUi = {
 	},
 		
 	prepareFormSections : function() {
+		var size = 0;
 		for (var alpha in Ed.content.sections) {
 			EUi.addSection(alpha);
 			EUi.prepareFormSubsections(alpha);
+			size++;
 		}
 		
 		if (EUtil.getParameter('section') == '') {
-			var addItem = $('<li id="ed_menuitem_new" class="tip">' + EStr.ADD + '</li>');
+			var addItem = $('<li id="ed_menuitem_new" class="tip menuitem">' + EStr.ADD + '</li>');
 			addItem.appendTo(EUi.menu).click(function() {
 				EUi.addNewSection();
 			}).data('tip', EStr.ADD_SECTION);
+		}
+		
+		if (size > EConstants.ONELINE_SECTIONS) {
+			console.log($('li.menuitem:nth-child(' + Math.floor(size / 2) + ')'));
+			$('li.menuitem:nth-child(' + Math.floor(size / 2) + ')').css('clear', 'left');
 		}
 		
 		// FIXME Change nie działa przy przełączeniu usenew 0->1
@@ -83,7 +90,7 @@ window.EUi = {
 			sec.title = '';
 		}
 		
-		var item = $('<li id="ed_menuitem_' + alphaname + '" class="tip">' + sec.code + '</li>');
+		var item = $('<li id="ed_menuitem_' + alphaname + '" class="tip menuitem">' + sec.code + '</li>');
 		var tip = alphaname == '0000'
 				? EStr.INTRO_SECTION
 				: EParser.insideTemplate(sec.title) + '\<br/><small>tytuł sekcji: <tt>' + sec.title + '</tt></small>';

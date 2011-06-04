@@ -13,7 +13,8 @@ window.EParser = {
 				// sekcja zerowa
 				reta['0000'] = {
 					content : $.trim(sec[0]),
-					title : ''
+					title : '',
+					alpha : '0000'
 				};
 			}
 			else {
@@ -46,7 +47,7 @@ window.EParser = {
 			pagename = '{{' + code + '|' + pagename + '}}';
 		}
 		return {
-			'title' : pagename + ' {{' + lang + '}}',
+			'title' : pagename + ' ({{' + lang + '}})',
 			'short' : lang.replace(/język /, ''),
 			'content' : '',
 			'alpha' : this.alphabetize(lang),
