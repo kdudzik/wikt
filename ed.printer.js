@@ -36,5 +36,5 @@ window.EPrinter = {
 	}
 };
 
-window.EdFilesLoaded++;
-window.EdTryInit();
+window.EFilesLoaded++;
+window.ETryInit();

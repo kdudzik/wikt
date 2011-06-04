@@ -32,7 +32,7 @@ window.Ed = {
 		Ed.parseContentToSections();
 		Ed.parseSectionsToSubsections();
 		
-		EdUi.prepareForm(oldform, instruction);
+		EUi.prepareForm(oldform, instruction);
 
         $('.tip').livequery(function() {
 			$(this).tooltip('tip');
@@ -60,5 +60,5 @@ window.EUtil = {
 	}
 };
 
-window.EdFilesLoaded++;
-window.EdTryInit();
+window.EFilesLoaded++;
+window.ETryInit();

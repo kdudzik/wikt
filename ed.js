@@ -2,7 +2,7 @@ mw.loader.load('http://localhost/wikt/ed.css', 'text/css');
 mw.loader.load('http://localhost/wikt/jqalert/jquery.alerts.css', 'text/css');
 mw.loader.load('http://localhost/wikt/tinytips/jquery.tinytips.css', 'text/css');
 
-window.EdFiles =
+window.EFiles =
 [
 	'http://localhost/wikt/ed.main.js',
 	'http://localhost/wikt/ed.parser.js',
@@ -14,21 +14,21 @@ window.EdFiles =
 	'http://localhost/wikt/jquery.autoresize.js',
 	'http://localhost/wikt/jquery.livequery.js',
 ];
-window.EdFilesLoaded = 0;
-window.EdFilesToLoad = window.EdFiles.length + 1;
+window.EFilesLoaded = 0;
+window.EFilesToLoad = window.EFiles.length + 1;
 
-window.EdTryInit = function() {
-	if (window.EdFilesLoaded == window.EdFilesToLoad) {
+window.ETryInit = function() {
+	if (window.EFilesLoaded == window.EFilesToLoad) {
 		$(document).ready(Ed.init);
 	}
 };
 
 if ((mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit')
 		&& mw.config.get('wgNamespaceNumber') == 0) {	
-	for (i in window.EdFiles) {
-		mw.loader.load(window.EdFiles[i]);
+	for (i in window.EFiles) {
+		mw.loader.load(window.EFiles[i]);
 	}
 		
-	window.EdFilesLoaded++;
-	window.EdTryInit();
+	window.EFilesLoaded++;
+	window.ETryInit();
 }

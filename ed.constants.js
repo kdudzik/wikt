@@ -2,7 +2,7 @@
  * 
  */
 
-window.EdConstants = {
+window.EConstants = {
 	INTRO : '«',
 	SUBSECTIONS :
 	{
@@ -248,7 +248,7 @@ window.EdConstants = {
 	}
 };
 
-window.EdStr = {
+window.EStr = {
 	TOGGLE_EDITOR :
 		'Przełącz edytor',
 	ADD : 
@@ -313,5 +313,5 @@ window.EdStr = {
 };
 
 
-window.EdFilesLoaded++;
-window.EdTryInit();
+window.EFilesLoaded++;
+window.ETryInit();

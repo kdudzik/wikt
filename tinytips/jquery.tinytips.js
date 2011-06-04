@@ -99,5 +99,5 @@
 
 })(jQuery);
 
-window.EdFilesLoaded++;
-window.EdTryInit();
+window.EFilesLoaded++;
+window.ETryInit();

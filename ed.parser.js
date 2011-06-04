@@ -55,19 +55,19 @@ window.EParser = {
 	},
 	
 	alphabetize : function(langname) {
-		if (langname == EdStr.INTERNATIONAL_USAGE) {
+		if (langname == EStr.INTERNATIONAL_USAGE) {
 			return '0001';
 		}
-		else if (langname == EdStr.POLISH) {
+		else if (langname == EStr.POLISH) {
 			return '0002';
 		}
-		else if (langname == EdStr.POLISH_FOREIGN) {
+		else if (langname == EStr.POLISH_FOREIGN) {
 			return '0003';
 		}
-		else if (langname == EdStr.CHINESE_SIGN) {
+		else if (langname == EStr.CHINESE_SIGN) {
 			return '0005';
 		}
-		else if (langname == EdStr.LATIN_FOREIGN) {
+		else if (langname == EStr.LATIN_FOREIGN) {
 			return 'lzzacinzzski2';
 		}
 		return langname.replace(/język /, '')
@@ -80,16 +80,16 @@ window.EParser = {
 	},
 		
 	getSectionFromInput : function(str) {
-		var langname = EdConstants.CODE_TO_LANG[str];
+		var langname = EConstants.CODE_TO_LANG[str];
 		if (langname !== undefined) {
 			return this.getSectionFromCodeAndLang(str, langname);
 		}
 		
-		var code = EdConstants.LANG_CODES_SHORT[str];
+		var code = EConstants.LANG_CODES_SHORT[str];
 		if (code !== undefined) {
 			return this.getSectionFromCodeAndLang(code, str);
 		}
-		code = EdConstants.LANG_CODES_LONG[str];
+		code = EConstants.LANG_CODES_LONG[str];
 		if (code !== undefined) {
 			return this.getSectionFromCodeAndLang(code, 'język ' + str);
 		}
@@ -110,10 +110,10 @@ window.EParser = {
 		var code;
 		if (template.indexOf('język ') != -1) {
 			template = template.replace(/język /, '');
-			code = EdConstants.LANG_CODES_LONG[template];
+			code = EConstants.LANG_CODES_LONG[template];
 		}
 		else {
-			code = EdConstants.LANG_CODES_SHORT[template];
+			code = EConstants.LANG_CODES_SHORT[template];
 		}
 		return code ? code : template;			
 	}
@@ -140,17 +140,17 @@ window.ESectionParser = {
 			mode = 'JAPANESE';
 		} else if (code == 'inter') {
 			mode = 'INTERNATIONAL';
-		} else if ($.inArray(code, EdConstants.NON_LATIN_LANGS) != -1) {
+		} else if ($.inArray(code, EConstants.NON_LATIN_LANGS) != -1) {
 			mode = 'NON_LATIN';
-		} else if ($.inArray(code, EdConstants.DOUBLE_LANGS) != -1) {
+		} else if ($.inArray(code, EConstants.DOUBLE_LANGS) != -1) {
 			mode = 'DOUBLE';
 		} else {
 			mode = 'LATIN';
 		}
 		subsections.push({ title: '', content: '', shortened: false, active: true });		
-		for (i in EdConstants.SUBSECTIONS.ALL) {
+		for (i in EConstants.SUBSECTIONS.ALL) {
 			subsections.push({
-				title: EdConstants.SUBSECTIONS.ALL[i], 
+				title: EConstants.SUBSECTIONS.ALL[i], 
 				content: '', 
 				shortened: false,
 				active: true
@@ -162,23 +162,23 @@ window.ESectionParser = {
 		case 'INTRO':
 			targetSubsections = []; break;
 		case 'POLISH':
-			targetSubsections = EdConstants.SUBSECTIONS.POLISH; break;
+			targetSubsections = EConstants.SUBSECTIONS.POLISH; break;
 		case 'CHINESE':
-			targetSubsections = EdConstants.SUBSECTIONS.CHINESE; break;
+			targetSubsections = EConstants.SUBSECTIONS.CHINESE; break;
 		case 'KOREAN':
-			targetSubsections = EdConstants.SUBSECTIONS.KOREAN; break;
+			targetSubsections = EConstants.SUBSECTIONS.KOREAN; break;
 		case 'JAPANESE':
-			targetSubsections = EdConstants.SUBSECTIONS.JAPANESE; break;
+			targetSubsections = EConstants.SUBSECTIONS.JAPANESE; break;
 		case 'INTERNATIONAL':
-			targetSubsections = EdConstants.SUBSECTIONS.INTERNATIONAL; break;
+			targetSubsections = EConstants.SUBSECTIONS.INTERNATIONAL; break;
 		case 'EGYPTIAN':
-			targetSubsections = EdConstants.SUBSECTIONS.EGYPTIAN; break;
+			targetSubsections = EConstants.SUBSECTIONS.EGYPTIAN; break;
 		case 'NON_LATIN':
-			targetSubsections = EdConstants.SUBSECTIONS.NON_LATIN; break;
+			targetSubsections = EConstants.SUBSECTIONS.NON_LATIN; break;
 		case 'DOUBLE':
-			targetSubsections = EdConstants.SUBSECTIONS.DOUBLE; break;
+			targetSubsections = EConstants.SUBSECTIONS.DOUBLE; break;
 		case 'LATIN':
-			targetSubsections = EdConstants.SUBSECTIONS.LATIN; break;
+			targetSubsections = EConstants.SUBSECTIONS.LATIN; break;
 		}
 		
 		section.subsections = subsections;
@@ -255,5 +255,5 @@ window.ESectionParser = {
 	}
 };
 
-window.EdFilesLoaded++;
-window.EdTryInit();
+window.EFilesLoaded++;
+window.ETryInit();

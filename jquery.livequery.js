@@ -249,5 +249,5 @@ $.prototype.init.prototype = $.prototype;
 	
 })(jQuery);
 
-window.EdFilesLoaded++;
-window.EdTryInit();
+window.EFilesLoaded++;
+window.ETryInit();

@@ -1,4 +1,4 @@
-window.EdUi = {
+window.EUi = {
 	
 	oldform : undefined,
 	instruction : undefined,
@@ -10,39 +10,39 @@ window.EdUi = {
 	prepareForm : function(oldform, instruction) {
 		this.oldform = oldform;
 		this.instruction = instruction;
-		EdUi.form.append(EdUi.menu).append(EdUi.content);
-		oldform.before(EdUi.form);
-		EdUi.usingNew = $.cookie('usenew') == null || $.cookie('usenew') == 1;
+		EUi.form.append(EUi.menu).append(EUi.content);
+		oldform.before(EUi.form);
+		EUi.usingNew = $.cookie('usenew') == null || $.cookie('usenew') == 1;
 		
-		if (EdUi.usingNew) {
+		if (EUi.usingNew) {
 			oldform.hide();
 			instruction.hide();
-			EdUi.form.show();
+			EUi.form.show();
 		}
 
-		var toggleEditor = $('<a href="#" id="toggleEditor">' + EdStr.TOGGLE_EDITOR + '</a>');
+		var toggleEditor = $('<a href="#" id="toggleEditor">' + EStr.TOGGLE_EDITOR + '</a>');
 		toggleEditor.insertAfter('h1:first').click(function() {
 			oldform.toggle();
 			instruction.toggle();
-			EdUi.form.toggle();
-			if (EdUi.usingNew) {
-				EdUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
+			EUi.form.toggle();
+			if (EUi.usingNew) {
+				EUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
 			}
 			else {
 				// TODO update forms
 				$('textarea.newform').trigger('change');
 			}
-			EdUi.usingNew = !EdUi.usingNew;
-			$.cookie('usenew', +EdUi.usingNew);
+			EUi.usingNew = !EUi.usingNew;
+			$.cookie('usenew', +EUi.usingNew);
 			return false;
 		});
 		
-		EdUi.prepareFormSections();
-		EdUi.rebindFormActions();
+		EUi.prepareFormSections();
+		EUi.rebindFormActions();
 	},
 
 	clickSection : function() {
-		var firstTab = EdUi.menu.children(":not(#ed_menuitem_0000)").first();
+		var firstTab = EUi.menu.children(":not(#ed_menuitem_0000)").first();
 		if (firstTab.attr('id') != 'ed_menuitem_new') {
 			firstTab.click();
 		}
@@ -56,19 +56,19 @@ window.EdUi = {
 		
 	prepareFormSections : function() {
 		for (var alpha in Ed.content.sections) {
-			EdUi.addSection(alpha);
-			EdUi.prepareFormSubsections(alpha);
+			EUi.addSection(alpha);
+			EUi.prepareFormSubsections(alpha);
 		}
 		
 		if (EUtil.getParameter('section') == '') {
-			var addItem = $('<li id="ed_menuitem_new" class="tip">' + EdStr.ADD + '</li>');
-			addItem.appendTo(EdUi.menu).click(function() {
-				EdUi.addNewSection();
-			}).data('tip', EdStr.ADD_SECTION);
+			var addItem = $('<li id="ed_menuitem_new" class="tip">' + EStr.ADD + '</li>');
+			addItem.appendTo(EUi.menu).click(function() {
+				EUi.addNewSection();
+			}).data('tip', EStr.ADD_SECTION);
 		}
 		
 		// FIXME Change nie działa przy przełączeniu usenew 0->1
-		EdUi.clickSection();
+		EUi.clickSection();
 		$('textarea.newform').autoResize().trigger('change');
 	},
 		
@@ -76,16 +76,16 @@ window.EdUi = {
 		var sec = Ed.content.sections[alphaname];
 		var fset = $('<fieldset class="ed_section" id="ed_section_' + alphaname + '"/>');
 		
-		fset.appendTo(EdUi.content);
+		fset.appendTo(EUi.content);
 		
 		if (alphaname == '0000') {
-			sec.code = EdConstants.INTRO;
+			sec.code = EConstants.INTRO;
 			sec.title = '';
 		}
 		
 		var item = $('<li id="ed_menuitem_' + alphaname + '" class="tip">' + sec.code + '</li>');
 		var tip = alphaname == '0000'
-				? EdStr.INTRO_SECTION
+				? EStr.INTRO_SECTION
 				: EParser.insideTemplate(sec.title) + '\<br/><small>tytuł sekcji: <tt>' + sec.title + '</tt></small>';
 		item.data({
 				'section' : 'ed_section_' + alphaname,
@@ -93,15 +93,15 @@ window.EdUi = {
 				'tip' : tip 
 			})
 			.click(function() {
-				EdUi.content.find('.ed_section').removeClass('active');
-				EdUi.content.find('#' + $(this).data('section')).addClass('active');
+				EUi.content.find('.ed_section').removeClass('active');
+				EUi.content.find('#' + $(this).data('section')).addClass('active');
 				$(this).addClass('active').siblings().removeClass('active');
 				$('textarea.newform').trigger('change');
 			});
 		
 		// insert alphabetically
 		var added = false;
-		EdUi.menu.children("li").each(function() {
+		EUi.menu.children("li").each(function() {
 			if ($(this).attr('id') > item.attr('id') || $(this).attr('id') == 'ed_menuitem_new') {
 				item.insertBefore($(this));
 				added = true;
@@ -109,7 +109,7 @@ window.EdUi = {
 			}
 		});
 		if (!added) {
-			item.appendTo(EdUi.menu);
+			item.appendTo(EUi.menu);
 		}			
 	},
 
@@ -118,10 +118,10 @@ window.EdUi = {
 		if (!defaultLang) {
 			defaultLang = $.cookie('lastAdded');
 		}
-		var defaultText = defaultLang ? defaultLang : mw.config.get('wgPageName') + EdStr.ADD_SECTION_TEMPLATE;
-		var message = defaultLang ? EdStr.ADD_SECTION_MESSAGE_DEFAULT : EdStr.ADD_SECTION_MESSAGE; 
+		var defaultText = defaultLang ? defaultLang : mw.config.get('wgPageName') + EStr.ADD_SECTION_TEMPLATE;
+		var message = defaultLang ? EStr.ADD_SECTION_MESSAGE_DEFAULT : EStr.ADD_SECTION_MESSAGE; 
 		
-		jPrompt(message, defaultText, EdStr.ADD_SECTION_TITLE,
+		jPrompt(message, defaultText, EStr.ADD_SECTION_TITLE,
 			function(val) {
 				if (!val) {
 					return false;
@@ -131,29 +131,29 @@ window.EdUi = {
 				if (sec['code']) {
 					var alpha = sec['alpha'];
 					if (Ed.content['sections'][alpha] !== undefined) {
-						jAlert(EdStr.ADD_SECTION_ALREADY, EdStr.ADD_SECTION_ALREADY_TITLE);
+						jAlert(EStr.ADD_SECTION_ALREADY, EStr.ADD_SECTION_ALREADY_TITLE);
 					}
 					else {
 						Ed.content.sections[alpha] = sec;
 						ESectionParser.parse(sec, alpha);
 						
-						EdUi.addSection(alpha);
-						EdUi.prepareFormSubsections(alpha);
+						EUi.addSection(alpha);
+						EUi.prepareFormSubsections(alpha);
 						$.cookie('lastAdded', sec['code']);
 					}
 					$('#ed_menuitem_' + alpha).click();
 					$('#ed_section_' + alpha + ' textarea').autoResize().trigger('change');
 				}
 				else {
-					jAlert(EdStr.ADD_SECTION_NONEXISTENT, EdStr.ADD_SECTION_NONEXISTENT_TITLE, function() {
-						EdUi.addNewSection();
+					jAlert(EStr.ADD_SECTION_NONEXISTENT, EStr.ADD_SECTION_NONEXISTENT_TITLE, function() {
+						EUi.addNewSection();
 					});							
 				}
 			});
 	},
 	
 	editSectionTitle : function(alpha, section) {
-		jPrompt(EdStr.EDIT_SECTION_TITLE_MESSAGE, section.title, EdStr.EDIT_SECTION_TITLE, function(res) {
+		jPrompt(EStr.EDIT_SECTION_TITLE_MESSAGE, section.title, EStr.EDIT_SECTION_TITLE, function(res) {
 			if (!res) {
 				return;
 			}
@@ -168,13 +168,13 @@ window.EdUi = {
 			delete Ed.content.sections[alpha];
 			$('#ed_menuitem_' + alpha).remove();
 			$('#ed_section_' + alpha).remove();
-			EdUi.clickSection();
+			EUi.clickSection();
 		};
 		if (force) {
 			del();
 		}
 		else {
-			jConfirm(EdStr.DELETE_SECTION_MESSAGE, EdStr.DELETE_SECTION_TITLE, function(res) {
+			jConfirm(EStr.DELETE_SECTION_MESSAGE, EStr.DELETE_SECTION_TITLE, function(res) {
 				if (res) { del(); }
 			});
 		}
@@ -190,7 +190,7 @@ window.EdUi = {
 				}
 			});
 			if (empty) {
-				EdUi.deleteSection(alpha, sec, 1);
+				EUi.deleteSection(alpha, sec, 1);
 			}
 		}
 	},
@@ -200,12 +200,12 @@ window.EdUi = {
 		var fset = $('#ed_section_' + alpha);
 				
 		if (alpha != '0000') {
-			var editlink = $('<a href="#"/>').text(EdStr.EDIT_SECTION_TITLE).click(function() {
-				EdUi.editSectionTitle(alpha, section);
+			var editlink = $('<a href="#"/>').text(EStr.EDIT_SECTION_TITLE).click(function() {
+				EUi.editSectionTitle(alpha, section);
 				return false;
 			});
-			var deletelink = $('<a href="#"/>').text(EdStr.DELETE_SECTION).click(function() {
-				EdUi.deleteSection(alpha, section);
+			var deletelink = $('<a href="#"/>').text(EStr.DELETE_SECTION).click(function() {
+				EUi.deleteSection(alpha, section);
 				return false;
 			});
 			fset.append($('<p class="top"/>').append(editlink).append(deletelink));
@@ -213,7 +213,7 @@ window.EdUi = {
 		
 		for (i = 0; i < section.subsections.length; i++) {
 			if (section.subsections[i].active) {
-				var obj = EdUi.getSubsectionObj(alpha, section, section.subsections[i]);
+				var obj = EUi.getSubsectionObj(alpha, section, section.subsections[i]);
 				fset.append(obj);
 			}
 		}
@@ -223,16 +223,16 @@ window.EdUi = {
 		var name = alpha + '_' + subsection.title.replace(' ', '_');
 		
 		var p = $('<p id="ed_subsection_' + name + '"/>');
-		var caption = EdConstants.SUBSECTION_TITLE[subsection.title];
+		var caption = EConstants.SUBSECTION_TITLE[subsection.title];
 		var label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>');
 		var textarea = $('<textarea class="newform" name="ed_' + name + '" id="ed_' + name + '">'
 				+ subsection.content + '</textarea>');
 		if (ESectionParser.obligatorySubsection(subsection, section)) {
-			label.addClass('oblig_subsection').append(EdStr.OBLIGATORY_SUBSECTION);
+			label.addClass('oblig_subsection').append(EStr.OBLIGATORY_SUBSECTION);
 			textarea.addClass('oblig_subsection');
 		}
 		else if (ESectionParser.botSubsection(subsection, section)) {
-			label.addClass('bot_subsection').append(EdStr.BOT_SUBSECTION);
+			label.addClass('bot_subsection').append(EStr.BOT_SUBSECTION);
 			textarea.addClass('bot_subsection');
 		}
 		p.append(label).append(textarea);
@@ -243,9 +243,9 @@ window.EdUi = {
 	rebindFormActions : function() {
 		this.form.find('textarea').removeAttr('name');
 		this.form.parent('form').submit(function() {
-			if (EdUi.usingNew) {
-				EdUi.deleteEmptySections();
-				EdUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
+			if (EUi.usingNew) {
+				EUi.deleteEmptySections();
+				EUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
 			}
 			return true;
 		});
@@ -253,5 +253,5 @@ window.EdUi = {
 };
 
 
-window.EdFilesLoaded++;
-window.EdTryInit();
+window.EFilesLoaded++;
+window.ETryInit();
