@@ -70,16 +70,12 @@ window.EUi = {
 		}
 		
 		if (size > EConstants.ONELINE_SECTIONS) {
-			console.log($('li.menuitem:nth-child(' + Math.floor(size / 2) + ')'));
 			$('li.menuitem:nth-child(' + Math.floor(size / 2) + ')').css('clear', 'left');
 		}
 		
 		EUi.clickSection();
-		$('fieldset.active').find('textarea').autogrow();
-		
-		$(window).resize(function() {
-			$('fieldset.active').find('textarea').autogrow();
-		});
+		EUi.resizeTextareas();		
+		$(window).resize(EUi.resizeTextareas);
 	},
 		
 	addSection : function(alphaname) {
@@ -106,7 +102,7 @@ window.EUi = {
 				EUi.content.find('.ed_section').removeClass('active');
 				EUi.content.find('#' + $(this).data('section')).addClass('active');
 				$(this).addClass('active').siblings().removeClass('active');
-				$('fieldset.active').find('textarea').autogrow();
+				EUi.resizeTextareas();
 			});
 		
 		// insert alphabetically
@@ -259,6 +255,10 @@ window.EUi = {
 			}
 			return true;
 		});
+	},
+	
+	resizeTextareas : function() {
+		$('fieldset.active').find('textarea').autogrow();
 	}
 };
 

@@ -1,3 +1,6 @@
+//mw.loader.load('http://pl.wiktionary.org/w/index.php?title=Wikipedysta:ToSter/ed.onefile.js&action=raw&ctype=text/javascript');
+/* */
+
 mw.loader.load('http://localhost/wikt/ed.css', 'text/css');
 mw.loader.load('http://localhost/wikt/jqalert/jquery.alerts.css', 'text/css');
 mw.loader.load('http://localhost/wikt/tinytips/jquery.tinytips.css', 'text/css');
@@ -32,3 +35,4 @@ if ((mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit
 	window.EFilesLoaded++;
 	window.ETryInit();
 }
+/* */
