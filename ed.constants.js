@@ -31,7 +31,7 @@ window.EdConstants = {
 			'uwagi', 'źródła'
 		],
 		KOREAN: [ // ko
-		 	'kreski', 'transliteracja', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'złożenia',
+		 	'kreski', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'złożenia',
 		 	'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia', 'hanja',
 		 	'uwagi', 'źródła'
 		],
@@ -92,8 +92,8 @@ window.EdConstants = {
 		'' : 'Sekcja wstępna'
 	},
 	NON_LATIN_LANGS :
-		['ru', 'uk', 'kk', 'be', 'hy', 'ka', 'he', 'yi', 'ar', 'fa', 'ja', 'ko', 'th', 'ur',
-		 'hi', 'zh', 'bg', 'mk', 'el', 'gr', 'bo', 'cau', 'ab', 'ady', 'akk', 'am', 'arc',
+		['ru', 'uk', 'kk', 'be', 'hy', 'ka', 'he', 'yi', 'ar', 'fa', 'th', 'ur',
+		 'hi', 'bg', 'mk', 'el', 'gr', 'bo', 'cau', 'ab', 'ady', 'akk', 'am', 'arc',
 		 'as', 'bn', 'av', 'ba', 'bal', 'my', 'gez', 'gu', 'got', 'myv', 'ky', 'dz', 'cv', 
 		 'ce', 'kjh', 'bs', 'ta', 'inh', 'iu', 'kn', 'ks', 'mr', 'km', 'kv', 'kok', 'cr',
 		 'ku', 'lo', 'lez', 'ml', 'dv', 'mn', 'ne', 'new', 'os', 'ps', 'pa', 'rom', 'sa',
