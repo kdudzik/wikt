@@ -76,6 +76,10 @@ window.EUi = {
 		
 		EUi.clickSection();
 		$('fieldset.active').find('textarea').autogrow();
+		
+		$(window).resize(function() {
+			$('fieldset.active').find('textarea').autogrow();
+		});
 	},
 		
 	addSection : function(alphaname) {

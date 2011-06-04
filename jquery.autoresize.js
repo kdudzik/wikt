@@ -8,7 +8,7 @@
         this.filter('textarea').each(function() {
             
             var $this       = $(this),
-                minHeight   = $this.height(),
+                minHeight   = 20,
                 maxHeight   = 500,
                 lineHeight  = $this.css('lineHeight');
             
