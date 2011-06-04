@@ -246,7 +246,10 @@ window.EConstants = {
 		'roa' : 'jèrriais', 'termin obcy w języku polskim' : 'termin obcy w języku polskim',
 		'termin obcy w języku łacińskim' : 'termin obcy w języku łacińskim'
 	},
-	ONELINE_SECTIONS : 20
+	ONELINE_SECTIONS : 20,
+	SUBSECTIONS_WITHOUT_NL : [
+        'wymowa', 'transliteracja', 'transkrypcja', 'ortografie', 'klucz', 'kreski', 'czytania'
+	]
 };
 
 window.EStr = {

@@ -154,7 +154,9 @@ window.ESectionParser = {
 				title: EConstants.SUBSECTIONS.ALL[i], 
 				content: '', 
 				shortened: false,
-				active: true
+				initmultiline: false,
+				active: true,
+				wasempty: false
 			});
 		}
 		
@@ -184,7 +186,7 @@ window.ESectionParser = {
 		
 		section.subsections = subsections;
 		section.mode = mode; 
-		this.parsePreparedSubsections(section, targetSubsections);
+		ESectionParser.parsePreparedSubsections(section, targetSubsections);
 	},
 	
 	alternateTitle : function(title) {
@@ -233,7 +235,12 @@ window.ESectionParser = {
 						var alt = ESectionParser.alternateTitle(sub.title);
 						var repl = new RegExp('\\{\\{(' + sub.title + alt + ')\\}\\}');
 						var changed = sub.content.replace(repl, '');
+						sub.wasempty = $.trim(changed) == '';
 						if (changed != sub.content) {
+							var firstbreak = changed.search(/\n/);
+							if (firstbreak != -1 && firstbreak < changed.search(/\S/)) {
+								sub.initmultiline = true;
+							}
 							sub.content = $.trim(changed);
 							sub.shortened = true;
 						}
