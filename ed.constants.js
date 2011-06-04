@@ -31,8 +31,8 @@ window.EdConstants = {
 			'uwagi', 'źródła'
 		],
 		KOREAN: [ // ko
-		 	'transliteracja', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
-		 	'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia', 'hanja', //'hanja-kreski'?
+		 	'kreski', 'transliteracja', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'złożenia',
+		 	'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia', 'hanja',
 		 	'uwagi', 'źródła'
 		],
 		JAPANESE: [ // ja
@@ -40,10 +40,22 @@ window.EdConstants = {
 		 	'synonimy', 'antonimy', 'złożenia', 'pokrewne', 'frazeologia', 'etymologia',
 		 	'uwagi', 'źródła'		
 		],
+		INTERNATIONAL : [ // inter
+		 	'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
+		 	'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
+		 	'uwagi', 'źródła'
+		],
 		EGYPTIAN : [ // egy
 		 	'zapis hieroglificzny', 'transliteracja', 'transkrypcja', 'znaczenia', 'determinatywy',
 			'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne',
 			'frazeologia', 'etymologia', 'uwagi', 'źródła'
+		],
+		ALL : [
+		    'zapis hieroglificzny', 'ortografie', 'transliteracja', 'transkrypcja', 'czytania',
+		    'klucz', 'kreski', 'warianty', 'kolejność', 'wymowa', 'znaczenia', 'determinatywy',
+		    'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'złożenia',
+		    'pokrewne', 'pochodne', 'frazeologia', 'etymologia', 'kody', 'hanja', 'słowniki', 'uwagi', 'tłumaczenia',
+		    'źródła'
 		]
 	},
 	SUBSECTION_TITLE :
@@ -76,6 +88,7 @@ window.EdConstants = {
 		'czytania' : 'Czytania',
 		'złożenia' : 'Złożenia',
 		'hanja' : 'Hanja',
+		'pochodne' : 'Wyrazy pochodne',
 		'' : 'Sekcja wstępna'
 	},
 	NON_LATIN_LANGS :

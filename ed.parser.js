@@ -115,7 +115,7 @@ window.EParser = {
 		else {
 			code = EdConstants.LANG_CODES_SHORT[template];
 		}
-		return code ? code : '';			
+		return code ? code : template;			
 	}
 };
 
@@ -128,73 +128,91 @@ window.ESectionParser = {
 		
 		if (!section.title) {
 			mode = 'INTRO';
-		}
-		else if (code == 'pl') {
+		} else if (code == 'pl') {
 			mode = 'POLISH';
-		}
-		else if (code == 'zh-char') {
+		} else if (code == 'zh-char') {
 			mode = 'CHINESE';
-		}
-		else if (code == 'egy') {
+		} else if (code == 'egy') {
 			mode = 'EGYPTIAN';
-		}
-		else if (code == 'ko') {
+		} else if (code == 'ko') {
 			mode = 'KOREAN';
-		}
-		else if (code == 'ja') {
+		} else if (code == 'ja') {
 			mode = 'JAPANESE';
-		}
-		else if ($.inArray(code, EdConstants.NON_LATIN_LANGS) != -1) {
+		} else if (code == 'inter') {
+			mode = 'INTERNATIONAL';
+		} else if ($.inArray(code, EdConstants.NON_LATIN_LANGS) != -1) {
 			mode = 'NON_LATIN';
-		}
-		else if ($.inArray(code, EdConstants.DOUBLE_LANGS) != -1) {
+		} else if ($.inArray(code, EdConstants.DOUBLE_LANGS) != -1) {
 			mode = 'DOUBLE';
-		}
-		else {
+		} else {
 			mode = 'LATIN';
 		}
-		subsections.push({ title: '', content: '', shortened: false });
+		subsections.push({ title: '', content: '', shortened: false, active: true });		
+		for (i in EdConstants.SUBSECTIONS.ALL) {
+			subsections.push({
+				title: EdConstants.SUBSECTIONS.ALL[i], 
+				content: '', 
+				shortened: false,
+				active: true
+			});
+		}
 		
-		var titlesArray;
+		var targetSubsections;
 		switch (mode) {
 		case 'INTRO':
-			titlesArray = []; break;
+			targetSubsections = []; break;
 		case 'POLISH':
-			titlesArray = EdConstants.SUBSECTIONS.POLISH; break;
+			targetSubsections = EdConstants.SUBSECTIONS.POLISH; break;
 		case 'CHINESE':
-			titlesArray = EdConstants.SUBSECTIONS.CHINESE; break;
+			targetSubsections = EdConstants.SUBSECTIONS.CHINESE; break;
 		case 'KOREAN':
-			titlesArray = EdConstants.SUBSECTIONS.KOREAN; break;
+			targetSubsections = EdConstants.SUBSECTIONS.KOREAN; break;
 		case 'JAPANESE':
-			titlesArray = EdConstants.SUBSECTIONS.JAPANESE; break;
+			targetSubsections = EdConstants.SUBSECTIONS.JAPANESE; break;
+		case 'INTERNATIONAL':
+			targetSubsections = EdConstants.SUBSECTIONS.INTERNATIONAL; break;
 		case 'EGYPTIAN':
-			titlesArray = EdConstants.SUBSECTIONS.EGYPTIAN; break;
+			targetSubsections = EdConstants.SUBSECTIONS.EGYPTIAN; break;
 		case 'NON_LATIN':
-			titlesArray = EdConstants.SUBSECTIONS.NON_LATIN; break;
+			targetSubsections = EdConstants.SUBSECTIONS.NON_LATIN; break;
 		case 'DOUBLE':
-			titlesArray = EdConstants.SUBSECTIONS.DOUBLE; break;
+			targetSubsections = EdConstants.SUBSECTIONS.DOUBLE; break;
 		case 'LATIN':
-			titlesArray = EdConstants.SUBSECTIONS.LATIN; break;
-		}
-		for (i in titlesArray) {
-			subsections.push({ title: titlesArray[i], content: '', shortened: false });
+			targetSubsections = EdConstants.SUBSECTIONS.LATIN; break;
 		}
 		
 		section.subsections = subsections;
 		section.mode = mode; 
-		this.parsePreparedSubsections(section.content, section.subsections);
+		this.parsePreparedSubsections(section, targetSubsections);
+	},
+	
+	alternateTitle : function(title) {
+		switch (title) {
+		case 'transliteracja' : return '|trans';
+		case 'transkrypcja' : return '|transkr';
+		case 'kreski' : return '|hanja-kreski';
+		case 'przykłady' : return '|użycie';
+		default: return '';
+		}
 	},
 		
-	parsePreparedSubsections : function(str, subsections) {
+	parsePreparedSubsections : function(section, targetSubsections) {
+		var str = section.content;
+		var subsections = section.subsections;
 		var positions = [];
 		for (i in subsections) {
 			var title = subsections[i].title;
+			var alt = ESectionParser.alternateTitle(title);
+			var regex = new RegExp('\\{\\{(' + title + alt + ')\\s*[\\|\\}]', 'g');
 			positions.push({
-				index: title == '' ? 0 : str.indexOf('{{' + title),
+				index: title == '' ? 0 : str.search(regex),
 				title: title
 			});
 		}
 		positions.sort(function(a, b) {
+			if (!a.index && !b.index) {
+				return a.title ? 1 : -1;
+			}
 			return a.index - b.index;
 		});
 		
@@ -211,14 +229,18 @@ window.ESectionParser = {
 						else {
 							sub.content = $.trim(str.substring(pos.index));
 						}
+						var alt = ESectionParser.alternateTitle(sub.title);
+						var repl = new RegExp('\\{\\{(' + sub.title + alt + ')\\}\\}');
+						var changed = sub.content.replace(repl, '');
+						if (changed != sub.content) {
+							sub.content = $.trim(changed);
+							sub.shortened = true;
+						}
+						break;
 					}
-					var repl = new RegExp('\{\{' + sub.title + '\}\}');
-					var changed = sub.content.replace(repl, '');
-					if (changed != sub.content) {
-						sub.content = $.trim(changed);
-						sub.shortened = true;
+					else if ($.inArray(pos.title, targetSubsections) == -1) {
+						sub.active = false;
 					}
-					break;
 				}
 			}
 		}

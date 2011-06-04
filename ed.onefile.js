@@ -525,7 +525,6 @@ window.EdStr = {
 	CHINESE_SIGN :
 		'znak chiński',
 	ADD_SECTION_NONEXISTENT:
-		// TODO kat
 		'Podałeś nieistniejący język. Sprawdź <a>listę dostępnych języków</a>.',
 	ADD_SECTION_NONEXISTENT_TITLE:
 		'Nieprawidłowa wartość języka',
@@ -569,7 +568,6 @@ window.EdUi = {
 					EdUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
 				}
 				else {
-					// TODO update forms
 				}
 				EdUi.usingNew = !EdUi.usingNew;
 				return false;

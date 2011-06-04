@@ -212,8 +212,10 @@ window.EdUi = {
 		}
 		
 		for (i = 0; i < section.subsections.length; i++) {
-			var obj = EdUi.getSubsectionObj(alpha, section, section.subsections[i]);
-			fset.append(obj);
+			if (section.subsections[i].active) {
+				var obj = EdUi.getSubsectionObj(alpha, section, section.subsections[i]);
+				fset.append(obj);
+			}
 		}
 	},
 	

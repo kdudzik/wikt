@@ -11,6 +11,9 @@ window.EPrinter = {
 				code += '== ' + sec.title + ' ==\n';
 				for (i = 0; i < sec.subsections.length; i++) {
 					var subs = sec.subsections[i];
+					if (!subs.active) {
+						continue;
+					}
 					subs.content = $('#ed_' + alpha + '_' + subs.title.replace(' ', '_')).val();
 					if (subs.title == '' && subs.content != '') {
 						code += $.trim(subs.content) + '\n';
