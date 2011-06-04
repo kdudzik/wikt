@@ -74,9 +74,8 @@ window.EUi = {
 			$('li.menuitem:nth-child(' + Math.floor(size / 2) + ')').css('clear', 'left');
 		}
 		
-		// FIXME Change nie działa przy przełączeniu usenew 0->1
 		EUi.clickSection();
-		$('textarea.newform').autoResize().trigger('change');
+		$('fieldset.active').find('textarea').autogrow();
 	},
 		
 	addSection : function(alphaname) {
@@ -103,7 +102,7 @@ window.EUi = {
 				EUi.content.find('.ed_section').removeClass('active');
 				EUi.content.find('#' + $(this).data('section')).addClass('active');
 				$(this).addClass('active').siblings().removeClass('active');
-				$('textarea.newform').trigger('change');
+				$('fieldset.active').find('textarea').autogrow();
 			});
 		
 		// insert alphabetically
@@ -149,7 +148,7 @@ window.EUi = {
 						$.cookie('lastAdded', sec['code']);
 					}
 					$('#ed_menuitem_' + alpha).click();
-					$('#ed_section_' + alpha + ' textarea').autoResize().trigger('change');
+					$('#ed_section_' + alpha + ' textarea').autogrow();
 				}
 				else {
 					jAlert(EStr.ADD_SECTION_NONEXISTENT, EStr.ADD_SECTION_NONEXISTENT_TITLE, function() {

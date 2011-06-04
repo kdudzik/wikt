@@ -8,7 +8,6 @@ window.EPrinter = {
 		sortableSections.sort(function(a, b) {
 			return a.alpha > b.alpha ? 1 : -1;
 		});
-		console.log(sortableSections)
 		for (i in sortableSections) {
 			var sec = sortableSections[i];
 			if (sec.alpha == '0000') {

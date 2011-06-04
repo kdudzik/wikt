@@ -15,6 +15,7 @@ fieldset.ed_section {
 	border: 1px solid khaki;
 	min-height: 250px;
 	background-color: LemonChiffon;
+	padding-top: 7px;
 }
 
 fieldset.ed_section.active {
@@ -60,24 +61,23 @@ ul#ed_menu li.active {
 
 fieldset.ed_section label {
 	float: left;
-	width: 180px;
-	padding-top: 2px;
+	width: 20%;
+	padding: 2px 1% 0 1%;
 	line-height: 1;
 	clear: left;
-}
-
-fieldset.ed_section input, fieldset.ed_section textarea {
-	width: 500px;
-	border: 1px solid khaki;
+	text-align: right;
+	max-width: 170px;
 }
 
 fieldset.ed_section textarea {
-	height: auto;
+	width: 77%;
+	border: 1px solid khaki;
+	height: 1em;
 }
 
 fieldset.ed_section p {
-	clear: left;
-	margin: 3px 0 0 0;
+	clear: both;
+	text-align: center;
 }
 
 fieldset.ed_section p.top {
