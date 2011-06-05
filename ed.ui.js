@@ -231,8 +231,7 @@ window.EUi = {
 		var p = $('<p id="ed_subsection_' + name + '"/>');
 		var caption = EConstants.SUBSECTION_TITLE[subsection.title];
 		var label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>');
-		var textarea = $('<textarea class="newform" name="ed_' + name + '" id="ed_' + name + '">'
-				+ subsection.content + '</textarea>');
+		var textarea = $('<textarea class="newform" name="ed_' + name + '" id="ed_' + name + '"/>').text(subsection.content);
 		if (ESectionParser.obligatorySubsection(subsection, section)) {
 			label.addClass('oblig_subsection').append(EStr.OBLIGATORY_SUBSECTION);
 			textarea.addClass('oblig_subsection');

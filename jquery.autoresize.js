@@ -31,7 +31,7 @@
                                     .replace(/\n/g, '<br/>');
                 
                 shadow.html(val);
-                $(this).css('height', Math.min(Math.max(shadow.height() + 20, minHeight), maxHeight));
+                $(this).css('height', Math.min(Math.max(shadow.height(), minHeight), maxHeight));
             
             };
             

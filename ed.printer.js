@@ -48,7 +48,6 @@ window.EPrinter = {
 	
 	adequateWhitespace : function(subsection) {
 		var str = subsection.content;
-		var ostr = subsection.initcontent;
 		/*
 		 * Teksty zaczynające się od dwukropka, gwiazdki, zaczynające się od "<references", "{{litera|", "{{kolor|", 
 		 * szablony zaczynające się na "{{zch-", linki do grafiki (file:, grafika: image: media: plik:, to samo dużą literą, 

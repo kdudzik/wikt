@@ -560,7 +560,6 @@ window.EPrinter = {
 	
 	adequateWhitespace : function(subsection) {
 		var str = subsection.content;
-		var ostr = subsection.initcontent;
 		/*
 		 * Teksty zaczynające się od dwukropka, gwiazdki, zaczynające się od "<references", "{{litera|", "{{kolor|", 
 		 * szablony zaczynające się na "{{zch-", linki do grafiki (file:, grafika: image: media: plik:, to samo dużą literą, 
@@ -612,61 +611,61 @@ window.EPrinter = {
 window.EConstants = {
 	INTRO : '«',
 	SUBSECTIONS :
-	{
-		POLISH : [
-		 	'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
-		 	'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
-		 	'uwagi', 'tłumaczenia', 'źródła'
-		],
-		LATIN : [
-		 	'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
-		 	'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
-		 	'uwagi', 'źródła'
-		],
-		NON_LATIN : [
-		 	'transliteracja', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
-		 	'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
-		 	'uwagi', 'źródła'
-		],
-		DOUBLE : [
-		 	'ortografie', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
-		 	'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
-		 	'uwagi', 'źródła'
-		],
-		CHINESE : [ // zh-char
-		 	'klucz', 'kreski', 'warianty', 'kolejność', 'znaczenia', 'etymologia', 'kody', 'słowniki',
-			'uwagi', 'źródła'
-		],
-		KOREAN: [ // ko
-		 	'kreski', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'złożenia',
-		 	'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia', 'hanja',
-		 	'uwagi', 'źródła'
-		],
-		JAPANESE: [ // ja
-		 	'transliteracja', 'czytania', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
-		 	'synonimy', 'antonimy', 'złożenia', 'pokrewne', 'frazeologia', 'etymologia',
-		 	'uwagi', 'źródła'		
-		],
-		INTERNATIONAL : [ // inter
-		 	'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
-		 	'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
-		 	'uwagi', 'źródła'
-		],
-		EGYPTIAN : [ // egy
-		 	'zapis hieroglificzny', 'transliteracja', 'transkrypcja', 'znaczenia', 'determinatywy',
-			'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne',
-			'frazeologia', 'etymologia', 'uwagi', 'źródła'
-		],
-		ALL : [
-		    'zapis hieroglificzny', 'ortografie', 'transliteracja', 'transkrypcja', 'czytania',
-		    'klucz', 'kreski', 'warianty', 'kolejność', 'wymowa', 'znaczenia', 'determinatywy',
-		    'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'złożenia',
-		    'pokrewne', 'pochodne', 'frazeologia', 'etymologia', 'kody', 'hanja', 'słowniki', 'uwagi', 'tłumaczenia',
-		    'źródła'
-		]
-	},
+		{
+		POLISH :
+			[
+			 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne',
+			 'frazeologia', 'etymologia', 'uwagi', 'tłumaczenia', 'źródła'
+			],
+		LATIN :
+			[
+		 	 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne',
+		 	 'frazeologia', 'etymologia', 'uwagi', 'źródła'
+		 	],
+		NON_LATIN :
+			[
+			 'transliteracja', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy',
+			 'pokrewne', 'frazeologia', 'etymologia', 'uwagi', 'źródła'
+			],
+		DOUBLE :
+			[
+			 'ortografie', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy',
+			 'pokrewne', 'frazeologia', 'etymologia', 'uwagi', 'źródła'
+			],
+		CHINESE :
+			[// zh-char
+			 'klucz', 'kreski', 'warianty', 'kolejność', 'znaczenia', 'etymologia', 'kody', 'słowniki', 'uwagi', 'źródła'
+			],
+		KOREAN:
+			[// ko
+			 'kreski', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'złożenia', 'składnia', 'kolokacje', 'synonimy', 'antonimy',
+			 'pokrewne', 'frazeologia', 'etymologia', 'hanja', 'uwagi', 'źródła'
+			],
+		JAPANESE:
+			[// ja
+			 'transliteracja', 'czytania', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy',
+			 'antonimy', 'złożenia', 'pokrewne', 'frazeologia', 'etymologia', 'uwagi', 'źródła'
+			],
+		INTERNATIONAL :
+			[// inter
+			 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne', 'frazeologia',
+			 'etymologia', 'uwagi', 'źródła'
+			],
+		EGYPTIAN :
+			[// egy
+		 	 'zapis hieroglificzny', 'transliteracja', 'transkrypcja', 'znaczenia', 'determinatywy', 'odmiana', 'przykłady',
+		 	 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia', 'uwagi', 'źródła'
+		 	],
+		ALL :
+			[
+			 'zapis hieroglificzny', 'ortografie', 'transliteracja', 'transkrypcja', 'czytania', 'klucz', 'kreski', 'warianty',
+			 'kolejność', 'wymowa', 'znaczenia', 'determinatywy', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy',
+			 'antonimy', 'złożenia', 'pokrewne', 'pochodne', 'frazeologia', 'etymologia', 'kody', 'hanja', 'słowniki', 'uwagi',
+			 'tłumaczenia', 'źródła'
+			]
+		},
 	SUBSECTION_TITLE :
-	{
+		{
 		'transliteracja' : 'Transliteracja',
 		'wymowa' : 'Wymowa',
 		'znaczenia' : 'Znaczenia',
@@ -697,7 +696,7 @@ window.EConstants = {
 		'hanja' : 'Hanja',
 		'pochodne' : 'Wyrazy pochodne',
 		'' : 'Sekcja wstępna'
-	},
+		},
 	NON_LATIN_LANGS :
 		['ru', 'uk', 'kk', 'be', 'hy', 'ka', 'he', 'yi', 'ar', 'fa', 'th', 'ur',
 		 'hi', 'bg', 'mk', 'el', 'gr', 'bo', 'cau', 'ab', 'ady', 'akk', 'am', 'arc',
@@ -708,7 +707,7 @@ window.EConstants = {
 	DOUBLE_LANGS :
 		['sr', 'tut', 'jdt', 'lad', 'tt', 'tk', 'ug', 'slovio', 'az', 'crh', 'be'],
 	LANG_CODES_SHORT :
-	{
+		{
 		'dżuhuri' : 'jdt', 'esperanto' : 'eo', 'ewe' : 'ee', 'hindi' : 'hi', 
 		'ido' : 'io', 'interlingua' : 'ia', 'inuktitut' : 'iu', 'ladino' : 'lad', 
 		'lingala' : 'ln', 'lojban' : 'jbo', 'novial' : 'nov', 'papiamento' : 'pap',
@@ -717,9 +716,9 @@ window.EConstants = {
 		'volapük' : 'vo', 'znak chiński' : 'zh-char', 'jidysz' : 'yi', 'jèrriais' : 'roa',
 		'termin obcy w języku polskim' : 'termin obcy w języku polskim',
 		'termin obcy w języku łacińskim' : 'termin obcy w języku łacińskim'
-	},
+		},
 	LANG_CODES_LONG :
-	{
+		{
 		'kaszmirski' : 'ks', 'marathi' : 'mr', 'newarski' : 'new', 'sorani' : 'ckb',
 		'zazaki' : 'zza', '!Xóõ' : 'khi', 'abazyński' : 'cau', 'abchaski' : 'ab',
 		'abenaki' : 'abe', 'adygejski' : 'ady', 'afrykanerski' : 'af', 'ajmara' : 'ay',
@@ -781,9 +780,9 @@ window.EConstants = {
 		'yupik środkowy' : 'ypk', 'zarfatit' : 'zrp', 'zulu' : 'zu', 'łaciński' : 'la',
 		'łotewski' : 'lv', 'średnio-dolno-niemiecki' : 'średnio-dolno-niemiecki', 'średnio-wysoko-niemiecki' : 'gmh',
 		'średnioangielski' : 'enm', 'żmudzki' : 'bat'
-	},
+		},
 	CODE_TO_LANG :
-	{
+		{
 		'ks' : 'język kaszmirski', 'mr' : 'język marathi', 'new' : 'język newarski', 'ckb' : 'język sorani',
 		'zza' : 'język zazaki', 'khi' : 'język !Xóõ', 'cau' : 'język abazyński', 'ab' : 'język abchaski',
 		'abe' : 'język abenaki', 'ady' : 'język adygejski', 'af' : 'język afrykanerski', 'ay' : 'język ajmara',
@@ -852,14 +851,13 @@ window.EConstants = {
 		'inter' : 'użycie międzynarodowe', 'vo' : 'volapük', 'zh-char' : 'znak chiński', 'yi' : 'jidysz',
 		'roa' : 'jèrriais', 'termin obcy w języku polskim' : 'termin obcy w języku polskim',
 		'termin obcy w języku łacińskim' : 'termin obcy w języku łacińskim'
-	},
-	ONELINE_SECTIONS : 20,
-	SUBSECTIONS_WITHOUT_NL : [
-        'wymowa', 'transliteracja', 'transkrypcja', 'ortografie', 'klucz', 'kreski', 'czytania'
-    ],
-	SUBSECTIONS_WITH_NL : [
-        'znaczenia', 'przykłady', 'tłumaczenia'
-  	]
+		},
+	ONELINE_SECTIONS :
+		20,
+	SUBSECTIONS_WITHOUT_NL :
+		[ 'wymowa', 'transliteracja', 'transkrypcja', 'ortografie', 'klucz', 'kreski', 'czytania' ],
+	SUBSECTIONS_WITH_NL :
+		[ 'znaczenia', 'przykłady', 'tłumaczenia' ]
 };
 
 window.EStr = {
@@ -1161,8 +1159,7 @@ window.EUi = {
 		var p = $('<p id="ed_subsection_' + name + '"/>');
 		var caption = EConstants.SUBSECTION_TITLE[subsection.title];
 		var label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>');
-		var textarea = $('<textarea class="newform" name="ed_' + name + '" id="ed_' + name + '">'
-				+ subsection.content + '</textarea>');
+		var textarea = $('<textarea class="newform" name="ed_' + name + '" id="ed_' + name + '"/>').text(subsection.content);
 		if (ESectionParser.obligatorySubsection(subsection, section)) {
 			label.addClass('oblig_subsection').append(EStr.OBLIGATORY_SUBSECTION);
 			textarea.addClass('oblig_subsection');
@@ -1565,7 +1562,7 @@ window.EUi = {
                                     .replace(/\n/g, '<br/>');
                 
                 shadow.html(val);
-                $(this).css('height', Math.min(Math.max(shadow.height() + 20, minHeight), maxHeight));
+                $(this).css('height', Math.min(Math.max(shadow.height(), minHeight), maxHeight));
             
             };
             
