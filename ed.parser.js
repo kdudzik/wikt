@@ -14,7 +14,8 @@ window.EParser = {
 				reta['0000'] = {
 					content : $.trim(sec[0]),
 					title : '',
-					alpha : '0000'
+					alpha : '0000',
+					initcontent: $.trim(sec[0])
 				};
 			}
 			else {
@@ -34,7 +35,8 @@ window.EParser = {
 			'short' : this.insideTemplate(str).replace(/język /, ''),
 			'content' : '',
 			'alpha' : this.getAlphabetical(str),
-			'code'  : this.getCode(str)
+			'code'  : this.getCode(str),
+			'initcontent' : ''
 		};
 	},
 	
@@ -51,7 +53,8 @@ window.EParser = {
 			'short' : lang.replace(/język /, ''),
 			'content' : '',
 			'alpha' : this.alphabetize(lang),
-			'code'	: code
+			'code'	: code,
+			'initcontent' : ''
 		};
 	},
 	
@@ -152,11 +155,11 @@ window.ESectionParser = {
 		for (i in EConstants.SUBSECTIONS.ALL) {
 			subsections.push({
 				title: EConstants.SUBSECTIONS.ALL[i], 
-				content: '', 
-				shortened: false,
+				content: '',
+				shortened: true,
+				initcontent: '',
 				initmultiline: false,
-				active: true,
-				wasempty: false
+				active: true
 			});
 		}
 		
@@ -235,15 +238,18 @@ window.ESectionParser = {
 						var alt = ESectionParser.alternateTitle(sub.title);
 						var repl = new RegExp('\\{\\{(' + sub.title + alt + ')\\}\\}');
 						var changed = sub.content.replace(repl, '');
-						sub.wasempty = $.trim(changed) == '';
+						
 						if (changed != sub.content) {
 							var firstbreak = changed.search(/\n/);
 							if (firstbreak != -1 && firstbreak < changed.search(/\S/)) {
 								sub.initmultiline = true;
 							}
 							sub.content = $.trim(changed);
-							sub.shortened = true;
 						}
+						else if (sub.content != '' || sub.title == '') {
+							sub.shortened = false;
+						}
+						sub.initcontent = sub.content;
 						break;
 					}
 					else if ($.inArray(pos.title, targetSubsections) == -1) {

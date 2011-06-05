@@ -22,7 +22,7 @@ window.EConstants = {
 		 	'uwagi', 'źródła'
 		],
 		DOUBLE : [
-		 	'ortografie', 'transliteracja', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
+		 	'ortografie', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
 		 	'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
 		 	'uwagi', 'źródła'
 		],
@@ -249,7 +249,10 @@ window.EConstants = {
 	ONELINE_SECTIONS : 20,
 	SUBSECTIONS_WITHOUT_NL : [
         'wymowa', 'transliteracja', 'transkrypcja', 'ortografie', 'klucz', 'kreski', 'czytania'
-	]
+    ],
+	SUBSECTIONS_WITH_NL : [
+        'znaczenia', 'przykłady', 'tłumaczenia'
+  	]
 };
 
 window.EStr = {
