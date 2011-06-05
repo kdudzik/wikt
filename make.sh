@@ -1,20 +1,17 @@
 #!/bin/bash
 
+bomstrip-files *.js
+rm *.bom
+
 JS=ed.onefile.js
 MAINJS=ed.js
-CSS=ed.onefile.css
-CSS_FILES="ed.css
-jqalert/jquery.alerts.css
-tinytips/jquery.tinytips.css"
+CSS=ed.css
 
-echo "" > $CSS
-for f in $CSS_FILES
-do
-	cat $f >> $CSS
-	echo "" >> $CSS
-done
-
-echo "mw.loader.load('http://pl.wiktionary.org/w/index.php?title=Wikipedysta:ToSter/ed.onefile.css&action=raw&ctype=text/css', 'text/css');" > $JS
+echo -n "var css=\"" > $JS
+sed 's/$/\\/g' $CSS >> $JS
+echo "
+\";
+mw.util.addCSS(css);" >> $JS
 
 JSFILES=`grep localhost $MAINJS | grep -v loader | cut -c 25- | sed "s/',//g"`
 
@@ -28,3 +25,6 @@ echo "if ((mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == '
 echo "	&& mw.config.get('wgNamespaceNumber') == 0) {" >> $JS	
 echo '	$(document).ready(Ed.init);' >> $JS
 echo '}' >> $JS
+
+bomstrip-files *.js
+rm *.bom

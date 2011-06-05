@@ -2,8 +2,6 @@
 /* */
 
 mw.loader.load('http://localhost/wikt/ed.css', 'text/css');
-mw.loader.load('http://localhost/wikt/jqalert/jquery.alerts.css', 'text/css');
-mw.loader.load('http://localhost/wikt/tinytips/jquery.tinytips.css', 'text/css');
 
 window.EFiles =
 [
@@ -12,8 +10,8 @@ window.EFiles =
 	'http://localhost/wikt/ed.printer.js',
 	'http://localhost/wikt/ed.constants.js',
 	'http://localhost/wikt/ed.ui.js',
-	'http://localhost/wikt/jqalert/jquery.alerts.js',
-	'http://localhost/wikt/tinytips/jquery.tinytips.js',
+	'http://localhost/wikt/jquery.alerts.js',
+	'http://localhost/wikt/jquery.tinytips.js',
 	'http://localhost/wikt/jquery.autoresize.js',
 	'http://localhost/wikt/jquery.livequery.js',
 ];

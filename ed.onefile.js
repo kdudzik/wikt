@@ -1,5 +1,4 @@
-var css = "\
-#ed {\
+var css="#ed {\
 	overflow : auto;\
 	background-color: white;\
 	padding: 0;\
@@ -9,6 +8,7 @@ var css = "\
 	width: 100%;\
 	height: auto;\
 }\
+\
 fieldset.ed_section {\
 	display: none;\
 	margin: 0;\
@@ -17,9 +17,11 @@ fieldset.ed_section {\
 	background-color: LemonChiffon;\
 	padding-top: 7px;\
 }\
+\
 fieldset.ed_section.active {\
 	display: block;\
 }\
+\
 ul#ed_menu {\
 	background-color: white;\
 	width: 97%;\
@@ -30,6 +32,7 @@ ul#ed_menu {\
 	border: 0;\
 	padding-left: 3%;\
 }\
+\
 ul#ed_menu li {\
 	float: left;\
 	padding: 3px 7px;\
@@ -39,18 +42,22 @@ ul#ed_menu li {\
 	border-color: khaki;\
 	cursor: pointer;\
 }\
+\
 ul#ed_menu li.active {\
 	background: LemonChiffon;\
 	border-color: DarkKhaki;\
 	border-style: solid;\
 }\
+\
 #ed_menuitem_new {\
 	font-weight: bold;\
 }\
+\
 #ed_content {\
 	clear: left;\
 	padding: 0;\
 }\
+\
 \
 fieldset.ed_section label {\
 	float: left;\
@@ -61,33 +68,42 @@ fieldset.ed_section label {\
 	text-align: right;\
 	max-width: 170px;\
 }\
+\
 fieldset.ed_section textarea {\
 	width: 77%;\
 	border: 1px solid khaki;\
 	height: 1em;\
 }\
+\
 fieldset.ed_section p {\
 	clear: both;\
 	text-align: center;\
 }\
+\
 fieldset.ed_section p.top {\
 	margin-top: 10px;\
 	margin-bottom: 10px;\
 }\
+\
 fieldset.ed_section a {	\
 	font-weight: normal !important;\
 	color: #0645AD !important;\
 }\
+\
 fieldset.ed_section p.top a {\
 	margin-right: 15px;\
 }\
+\
 fieldset.ed_section p.top a:hover {\
 	border-bottom: 1px solid darkkhaki;\
 }\
+\
 label.oblig_subsection {\
 	color: #CC0000;\
 	font-weight: bold;\
 }\
+\
+\
 #popup_container {\
 	font-family: Arial, sans-serif;\
 	font-size: 12px;\
@@ -100,6 +116,7 @@ label.oblig_subsection {\
 	-webkit-border-radius: 5px;\
 	border-radius: 5px;\
 }\
+\
 #popup_title {\
 	font-size: 14px;\
 	font-weight: bold;\
@@ -113,31 +130,39 @@ label.oblig_subsection {\
 	padding: 0em;\
 	margin: 0em;\
 }\
+\
 #popup_content {\
 	background: 16px 16px no-repeat url(images/info.gif);\
 	padding: 1em 1.75em;\
 	margin: 0em;\
 }\
+\
 #popup_content.alert {\
 	background-image: url(images/info.gif);\
 }\
+\
 #popup_content.confirm {\
 	background-image: url(images/important.gif);\
 }\
+\
 #popup_content.prompt {\
 	background-image: url(images/help.gif);\
 }\
+\
 #popup_message {\
 	padding-left: 48px;\
 }\
+\
 #popup_panel {\
 	text-align: center;\
 	margin: 1em 0em 0em 1em;\
 }\
+\
 #popup_prompt {\
 	margin: .5em 0em;\
-}" +
-		".tinyTip { \
+}\
+\
+.tinyTip { \
 	padding: 5px;\
 	display: block;\
 	max-width: 400px;\
@@ -147,8 +172,12 @@ label.oblig_subsection {\
 .tinyTip .content {\
 	padding: 0px;\
 	color: saddlebrown;\
-}";
+}\
+";
 mw.util.addCSS(css);
+/**
+ * 
+ */
 
 window.Ed = {
 	
@@ -225,7 +254,8 @@ window.EParser = {
 				reta['0000'] = {
 					content : $.trim(sec[0]),
 					title : '',
-					alpha : '0000'
+					alpha : '0000',
+					initcontent: $.trim(sec[0])
 				};
 			}
 			else {
@@ -245,7 +275,8 @@ window.EParser = {
 			'short' : this.insideTemplate(str).replace(/język /, ''),
 			'content' : '',
 			'alpha' : this.getAlphabetical(str),
-			'code'  : this.getCode(str)
+			'code'  : this.getCode(str),
+			'initcontent' : ''
 		};
 	},
 	
@@ -262,7 +293,8 @@ window.EParser = {
 			'short' : lang.replace(/język /, ''),
 			'content' : '',
 			'alpha' : this.alphabetize(lang),
-			'code'	: code
+			'code'	: code,
+			'initcontent' : ''
 		};
 	},
 	
@@ -363,8 +395,10 @@ window.ESectionParser = {
 		for (i in EConstants.SUBSECTIONS.ALL) {
 			subsections.push({
 				title: EConstants.SUBSECTIONS.ALL[i], 
-				content: '', 
-				shortened: false,
+				content: '',
+				shortened: true,
+				initcontent: '',
+				initmultiline: false,
 				active: true
 			});
 		}
@@ -395,7 +429,7 @@ window.ESectionParser = {
 		
 		section.subsections = subsections;
 		section.mode = mode; 
-		this.parsePreparedSubsections(section, targetSubsections);
+		ESectionParser.parsePreparedSubsections(section, targetSubsections);
 	},
 	
 	alternateTitle : function(title) {
@@ -444,10 +478,18 @@ window.ESectionParser = {
 						var alt = ESectionParser.alternateTitle(sub.title);
 						var repl = new RegExp('\\{\\{(' + sub.title + alt + ')\\}\\}');
 						var changed = sub.content.replace(repl, '');
+						
 						if (changed != sub.content) {
+							var firstbreak = changed.search(/\n/);
+							if (firstbreak != -1 && firstbreak < changed.search(/\S/)) {
+								sub.initmultiline = true;
+							}
 							sub.content = $.trim(changed);
-							sub.shortened = true;
 						}
+						else if (sub.content != '' || sub.title == '') {
+							sub.shortened = false;
+						}
+						sub.initcontent = sub.content;
 						break;
 					}
 					else if ($.inArray(pos.title, targetSubsections) == -1) {
@@ -478,6 +520,7 @@ window.EPrinter = {
 		sortableSections.sort(function(a, b) {
 			return a.alpha > b.alpha ? 1 : -1;
 		});
+		
 		for (i in sortableSections) {
 			var sec = sortableSections[i];
 			if (sec.alpha == '0000') {
@@ -492,17 +535,20 @@ window.EPrinter = {
 						continue;
 					}
 					subs.content = $('#ed_' + sec.alpha + '_' + subs.title.replace(' ', '_')).val();
+					subs.content = $.trim(subs.content);
+					
 					if (subs.title == '' && subs.content != '') {
-						code += $.trim(subs.content) + '\n';
+						code += subs.content + '\n';
 					}
 					else if (subs.title != '' && subs.content == '') {
 						code += '{{' + subs.title + '}}\n';
 					}
 					else if (subs.shortened) {
-						code += '{{' + subs.title + '}}\n' + $.trim(subs.content) + '\n';
+						var whitespace = EPrinter.adequateWhitespace(subs);
+						code += '{{' + subs.title + '}}' + whitespace + subs.content + '\n';
 					}
 					else if (subs.content != '') {
-						code += $.trim(subs.content) + '\n';
+						code += subs.content + '\n';
 					}
 				}
 				code += '\n';
@@ -510,6 +556,51 @@ window.EPrinter = {
 		}
 		code = $.trim(code);
 		return code;
+	},
+	
+	adequateWhitespace : function(subsection) {
+		var str = subsection.content;
+		var ostr = subsection.initcontent;
+		/*
+		 * Teksty zaczynające się od dwukropka, gwiazdki, zaczynające się od "<references", "{{litera|", "{{kolor|", 
+		 * szablony zaczynające się na "{{zch-", linki do grafiki (file:, grafika: image: media: plik:, to samo dużą literą, 
+		 * możliwe białe znaki między nawiasami kwadratowymi a tym słowem),...
+		 */
+		if (str.search(/[:\*#]|<references|\{\{(litera|kolor)\||\{\{zch-|\[\[(file|image|grafika|plik|media):/i) == 0) {
+			return '\n';
+		}
+		/*
+		 * ...teksty w polach "znaczenia", "przykłady" oraz "tłumaczenia" nie mogą występować zaraz po szablonie, jeśli 
+		 * występują muszą być przeniesione bez dodawania dwukropka.
+		 */
+		if ($.inArray(subsection.title, EConstants.SUBSECTIONS_WITH_NL) != -1) {
+			return '\n';
+		}
+		/*
+		 * Inne teksty składające się z więcej niż jednej linii, powinny być przeniesione z dodaniem dwukropka i spacji 
+		 * na początku pierwszej linii
+		 */
+		if (str.indexOf('\n') != -1 && str.search(/[:\*#]/) != 0) {
+			return '\n: ';
+		}
+		/*
+		 * Wpp: dla wypełnionych przed edycją pól zachowujemy istniejące formatowanie o ile dane pole już było niepuste.
+		*/
+		if (subsection.initcontent != '') {
+			return subsection.initmultiline ? '\n: ' : ' ';
+		}
+		/*
+		 * w polach pustych przed edycją: w sekcjach "wymowa", "transliteracja", "transkrypcja", "ortografie", "klucz", 
+		 * "kreski", "czytania", "hanja-kreski" defaultem jest pisanie bezpośrednio po szablonie (po spacji)...
+		 */
+		if ($.inArray(subsection.title, EConstants.SUBSECTIONS_WITHOUT_NL) != -1) {
+			return ' ';
+		}
+		/*
+		 * a w pozostałych od następnej linii (jeśli nie jest to "znaczenie" ani pierwsza sekcja ani "przykłady", 
+		 * ani "tłumaczenia" a tekst nie zaczyna się od dwukropka lub gwiazdki, to program powinien sam dodać dwukropek i spację)
+		 */
+		return '\n: ';
 	}
 };
 
@@ -538,7 +629,7 @@ window.EConstants = {
 		 	'uwagi', 'źródła'
 		],
 		DOUBLE : [
-		 	'ortografie', 'transliteracja', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
+		 	'ortografie', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje',
 		 	'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia',
 		 	'uwagi', 'źródła'
 		],
@@ -762,7 +853,13 @@ window.EConstants = {
 		'roa' : 'jèrriais', 'termin obcy w języku polskim' : 'termin obcy w języku polskim',
 		'termin obcy w języku łacińskim' : 'termin obcy w języku łacińskim'
 	},
-	ONELINE_SECTIONS : 20
+	ONELINE_SECTIONS : 20,
+	SUBSECTIONS_WITHOUT_NL : [
+        'wymowa', 'transliteracja', 'transkrypcja', 'ortografie', 'klucz', 'kreski', 'czytania'
+    ],
+	SUBSECTIONS_WITH_NL : [
+        'znaczenia', 'przykłady', 'tłumaczenia'
+  	]
 };
 
 window.EStr = {
@@ -1334,7 +1431,6 @@ window.EUi = {
 })(jQuery);
 
 
-/************************************************************************/
 /*                    tinyTips Plugin                			     	*/
 /*                      Version: 1.0                 			   		*/
 /*                      Mike Merritt                  					*/
