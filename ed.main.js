@@ -6,8 +6,7 @@ window.Ed = {
 	
 	code : '',
 	content : {},
-	
-		
+			
 	parseContentToSections : function() {
 		Ed.content.sections = EParser.getSections(Ed.code);
 	},
@@ -37,8 +36,17 @@ window.Ed = {
         $('.tip').livequery(function() {
 			$(this).tooltip('tip');
         });
-	}
+	},
 	
+	resetNew : function() {
+		var tbox = $('#wpTextbox1');
+		Ed.content = {};
+		Ed.code = tbox.val();
+		Ed.parseContentToSections();
+		Ed.parseSectionsToSubsections();
+		
+		EUi.reset();
+	}	
 	
 };
 

@@ -25,17 +25,24 @@ window.EUi = {
 			oldform.toggle();
 			instruction.toggle();
 			EUi.form.toggle();
+			EUi.usingNew = !EUi.usingNew;
 			if (EUi.usingNew) {
-				EUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
+				Ed.resetNew();
 			}
 			else {
-				// TODO update forms
-				$('textarea.newform').trigger('change');
+				EUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
 			}
-			EUi.usingNew = !EUi.usingNew;
 			$.cookie('usenew', +EUi.usingNew);
 			return false;
 		});
+		
+		EUi.prepareFormSections();
+		EUi.rebindFormActions();
+	},
+	
+	reset : function() {
+		EUi.menu.html('');
+		EUi.content.html('');
 		
 		EUi.prepareFormSections();
 		EUi.rebindFormActions();
