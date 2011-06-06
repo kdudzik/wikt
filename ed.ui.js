@@ -42,6 +42,9 @@ window.EUi = {
 	},
 
 	clickSection : function() {
+		if (!EUi.usingNew) {
+			return false;
+		}
 		var firstTab = EUi.menu.children(":not(#ed_menuitem_0000)").first();
 		if (firstTab.attr('id') != 'ed_menuitem_new') {
 			firstTab.click();
@@ -124,7 +127,9 @@ window.EUi = {
 		if (!defaultLang) {
 			defaultLang = $.cookie('lastAdded');
 		}
-		var defaultText = defaultLang ? defaultLang : mw.config.get('wgPageName') + EStr.ADD_SECTION_TEMPLATE;
+		var defaultText = defaultLang
+				? EParser.getTitleFromCode(defaultLang)
+				: mw.config.get('wgPageName') + EStr.ADD_SECTION_TEMPLATE;
 		var message = defaultLang ? EStr.ADD_SECTION_MESSAGE_DEFAULT : EStr.ADD_SECTION_MESSAGE; 
 		
 		jPrompt(message, defaultText, EStr.ADD_SECTION_TITLE,

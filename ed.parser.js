@@ -40,7 +40,7 @@ window.EParser = {
 		};
 	},
 	
-	getSectionFromCodeAndLang : function(code, lang) {
+	getTitleFromCode : function(code) {
 		var pagename = mw.config.get('wgPageName').replace('_', ' ');
 		if (code == 'zh-char' || code == 'zh') {
 			pagename = '{{zh|' + pagename + '}}';
@@ -48,8 +48,13 @@ window.EParser = {
 		else if (code == 'ja' || code == 'ko') {
 			pagename = '{{' + code + '|' + pagename + '}}';
 		}
+		var lang = EConstants.CODE_TO_LANG[code] ? EConstants.CODE_TO_LANG[code] : code;
+		return pagename + ' ({{' + lang + '}})';		
+	},
+	
+	getSectionFromCodeAndLang : function(code, lang) {
 		return {
-			'title' : pagename + ' ({{' + lang + '}})',
+			'title' : EParser.getTitleFromCode(code),
 			'short' : lang.replace(/język /, ''),
 			'content' : '',
 			'alpha' : this.alphabetize(lang),
