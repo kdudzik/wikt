@@ -276,7 +276,7 @@ window.EStr = {
 		Możesz też dodać niestandardowy nagłówek (np. akcenty, linki do poszczególnych wyrazów). W tym celu \
 		wpisz cały kod nagłówka (bez znaków ==).</small>',
 	ADD_SECTION_TEMPLATE : 
-		' {{język …}}',
+		' ({{język …}})',
 	ADD_SECTION_TITLE : 
 		'Podaj tytuł sekcji',
 	INTERNATIONAL_USAGE : 

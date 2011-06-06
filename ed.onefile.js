@@ -183,8 +183,7 @@ window.Ed = {
 	
 	code : '',
 	content : {},
-	
-		
+			
 	parseContentToSections : function() {
 		Ed.content.sections = EParser.getSections(Ed.code);
 	},
@@ -213,9 +212,18 @@ window.Ed = {
 
         $('.tip').livequery(function() {
 			$(this).tooltip('tip');
-        });			
-	}
+        });
+	},
 	
+	resetNew : function() {
+		var tbox = $('#wpTextbox1');
+		Ed.content = {};
+		Ed.code = tbox.val();
+		Ed.parseContentToSections();
+		Ed.parseSectionsToSubsections();
+		
+		EUi.reset();
+	}	
 	
 };
 
@@ -280,7 +288,7 @@ window.EParser = {
 		};
 	},
 	
-	getSectionFromCodeAndLang : function(code, lang) {
+	getTitleFromCode : function(code) {
 		var pagename = mw.config.get('wgPageName').replace('_', ' ');
 		if (code == 'zh-char' || code == 'zh') {
 			pagename = '{{zh|' + pagename + '}}';
@@ -288,8 +296,13 @@ window.EParser = {
 		else if (code == 'ja' || code == 'ko') {
 			pagename = '{{' + code + '|' + pagename + '}}';
 		}
+		var lang = EConstants.CODE_TO_LANG[code] ? EConstants.CODE_TO_LANG[code] : code;
+		return pagename + ' ({{' + lang + '}})';		
+	},
+	
+	getSectionFromCodeAndLang : function(code, lang) {
 		return {
-			'title' : pagename + ' ({{' + lang + '}})',
+			'title' : EParser.getTitleFromCode(code),
 			'short' : lang.replace(/język /, ''),
 			'content' : '',
 			'alpha' : this.alphabetize(lang),
@@ -882,7 +895,7 @@ window.EStr = {
 		Możesz też dodać niestandardowy nagłówek (np. akcenty, linki do poszczególnych wyrazów). W tym celu \
 		wpisz cały kod nagłówka (bez znaków ==).</small>',
 	ADD_SECTION_TEMPLATE : 
-		' {{język …}}',
+		' ({{język …}})',
 	ADD_SECTION_TITLE : 
 		'Podaj tytuł sekcji',
 	INTERNATIONAL_USAGE : 
@@ -953,14 +966,13 @@ window.EUi = {
 			oldform.toggle();
 			instruction.toggle();
 			EUi.form.toggle();
+			EUi.usingNew = !EUi.usingNew;
 			if (EUi.usingNew) {
-				EUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
+				Ed.resetNew();
 			}
 			else {
-				// TODO update forms
-				$('textarea.newform').trigger('change');
+				EUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
 			}
-			EUi.usingNew = !EUi.usingNew;
 			$.cookie('usenew', +EUi.usingNew);
 			return false;
 		});
@@ -968,8 +980,19 @@ window.EUi = {
 		EUi.prepareFormSections();
 		EUi.rebindFormActions();
 	},
+	
+	reset : function() {
+		EUi.menu.html('');
+		EUi.content.html('');
+		
+		EUi.prepareFormSections();
+		EUi.rebindFormActions();
+	},
 
 	clickSection : function() {
+		if (!EUi.usingNew) {
+			return false;
+		}
 		var firstTab = EUi.menu.children(":not(#ed_menuitem_0000)").first();
 		if (firstTab.attr('id') != 'ed_menuitem_new') {
 			firstTab.click();
@@ -1052,7 +1075,9 @@ window.EUi = {
 		if (!defaultLang) {
 			defaultLang = $.cookie('lastAdded');
 		}
-		var defaultText = defaultLang ? defaultLang : mw.config.get('wgPageName') + EStr.ADD_SECTION_TEMPLATE;
+		var defaultText = defaultLang
+				? EParser.getTitleFromCode(defaultLang)
+				: mw.config.get('wgPageName') + EStr.ADD_SECTION_TEMPLATE;
 		var message = defaultLang ? EStr.ADD_SECTION_MESSAGE_DEFAULT : EStr.ADD_SECTION_MESSAGE; 
 		
 		jPrompt(message, defaultText, EStr.ADD_SECTION_TITLE,
