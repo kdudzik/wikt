@@ -934,7 +934,17 @@ window.EStr = {
 	DELETE_SECTION:
 		'Usuń tę sekcję językową',
 	DELETE_SECTION_MESSAGE:
-		'Czy na pewno usunąć bieżącą sekcję językową?'
+		'Czy na pewno usunąć bieżącą sekcję językową?',
+	OK:
+		'OK',
+	CANCEL:
+		'Anuluj',
+	WARNING:
+		'Ostrzeżenie',
+	CONFIRMATION:
+		'Potwierdzenie',
+	QUESTION:
+		'Pytanie'
 };
 
 
@@ -1254,28 +1264,28 @@ window.EUi = {
 		overlayOpacity: .2,                // transparency level of overlay
 		overlayColor: '#000',               // base color of overlay
 		draggable: true,                    // make the dialogs draggable (requires UI Draggables plugin)
-		okButton: '&nbsp;OK&nbsp;',         // text for the OK button
-		cancelButton: '&nbsp;Anuluj&nbsp;', // text for the Cancel button
+		okButton: '&nbsp;' + EStr.OK + '&nbsp;',         // text for the OK button
+		cancelButton: '&nbsp;' + EStr.CANCEL + '&nbsp;', // text for the Cancel button
 		dialogClass: null,                  // if specified, this class will be applied to all dialogs
 		
 		// Public methods
 		
 		alert: function(message, title, callback) {
-			if( title == null ) title = 'Ostrzeżenie';
+			if( title == null ) title = EStr.WARNING;
 			$.alerts._show(title, message, null, 'alert', function(result) {
 				if( callback ) callback(result);
 			});
 		},
 		
 		confirm: function(message, title, callback) {
-			if( title == null ) title = 'Potwierdzenie';
+			if( title == null ) title = EStr.CONFIRMATION;
 			$.alerts._show(title, message, null, 'confirm', function(result) {
 				if( callback ) callback(result);
 			});
 		},
 			
 		prompt: function(message, value, title, callback) {
-			if( title == null ) title = 'Pytanie';
+			if( title == null ) title = EStr.QUESTION;
 			$.alerts._show(title, message, value, 'prompt', function(result) {
 				if( callback ) callback(result);
 			});

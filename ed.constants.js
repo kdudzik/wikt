@@ -315,7 +315,17 @@ window.EStr = {
 	DELETE_SECTION:
 		'Usuń tę sekcję językową',
 	DELETE_SECTION_MESSAGE:
-		'Czy na pewno usunąć bieżącą sekcję językową?'
+		'Czy na pewno usunąć bieżącą sekcję językową?',
+	OK:
+		'OK',
+	CANCEL:
+		'Anuluj',
+	WARNING:
+		'Ostrzeżenie',
+	CONFIRMATION:
+		'Potwierdzenie',
+	QUESTION:
+		'Pytanie'
 };
 
 
