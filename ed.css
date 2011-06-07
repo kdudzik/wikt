@@ -160,16 +160,30 @@ label.oblig_subsection {
 
 #popup_prompt {
 	margin: .5em 0em;
-}
-
-.tinyTip { 
-	padding: 5px;
-	display: block;
-	max-width: 400px;
-	background-color: lemonchiffon;
 	border: 1px solid darkkhaki;
 }
-.tinyTip .content {
-	padding: 0px;
+
+.tooltip { 
+	padding: 5px;
+	max-width: 450px;
+	background-color: lemonchiffon;
+	border: 1px solid darkkhaki;
 	color: saddlebrown;
+}
+
+#keyboard {
+	width: 32px;
+	height: 32px;
+	background-color: lemonchiffon;
+	background-image: url('http://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Input-keyboard.svg/32px-Input-keyboard.svg.png');
+	border: 3px solid PaleGoldenrod;
+	padding: 0;
+}
+
+#keyboard_keys {
+	font-size: 0.8em;
+	background-color: lemonchiffon;
+	border: 3px solid palegoldenrod;
+	padding: 5px;
+	max-width: 400px;
 }

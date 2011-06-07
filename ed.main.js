@@ -36,6 +36,9 @@ window.Ed = {
         $('.tip').livequery(function() {
 			$(this).tooltip('tip');
         });
+        $('.keyboardable').livequery(function() {
+			$(this).keyboard();
+		});
 	},
 	
 	resetNew : function() {

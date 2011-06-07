@@ -85,7 +85,7 @@
 			
 			$("#popup_container").css({
 				position: pos,
-				zIndex: 99999,
+				zIndex: 800,
 				padding: 0,
 				margin: 0
 			});
@@ -131,7 +131,7 @@
 					});
 				break;
 				case 'prompt':
-					$("#popup_message").append('<br /><input type="text" size="30" id="popup_prompt" />').after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
+					$("#popup_message").append('<br /><input type="text" size="30" id="popup_prompt" class="keyboardable" />').after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
 					$("#popup_prompt").width( $("#popup_message").width() );
 					$("#popup_ok").click( function() {
 						var val = $("#popup_prompt").val();
@@ -147,6 +147,7 @@
 						if( e.keyCode == 27 ) $("#popup_cancel").trigger('click');
 					});
 					if( value ) $("#popup_prompt").val(value);
+					$("#popup_prompt").keyboard();
 					$("#popup_prompt").focus().select();
 				break;
 			}
@@ -173,7 +174,7 @@
 					$("BODY").append('<div id="popup_overlay"></div>');
 					$("#popup_overlay").css({
 						position: 'absolute',
-						zIndex: 99998,
+						zIndex: 799,
 						top: '0px',
 						left: '0px',
 						width: '100%',

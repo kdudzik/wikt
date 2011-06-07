@@ -11,9 +11,10 @@ window.EFiles =
 	'http://localhost/wikt/ed.constants.js',
 	'http://localhost/wikt/ed.ui.js',
 	'http://localhost/wikt/jquery.alerts.js',
-	'http://localhost/wikt/jquery.tinytips.js',
+	'http://localhost/wikt/jquery.tooltip.js',
 	'http://localhost/wikt/jquery.autoresize.js',
 	'http://localhost/wikt/jquery.livequery.js',
+	'http://localhost/wikt/jquery.keyboard.js',
 ];
 window.EFilesLoaded = 0;
 window.EFilesToLoad = window.EFiles.length + 1;
