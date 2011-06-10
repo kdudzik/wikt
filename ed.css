@@ -7,6 +7,7 @@
 	border: 0;
 	width: 100%;
 	height: auto;
+	position: relative;
 }
 
 fieldset.ed_section {
@@ -85,17 +86,12 @@ fieldset.ed_section p.top {
 	margin-bottom: 10px;
 }
 
-fieldset.ed_section a {	
-	font-weight: normal !important;
-	color: #0645AD !important;
-}
-
 fieldset.ed_section p.top a {
 	margin-right: 15px;
 }
 
-fieldset.ed_section p.top a:hover {
-	border-bottom: 1px solid darkkhaki;
+fieldset.ed_section a:hover {
+	cursor: pointer;
 }
 
 label.oblig_subsection {
@@ -178,6 +174,7 @@ label.oblig_subsection {
 	background-image: url('http://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Input-keyboard.svg/32px-Input-keyboard.svg.png');
 	border: 3px solid PaleGoldenrod;
 	padding: 0;
+	position: absolute;
 }
 
 #keyboard_keys {
@@ -186,4 +183,13 @@ label.oblig_subsection {
 	border: 3px solid palegoldenrod;
 	padding: 5px;
 	max-width: 400px;
+	position: absolute;
+}
+
+#keyboard_keys .plainlinks {
+	border: 0 !important;
+}
+
+#keyboard_keys select {
+	width: 100%;
 }

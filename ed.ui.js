@@ -25,6 +25,8 @@ window.EUi = {
 			oldform.toggle();
 			instruction.toggle();
 			EUi.form.toggle();
+			ESpecialChars.toggle();
+			
 			EUi.usingNew = !EUi.usingNew;
 			if (EUi.usingNew) {
 				Ed.resetNew();
@@ -38,6 +40,7 @@ window.EUi = {
 		
 		EUi.prepareFormSections();
 		EUi.rebindFormActions();
+		EKeyboard.init();
 	},
 	
 	reset : function() {
@@ -109,6 +112,7 @@ window.EUi = {
 				'tip' : tip 
 			})
 			.click(function() {
+				EKeyboard.hide();
 				EUi.content.find('.ed_section').removeClass('active');
 				EUi.content.find('#' + $(this).data('section')).addClass('active');
 				$(this).addClass('active').siblings().removeClass('active');
@@ -218,11 +222,11 @@ window.EUi = {
 		var fset = $('#ed_section_' + alpha);
 				
 		if (alpha != '0000') {
-			var editlink = $('<a href="#"/>').text(EStr.EDIT_SECTION_TITLE).click(function() {
+			var editlink = $('<a/>').text(EStr.EDIT_SECTION_TITLE).click(function() {
 				EUi.editSectionTitle(alpha, section);
 				return false;
 			});
-			var deletelink = $('<a href="#"/>').text(EStr.DELETE_SECTION).click(function() {
+			var deletelink = $('<a/>').text(EStr.DELETE_SECTION).click(function() {
 				EUi.deleteSection(alpha, section);
 				return false;
 			});
