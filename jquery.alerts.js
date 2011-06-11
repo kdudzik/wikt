@@ -85,7 +85,6 @@
 			
 			$("#popup_container").css({
 				position: pos,
-				zIndex: 800,
 				padding: 0,
 				margin: 0
 			});
@@ -105,6 +104,8 @@
 			
 			switch( type ) {
 				case 'alert':
+					$('#popup_container').addClass('alert').removeClass('confirm').removeClass('prompt');
+					$('#popup_overlay').addClass('alert').removeClass('confirm').removeClass('prompt');
 					$("#popup_message").after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /></div>');
 					$("#popup_ok").click( function() {
 						$.alerts._hide();
@@ -115,6 +116,8 @@
 					});
 				break;
 				case 'confirm':
+					$('#popup_container').removeClass('alert').addClass('confirm').removeClass('prompt');
+					$('#popup_overlay').removeClass('alert').addClass('confirm').removeClass('prompt');
 					$("#popup_message").after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
 					$("#popup_ok").click( function() {
 						$.alerts._hide();
@@ -131,6 +134,8 @@
 					});
 				break;
 				case 'prompt':
+					$('#popup_container').removeClass('alert').removeClass('confirm').addClass('prompt');
+					$('#popup_overlay').removeClass('alert').removeClass('confirm').addClass('prompt');
 					$("#popup_message").append('<br /><input type="text" size="30" id="popup_prompt" class="keyboardable" />').after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
 					$("#popup_prompt").width( $("#popup_message").width() );
 					$("#popup_ok").click( function() {
@@ -176,7 +181,6 @@
 					$("BODY").append('<div id="popup_overlay"></div>');
 					$("#popup_overlay").css({
 						position: 'absolute',
-						zIndex: 799,
 						top: '0px',
 						left: '0px',
 						width: '100%',

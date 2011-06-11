@@ -111,6 +111,19 @@ label.oblig_subsection {
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 	border-radius: 5px;
+	z-index: 900;
+}
+
+#popup_overlay {
+	z-index: 899;
+}
+
+#popup_container.prompt {
+	z-index: 600;
+}
+
+#popup_overlay.prompt {
+	z-index: 599;
 }
 
 #popup_title {
@@ -175,6 +188,7 @@ label.oblig_subsection {
 	border: 3px solid PaleGoldenrod;
 	padding: 0;
 	position: absolute;
+	z-index: 700;
 }
 
 #keyboard_keys {
@@ -184,6 +198,7 @@ label.oblig_subsection {
 	padding: 5px;
 	max-width: 400px;
 	position: absolute;
+	z-index: 700;
 }
 
 #keyboard_keys .plainlinks {

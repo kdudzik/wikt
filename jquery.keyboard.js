@@ -43,8 +43,8 @@ window.EKeyboard = {
 		var keyboard = $('<div id="keyboard"/>');
 		var keys = $('<div id="keyboard_keys" />');
 		
-		keyboard.css('z-index', '900').hide();
-		keys.css('z-index', '900').hide();
+		keyboard.hide();
+		keys.hide();
 		$('body').append(keyboard).append(keys);
 		
 		if (EUi.usingNew) {

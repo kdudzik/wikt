@@ -7,6 +7,7 @@ var css="#ed {\
 	border: 0;\
 	width: 100%;\
 	height: auto;\
+	position: relative;\
 }\
 \
 fieldset.ed_section {\
@@ -85,17 +86,12 @@ fieldset.ed_section p.top {\
 	margin-bottom: 10px;\
 }\
 \
-fieldset.ed_section a {	\
-	font-weight: normal !important;\
-	color: #0645AD !important;\
-}\
-\
 fieldset.ed_section p.top a {\
 	margin-right: 15px;\
 }\
 \
-fieldset.ed_section p.top a:hover {\
-	border-bottom: 1px solid darkkhaki;\
+fieldset.ed_section a:hover {\
+	cursor: pointer;\
 }\
 \
 label.oblig_subsection {\
@@ -115,6 +111,19 @@ label.oblig_subsection {\
 	-moz-border-radius: 5px;\
 	-webkit-border-radius: 5px;\
 	border-radius: 5px;\
+	z-index: 900;\
+}\
+\
+#popup_overlay {\
+	z-index: 899;\
+}\
+\
+#popup_container.prompt {\
+	z-index: 600;\
+}\
+\
+#popup_overlay.prompt {\
+	z-index: 599;\
 }\
 \
 #popup_title {\
@@ -160,18 +169,44 @@ label.oblig_subsection {\
 \
 #popup_prompt {\
 	margin: .5em 0em;\
-}\
-\
-.tinyTip { \
-	padding: 5px;\
-	display: block;\
-	max-width: 400px;\
-	background-color: lemonchiffon;\
 	border: 1px solid darkkhaki;\
 }\
-.tinyTip .content {\
-	padding: 0px;\
+\
+.tooltip { \
+	padding: 5px;\
+	max-width: 450px;\
+	background-color: lemonchiffon;\
+	border: 1px solid darkkhaki;\
 	color: saddlebrown;\
+}\
+\
+#keyboard {\
+	width: 32px;\
+	height: 32px;\
+	background-color: lemonchiffon;\
+	background-image: url('http://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Input-keyboard.svg/32px-Input-keyboard.svg.png');\
+	border: 3px solid PaleGoldenrod;\
+	padding: 0;\
+	position: absolute;\
+	z-index: 700;\
+}\
+\
+#keyboard_keys {\
+	font-size: 0.8em;\
+	background-color: lemonchiffon;\
+	border: 3px solid palegoldenrod;\
+	padding: 5px;\
+	max-width: 400px;\
+	position: absolute;\
+	z-index: 700;\
+}\
+\
+#keyboard_keys .plainlinks {\
+	border: 0 !important;\
+}\
+\
+#keyboard_keys select {\
+	width: 100%;\
 }\
 ";
 mw.util.addCSS(css);
@@ -213,6 +248,9 @@ window.Ed = {
         $('.tip').livequery(function() {
 			$(this).tooltip('tip');
         });
+        $('.keyboardable').livequery(function() {
+			$(this).keyboard();
+		});
 	},
 	
 	resetNew : function() {
@@ -976,6 +1014,8 @@ window.EUi = {
 			oldform.toggle();
 			instruction.toggle();
 			EUi.form.toggle();
+			ESpecialChars.toggle();
+			
 			EUi.usingNew = !EUi.usingNew;
 			if (EUi.usingNew) {
 				Ed.resetNew();
@@ -989,6 +1029,7 @@ window.EUi = {
 		
 		EUi.prepareFormSections();
 		EUi.rebindFormActions();
+		EKeyboard.init();
 	},
 	
 	reset : function() {
@@ -1060,6 +1101,7 @@ window.EUi = {
 				'tip' : tip 
 			})
 			.click(function() {
+				EKeyboard.hide();
 				EUi.content.find('.ed_section').removeClass('active');
 				EUi.content.find('#' + $(this).data('section')).addClass('active');
 				$(this).addClass('active').siblings().removeClass('active');
@@ -1169,11 +1211,11 @@ window.EUi = {
 		var fset = $('#ed_section_' + alpha);
 				
 		if (alpha != '0000') {
-			var editlink = $('<a href="#"/>').text(EStr.EDIT_SECTION_TITLE).click(function() {
+			var editlink = $('<a/>').text(EStr.EDIT_SECTION_TITLE).click(function() {
 				EUi.editSectionTitle(alpha, section);
 				return false;
 			});
-			var deletelink = $('<a href="#"/>').text(EStr.DELETE_SECTION).click(function() {
+			var deletelink = $('<a/>').text(EStr.DELETE_SECTION).click(function() {
 				EUi.deleteSection(alpha, section);
 				return false;
 			});
@@ -1194,7 +1236,7 @@ window.EUi = {
 		var p = $('<p id="ed_subsection_' + name + '"/>');
 		var caption = EConstants.SUBSECTION_TITLE[subsection.title];
 		var label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>');
-		var textarea = $('<textarea class="newform" name="ed_' + name + '" id="ed_' + name + '"/>').text(subsection.content);
+		var textarea = $('<textarea class="newform keyboardable" name="ed_' + name + '" id="ed_' + name + '"/>').text(subsection.content);
 		if (ESectionParser.obligatorySubsection(subsection, section)) {
 			label.addClass('oblig_subsection').append(EStr.OBLIGATORY_SUBSECTION);
 			textarea.addClass('oblig_subsection');
@@ -1313,7 +1355,6 @@ window.EUi = {
 			
 			$("#popup_container").css({
 				position: pos,
-				zIndex: 99999,
 				padding: 0,
 				margin: 0
 			});
@@ -1333,6 +1374,8 @@ window.EUi = {
 			
 			switch( type ) {
 				case 'alert':
+					$('#popup_container').addClass('alert').removeClass('confirm').removeClass('prompt');
+					$('#popup_overlay').addClass('alert').removeClass('confirm').removeClass('prompt');
 					$("#popup_message").after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /></div>');
 					$("#popup_ok").click( function() {
 						$.alerts._hide();
@@ -1343,6 +1386,8 @@ window.EUi = {
 					});
 				break;
 				case 'confirm':
+					$('#popup_container').removeClass('alert').addClass('confirm').removeClass('prompt');
+					$('#popup_overlay').removeClass('alert').addClass('confirm').removeClass('prompt');
 					$("#popup_message").after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
 					$("#popup_ok").click( function() {
 						$.alerts._hide();
@@ -1359,14 +1404,18 @@ window.EUi = {
 					});
 				break;
 				case 'prompt':
-					$("#popup_message").append('<br /><input type="text" size="30" id="popup_prompt" />').after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
+					$('#popup_container').removeClass('alert').removeClass('confirm').addClass('prompt');
+					$('#popup_overlay').removeClass('alert').removeClass('confirm').addClass('prompt');
+					$("#popup_message").append('<br /><input type="text" size="30" id="popup_prompt" class="keyboardable" />').after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
 					$("#popup_prompt").width( $("#popup_message").width() );
 					$("#popup_ok").click( function() {
+						EKeyboard.hide();
 						var val = $("#popup_prompt").val();
 						$.alerts._hide();
 						if( callback ) callback( val );
 					});
 					$("#popup_cancel").click( function() {
+						EKeyboard.hide();
 						$.alerts._hide();
 						if( callback ) callback( null );
 					});
@@ -1375,6 +1424,7 @@ window.EUi = {
 						if( e.keyCode == 27 ) $("#popup_cancel").trigger('click');
 					});
 					if( value ) $("#popup_prompt").val(value);
+					$("#popup_prompt").keyboard();
 					$("#popup_prompt").focus().select();
 				break;
 			}
@@ -1401,7 +1451,6 @@ window.EUi = {
 					$("BODY").append('<div id="popup_overlay"></div>');
 					$("#popup_overlay").css({
 						position: 'absolute',
-						zIndex: 99998,
 						top: '0px',
 						left: '0px',
 						width: '100%',
@@ -1494,45 +1543,18 @@ window.EUi = {
 (function($){  
 	$.fn.tooltip = function () {
 		
-		/* User settings
-		**********************************/
-		
-		// Enter the markup for your tooltips here. The wrapping div must have a class of tinyTip and 
-		// it must have a div with the class "content" somewhere inside of it.
-		var tipFrame = '<div class="tinyTip"><div class="content"></div></div>';
-		
-		// Speed of the animations in milliseconds - 1000 = 1 second.
-		var animSpeed = 200;
-		
-		/***************************************************************************************************/
-		/* End of user settings - Do not edit below this line unless you are trying to edit functionality. */
-		/***************************************************************************************************/
-		
-		// Global tinyTip variable;
-		var tinyTip;
-		var tText;
+		var tooltip = $('<div class="tooltip"/>');
+		tooltip.css('position', 'absolute').css('z-index', '1000').appendTo($('body'));
 		
 		// When we hover over the element that we want the tooltip applied to
 		$(this).hover(function() {
-		
-			// Inject the markup for the tooltip into the page and
-			// set the tooltip global to the current markup and then hide it.
-			$('body').append(tipFrame);
-			tinyTip = $('div.tinyTip');
-			tinyTip.hide();
-			
-			// Grab the content for the tooltip from the title attribute (or the supplied content) and
-			// inject it into the markup for the current tooltip. NOTE: title attribute is used unless
-			// other content is supplied instead.
-			var tipCont = $(this).data('tip');
-
-			$('.tinyTip .content').html(tipCont);
-			tText = $(this).data('tip');
+					
+			tooltip.html($(this).data('tip'));
 			
 			// Offsets so that the tooltip is centered over the element it is being applied to but
 			// raise it up above the element so it isn't covering it.
-			var yOffset = tinyTip.height() + 17;
-			var xOffset = (((tinyTip.width() - 10) / 2)) - ($(this).width() / 2);
+			var yOffset = tooltip.height() + 17;
+			var xOffset = (((tooltip.width() - 10) / 2)) - ($(this).width() / 2);
 			
 			// Grab the coordinates for the element with the tooltip and make a new copy
 			// so that we can keep the original un-touched.
@@ -1543,20 +1565,10 @@ window.EUi = {
 			nPos.top = pos.top - yOffset;
 			nPos.left = pos.left - xOffset;
 			
-			// Make sure that the tooltip has absolute positioning and a high z-index, 
-			// then place it at the correct spot and fade it in.
-			tinyTip.css('position', 'absolute').css('z-index', '1000');
-			tinyTip.css(nPos).fadeIn(animSpeed);
+			tooltip.css(nPos).show();
 			
 		}, function() {
-			
-			$(this).data('tip', tText);
-		
-			// Fade the tooltip out once the mouse moves away and then remove it from the DOM.
-			$('div.tinyTip').fadeOut(animSpeed, function() {
-				$(this).remove();
-			});
-			
+			tooltip.hide();			
 		});
 		
 	};
@@ -1864,6 +1876,179 @@ $.prototype.init = function(a,c) {
 $.prototype.init.prototype = $.prototype;
 	
 })(jQuery);
+
+
+window.ESpecialChars = {
+	
+	obj : undefined,
+	formerParent : undefined,
+	detached : 0,
+	
+	detach : function() {
+		if (ESpecialChars.detached) {
+			return;
+		}
+		var container = $('#keyboard_keys');
+		ESpecialChars.obj = $('#editpage-specialchars');
+		ESpecialChars.formerParent = ESpecialChars.obj.parent();
+		ESpecialChars.obj.detach();
+		
+		container.append(ESpecialChars.obj);
+		ESpecialChars.detached = 1;
+	},
+	
+	attach : function() {
+		if (!ESpecialChars.detached) {
+			return;
+		}
+		EKeyboard.hide();
+		ESpecialChars.obj.detach();
+		ESpecialChars.formerParent.append(ESpecialChars.obj);
+		ESpecialChars.detached = 0;
+	},
+	
+	toggle : function() {
+		if (ESpecialChars.detached) {
+			ESpecialChars.attach();
+		}
+		else {
+			ESpecialChars.detach();
+		}
+	}
+};
+
+window.EKeyboard = {
+
+	init : function() {
+		var keyboard = $('<div id="keyboard"/>');
+		var keys = $('<div id="keyboard_keys" />');
+		
+		keyboard.hide();
+		keys.hide();
+		$('body').append(keyboard).append(keys);
+		
+		if (EUi.usingNew) {
+			ESpecialChars.detach();
+		}
+		
+		keyboard.click(function() {
+			keys.toggle();
+		});
+		
+	},
+	
+	hide : function() {
+		$('#keyboard').hide();
+		$('#keyboard_keys').hide();		
+	}
+
+};
+
+(function($) {
+			
+	$.fn.keyboard = function () {
+		
+		$(this).focus(function() {
+			if (!$(this).is(':visible')) {
+				EKeyboard.hide();
+				return;
+			}
+			var nPos = $(this).offset();
+			
+			nPos.top += ($(this).height() + 7);
+			nPos.left += 20;
+			$('#keyboard').show().css({ top: nPos.top, left: nPos.left });
+			$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 40 });			
+			$('#keyboard_keys').data('active_area', $(this).attr('id'));
+			
+			insertTags = insertTags2;
+		}).blur(function() {
+		});
+		return $(this);
+		
+	};
+
+})(jQuery);
+
+insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
+	var txtarea;
+	if (document.editform && !EUi.usingNew) {
+		txtarea = document.editform.wpTextbox1;
+	} else if (EUi.usingNew) {
+		var aname = $('#keyboard_keys').data('active_area');
+		txtarea = aname ? document.getElementById(aname) : undefined;
+	}
+	if (!txtarea) {
+		// some alternate form? take the first one we can find
+		var areas = document.getElementsByTagName('textarea');
+		txtarea = areas[0];
+	}
+	var selText, isSample = false;
+ 
+	if (document.selection  && document.selection.createRange) { // IE/Opera
+ 
+		//save window scroll position
+		if (document.documentElement && document.documentElement.scrollTop)
+			var winScroll = document.documentElement.scrollTop;
+		else if (document.body)
+			var winScroll = document.body.scrollTop;
+		//get current selection  
+		txtarea.focus();
+		var range = document.selection.createRange();
+		selText = range.text;
+		//insert tags
+		checkSelectedText();
+		range.text = tagOpen + selText + tagClose;
+		//mark sample text as selected
+		if (isSample && range.moveStart) {
+			if (is_opera && is_opera_seven && !is_opera_95)
+				tagClose = tagClose.replace(/\n/g,'');
+			range.moveStart('character', - tagClose.length - selText.length); 
+			range.moveEnd('character', - tagClose.length); 
+		}
+		range.select();   
+		//restore window scroll position
+		if (document.documentElement && document.documentElement.scrollTop)
+			document.documentElement.scrollTop = winScroll;
+		else if (document.body)
+			document.body.scrollTop = winScroll;
+ 
+	} else if (txtarea.selectionStart || txtarea.selectionStart == '0') { // Mozilla
+ 
+		//save textarea scroll position
+		var textScroll = txtarea.scrollTop;
+		//get current selection
+		txtarea.focus();
+		var startPos = txtarea.selectionStart;
+		var endPos = txtarea.selectionEnd;
+		selText = txtarea.value.substring(startPos, endPos);
+		//insert tags
+		checkSelectedText();
+		txtarea.value = txtarea.value.substring(0, startPos)
+			+ tagOpen + selText + tagClose
+			+ txtarea.value.substring(endPos, txtarea.value.length);
+		//set new selection
+		if (isSample) {
+			txtarea.selectionStart = startPos + tagOpen.length;
+			txtarea.selectionEnd = startPos + tagOpen.length + selText.length;
+		} else {
+			txtarea.selectionStart = startPos + tagOpen.length + selText.length + tagClose.length;
+			txtarea.selectionEnd = txtarea.selectionStart;
+		}
+		//restore textarea scroll position
+		txtarea.scrollTop = textScroll;
+	} 
+ 
+	function checkSelectedText(){
+		if (!selText) {
+			selText = sampleText;
+			isSample = true;
+		} else if (selText.charAt(selText.length - 1) == ' ') { //exclude ending space char
+			selText = selText.substring(0, selText.length - 1);
+			tagClose += ' ';
+		} 
+	}
+};
 
 
 if ((mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit')
