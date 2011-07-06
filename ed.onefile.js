@@ -1,3 +1,4 @@
+//<nowiki>
 var css="#ed {\
 	overflow : auto;\
 	background-color: white;\

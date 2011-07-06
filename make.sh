@@ -7,7 +7,8 @@ JS=ed.onefile.js
 MAINJS=ed.js
 CSS=ed.css
 
-echo -n "var css=\"" > $JS
+echo -n "//<nowiki>
+var css=\"" > $JS
 sed 's/$/\\/g' $CSS >> $JS
 echo "
 \";

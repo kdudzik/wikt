@@ -1,0 +1,204 @@
+\documentclass{pracamgr}
+\usepackage{polski}
+\usepackage[latin2]{inputenc}
+\usepackage{indentfirst}
+\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{upquote}
+\usepackage{tabularx}
+\usepackage{setspace}
+
+\author{Krzysztof Dudzik}
+\nralbumu{248349}
+\title{Aplikacja wspomagaj±ca tworzenie i~edycjê hase³ w~polskim Wikis³owniku}
+\tytulang{An application supporting article creation and edition for the Polish Wiktionary}
+\kierunek{Informatyka}
+\opiekun{dr. hab. Jerzego Tyszkiewicza, prof. UW\\Instytut Informatyki\\}
+\date{Czerwiec 2011}
+\dziedzina{11.3 Informatyka\\}
+\klasyfikacja{D. Software\\D.2. Software Engineering\\D.2.10. Design}
+\keywords{Wikis³ownik, MediaWiki, wiki, edytor, interfejs u¿ytkownika, JavaScript, jQuery, spo³eczno¶æ internetowa}
+
+% Tu jest dobre miejsce na Twoje w³asne makra i~¶rodowiska:
+\newenvironment{illustration}[0]{
+	\begin{figure}[h]
+	\begin{center}
+}{
+	\end{center}
+	\end{figure}
+}
+\setkeys{Gin}{width=0.9\textwidth}
+\graphicspath{{./screeny/}}
+\setlength{\fboxsep}{0pt}
+\setlength{\fboxrule}{0.2pt}
+\setlength{\parskip}{1.2ex plus 0.5ex minus 0.2ex}
+\setlength{\parindent}{5ex}
+\frenchspacing
+\renewcommand*{\figurename}{Ilustracja}
+
+% koniec definicji
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  Tematem pracy jest aplikacja s³u¿±ca do u³atwienia pracy autorów hase³ w~polskim Wikis³owniku. Jej funkcje maj± w~maksymalny mo¿liwy sposób u³atwiæ tworzenie i~edytowanie hase³ osobom bez wiedzy informatycznej i~technicznej, a~tak¿e automatyzowaæ mo¿liwie wiele rutynowych czynno¶ci wykonywanych przy redagowaniu has³a, jak tworzenie ³±cz do hase³ powi±zanych, zautomatyzowane szukanie przyk³adów u¿ycia, wyst±pieñ w~zwi±zkach frazeologicznych, wyrazów bliskoznacznych, innych s³ów, któr± formê gramatyczn± mog³oby stanowiæ has³o~itp. Dodatkowo aplikacja mo¿e przej±æ czê¶æ funkcji realizowanych obecnie za~pomoc± botów.
+\end{abstract}
+
+\tableofcontents
+
+\chapter{Wprowadzenie}
+¯yjemy w~czasach, w~których nieustannie zmienia siê sposób wyszukiwania informacji przez przeciêtnego cz³owieka. Z~roku na rok coraz mniejsz± rolê odgrywaj± papierowe kompendia takie jak encyklopedie i~s³owniki, stopniowo przybieraj± natomiast na znaczeniu elektroniczne bazy wiedzy -- szczególnie za¶ internetowe zbiory danych. Przyczyny tego stanu rzeczy s± oczywiste: chodzi przede wszystkim o~wygodê korzystania ze~stron internetowych. Brak mo¿liwo¶ci wyszukiwania w~obrêbie ogromnych ilo¶ci danych powoduje, ¿e encyklopedie i~s³owniki w~postaci ksi±¿ek staj± siê o~wiele mniej atrakcyjne dla kogo¶, kto chce zdobyæ nowe informacje.
+
+Wszechobecny dostêp do internetu sprawia, ¿e to w³a¶nie w~sieci WWW powstaj± najbardziej popularne bazy ludzkie wiedzy. Nie ma chyba internautów, którzy nie korzystaliby, rzadziej lub czê¶ciej, z~Wikipedii -- internetowej encyklopedii pisanej przez ochotników. W³a¶nie fakt, ¿e encyklopedia ta wspó³tworzona jest przez amatorów, stanowi o~jej wyj±tkowym charakterze, który zostanie w~tej pracy pokrótce opisany. Wikipedia stale utrzymuje siê w~pierwszej dziesi±tce najczê¶ciej odwiedzanych stron, a~pod wieloma wzglêdami jest to dzi¶ najlepsza istniej±ca encyklopedia. Przed kilkoma laty g³o¶ne by³o porównanie jej z~presti¿ow± \emph{Encyclopaedia Britannica} -- okaza³o siê, ¿e ró¿nice w~poziomie merytorycznym s± niewielkie.
+
+O~ile przewrót w~kategorii encyklopedii w³a¶ciwie ju¿ siê dokona³, nieco inaczej wygl±da rywalizacja s³owników. Oczywi¶cie wyra¼nie widaæ, ¿e i~tu papierowe edycje s± coraz mniej popularne. Ró¿nice uwidaczniaj± siê, gdy przeanalizowana zostanie sytuacja s³owników internetowych. Tak zwany siostrzany projekt Wikipedii, Wikis³ownik, nie dominuje w¶ród konkurencji -- zarówno na ¶wiecie, jak i~w~Polsce. Przyczyny tego stanu rzeczy s± z³o¿one. Autor postanowi³ skupiæ siê na kilku zagadnieniach, uwidaczniaj±cych siê w~polskojêzycznej wersji Wikis³ownika. W~tym celu konieczne by³o zbadanie spo³eczno¶ci zaanga¿owanej w~tworzenie tego projektu. Jego efektem by³o wykonanie prac programistycznych, których opis stanowi g³ówn± czê¶æ niniejszego opracowania.
+
+W~przypadku wszystkich projektów opartych na silniku programistycznym MediaWiki istotn± barier± rozwoju jest sama technologia. Ka¿dy ochotnik ma mo¿liwo¶æ uczestniczenia w~rozwoju portalu, wi±¿e siê to jednak z~konieczno¶ci± przystosowania siê do wymagañ stawianych przez oprogramowanie. Edytowanie hase³ w~internetowej encyklopedii czy s³owniku jest praktycznie niemo¿liwe dla osoby bez wcze¶niejszego przygotowania lub znacznej wiedzy techniczno-informatycznej. Oprogramowanie MediaWiki oparte jest bowiem na tzw. wikikodzie (tak¿e: wikitekst, wikisk³adnia), czyli jêzyku opisu struktury i~wygl±du strony internetowej -- prostszym ni¿ HTML, jednak wci±¿ nieintuicyjnym dla kogo¶, kto nie mia³ wcze¶niej do czynienia z~tego typu edytorami. Dlatego wielu potencjalnych wspó³autorów zniechêca siê do projektu ju¿ przy pierwszej próbie poprawy artyku³u.
+
+Aby zmieniæ tê sytuacjê, przygotowany zosta³ nowy edytor, dostosowany specjalnie do potrzeb polskiego Wikis³ownika. Aplikacja pozwala na o~wiele prostsze tworzenie nowych i~zmienianie starych hase³ ni¿ poprzednia, standardowa. Dziêki u¿yciu jej jako domy¶lnej w~projekcie popularyzacja edytowania Wikis³ownika w¶ród fachowców w~dziedzinach lingwistycznych oka¿e siê ³atwiejsze -- zniknie podstawowa bariera, jak± jest konieczno¶æ dostosowania siê do skomplikowanych technicznych wymagañ stawianych przez u¿yte oprogramowanie. Dodatkowo nowa aplikacja umo¿liwia zaawansowan± automatyzacjê tworzenia has³a. Wiele z~czynno¶ci zintegrowanych z~nowym edytorem do tej pory wymaga³o mozolnych poszukiwañ w~artyku³ach Wikis³ownika oraz innych projektach. Dziêki u¿yciu API udostêpnianego przez serwisy Fundacji Wikimedia skomplikowane przeszukiwanie tysiêcy stron uda³o siê sprowadziæ do kilku klikniêæ.
+
+W~dalszej czê¶ci pracy opisany zosta³ proces tworzenia tego edytora. Pierwszy rozdzia³ charakteryzuje pokrótce sam Wikis³ownik, jak i~pokrewne projekty oraz oprogramowanie w~nich u¿yte. Nastêpnie opisano spo³eczno¶ciowe aspekty tworzenia tego typu aplikacji ze szczególnym uwzglêdnieniem koncepcji \emph{wiki}. Ostatni rozdzia³ wyczerpuj±co przedstawia szczegó³y projektowe i~implementacyjne aplikacji.
+
+\chapter{Wikis³ownik}
+Rozdzia³ ten stanowi charakterystykê Wikis³ownika -- sieciowego s³ownika opartego na oprogramowaniu MediaWiki. Wikis³ownik jest jednym z~najwiêkszych i~najpopularniejszych s³owników dostêpnych w~polskim internecie. W~kolejnych podrozdzia³ach projekt ten zosta³ opisany na ró¿nych poziomach szczegó³owo¶ci. Omówiono zarówno oprogramowanie, na jakim bazuje s³ownik, jak i~swego rodzaju ,,ekosystem'', w~którym znajduje on swoje miejsce.
+
+\section{Projekty Fundacji Wikimedia}
+Podmiotem odpowiedzialnym m.in. za rozwój Wikis³ownika jest Wikimedia Foundation Inc.\ (opisywana dalej jako ,,Fundacja'') -- organizacja non-profit maj±ca siedzibê w~San Francisco w~Stanach Zjednoczonych, istniej±ca od 2003 roku. Jak informuje strona internetowa polskiego partnera Fundacji, Stowarzyszenia Wikimedia Polska, \emph{celem fundacji jest sprzyjanie tworzeniu i~rozwojowi projektów o~otwartej tre¶ci opartych na technologii WikiWiki oraz dostarczanie spo³eczno¶ci internetowej pe³nej zawarto¶ci wymienionych projektów za darmo i~bez zamieszczania reklam.} %cite
+Doskonale znan±, sztandarow± inicjatyw± Fundacji jest Wikipedia (\texttt{http://www.wikipedia.org}) -- najwiêksza obecnie encyklopedia internetowa, dostêpna w~281 jêzykach (stan z maja 2011 roku) i~zawieraj±ca ponad 18~milionów hase³, w~tym ponad 3,6~miliona w~najwiêkszej, angielskojêzycznej edycji. Mimo czêstej krytyki tego przedsiêwziêcia faktem jest, ¿e Wikipedia jest miejscem, z~którego miliony osób korzystaj±, by pozyskaæ informacje z~najró¿niejszych dziedzin. Obecny stan rzeczy mo¿liwy jest dziêki pracy wielkiej liczby wolontariuszy tworz±cych artyku³y bez wynagrodzenia.
+
+\begin{illustration}
+	\fbox{\includegraphics{plwikipedia}}
+	\caption{Polska edycja Wikipedii}
+\end{illustration}
+
+Wikipedia jest najbardziej znanym, ale nie jedynym projektem pod opiek± Fundacji. Pozosta³e to tzw.\ ,,projekty siostrzane'', w~szczególny sposób uwzglêdniane równie¿ przy tworzeniu hase³ w~encyklopedii. Oto lista wspieranych przez Fundacjê wielojêzycznych inicjatyw:
+\begin{itemize}
+	\item Wikis³ownik (ang. \emph{Wiktionary}) -- wielojêzyczny s³ownik internetowy, bêd±cy g³ównym przedmiotem niniejszej pracy,
+	\item Wikicytaty (ang. \emph{Wikiquotes}) -- zbiór cytatów autorstwa znanych osób, z~filmów i~ksi±¿ek, przys³ów i~porzekade³,
+	\item Wikibooks -- serwis z~,,otwartymi'' (opartymi na wolnej licencji) podrêcznikami,
+	\item Wiki¼ród³a (ang. \emph{Wikisource}) -- zbiór dokumentów ¼ród³owych w~wersjach oryginalnych i~t³umaczonych, nieograniczonych prawem autorskim,
+	\item Wikinews -- otwarty serwis informacyjny,
+	\item Wikimedia Commons -- repozytorium mediów (zdjêæ, grafik, filmów) dostêpnych na wolnej licencji, z~którego korzystaj± pozosta³e projekty Wikimedia,
+	\item Wikispecies -- katalog gatunków organizmów ¿ywych,
+	\item Wikiversity -- materia³y edukacyjne i~naukowe,
+	\item Wikimedia Incubator -- metaprojekt umo¿liwiaj±cy tworzenie nowych inicjatyw wspieranych przez Fundacjê.
+	\item Meta-Wiki -- projekt u³atwiaj±cy koordynacjê wszystkich pozosta³ych.
+\end{itemize}
+Wszystkie projekty ³±czy sposób ich powstawania -- mo¿liwo¶æ edycji dostêpna jest praktycznie dla ka¿dego internauty. Nie dotyczy to co~prawda kilku krajów, w~których projekty Fundacji zablokowane s± w~ramach cenzury internetu, jednak ogromna wiêkszo¶æ osób dysponuj±cych ³±czem internetowym ma szansê staæ siê jednymi spo¶ród wspó³autorów hase³.
+
+Drug± cech± wspóln± s± wolne licencje, na których udostêpniana jest zawarto¶æ wszystkich serwisów. Po reformie w~czerwcu 2009~roku tre¶æ Wikipedii i~projektów siostrzanych dostêpna jest nie tylko na licencji GNU FDL (Free Documentation License), ale tak¿e na kompatybilnej z~ni± CC-BY-SA 3.0 (Creative Commons Attribution-ShareAlike / Uznanie Autorstwa -- Na Tych Samych Warunkach). %cite http://meta.wikimedia.org/wiki/Licensing_update/Result
+Oznacza to, ¿e mo¿na j± dowolnie wykorzystywaæ we~w³asnych dzie³ach pod warunkiem podania oryginalnych autorów i~zachowania pierwotnej licencji.
+
+\section{Oprogramowanie MediaWiki}
+Sama dzia³alno¶æ wolontarystyczna redaktorów projektów Wikimedia nie wystarczy³aby do stworzenia serwisów internetowych o~obecnych kszta³tach. Konieczne jest oczywi¶cie równie¿ zapewnienie oprogramowania, które umo¿liwi p³ynn± wspó³pracê przy tworzeniu hase³. Tym oprogramowaniem jest wolna platforma MediaWiki tworzona zgodnie z~zasadami \emph{open source}. System MediaWiki napisany jest w~jêzyku PHP i~opiera siê na bazie danych (w~przypadku projektów Wikimedia jest to MySQL). Dla inicjatyw Wikimedia stanowi szkielet programistyczny od samego ich pocz±tku, a~od 2002~roku stale siê rozwija. W~czerwcu 2011~roku wersj± u¿ywan± w~projektach by³o MediaWiki~1.17.
+
+System MediaWiki u¿ywany jest nie tylko w~projektach wspieranych przez Fundacjê, ale tak¿e w~tysi±cach innych, mniejszych lub wiêkszych, co jest mo¿liwe dziêki wysokiemu stopniowi konfigurowalno¶ci i~du¿ej liczbie dostêpnych rozszerzeñ. S± to w~du¿ej mierze serwisy o~podobnym charakterze, umo¿liwiaj±ce swobodn± wymianê informacji na dowolny temat. MediaWiki bywa tak¿e u¿ywane w~firmowych intranetach i~wszêdzie tam, gdzie zachodzi potrzeba udostêpnienia materia³ów do edycji du¿ej liczbie u¿ytkowników.
+
+\subsection{Edytowanie i~wikitekst}
+Strony w~projektach opartych na platformie MediaWiki na~ogó³ nie mog± byæ czystym tekstem, pozbawionym formatowania. Przyk³adowo has³a w~encyklopedii musz± zachowywaæ okre¶lon± strukturê -- wystêpuje wiêc podzia³ na sekcje, ilustracje, ró¿ne rodzaje formatowania (kursywa, wyt³uszczenie), przypisy czy powtarzalne fragmenty. Szczególnie istotnym elementem s± linki pomiêdzy poszczególnymi artyku³ami, wyró¿niaj±ce projekty Fundacji na tle ich papierowych, ale te¿ elektronicznych konkurentów. Odno¶niki pozwalaj± b³yskawicznie przemieszczaæ siê miêdzy has³ami, by w~ten sposób uzyskiwaæ kolejne informacje wspomagaj±ce przyswajanie wiedzy.
+
+Linki i~formatowanie na stronach internetowych tworzone s± za pomoc± elementów jêzyka HTML lub XHTML. O~ile jêzyki te s± proste w obs³udze dla specjalisty informatyka, to laik nie jest w~stanie tworzyæ za ich pomoc± stron bez uprzedniego d³u¿szego przygotowania. Aby umo¿liwiæ bezproblemow± edycjê stron internetowych osobom bez wykszta³cenia informatycznego, programi¶ci MediaWiki zaprojektowali tzw.\ wikitekst -- uproszczony jêzyk opisu stron, pozwalaj±cy na realizacjê wymienionych elementów. Porównanie niektórych z~nich znajduje siê w~tabeli \ref{html-wiki}.
+
+\begin{table}[h]
+\begin{center}
+\label{html-wiki}
+\footnotesize{
+	\begin{tabularx}{\textwidth}{ |l|X|X| }
+		\hline
+		& Wikitekst & XHTML \\
+		\hline \hline
+		Kursywa
+		 & \texttt{''Tekst''}
+		 & \texttt{<em>Tekst</em>} \\
+		\hline
+		Wyt³uszczenie
+		 & \texttt{'''Tekst'''}
+		 & \texttt{<strong>Tekst</strong>} \\
+		\hline
+		Nag³ówek
+		 & \texttt{== Nag³ówek ==}
+		 & \texttt{<h2>Nag³ówek</h2>} \\
+		 & \texttt{=== Nag³ówek ===}
+		 & \texttt{<h3>Nag³ówek</h3>} \\
+		\hline
+		Odno¶nik wewnêtrzny
+		 & \texttt{[[Strona]]}
+		 & \texttt{<a href="/wiki/Strona">Strona</a>} \\
+		 & \texttt{[[Strona|strony]]}
+		 & \texttt{<a href="/wiki/Strona">strony</a>} \\
+		\hline
+		Odno¶nik zewnêtrzny
+		 & \texttt{[http://www.google.com Google]}
+		 & \texttt{<a href="http://www.google.com">\newline Google</a>} \\
+		\hline
+		Obraz
+		 & \texttt{[[Plik:Przyk³ad.png|thumb|Podpis]]}
+		 & \texttt{<img src="\dots /Przyk³ad.png"/><br/>\newline <div class="caption">Podpis</div>} \\
+		\hline
+		Podzia³ na akapity
+		 & \texttt{Pierwszy akapit \newline \newline Drugi akapit}
+		 & \texttt{<p>Pierwszy akapit</p>\newline <p>Drugi akapit</p>} \\
+		\hline
+		Lista nienumerowana
+		 & \texttt{* Element\newline * Element\newline * Element}
+		 & \texttt{<ul>\newline <li>Element</li>\newline <li>Element</li>\newline <li>Element</li>\newline </ul>}\\
+		\hline
+		Lista numerowana
+		 & \texttt{\# Element\newline \# Element\newline \# Element}
+		 & \texttt{<ol>\newline <li>Element</li>\newline <li>Element</li>\newline <li>Element</li>\newline </ol>}\\
+		\hline
+	\end{tabularx}
+}
+\caption{Porównanie HTML i wikitekstu}
+\end{center}
+\end{table}
+
+£atwo mo¿na zauwa¿yæ, ¿e u¿ywanie wikitekstu jest o~wiele prostsze ni¿ nauka XHTML-a. Je¶li zachodzi potrzeba zaawansowanego formatowania, mo¿liwe jest tak¿e u¿ycie znaczników XHTML. W~przypadku standardowego formatowania jest to jednak niewskazane ze wzglêdu na dobro niedo¶wiadczonych edytorów.
+
+Bardzo istotnym elementem wikitekstu s± szablony -- predefiniowane fragmenty kodu z~opcjonalnymi parametrami. Szablony mo¿na uznaæ za odpowiednik procedur/funkcji w~jêzykach programowania. W~projektach opartych na MediaWiki szablony pe³ni± przede wszystkim dwie g³ówne funkcje:
+\begin{itemize}
+	\item upraszczaj± kod -- pozwalaj± np.\ na zast±pienie skomplikowanego kodu XHTML (a~tak¿e jeszcze bardziej z³o¿onych funkcji parsera MediaWiki) krótkim wywo³aniem szablonu,
+	\item standaryzuj± strony -- czêsto wykorzystywane fragmenty wywo³ywane s± zawsze w~dok³adnie ten sam sposób.
+\end{itemize}
+We~wszystkich wiêkszych projektach Fundacji szablony s± bardzo czêsto wykorzystywane. Przy tym stanowi± du¿e u³atwienie dla technicznie zaawansowanych autorów, którzy wspomagaj± siê przy tworzeniu hase³ dodatkowymi technologiami. Na u¿ywaniu szablonów korzystaj± przede wszystkim boty, czyli programy dokonuj±ce edycji samodzielnie po uprzednim przygotowaniu lub pod sta³± opiek± programisty. W~wiêkszo¶ci projektów przyjête jest, ¿e ka¿dy bot ma w³asne konto u¿ytkownika, nie u¿ywa natomiast konta swojego ,,w³a¶ciciela''. Dziêki botom mo¿liwe jest np.\ masowe tworzenie hase³ w~Wikipedii na ¶ci¶le okre¶lony temat, je¶li istnieje dobre ¼ród³o w~formie czytelnej dla komputera (takich jak opisy asteroid czy wszystkich miejscowo¶ci lub jednostek administracyjnych w~danym kraju). Innym ich zastosowaniem jest automatycznie uzupe³nianie tzw.\ interwiki -- czyli odno¶ników pomiêdzy poszczególnymi wersjami jêzykowymi tego samego has³a.
+
+Szablony mog± byæ wykorzystywane w~prosty sposób nawet przez pocz±tkuj±cych u¿ytkowników -- aby wywo³aæ szablon, wystarczy wpisaæ jego nazwê
+ pomiêdzy podwójnymi nawiasami klamrowymi (\verb@{{Nazwa szablonu}}@ lub \verb@{{Nazwa szablonu|parametr=warto¶æ}}@). W~polskim Wikis³owniku szablony pe³ni± szczególn± rolê -- i~to m.in.\ dziêki ich szerokiemu zastosowaniu w~projekcie zrodzi³ siê pomys³ na niniejsz± pracê. Szczegó³y tego zagadnienia zostan± przedstawione w~kolejnym rozdziale.
+
+\section{Wiktionary -- Wikis³ownik}
+Jednym z~najwiêkszych projektów siostrzanych Wikipedii jest Wikis³ownik, w~wersji angielskojêzycznej nosz±cy nazwê \emph{Wiktionary} (\texttt{http://www.wiktionary.org}). Ten s³ownik internetowy nie rozwin±³ siê jeszcze tak prê¿nie jak encyklopedia, zw³aszcza je¶li chodzi o~polsk± edycjê. Jest dzi¶ jednak jednym z~najwiêkszych s³owników w~sieci, a w~pewnych zastosowaniach stanowi zdecydowanie najlepszy wybór. I~tak %cite  
+
+\section{Polska edycja Wikis³ownika}
+
+\chapter{Aspekty spo³eczno¶ciowe}
+\section{Koncepcja \emph{wiki}}
+\section{Spo³eczno¶æ polskiej edycji Wikis³ownika}
+\section{Specyfika tworzenia aplikacji dla wikispo³eczno¶ci}
+
+\chapter{Opis implementacji}
+\section{Wprowadzenie}
+\section{Formularz edycyjny}
+\section{Automatyzacja edycji has³a}
+\section{Wdro¿enie}
+
+\chapter{Podsumowanie}
+
+
+\appendix
+
+\bibliographystyle{unsrt}
+\addcontentsline{toc}{chapter}{Bibliografia}
+%\sbibliography{mgr}{}
+%\listoffigures
+%\listoftables
+
+
+\end{document}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% coding: latin-2
+%%% End:
