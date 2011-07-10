@@ -75,6 +75,8 @@ fieldset.ed_section textarea {\
 	width: 77%;\
 	border: 1px solid khaki;\
 	height: 1em;\
+	font-family: Consolas, "Lucida Console", monospace;\
+	font-size: 9pt;\
 }\
 \
 fieldset.ed_section p {\
@@ -102,8 +104,7 @@ label.oblig_subsection {\
 \
 \
 #popup_container {\
-	font-family: Arial, sans-serif;\
-	font-size: 12px;\
+	font-size: 0.8em;\
 	min-width: 300px; /* Dialog will be no smaller than this */\
 	max-width: 600px; /* Dialog will wrap after this width */\
 	background: #FFF;\
@@ -128,17 +129,14 @@ label.oblig_subsection {\
 }\
 \
 #popup_title {\
-	font-size: 14px;\
+	font-size: 1em;\
 	font-weight: bold;\
 	text-align: center;\
 	line-height: 1.75em;\
 	color: #666;\
-	background: #CCC url(images/title.gif) top repeat-x;\
+	background-color: #CCC;\
 	border: solid 1px #FFF;\
 	border-bottom: solid 1px #999;\
-	cursor: default;\
-	padding: 0em;\
-	margin: 0em;\
 }\
 \
 #popup_content {\
@@ -186,7 +184,7 @@ label.oblig_subsection {\
 	height: 32px;\
 	background-color: lemonchiffon;\
 	background-image: url('http://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Input-keyboard.svg/32px-Input-keyboard.svg.png');\
-	border: 3px solid PaleGoldenrod;\
+	border: 2px solid PaleGoldenrod;\
 	padding: 0;\
 	position: absolute;\
 	z-index: 700;\
@@ -195,7 +193,7 @@ label.oblig_subsection {\
 #keyboard_keys {\
 	font-size: 0.8em;\
 	background-color: lemonchiffon;\
-	border: 3px solid palegoldenrod;\
+	border: 2px solid palegoldenrod;\
 	padding: 5px;\
 	max-width: 400px;\
 	position: absolute;\
@@ -208,6 +206,28 @@ label.oblig_subsection {\
 \
 #keyboard_keys select {\
 	width: 100%;\
+}\
+\
+#keyboard_keys #editpage-specialchars.plainlinks a {\
+	padding: 1px 2px !important;\
+	margin: 0px !important;\
+}\
+#keyboard_keys #editpage-specialchars.plainlinks a:hover {\
+	text-decoration: none;\
+	background-color: palegoldenrod !important;\
+}\
+#keyboard_keys .keyboard_always {\
+	margin: 5px 2px;\
+}\
+#keyboard_keys .keyboard_always a {\
+	padding: 2px 7px;\
+	font-size: 1.2em;\
+	border: 1px solid palegoldenrod;\
+	background-color: palegoldenrod;\
+}\
+#keyboard_keys .keyboard_always a:hover {\
+	text-decoration: none;\
+	border: 1px solid darkkhaki;\
 }\
 ";
 mw.util.addCSS(css);
@@ -983,7 +1003,15 @@ window.EStr = {
 	CONFIRMATION:
 		'Potwierdzenie',
 	QUESTION:
-		'Pytanie'
+		'Pytanie',
+	KEYBOARD_ALWAYS:
+		'<div class="keyboard_always"> \
+		<a href="#" onclick="insertTags(\'•\', \'\', \'\'); return false">•</a> \
+		<a href="#" onclick="insertTags(\'→\', \'\', \'\'); return false">→</a> \
+		<a href="#" onclick="insertTags(\'~\', \'\', \'\'); return false">~</a> \
+		<a href="#" onclick="insertTags(\'–\', \'\', \'\'); return false">–</a> \
+		<a href="#" onclick="insertTags(\'„\', \'”\', \'\'); return false">„”</a> \
+		</div>'
 };
 
 
@@ -1267,6 +1295,179 @@ window.EUi = {
 	}
 };
 
+
+
+window.ESpecialChars = {
+	
+	obj : undefined,
+	formerParent : undefined,
+	detached : 0,
+	
+	detach : function() {
+		if (ESpecialChars.detached) {
+			return;
+		}
+		var container = $('#keyboard_keys');
+		ESpecialChars.obj = $('#editpage-specialchars');
+		ESpecialChars.formerParent = ESpecialChars.obj.parent();
+		ESpecialChars.obj.detach();
+		
+		container.append(ESpecialChars.obj);
+		ESpecialChars.detached = 1;
+	},
+	
+	attach : function() {
+		if (!ESpecialChars.detached) {
+			return;
+		}
+		EKeyboard.hide();
+		ESpecialChars.obj.detach();
+		ESpecialChars.formerParent.append(ESpecialChars.obj);
+		ESpecialChars.detached = 0;
+	},
+	
+	toggle : function() {
+		if (ESpecialChars.detached) {
+			ESpecialChars.attach();
+		}
+		else {
+			ESpecialChars.detach();
+		}
+	}
+};
+
+window.EKeyboard = {
+
+	init : function() {
+		var keyboard = $('<div id="keyboard"/>');
+		var keys = $('<div id="keyboard_keys" />');
+		
+		keyboard.hide();
+		keys.hide().append(EStr.KEYBOARD_ALWAYS);
+		$('body').append(keyboard).append(keys);
+		
+		if (EUi.usingNew) {
+			ESpecialChars.detach();
+		}
+		
+		keyboard.click(function() {
+			keys.toggle();
+		});
+		
+	},
+	
+	hide : function() {
+		$('#keyboard').hide();
+		$('#keyboard_keys').hide();		
+	}
+
+};
+
+(function($) {
+			
+	$.fn.keyboard = function () {
+		
+		$(this).focus(function() {
+			if (!$(this).is(':visible')) {
+				EKeyboard.hide();
+				return;
+			}
+			var nPos = $(this).offset();
+			
+			nPos.top += ($(this).height() + 7);
+			nPos.left += 20;
+			$('#keyboard').show().css({ top: nPos.top, left: nPos.left });
+			$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 40 });			
+			$('#keyboard_keys').data('active_area', $(this).attr('id'));
+			
+			insertTags = insertTags2;
+		}).blur(function() {
+		});
+		return $(this);
+		
+	};
+
+})(jQuery);
+
+insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
+	var txtarea;
+	if (document.editform && !EUi.usingNew) {
+		txtarea = document.editform.wpTextbox1;
+	} else if (EUi.usingNew) {
+		var aname = $('#keyboard_keys').data('active_area');
+		txtarea = aname ? document.getElementById(aname) : undefined;
+	}
+	if (!txtarea) {
+		// some alternate form? take the first one we can find
+		var areas = document.getElementsByTagName('textarea');
+		txtarea = areas[0];
+	}
+	var selText, isSample = false;
+ 
+	if (document.selection  && document.selection.createRange) { // IE/Opera
+ 
+		//save window scroll position
+		if (document.documentElement && document.documentElement.scrollTop)
+			var winScroll = document.documentElement.scrollTop;
+		else if (document.body)
+			var winScroll = document.body.scrollTop;
+		//get current selection  
+		txtarea.focus();
+		var range = document.selection.createRange();
+		selText = range.text;
+		//insert tags
+		checkSelectedText();
+		range.text = tagOpen + selText + tagClose;
+		//mark sample text as selected
+		if (isSample && range.moveStart) {
+			if (is_opera && is_opera_seven && !is_opera_95)
+				tagClose = tagClose.replace(/\n/g,'');
+			range.moveStart('character', - tagClose.length - selText.length); 
+			range.moveEnd('character', - tagClose.length); 
+		}
+		range.select();   
+		//restore window scroll position
+		if (document.documentElement && document.documentElement.scrollTop)
+			document.documentElement.scrollTop = winScroll;
+		else if (document.body)
+			document.body.scrollTop = winScroll;
+ 
+	} else if (txtarea.selectionStart || txtarea.selectionStart == '0') { // Mozilla
+ 
+		//save textarea scroll position
+		var textScroll = txtarea.scrollTop;
+		//get current selection
+		txtarea.focus();
+		var startPos = txtarea.selectionStart;
+		var endPos = txtarea.selectionEnd;
+		selText = txtarea.value.substring(startPos, endPos);
+		//insert tags
+		checkSelectedText();
+		txtarea.value = txtarea.value.substring(0, startPos)
+			+ tagOpen + selText + tagClose
+			+ txtarea.value.substring(endPos, txtarea.value.length);
+		//set new selection
+		if (isSample) {
+			txtarea.selectionStart = startPos + tagOpen.length;
+			txtarea.selectionEnd = startPos + tagOpen.length + selText.length;
+		} else {
+			txtarea.selectionStart = startPos + tagOpen.length + selText.length + tagClose.length;
+			txtarea.selectionEnd = txtarea.selectionStart;
+		}
+		//restore textarea scroll position
+		txtarea.scrollTop = textScroll;
+	} 
+ 
+	function checkSelectedText(){
+		if (!selText) {
+			selText = sampleText;
+			isSample = true;
+		} else if (selText.charAt(selText.length - 1) == ' ') { //exclude ending space char
+			selText = selText.substring(0, selText.length - 1);
+			tagClose += ' ';
+		} 
+	}
+};
 
 
 // jQuery Alert Dialogs Plugin
@@ -1877,179 +2078,6 @@ $.prototype.init = function(a,c) {
 $.prototype.init.prototype = $.prototype;
 	
 })(jQuery);
-
-
-window.ESpecialChars = {
-	
-	obj : undefined,
-	formerParent : undefined,
-	detached : 0,
-	
-	detach : function() {
-		if (ESpecialChars.detached) {
-			return;
-		}
-		var container = $('#keyboard_keys');
-		ESpecialChars.obj = $('#editpage-specialchars');
-		ESpecialChars.formerParent = ESpecialChars.obj.parent();
-		ESpecialChars.obj.detach();
-		
-		container.append(ESpecialChars.obj);
-		ESpecialChars.detached = 1;
-	},
-	
-	attach : function() {
-		if (!ESpecialChars.detached) {
-			return;
-		}
-		EKeyboard.hide();
-		ESpecialChars.obj.detach();
-		ESpecialChars.formerParent.append(ESpecialChars.obj);
-		ESpecialChars.detached = 0;
-	},
-	
-	toggle : function() {
-		if (ESpecialChars.detached) {
-			ESpecialChars.attach();
-		}
-		else {
-			ESpecialChars.detach();
-		}
-	}
-};
-
-window.EKeyboard = {
-
-	init : function() {
-		var keyboard = $('<div id="keyboard"/>');
-		var keys = $('<div id="keyboard_keys" />');
-		
-		keyboard.hide();
-		keys.hide();
-		$('body').append(keyboard).append(keys);
-		
-		if (EUi.usingNew) {
-			ESpecialChars.detach();
-		}
-		
-		keyboard.click(function() {
-			keys.toggle();
-		});
-		
-	},
-	
-	hide : function() {
-		$('#keyboard').hide();
-		$('#keyboard_keys').hide();		
-	}
-
-};
-
-(function($) {
-			
-	$.fn.keyboard = function () {
-		
-		$(this).focus(function() {
-			if (!$(this).is(':visible')) {
-				EKeyboard.hide();
-				return;
-			}
-			var nPos = $(this).offset();
-			
-			nPos.top += ($(this).height() + 7);
-			nPos.left += 20;
-			$('#keyboard').show().css({ top: nPos.top, left: nPos.left });
-			$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 40 });			
-			$('#keyboard_keys').data('active_area', $(this).attr('id'));
-			
-			insertTags = insertTags2;
-		}).blur(function() {
-		});
-		return $(this);
-		
-	};
-
-})(jQuery);
-
-insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
-	var txtarea;
-	if (document.editform && !EUi.usingNew) {
-		txtarea = document.editform.wpTextbox1;
-	} else if (EUi.usingNew) {
-		var aname = $('#keyboard_keys').data('active_area');
-		txtarea = aname ? document.getElementById(aname) : undefined;
-	}
-	if (!txtarea) {
-		// some alternate form? take the first one we can find
-		var areas = document.getElementsByTagName('textarea');
-		txtarea = areas[0];
-	}
-	var selText, isSample = false;
- 
-	if (document.selection  && document.selection.createRange) { // IE/Opera
- 
-		//save window scroll position
-		if (document.documentElement && document.documentElement.scrollTop)
-			var winScroll = document.documentElement.scrollTop;
-		else if (document.body)
-			var winScroll = document.body.scrollTop;
-		//get current selection  
-		txtarea.focus();
-		var range = document.selection.createRange();
-		selText = range.text;
-		//insert tags
-		checkSelectedText();
-		range.text = tagOpen + selText + tagClose;
-		//mark sample text as selected
-		if (isSample && range.moveStart) {
-			if (is_opera && is_opera_seven && !is_opera_95)
-				tagClose = tagClose.replace(/\n/g,'');
-			range.moveStart('character', - tagClose.length - selText.length); 
-			range.moveEnd('character', - tagClose.length); 
-		}
-		range.select();   
-		//restore window scroll position
-		if (document.documentElement && document.documentElement.scrollTop)
-			document.documentElement.scrollTop = winScroll;
-		else if (document.body)
-			document.body.scrollTop = winScroll;
- 
-	} else if (txtarea.selectionStart || txtarea.selectionStart == '0') { // Mozilla
- 
-		//save textarea scroll position
-		var textScroll = txtarea.scrollTop;
-		//get current selection
-		txtarea.focus();
-		var startPos = txtarea.selectionStart;
-		var endPos = txtarea.selectionEnd;
-		selText = txtarea.value.substring(startPos, endPos);
-		//insert tags
-		checkSelectedText();
-		txtarea.value = txtarea.value.substring(0, startPos)
-			+ tagOpen + selText + tagClose
-			+ txtarea.value.substring(endPos, txtarea.value.length);
-		//set new selection
-		if (isSample) {
-			txtarea.selectionStart = startPos + tagOpen.length;
-			txtarea.selectionEnd = startPos + tagOpen.length + selText.length;
-		} else {
-			txtarea.selectionStart = startPos + tagOpen.length + selText.length + tagClose.length;
-			txtarea.selectionEnd = txtarea.selectionStart;
-		}
-		//restore textarea scroll position
-		txtarea.scrollTop = textScroll;
-	} 
- 
-	function checkSelectedText(){
-		if (!selText) {
-			selText = sampleText;
-			isSample = true;
-		} else if (selText.charAt(selText.length - 1) == ' ') { //exclude ending space char
-			selText = selText.substring(0, selText.length - 1);
-			tagClose += ' ';
-		} 
-	}
-};
 
 
 if ((mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit')

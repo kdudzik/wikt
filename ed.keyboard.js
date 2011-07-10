@@ -44,7 +44,7 @@ window.EKeyboard = {
 		var keys = $('<div id="keyboard_keys" />');
 		
 		keyboard.hide();
-		keys.hide();
+		keys.hide().append(EStr.KEYBOARD_ALWAYS);
 		$('body').append(keyboard).append(keys);
 		
 		if (EUi.usingNew) {

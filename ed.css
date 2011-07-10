@@ -74,6 +74,8 @@ fieldset.ed_section textarea {
 	width: 77%;
 	border: 1px solid khaki;
 	height: 1em;
+	font-family: Consolas, "Lucida Console", monospace;
+	font-size: 9pt;
 }
 
 fieldset.ed_section p {
@@ -101,8 +103,7 @@ label.oblig_subsection {
 
 
 #popup_container {
-	font-family: Arial, sans-serif;
-	font-size: 12px;
+	font-size: 0.8em;
 	min-width: 300px; /* Dialog will be no smaller than this */
 	max-width: 600px; /* Dialog will wrap after this width */
 	background: #FFF;
@@ -127,17 +128,14 @@ label.oblig_subsection {
 }
 
 #popup_title {
-	font-size: 14px;
+	font-size: 1em;
 	font-weight: bold;
 	text-align: center;
 	line-height: 1.75em;
 	color: #666;
-	background: #CCC url(images/title.gif) top repeat-x;
+	background-color: #CCC;
 	border: solid 1px #FFF;
 	border-bottom: solid 1px #999;
-	cursor: default;
-	padding: 0em;
-	margin: 0em;
 }
 
 #popup_content {
@@ -185,7 +183,7 @@ label.oblig_subsection {
 	height: 32px;
 	background-color: lemonchiffon;
 	background-image: url('http://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Input-keyboard.svg/32px-Input-keyboard.svg.png');
-	border: 3px solid PaleGoldenrod;
+	border: 2px solid PaleGoldenrod;
 	padding: 0;
 	position: absolute;
 	z-index: 700;
@@ -194,7 +192,7 @@ label.oblig_subsection {
 #keyboard_keys {
 	font-size: 0.8em;
 	background-color: lemonchiffon;
-	border: 3px solid palegoldenrod;
+	border: 2px solid palegoldenrod;
 	padding: 5px;
 	max-width: 400px;
 	position: absolute;
@@ -207,4 +205,26 @@ label.oblig_subsection {
 
 #keyboard_keys select {
 	width: 100%;
+}
+
+#keyboard_keys #editpage-specialchars.plainlinks a {
+	padding: 1px 2px !important;
+	margin: 0px !important;
+}
+#keyboard_keys #editpage-specialchars.plainlinks a:hover {
+	text-decoration: none;
+	background-color: palegoldenrod !important;
+}
+#keyboard_keys .keyboard_always {
+	margin: 5px 2px;
+}
+#keyboard_keys .keyboard_always a {
+	padding: 2px 7px;
+	font-size: 1.2em;
+	border: 1px solid palegoldenrod;
+	background-color: palegoldenrod;
+}
+#keyboard_keys .keyboard_always a:hover {
+	text-decoration: none;
+	border: 1px solid darkkhaki;
 }

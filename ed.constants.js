@@ -325,7 +325,15 @@ window.EStr = {
 	CONFIRMATION:
 		'Potwierdzenie',
 	QUESTION:
-		'Pytanie'
+		'Pytanie',
+	KEYBOARD_ALWAYS:
+		'<div class="keyboard_always"> \
+		<a href="#" onclick="insertTags(\'•\', \'\', \'\'); return false">•</a> \
+		<a href="#" onclick="insertTags(\'→\', \'\', \'\'); return false">→</a> \
+		<a href="#" onclick="insertTags(\'~\', \'\', \'\'); return false">~</a> \
+		<a href="#" onclick="insertTags(\'–\', \'\', \'\'); return false">–</a> \
+		<a href="#" onclick="insertTags(\'„\', \'”\', \'\'); return false">„”</a> \
+		</div>'
 };
 
 
