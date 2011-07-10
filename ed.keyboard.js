@@ -78,7 +78,7 @@ window.EKeyboard = {
 			nPos.top += ($(this).height() + 7);
 			nPos.left += 20;
 			$('#keyboard').show().css({ top: nPos.top, left: nPos.left });
-			$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 40 });			
+			$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 34 });			
 			$('#keyboard_keys').data('active_area', $(this).attr('id'));
 			
 			insertTags = insertTags2;

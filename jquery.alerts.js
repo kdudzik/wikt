@@ -35,7 +35,7 @@
 		repositionOnResize: true,           // re-centers the dialog on window resize
 		overlayOpacity: .2,                // transparency level of overlay
 		overlayColor: '#000',               // base color of overlay
-		draggable: true,                    // make the dialogs draggable (requires UI Draggables plugin)
+		draggable: false,                    // make the dialogs draggable (requires UI Draggables plugin)
 		okButton: '&nbsp;' + EStr.OK + '&nbsp;',         // text for the OK button
 		cancelButton: '&nbsp;' + EStr.CANCEL + '&nbsp;', // text for the Cancel button
 		dialogClass: null,                  // if specified, this class will be applied to all dialogs

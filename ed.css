@@ -74,7 +74,7 @@ fieldset.ed_section textarea {
 	width: 77%;
 	border: 1px solid khaki;
 	height: 1em;
-	font-family: Consolas, "Lucida Console", monospace;
+	font-family: Consolas, Lucida Console, monospace;
 	font-size: 9pt;
 }
 
@@ -209,11 +209,18 @@ label.oblig_subsection {
 
 #keyboard_keys #editpage-specialchars.plainlinks a {
 	padding: 1px 2px !important;
-	margin: 0px !important;
+	margin: 0 !important;
 }
 #keyboard_keys #editpage-specialchars.plainlinks a:hover {
 	text-decoration: none;
 	background-color: palegoldenrod !important;
+}
+#keyboard_keys #editpage-specialchars.plainlinks a.extiw {
+	padding: 0 !important;
+}
+#keyboard_keys #editpage-specialchars.plainlinks a.extiw:hover {
+	text-decoration: underline;
+	background-color: transparent !important;
 }
 #keyboard_keys .keyboard_always {
 	margin: 5px 2px;

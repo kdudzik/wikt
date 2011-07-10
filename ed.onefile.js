@@ -75,7 +75,7 @@ fieldset.ed_section textarea {\
 	width: 77%;\
 	border: 1px solid khaki;\
 	height: 1em;\
-	font-family: Consolas, "Lucida Console", monospace;\
+	font-family: Consolas, Lucida Console, monospace;\
 	font-size: 9pt;\
 }\
 \
@@ -210,11 +210,18 @@ label.oblig_subsection {\
 \
 #keyboard_keys #editpage-specialchars.plainlinks a {\
 	padding: 1px 2px !important;\
-	margin: 0px !important;\
+	margin: 0 !important;\
 }\
 #keyboard_keys #editpage-specialchars.plainlinks a:hover {\
 	text-decoration: none;\
 	background-color: palegoldenrod !important;\
+}\
+#keyboard_keys #editpage-specialchars.plainlinks a.extiw {\
+	padding: 0 !important;\
+}\
+#keyboard_keys #editpage-specialchars.plainlinks a.extiw:hover {\
+	text-decoration: underline;\
+	background-color: transparent !important;\
 }\
 #keyboard_keys .keyboard_always {\
 	margin: 5px 2px;\
@@ -1377,7 +1384,7 @@ window.EKeyboard = {
 			nPos.top += ($(this).height() + 7);
 			nPos.left += 20;
 			$('#keyboard').show().css({ top: nPos.top, left: nPos.left });
-			$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 40 });			
+			$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 34 });			
 			$('#keyboard_keys').data('active_area', $(this).attr('id'));
 			
 			insertTags = insertTags2;
@@ -1507,7 +1514,7 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 		repositionOnResize: true,           // re-centers the dialog on window resize
 		overlayOpacity: .2,                // transparency level of overlay
 		overlayColor: '#000',               // base color of overlay
-		draggable: true,                    // make the dialogs draggable (requires UI Draggables plugin)
+		draggable: false,                    // make the dialogs draggable (requires UI Draggables plugin)
 		okButton: '&nbsp;' + EStr.OK + '&nbsp;',         // text for the OK button
 		cancelButton: '&nbsp;' + EStr.CANCEL + '&nbsp;', // text for the Cancel button
 		dialogClass: null,                  // if specified, this class will be applied to all dialogs
