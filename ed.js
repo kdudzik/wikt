@@ -1,4 +1,5 @@
 //mw.loader.load('http://pl.wiktionary.org/w/index.php?title=Wikipedysta:ToSter/ed.onefile.js&action=raw&ctype=text/javascript');
+//mw.loader.load('http://localhost/wikt/ed.onefile.js');
 /* */
 
 mw.loader.load('http://localhost/wikt/ed.css', 'text/css');

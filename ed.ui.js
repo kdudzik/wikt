@@ -161,6 +161,7 @@ window.EUi = {
 						
 						EUi.addSection(alpha);
 						EUi.prepareFormSubsections(alpha);
+						EForm.addDefaultTexts(alpha, sec['code']);
 						$.cookie('lastAdded', sec['code']);
 					}
 					$('#ed_menuitem_' + alpha).click();
@@ -275,6 +276,28 @@ window.EUi = {
 	resizeTextareas : function() {
 		$('fieldset.active').find('textarea').autogrow();
 	}
+};
+
+var EForm = {
+		
+	addDefaultTexts : function(alpha, code) {
+		var arr = code == 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
+		for (subs in arr) {
+			var defaultText = arr[subs];
+			$('#ed_' + alpha + '_' + subs).val(defaultText);
+		}
+	},
+	
+	removeDefaultTexts : function(alpha, code) {
+		var arr = code == 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
+		for (subs in arr) {
+			var defaultText = arr[subs];
+			if ($('#ed_' + alpha + '_' + subs).val() == defaultText) {
+				$('#ed_' + alpha + '_' + subs).val('');
+			}
+		}
+	}
+	
 };
 
 

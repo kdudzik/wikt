@@ -251,7 +251,18 @@ window.EConstants = {
 	SUBSECTIONS_WITHOUT_NL :
 		[ 'wymowa', 'transliteracja', 'transkrypcja', 'ortografie', 'klucz', 'kreski', 'czytania' ],
 	SUBSECTIONS_WITH_NL :
-		[ 'znaczenia', 'przykłady', 'tłumaczenia' ]
+		[ 'znaczenia', 'przykłady', 'tłumaczenia' ],
+	SAMPLE_SUBSECTION_CONTENTS_POLISH :
+		{
+		'znaczenia' : "''rzeczownik, rodzaj żeński, męski''\n: (1.1) [[krótki|krótka]] [[definicja]]",
+		'przykłady' : ": (1.1) ''[[przykład|Przykład]] [[zdanie|zdania]].''",
+		'tłumaczenia' : "* angielski: (1.1) [[ ]]"
+		},
+	SAMPLE_SUBSECTION_CONTENTS_FOREIGN :
+		{
+		'znaczenia' : "''rzeczownik, rodzaj żeński, męski''\n: (1.1) [[krótki|krótka]] [[definicja]]",
+		'przykłady' : ": (1.1) ''[[przykład|Przykład]] [[zdanie|zdania]].'' → [[tłumaczenie|Tłumaczenie]] [[zdanie|zdania]]."
+		}
 };
 
 window.EStr = {

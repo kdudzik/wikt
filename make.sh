@@ -9,7 +9,7 @@ CSS=ed.css
 
 echo -n "//<nowiki>
 var css=\"" > $JS
-sed 's/$/\\/g' $CSS >> $JS
+sed 's/$/\\/g' $CSS | sed 's/\"/\\\"/g' >> $JS
 echo "
 \";
 mw.util.addCSS(css);" >> $JS

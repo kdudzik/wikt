@@ -3,7 +3,9 @@ window.EPrinter = {
 		var code = '';
 		var sortableSections = [];
 		for (alpha in Ed.content.sections) {
-			sortableSections.push(Ed.content.sections[alpha]);
+			var sec = Ed.content.sections[alpha];
+			EForm.removeDefaultTexts(alpha, sec['code']);
+			sortableSections.push(sec);
 		}
 		sortableSections.sort(function(a, b) {
 			return a.alpha > b.alpha ? 1 : -1;
@@ -24,6 +26,7 @@ window.EPrinter = {
 					}
 					subs.content = $('#ed_' + sec.alpha + '_' + subs.title.replace(' ', '_')).val();
 					subs.content = $.trim(subs.content);
+					
 					
 					if (subs.title == '' && subs.content != '') {
 						code += subs.content + '\n';

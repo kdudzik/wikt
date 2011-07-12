@@ -74,7 +74,7 @@ fieldset.ed_section textarea {
 	width: 77%;
 	border: 1px solid khaki;
 	height: 1em;
-	font-family: Consolas, Lucida Console, monospace;
+	font-family: Consolas, "Lucida Console", monospace;
 	font-size: 9pt;
 }
 

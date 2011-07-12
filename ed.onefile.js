@@ -75,7 +75,7 @@ fieldset.ed_section textarea {\
 	width: 77%;\
 	border: 1px solid khaki;\
 	height: 1em;\
-	font-family: Consolas, Lucida Console, monospace;\
+	font-family: Consolas, \"Lucida Console\", monospace;\
 	font-size: 9pt;\
 }\
 \
@@ -594,7 +594,9 @@ window.EPrinter = {
 		var code = '';
 		var sortableSections = [];
 		for (alpha in Ed.content.sections) {
-			sortableSections.push(Ed.content.sections[alpha]);
+			var sec = Ed.content.sections[alpha];
+			EForm.removeDefaultTexts(alpha, sec['code']);
+			sortableSections.push(sec);
 		}
 		sortableSections.sort(function(a, b) {
 			return a.alpha > b.alpha ? 1 : -1;
@@ -615,6 +617,7 @@ window.EPrinter = {
 					}
 					subs.content = $('#ed_' + sec.alpha + '_' + subs.title.replace(' ', '_')).val();
 					subs.content = $.trim(subs.content);
+					
 					
 					if (subs.title == '' && subs.content != '') {
 						code += subs.content + '\n';
@@ -936,7 +939,18 @@ window.EConstants = {
 	SUBSECTIONS_WITHOUT_NL :
 		[ 'wymowa', 'transliteracja', 'transkrypcja', 'ortografie', 'klucz', 'kreski', 'czytania' ],
 	SUBSECTIONS_WITH_NL :
-		[ 'znaczenia', 'przykłady', 'tłumaczenia' ]
+		[ 'znaczenia', 'przykłady', 'tłumaczenia' ],
+	SAMPLE_SUBSECTION_CONTENTS_POLISH :
+		{
+		'znaczenia' : "''rzeczownik, rodzaj żeński, męski''\n: (1.1) [[krótki|krótka]] [[definicja]]",
+		'przykłady' : ": (1.1) ''[[przykład|Przykład]] [[zdanie|zdania]].''",
+		'tłumaczenia' : "* angielski: (1.1) [[ ]]"
+		},
+	SAMPLE_SUBSECTION_CONTENTS_FOREIGN :
+		{
+		'znaczenia' : "''rzeczownik, rodzaj żeński, męski''\n: (1.1) [[krótki|krótka]] [[definicja]]",
+		'przykłady' : ": (1.1) ''[[przykład|Przykład]] [[zdanie|zdania]].'' → [[tłumaczenie|Tłumaczenie]] [[zdanie|zdania]]."
+		}
 };
 
 window.EStr = {
@@ -1186,6 +1200,7 @@ window.EUi = {
 						
 						EUi.addSection(alpha);
 						EUi.prepareFormSubsections(alpha);
+						EForm.addDefaultTexts(alpha, sec['code']);
 						$.cookie('lastAdded', sec['code']);
 					}
 					$('#ed_menuitem_' + alpha).click();
@@ -1300,6 +1315,28 @@ window.EUi = {
 	resizeTextareas : function() {
 		$('fieldset.active').find('textarea').autogrow();
 	}
+};
+
+var EForm = {
+		
+	addDefaultTexts : function(alpha, code) {
+		var arr = code == 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
+		for (subs in arr) {
+			var defaultText = arr[subs];
+			$('#ed_' + alpha + '_' + subs).val(defaultText);
+		}
+	},
+	
+	removeDefaultTexts : function(alpha, code) {
+		var arr = code == 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
+		for (subs in arr) {
+			var defaultText = arr[subs];
+			if ($('#ed_' + alpha + '_' + subs).val() == defaultText) {
+				$('#ed_' + alpha + '_' + subs).val('');
+			}
+		}
+	}
+	
 };
 
 
