@@ -55,6 +55,12 @@ window.EKeyboard = {
 			keys.toggle();
 		});
 		
+		$(window).resize(function() {
+			if (document.activeElement) {
+				$(document.activeElement).focus();
+			}
+		});
+		
 	},
 	
 	hide : function() {

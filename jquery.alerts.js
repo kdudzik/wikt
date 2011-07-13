@@ -79,12 +79,8 @@
 			  '</div>');
 			
 			if( $.alerts.dialogClass ) $("#popup_container").addClass($.alerts.dialogClass);
-			
-			// IE6 Fix
-			var pos = ($.browser.msie && parseInt($.browser.version) <= 6 ) ? 'absolute' : 'fixed'; 
-			
+						
 			$("#popup_container").css({
-				position: pos,
 				padding: 0,
 				margin: 0
 			});
@@ -154,8 +150,7 @@
 						if( e.keyCode == 27 ) $("#popup_cancel").trigger('click');
 					});
 					if( value ) $("#popup_prompt").val(value);
-					$("#popup_prompt").keyboard();
-					$("#popup_prompt").focus().select();
+					$("#popup_prompt").keyboard().focus().select();
 				break;
 			}
 			
@@ -209,6 +204,7 @@
 				left: left + 'px'
 			});
 			$("#popup_overlay").height( $(document).height() );
+			$("#popup_prompt").keyboard().focus().select();
 		},
 		
 		_maintainPosition: function(status) {

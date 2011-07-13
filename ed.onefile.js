@@ -114,6 +114,7 @@ label.oblig_subsection {\
 	-webkit-border-radius: 5px;\
 	border-radius: 5px;\
 	z-index: 900;\
+	position: absolute;\
 }\
 \
 #popup_overlay {\
@@ -1398,6 +1399,12 @@ window.EKeyboard = {
 			keys.toggle();
 		});
 		
+		$(window).resize(function() {
+			if (document.activeElement) {
+				$(document.activeElement).focus();
+			}
+		});
+		
 	},
 	
 	hide : function() {
@@ -1595,12 +1602,8 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 			  '</div>');
 			
 			if( $.alerts.dialogClass ) $("#popup_container").addClass($.alerts.dialogClass);
-			
-			// IE6 Fix
-			var pos = ($.browser.msie && parseInt($.browser.version) <= 6 ) ? 'absolute' : 'fixed'; 
-			
+						
 			$("#popup_container").css({
-				position: pos,
 				padding: 0,
 				margin: 0
 			});
@@ -1670,8 +1673,7 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 						if( e.keyCode == 27 ) $("#popup_cancel").trigger('click');
 					});
 					if( value ) $("#popup_prompt").val(value);
-					$("#popup_prompt").keyboard();
-					$("#popup_prompt").focus().select();
+					$("#popup_prompt").keyboard().focus().select();
 				break;
 			}
 			
@@ -1725,6 +1727,7 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 				left: left + 'px'
 			});
 			$("#popup_overlay").height( $(document).height() );
+			$("#popup_prompt").keyboard().focus().select();
 		},
 		
 		_maintainPosition: function(status) {
