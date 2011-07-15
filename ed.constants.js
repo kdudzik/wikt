@@ -262,7 +262,19 @@ window.EConstants = {
 		{
 		'znaczenia' : "''rzeczownik, rodzaj żeński, męski''\n: (1.1) [[krótki|krótka]] [[definicja]]",
 		'przykłady' : ": (1.1) ''[[przykład|Przykład]] [[zdanie|zdania]].'' → [[tłumaczenie|Tłumaczenie]] [[zdanie|zdania]]."
-		}
+		},
+	SECTION_ID_INTRO :
+		'0000',
+	SECTION_ID_INTERNATIONAL :
+		'0001',
+	SECTION_ID_POLISH :
+		'0002',
+	SECTION_ID_POLISH_FOREIGN :
+		'0003',
+	SECTION_ID_CHINESE_SIGN :
+		'0004',
+	SECTION_ID_LATIN_FOREIGN :
+		'lzzacinzzski2'
 };
 
 window.EStr = {

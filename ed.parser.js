@@ -11,18 +11,18 @@ window.EParser = {
 			
 			if (sec.length == 1) {
 				// sekcja zerowa
-				reta['0000'] = {
+				reta[EConstants.SECTION_ID_INTRO] = {
 					content : $.trim(sec[0]),
 					title : '',
-					alpha : '0000',
+					id : EConstants.SECTION_ID_INTRO,
 					initcontent: $.trim(sec[0])
 				};
 			}
 			else {
 				var section = this.getSectionFromTitle($.trim(sec[0]));
-				var alphacode = section.alpha;
-				reta[alphacode] = section;
-				reta[alphacode].content = $.trim(sec[1]);					
+				var id = section.id;
+				reta[id] = section;
+				reta[id].content = $.trim(sec[1]);					
 			}
 		}
 
@@ -30,12 +30,13 @@ window.EParser = {
 	},
 		
 	getSectionFromTitle : function(str) {
+		var template = this.insideTemplate(str);
 		return {
 			'title' : str,
-			'short' : this.insideTemplate(str).replace(/język /, ''),
+			'short' : template.replace(/język /, ''),
 			'content' : '',
-			'alpha' : this.getAlphabetical(str),
-			'code'  : this.getCode(str),
+			'id' : this.langId(template),
+			'code'  : this.langCode(template),
 			'initcontent' : ''
 		};
 	},
@@ -57,27 +58,27 @@ window.EParser = {
 			'title' : EParser.getTitleFromCode(code),
 			'short' : lang.replace(/język /, ''),
 			'content' : '',
-			'alpha' : this.alphabetize(lang),
+			'id' : this.langId(lang),
 			'code'	: code,
 			'initcontent' : ''
 		};
 	},
 	
-	alphabetize : function(langname) {
+	langId : function(langname) {
 		if (langname == EStr.INTERNATIONAL_USAGE) {
-			return '0001';
+			return EConstants.SECTION_ID_INTERNATIONAL;
 		}
 		else if (langname == EStr.POLISH) {
-			return '0002';
+			return EConstants.SECTION_ID_POLISH;
 		}
 		else if (langname == EStr.POLISH_FOREIGN) {
-			return '0003';
+			return EConstants.SECTION_ID_POLISH_FOREIGN;
 		}
 		else if (langname == EStr.CHINESE_SIGN) {
-			return '0005';
+			return EConstants.SECTION_ID_CHINESE_SIGN;
 		}
 		else if (langname == EStr.LATIN_FOREIGN) {
-			return 'lzzacinzzski2';
+			return EConstants.SECTION_ID_LATIN_FOREIGN;
 		}
 		return langname.replace(/język /, '')
 			.replace(/[ąáåã]/g, 'azz').replace(/ć/g, 'czz')
@@ -109,28 +110,22 @@ window.EParser = {
 		return str.replace(/.*\{\{(.*?)(\}\}|\|).*/g, '$1');
 	},
 		
-	getAlphabetical : function(str) {
-		var template = this.insideTemplate(str);
-		return this.alphabetize(template);
-	},
-		
-	getCode : function(str) {
-		var template = this.insideTemplate(str);
+	langCode : function(lang) {
 		var code;
-		if (template.indexOf('język ') != -1) {
-			template = template.replace(/język /, '');
-			code = EConstants.LANG_CODES_LONG[template];
+		if (lang.indexOf('język ') != -1) {
+			lang = lang.replace(/język /, '');
+			code = EConstants.LANG_CODES_LONG[lang];
 		}
 		else {
-			code = EConstants.LANG_CODES_SHORT[template];
+			code = EConstants.LANG_CODES_SHORT[lang];
 		}
-		return code ? code : template;			
+		return code ? code : lang;
 	}
 };
 
 window.ESectionParser = {
 		
-	parse: function(section, alphaname) {
+	parse: function(section) {
 		var subsections = [];
 		var mode = '';
 		var code = section.code;

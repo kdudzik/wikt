@@ -12,9 +12,9 @@ window.Ed = {
 	},
 		
 	parseSectionsToSubsections : function() {
-		for (var alphaname in Ed.content.sections) {
-			var sec = Ed.content.sections[alphaname];
-			ESectionParser.parse(sec, alphaname);
+		for (var id in Ed.content.sections) {
+			var sec = Ed.content.sections[id];
+			ESectionParser.parse(sec);
 		}
 	},
 

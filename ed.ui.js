@@ -55,12 +55,12 @@ window.EUi = {
 		if (!EUi.usingNew) {
 			return false;
 		}
-		var firstTab = EUi.menu.children(":not(#ed_menuitem_0000)").first();
+		var firstTab = EUi.menu.children(":not(#ed_menuitem_" + EConstants.SECTION_ID_INTRO + ")").first();
 		if (firstTab.attr('id') != 'ed_menuitem_new') {
 			firstTab.click();
 		}
-		else if (Ed.content.sections['0000'] != undefined) {
-			$('#ed_menuitem_0000').click();
+		else if (Ed.content.sections[EConstants.SECTION_ID_INTRO] != undefined) {
+			$('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).click();
 		}
 		else {
 			$('#ed_menuitem_new').click();
@@ -69,9 +69,9 @@ window.EUi = {
 		
 	prepareFormSections : function() {
 		var size = 0;
-		for (var alpha in Ed.content.sections) {
-			EUi.addSection(alpha);
-			EUi.prepareFormSubsections(alpha);
+		for (var id in Ed.content.sections) {
+			EUi.addSection(id);
+			EUi.prepareFormSubsections(id);
 			size++;
 		}
 		
@@ -91,23 +91,23 @@ window.EUi = {
 		$(window).resize(EUi.resizeTextareas);
 	},
 		
-	addSection : function(alphaname) {
-		var sec = Ed.content.sections[alphaname];
-		var fset = $('<fieldset class="ed_section" id="ed_section_' + alphaname + '"/>');
+	addSection : function(id) {
+		var sec = Ed.content.sections[id];
+		var fset = $('<fieldset class="ed_section" id="ed_section_' + id + '"/>');
 		
 		fset.appendTo(EUi.content);
 		
-		if (alphaname == '0000') {
+		if (id == EConstants.SECTION_ID_INTRO) {
 			sec.code = EConstants.INTRO;
 			sec.title = '';
 		}
 		
-		var item = $('<li id="ed_menuitem_' + alphaname + '" class="tip menuitem">' + sec.code + '</li>');
-		var tip = alphaname == '0000'
+		var item = $('<li id="ed_menuitem_' + id + '" class="tip menuitem">' + sec.code + '</li>');
+		var tip = id == EConstants.SECTION_ID_INTRO
 				? EStr.INTRO_SECTION
 				: EParser.insideTemplate(sec.title) + '\<br/><small>tytuł sekcji: <tt>' + sec.title + '</tt></small>';
 		item.data({
-				'section' : 'ed_section_' + alphaname,
+				'section' : 'ed_section_' + id,
 				'code' : sec['code'],
 				'tip' : tip 
 			})
@@ -151,21 +151,21 @@ window.EUi = {
 				var sec = EParser.getSectionFromInput(val);
 				
 				if (sec['code']) {
-					var alpha = sec['alpha'];
-					if (Ed.content['sections'][alpha] !== undefined) {
+					var id = sec['id'];
+					if (Ed.content['sections'][id] !== undefined) {
 						jAlert(EStr.ADD_SECTION_ALREADY, EStr.ADD_SECTION_ALREADY_TITLE);
 					}
 					else {
-						Ed.content.sections[alpha] = sec;
-						ESectionParser.parse(sec, alpha);
+						Ed.content.sections[id] = sec;
+						ESectionParser.parse(sec);
 						
-						EUi.addSection(alpha);
-						EUi.prepareFormSubsections(alpha);
-						EForm.addDefaultTexts(alpha, sec['code']);
+						EUi.addSection(id);
+						EUi.prepareFormSubsections(id);
+						EForm.addDefaultTexts(id, sec['code']);
 						$.cookie('lastAdded', sec['code']);
 					}
-					$('#ed_menuitem_' + alpha).click();
-					$('#ed_section_' + alpha + ' textarea').autogrow();
+					$('#ed_menuitem_' + id).click();
+					$('#ed_section_' + id + ' textarea').autogrow();
 				}
 				else {
 					jAlert(EStr.ADD_SECTION_NONEXISTENT, EStr.ADD_SECTION_NONEXISTENT_TITLE, function() {
@@ -175,22 +175,22 @@ window.EUi = {
 			});
 	},
 	
-	editSectionTitle : function(alpha, section) {
+	editSectionTitle : function(id, section) {
 		jPrompt(EStr.EDIT_SECTION_TITLE_MESSAGE, section.title, EStr.EDIT_SECTION_TITLE, function(res) {
 			if (!res) {
 				return;
 			}
 			section.title = res;
 			var tip = EParser.insideTemplate(res) + '\<br/><small>tytuł sekcji: <tt>' + res + '</tt></small>';
-			$('#ed_menuitem_' + alpha).data('tip', tip);
+			$('#ed_menuitem_' + id).data('tip', tip);
 		});
 	},
 	
-	deleteSection : function(alpha, section, force) {
+	deleteSection : function(id, section, force) {
 		var del = function() {
-			delete Ed.content.sections[alpha];
-			$('#ed_menuitem_' + alpha).remove();
-			$('#ed_section_' + alpha).remove();
+			delete Ed.content.sections[id];
+			$('#ed_menuitem_' + id).remove();
+			$('#ed_section_' + id).remove();
 			EUi.clickSection();
 		};
 		if (force) {
@@ -204,31 +204,31 @@ window.EUi = {
 	},
 	
 	deleteEmptySections : function() {
-		for (var alpha in Ed.content.sections) {
-			var sec = Ed.content.sections[alpha];
+		for (var id in Ed.content.sections) {
+			var sec = Ed.content.sections[id];
 			var empty = true;
-			$('#ed_section_' + alpha).find('textarea').each(function() {
+			$('#ed_section_' + id).find('textarea').each(function() {
 				if ($(this).val()) {
 					empty = false;
 				}
 			});
 			if (empty) {
-				EUi.deleteSection(alpha, sec, 1);
+				EUi.deleteSection(id, sec, 1);
 			}
 		}
 	},
 		
-	prepareFormSubsections : function(alpha) {
-		var section = Ed.content['sections'][alpha];
-		var fset = $('#ed_section_' + alpha);
+	prepareFormSubsections : function(id) {
+		var section = Ed.content['sections'][id];
+		var fset = $('#ed_section_' + id);
 				
-		if (alpha != '0000') {
+		if (id != EConstants.SECTION_ID_INTRO) {
 			var editlink = $('<a/>').text(EStr.EDIT_SECTION_TITLE).click(function() {
-				EUi.editSectionTitle(alpha, section);
+				EUi.editSectionTitle(id, section);
 				return false;
 			});
 			var deletelink = $('<a/>').text(EStr.DELETE_SECTION).click(function() {
-				EUi.deleteSection(alpha, section);
+				EUi.deleteSection(id, section);
 				return false;
 			});
 			fset.append($('<p class="top"/>').append(editlink).append(deletelink));
@@ -236,14 +236,14 @@ window.EUi = {
 		
 		for (i = 0; i < section.subsections.length; i++) {
 			if (section.subsections[i].active) {
-				var obj = EUi.getSubsectionObj(alpha, section, section.subsections[i]);
+				var obj = EUi.getSubsectionObj(id, section, section.subsections[i]);
 				fset.append(obj);
 			}
 		}
 	},
 	
-	getSubsectionObj : function(alpha, section, subsection) {
-		var name = alpha + '_' + subsection.title.replace(' ', '_');
+	getSubsectionObj : function(langid, section, subsection) {
+		var name = langid + '_' + subsection.title.replace(' ', '_');
 		
 		var p = $('<p id="ed_subsection_' + name + '"/>');
 		var caption = EConstants.SUBSECTION_TITLE[subsection.title];
@@ -278,23 +278,31 @@ window.EUi = {
 	}
 };
 
-var EForm = {
+window.EForm = {
 		
-	addDefaultTexts : function(alpha, code) {
+	addDefaultTexts : function(langid, code) {
 		var arr = code == 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
 		for (subs in arr) {
 			var defaultText = arr[subs];
-			$('#ed_' + alpha + '_' + subs).val(defaultText);
+			EForm.val(langid, subs, defaultText);
 		}
 	},
 	
-	removeDefaultTexts : function(alpha, code) {
+	removeDefaultTexts : function(langid, code) {
 		var arr = code == 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
 		for (subs in arr) {
 			var defaultText = arr[subs];
-			if ($('#ed_' + alpha + '_' + subs).val() == defaultText) {
-				$('#ed_' + alpha + '_' + subs).val('');
+			if (EForm.val(langid, subs) == defaultText) {
+				EForm.val(langid, subs, '');
 			}
+		}
+	},
+
+	val : function(langid, subsectionTitle, newValue) {
+		if (newValue == undefined) {
+			return $.trim($('#ed_' + langid + '_' + subsectionTitle.replace(' ', '_')).val());
+		} else {
+			$('#ed_' + langid + '_' + subsectionTitle).val(newValue);
 		}
 	}
 	

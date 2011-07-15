@@ -2,20 +2,17 @@ window.EPrinter = {
 	recalculateCode : function(form) {
 		var code = '';
 		var sortableSections = [];
-		for (alpha in Ed.content.sections) {
-			var sec = Ed.content.sections[alpha];
-			EForm.removeDefaultTexts(alpha, sec['code']);
+		for (id in Ed.content.sections) {
+			var sec = Ed.content.sections[id];
+			EForm.removeDefaultTexts(id, sec['code']);
 			sortableSections.push(sec);
 		}
-		sortableSections.sort(function(a, b) {
-			return a.alpha > b.alpha ? 1 : -1;
-		});
+		sortableSections.sort(function(a, b) { return a.id > b.id ? 1 : -1; });
 		
 		for (i in sortableSections) {
 			var sec = sortableSections[i];
-			if (sec.alpha == '0000') {
-				code = $('#ed_0000_').val();
-				code = $.trim(code) + '\n';
+			if (sec.id == EConstants.SECTION_ID_INTRO) {
+				code = EForm.val(EConstants.SECTION_ID_INTRO, '') + '\n';
 			}
 			else {
 				code += '== ' + sec.title + ' ==\n';
@@ -24,10 +21,8 @@ window.EPrinter = {
 					if (!subs.active) {
 						continue;
 					}
-					subs.content = $('#ed_' + sec.alpha + '_' + subs.title.replace(' ', '_')).val();
-					subs.content = $.trim(subs.content);
-					
-					
+					subs.content = EForm.val(sec.id, subs.title);
+										
 					if (subs.title == '' && subs.content != '') {
 						code += subs.content + '\n';
 					}
