@@ -1,5 +1,5 @@
 window.EUi = {
-	
+
 	oldform : undefined,
 	instruction : undefined,
 	form : $('<div id="ed"/>'),
@@ -13,7 +13,7 @@ window.EUi = {
 		EUi.form.append(EUi.menu).append(EUi.content);
 		oldform.before(EUi.form);
 		EUi.usingNew = $.cookie('usenew') == null || $.cookie('usenew') == 1;
-		
+
 		if (EUi.usingNew) {
 			oldform.hide();
 			instruction.hide();
@@ -26,7 +26,7 @@ window.EUi = {
 			instruction.toggle();
 			EUi.form.toggle();
 			ESpecialChars.toggle();
-			
+
 			EUi.usingNew = !EUi.usingNew;
 			if (EUi.usingNew) {
 				Ed.resetNew();
@@ -37,16 +37,16 @@ window.EUi = {
 			$.cookie('usenew', +EUi.usingNew);
 			return false;
 		});
-		
+
 		EUi.prepareFormSections();
 		EUi.rebindFormActions();
 		EKeyboard.init();
 	},
-	
+
 	reset : function() {
 		EUi.menu.html('');
 		EUi.content.html('');
-		
+
 		EUi.prepareFormSections();
 		EUi.rebindFormActions();
 	},
@@ -66,7 +66,7 @@ window.EUi = {
 			$('#ed_menuitem_new').click();
 		}
 	},
-		
+
 	prepareFormSections : function() {
 		var size = 0;
 		for (var id in Ed.content.sections) {
@@ -74,34 +74,34 @@ window.EUi = {
 			EUi.prepareFormSubsections(id);
 			size++;
 		}
-		
+
 		if (EUtil.getParameter('section') == '') {
 			var addItem = $('<li id="ed_menuitem_new" class="tip menuitem">' + EStr.ADD + '</li>');
 			addItem.appendTo(EUi.menu).click(function() {
 				EUi.addNewSection();
 			}).data('tip', EStr.ADD_SECTION);
 		}
-		
+
 		if (size > EConstants.ONELINE_SECTIONS) {
 			$('li.menuitem:nth-child(' + Math.floor(size / 2) + ')').css('clear', 'left');
 		}
-		
+
 		EUi.clickSection();
-		EUi.resizeTextareas();		
+		EUi.resizeTextareas();
 		$(window).resize(EUi.resizeTextareas);
 	},
-		
+
 	addSection : function(id) {
 		var sec = Ed.content.sections[id];
 		var fset = $('<fieldset class="ed_section" id="ed_section_' + id + '"/>');
-		
+
 		fset.appendTo(EUi.content);
-		
+
 		if (id == EConstants.SECTION_ID_INTRO) {
 			sec.code = EConstants.INTRO;
 			sec.title = '';
 		}
-		
+
 		var item = $('<li id="ed_menuitem_' + id + '" class="tip menuitem">' + sec.code + '</li>');
 		var tip = id == EConstants.SECTION_ID_INTRO
 				? EStr.INTRO_SECTION
@@ -109,7 +109,7 @@ window.EUi = {
 		item.data({
 				'section' : 'ed_section_' + id,
 				'code' : sec['code'],
-				'tip' : tip 
+				'tip' : tip
 			})
 			.click(function() {
 				EKeyboard.hide();
@@ -118,7 +118,7 @@ window.EUi = {
 				$(this).addClass('active').siblings().removeClass('active');
 				EUi.resizeTextareas();
 			});
-		
+
 		// insert alphabetically
 		var added = false;
 		EUi.menu.children("li").each(function() {
@@ -130,7 +130,7 @@ window.EUi = {
 		});
 		if (!added) {
 			item.appendTo(EUi.menu);
-		}			
+		}
 	},
 
 	addNewSection : function() {
@@ -141,15 +141,15 @@ window.EUi = {
 		var defaultText = defaultLang
 				? EParser.getTitleFromCode(defaultLang)
 				: mw.config.get('wgPageName') + EStr.ADD_SECTION_TEMPLATE;
-		var message = defaultLang ? EStr.ADD_SECTION_MESSAGE_DEFAULT : EStr.ADD_SECTION_MESSAGE; 
-		
+		var message = defaultLang ? EStr.ADD_SECTION_MESSAGE_DEFAULT : EStr.ADD_SECTION_MESSAGE;
+
 		jPrompt(message, defaultText, EStr.ADD_SECTION_TITLE,
 			function(val) {
 				if (!val) {
 					return false;
 				}
 				var sec = EParser.getSectionFromInput(val);
-				
+
 				if (sec['code']) {
 					var id = sec['id'];
 					if (Ed.content['sections'][id] !== undefined) {
@@ -158,7 +158,7 @@ window.EUi = {
 					else {
 						Ed.content.sections[id] = sec;
 						ESectionParser.parse(sec);
-						
+
 						EUi.addSection(id);
 						EUi.prepareFormSubsections(id);
 						EForm.addDefaultTexts(id, sec['code']);
@@ -170,11 +170,11 @@ window.EUi = {
 				else {
 					jAlert(EStr.ADD_SECTION_NONEXISTENT, EStr.ADD_SECTION_NONEXISTENT_TITLE, function() {
 						EUi.addNewSection();
-					});							
+					});
 				}
 			});
 	},
-	
+
 	editSectionTitle : function(id, section) {
 		jPrompt(EStr.EDIT_SECTION_TITLE_MESSAGE, section.title, EStr.EDIT_SECTION_TITLE, function(res) {
 			if (!res) {
@@ -185,7 +185,7 @@ window.EUi = {
 			$('#ed_menuitem_' + id).data('tip', tip);
 		});
 	},
-	
+
 	deleteSection : function(id, section, force) {
 		var del = function() {
 			delete Ed.content.sections[id];
@@ -202,7 +202,7 @@ window.EUi = {
 			});
 		}
 	},
-	
+
 	deleteEmptySections : function() {
 		for (var id in Ed.content.sections) {
 			var sec = Ed.content.sections[id];
@@ -217,11 +217,11 @@ window.EUi = {
 			}
 		}
 	},
-		
+
 	prepareFormSubsections : function(id) {
 		var section = Ed.content['sections'][id];
 		var fset = $('#ed_section_' + id);
-				
+
 		if (id != EConstants.SECTION_ID_INTRO) {
 			var editlink = $('<a/>').text(EStr.EDIT_SECTION_TITLE).click(function() {
 				EUi.editSectionTitle(id, section);
@@ -233,7 +233,7 @@ window.EUi = {
 			});
 			fset.append($('<p class="top"/>').append(editlink).append(deletelink));
 		}
-		
+
 		for (i = 0; i < section.subsections.length; i++) {
 			if (section.subsections[i].active) {
 				var obj = EUi.getSubsectionObj(id, section, section.subsections[i]);
@@ -241,10 +241,10 @@ window.EUi = {
 			}
 		}
 	},
-	
+
 	getSubsectionObj : function(langid, section, subsection) {
 		var name = langid + '_' + subsection.title.replace(' ', '_');
-		
+
 		var p = $('<p id="ed_subsection_' + name + '"/>');
 		var caption = EConstants.SUBSECTION_TITLE[subsection.title];
 		var label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>');
@@ -258,10 +258,10 @@ window.EUi = {
 			textarea.addClass('bot_subsection');
 		}
 		p.append(label).append(textarea);
-		
+
 		return p;
 	},
-	
+
 	rebindFormActions : function() {
 		this.form.find('textarea').removeAttr('name');
 		this.form.parent('form').submit(function() {
@@ -272,14 +272,14 @@ window.EUi = {
 			return true;
 		});
 	},
-	
+
 	resizeTextareas : function() {
 		$('fieldset.active').find('textarea').autogrow();
 	}
 };
 
 window.EForm = {
-		
+
 	addDefaultTexts : function(langid, code) {
 		var arr = code == 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
 		for (subs in arr) {
@@ -287,7 +287,7 @@ window.EForm = {
 			EForm.val(langid, subs, defaultText);
 		}
 	},
-	
+
 	removeDefaultTexts : function(langid, code) {
 		var arr = code == 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
 		for (subs in arr) {
@@ -305,7 +305,7 @@ window.EForm = {
 			$('#ed_' + langid + '_' + subsectionTitle).val(newValue);
 		}
 	}
-	
+
 };
 
 

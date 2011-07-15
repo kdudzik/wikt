@@ -4,14 +4,14 @@
      * Auto-growing textareas; technique ripped from Facebook
      */
     $.fn.autogrow = function(options) {
-        
+
         this.filter('textarea').each(function() {
-            
+
             var $this       = $(this),
                 minHeight   = 20,
                 maxHeight   = 500,
                 lineHeight  = $this.css('lineHeight');
-            
+
             var shadow = $('<div></div>').css({
                 position:   'absolute',
                 top:        -10000,
@@ -22,29 +22,29 @@
                 lineHeight: $this.css('lineHeight'),
                 resize:     'none'
             }).appendTo(document.body);
-            
+
             var update = function() {
                 var val = this.value.replace(/</g, '&lt;')
                                     .replace(/>/g, '&gt;')
                                     .replace(/&/g, '&amp;')
                                     .replace(/\n$/, '<br/>&nbsp;')
                                     .replace(/\n/g, '<br/>');
-                
+
                 shadow.html(val);
                 $(this).css('height', Math.min(Math.max(shadow.height(), minHeight), maxHeight));
-            
+
             };
-            
+
             $(this).change(update).keyup(update).keydown(update);
-            
+
             update.apply(this);
-            
+
         });
-        
+
         return this;
-        
+
     };
-    
+
 })(jQuery);
 
 window.EFilesLoaded++;

@@ -17,13 +17,13 @@ mw.util.addCSS(css);" >> $JS
 JSFILES=`grep localhost $MAINJS | grep -v loader | cut -c 25- | sed "s/',//g"`
 
 for f in $JSFILES
-do 
+do
 	grep -v EFilesLoaded $f | grep -v ETryInit >> $JS
 	echo "" >> $JS
 done
 
 echo "if ((mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit')" >> $JS
-echo "	&& mw.config.get('wgNamespaceNumber') == 0) {" >> $JS	
+echo "	&& mw.config.get('wgNamespaceNumber') == 0) {" >> $JS
 echo '	$(document).ready(Ed.init);' >> $JS
 echo '}' >> $JS
 

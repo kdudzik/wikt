@@ -172,7 +172,7 @@ label.oblig_subsection {\
 	border: 1px solid darkkhaki;\
 }\
 \
-.tooltip { \
+.tooltip {\
 	padding: 5px;\
 	max-width: 450px;\
 	background-color: lemonchiffon;\
@@ -237,21 +237,22 @@ label.oblig_subsection {\
 	text-decoration: none;\
 	border: 1px solid darkkhaki;\
 }\
+
 ";
 mw.util.addCSS(css);
 /**
- * 
+ *
  */
 
 window.Ed = {
-	
+
 	code : '',
 	content : {},
-			
+
 	parseContentToSections : function() {
 		Ed.content.sections = EParser.getSections(Ed.code);
 	},
-		
+
 	parseSectionsToSubsections : function() {
 		for (var id in Ed.content.sections) {
 			var sec = Ed.content.sections[id];
@@ -263,15 +264,15 @@ window.Ed = {
 		if (EUtil.getParameter('oldid') && EUtil.getParameter('oldid') != mw.config.get('wgCurRevisionId')) {
 			return;
 		}
-			
+
 		var tbox = $('#wpTextbox1'),
 			oldform = $('.wikiEditor-ui'),
 			instruction = $('#nat-instrukcja');
 		Ed.code = tbox.val();
-		
+
 		Ed.parseContentToSections();
 		Ed.parseSectionsToSubsections();
-		
+
 		EUi.prepareForm(oldform, instruction);
 
         $('.tip').livequery(function() {
@@ -281,17 +282,17 @@ window.Ed = {
 			$(this).keyboard();
 		});
 	},
-	
+
 	resetNew : function() {
 		var tbox = $('#wpTextbox1');
 		Ed.content = {};
 		Ed.code = tbox.val();
 		Ed.parseContentToSections();
 		Ed.parseSectionsToSubsections();
-		
+
 		EUi.reset();
-	}	
-	
+	}
+
 };
 
 window.EUtil = {
@@ -306,7 +307,7 @@ window.EUtil = {
 	  else
 	    return decodeURIComponent(results[1].replace(/\+/g, " "));
 	},
-	
+
 	getSection : function() {
 		return self.document.location.hash.replace('#', '');
 	}
@@ -323,7 +324,7 @@ window.EParser = {
 				continue;
 			}
 			sec = sections[s].split('<EN>');
-			
+
 			if (sec.length == 1) {
 				// sekcja zerowa
 				reta[EConstants.SECTION_ID_INTRO] = {
@@ -337,13 +338,13 @@ window.EParser = {
 				var section = this.getSectionFromTitle($.trim(sec[0]));
 				var id = section.id;
 				reta[id] = section;
-				reta[id].content = $.trim(sec[1]);					
+				reta[id].content = $.trim(sec[1]);
 			}
 		}
 
 		return reta;
 	},
-		
+
 	getSectionFromTitle : function(str) {
 		var template = this.insideTemplate(str);
 		return {
@@ -355,7 +356,7 @@ window.EParser = {
 			'initcontent' : ''
 		};
 	},
-	
+
 	getTitleFromCode : function(code) {
 		var pagename = mw.config.get('wgPageName').replace('_', ' ');
 		if (code == 'zh-char' || code == 'zh') {
@@ -365,9 +366,9 @@ window.EParser = {
 			pagename = '{{' + code + '|' + pagename + '}}';
 		}
 		var lang = EConstants.CODE_TO_LANG[code] ? EConstants.CODE_TO_LANG[code] : code;
-		return pagename + ' ({{' + lang + '}})';		
+		return pagename + ' ({{' + lang + '}})';
 	},
-	
+
 	getSectionFromCodeAndLang : function(code, lang) {
 		return {
 			'title' : EParser.getTitleFromCode(code),
@@ -378,7 +379,7 @@ window.EParser = {
 			'initcontent' : ''
 		};
 	},
-	
+
 	langId : function(langname) {
 		if (langname == EStr.INTERNATIONAL_USAGE) {
 			return EConstants.SECTION_ID_INTERNATIONAL;
@@ -403,13 +404,13 @@ window.EParser = {
 			.replace(/ź/g, 'zzy').replace(/ż/g, 'zzz')
 			.replace(/[ \|!\(\)]/g, '_');
 	},
-		
+
 	getSectionFromInput : function(str) {
 		var langname = EConstants.CODE_TO_LANG[str];
 		if (langname !== undefined) {
 			return this.getSectionFromCodeAndLang(str, langname);
 		}
-		
+
 		var code = EConstants.LANG_CODES_SHORT[str];
 		if (code !== undefined) {
 			return this.getSectionFromCodeAndLang(code, str);
@@ -424,7 +425,7 @@ window.EParser = {
 	insideTemplate  : function(str) {
 		return str.replace(/.*\{\{(.*?)(\}\}|\|).*/g, '$1');
 	},
-		
+
 	langCode : function(lang) {
 		var code;
 		if (lang.indexOf('język ') != -1) {
@@ -439,12 +440,12 @@ window.EParser = {
 };
 
 window.ESectionParser = {
-		
+
 	parse: function(section) {
 		var subsections = [];
 		var mode = '';
 		var code = section.code;
-		
+
 		if (!section.title) {
 			mode = 'INTRO';
 		} else if (code == 'pl') {
@@ -466,10 +467,10 @@ window.ESectionParser = {
 		} else {
 			mode = 'LATIN';
 		}
-		subsections.push({ title: '', content: '', shortened: false, active: true });		
+		subsections.push({ title: '', content: '', shortened: false, active: true });
 		for (i in EConstants.SUBSECTIONS.ALL) {
 			subsections.push({
-				title: EConstants.SUBSECTIONS.ALL[i], 
+				title: EConstants.SUBSECTIONS.ALL[i],
 				content: '',
 				shortened: true,
 				initcontent: '',
@@ -477,7 +478,7 @@ window.ESectionParser = {
 				active: true
 			});
 		}
-		
+
 		var targetSubsections;
 		switch (mode) {
 		case 'INTRO':
@@ -501,12 +502,12 @@ window.ESectionParser = {
 		case 'LATIN':
 			targetSubsections = EConstants.SUBSECTIONS.LATIN; break;
 		}
-		
+
 		section.subsections = subsections;
-		section.mode = mode; 
+		section.mode = mode;
 		ESectionParser.parsePreparedSubsections(section, targetSubsections);
 	},
-	
+
 	alternateTitle : function(title) {
 		switch (title) {
 		case 'transliteracja' : return '|trans';
@@ -516,7 +517,7 @@ window.ESectionParser = {
 		default: return '';
 		}
 	},
-		
+
 	parsePreparedSubsections : function(section, targetSubsections) {
 		var str = section.content;
 		var subsections = section.subsections;
@@ -536,7 +537,7 @@ window.ESectionParser = {
 			}
 			return a.index - b.index;
 		});
-		
+
 		for (i in subsections) {
 			var sub = subsections[i];
 			for (j in positions) {
@@ -553,7 +554,7 @@ window.ESectionParser = {
 						var alt = ESectionParser.alternateTitle(sub.title);
 						var repl = new RegExp('\\{\\{(' + sub.title + alt + ')\\}\\}');
 						var changed = sub.content.replace(repl, '');
-						
+
 						if (changed != sub.content) {
 							var firstbreak = changed.search(/\n/);
 							if (firstbreak != -1 && firstbreak < changed.search(/\S/)) {
@@ -574,11 +575,11 @@ window.ESectionParser = {
 			}
 		}
 	},
-	
+
 	obligatorySubsection : function(subsection, section) {
 		return (subsection.title == 'znaczenia') && (section.mode != 'CHINESE');
 	},
-	
+
 	botSubsection : function(subsection, section) {
 		return (subsection.title == 'wymowa') && (section.mode == 'POLISH') && !subsection.content;
 	}
@@ -595,7 +596,7 @@ window.EPrinter = {
 			sortableSections.push(sec);
 		}
 		sortableSections.sort(function(a, b) { return a.id > b.id ? 1 : -1; });
-		
+
 		for (i in sortableSections) {
 			var sec = sortableSections[i];
 			if (sec.id == EConstants.SECTION_ID_INTRO) {
@@ -609,7 +610,7 @@ window.EPrinter = {
 						continue;
 					}
 					subs.content = EForm.val(sec.id, subs.title);
-										
+
 					if (subs.title == '' && subs.content != '') {
 						code += subs.content + '\n';
 					}
@@ -630,26 +631,26 @@ window.EPrinter = {
 		code = $.trim(code);
 		return code;
 	},
-	
+
 	adequateWhitespace : function(subsection) {
 		var str = subsection.content;
 		/*
-		 * Teksty zaczynające się od dwukropka, gwiazdki, zaczynające się od "<references", "{{litera|", "{{kolor|", 
-		 * szablony zaczynające się na "{{zch-", linki do grafiki (file:, grafika: image: media: plik:, to samo dużą literą, 
+		 * Teksty zaczynające się od dwukropka, gwiazdki, zaczynające się od "<references", "{{litera|", "{{kolor|",
+		 * szablony zaczynające się na "{{zch-", linki do grafiki (file:, grafika: image: media: plik:, to samo dużą literą,
 		 * możliwe białe znaki między nawiasami kwadratowymi a tym słowem),...
 		 */
 		if (str.search(/[:\*#]|<references|\{\{(litera|kolor)\||\{\{zch-|\[\[(file|image|grafika|plik|media):/i) == 0) {
 			return '\n';
 		}
 		/*
-		 * ...teksty w polach "znaczenia", "przykłady" oraz "tłumaczenia" nie mogą występować zaraz po szablonie, jeśli 
+		 * ...teksty w polach "znaczenia", "przykłady" oraz "tłumaczenia" nie mogą występować zaraz po szablonie, jeśli
 		 * występują muszą być przeniesione bez dodawania dwukropka.
 		 */
 		if ($.inArray(subsection.title, EConstants.SUBSECTIONS_WITH_NL) != -1) {
 			return '\n';
 		}
 		/*
-		 * Inne teksty składające się z więcej niż jednej linii, powinny być przeniesione z dodaniem dwukropka i spacji 
+		 * Inne teksty składające się z więcej niż jednej linii, powinny być przeniesione z dodaniem dwukropka i spacji
 		 * na początku pierwszej linii
 		 */
 		if (str.indexOf('\n') != -1 && str.search(/[:\*#]/) != 0) {
@@ -662,14 +663,14 @@ window.EPrinter = {
 			return subsection.initmultiline ? '\n: ' : ' ';
 		}
 		/*
-		 * w polach pustych przed edycją: w sekcjach "wymowa", "transliteracja", "transkrypcja", "ortografie", "klucz", 
+		 * w polach pustych przed edycją: w sekcjach "wymowa", "transliteracja", "transkrypcja", "ortografie", "klucz",
 		 * "kreski", "czytania", "hanja-kreski" defaultem jest pisanie bezpośrednio po szablonie (po spacji)...
 		 */
 		if ($.inArray(subsection.title, EConstants.SUBSECTIONS_WITHOUT_NL) != -1) {
 			return ' ';
 		}
 		/*
-		 * a w pozostałych od następnej linii (jeśli nie jest to "znaczenie" ani pierwsza sekcja ani "przykłady", 
+		 * a w pozostałych od następnej linii (jeśli nie jest to "znaczenie" ani pierwsza sekcja ani "przykłady",
 		 * ani "tłumaczenia" a tekst nie zaczyna się od dwukropka lub gwiazdki, to program powinien sam dodać dwukropek i spację)
 		 */
 		return '\n: ';
@@ -678,7 +679,7 @@ window.EPrinter = {
 
 
 /**
- * 
+ *
  */
 
 window.EConstants = {
@@ -773,7 +774,7 @@ window.EConstants = {
 	NON_LATIN_LANGS :
 		['ru', 'uk', 'kk', 'be', 'hy', 'ka', 'he', 'yi', 'ar', 'fa', 'th', 'ur',
 		 'hi', 'bg', 'mk', 'el', 'gr', 'bo', 'cau', 'ab', 'ady', 'akk', 'am', 'arc',
-		 'as', 'bn', 'av', 'ba', 'bal', 'my', 'gez', 'gu', 'got', 'myv', 'ky', 'dz', 'cv', 
+		 'as', 'bn', 'av', 'ba', 'bal', 'my', 'gez', 'gu', 'got', 'myv', 'ky', 'dz', 'cv',
 		 'ce', 'kjh', 'bs', 'ta', 'inh', 'iu', 'kn', 'ks', 'mr', 'km', 'kv', 'kok', 'cr',
 		 'ku', 'lo', 'lez', 'ml', 'dv', 'mn', 'ne', 'new', 'os', 'ps', 'pa', 'rom', 'sa',
 		 'sd', 'ckb', 'cu', 'sux', 'si', 'tab', 'tg', 'tzm', 'te', 'zrp'],
@@ -781,10 +782,10 @@ window.EConstants = {
 		['sr', 'tut', 'jdt', 'lad', 'tt', 'tk', 'ug', 'slovio', 'az', 'crh', 'be'],
 	LANG_CODES_SHORT :
 		{
-		'dżuhuri' : 'jdt', 'esperanto' : 'eo', 'ewe' : 'ee', 'hindi' : 'hi', 
-		'ido' : 'io', 'interlingua' : 'ia', 'inuktitut' : 'iu', 'ladino' : 'lad', 
+		'dżuhuri' : 'jdt', 'esperanto' : 'eo', 'ewe' : 'ee', 'hindi' : 'hi',
+		'ido' : 'io', 'interlingua' : 'ia', 'inuktitut' : 'iu', 'ladino' : 'lad',
 		'lingala' : 'ln', 'lojban' : 'jbo', 'novial' : 'nov', 'papiamento' : 'pap',
-		'pitjantjatjara' : 'pjt', 'sanskryt' : 'sa', 'slovio' : 'slovio', 'sranan tongo' : 'srn', 
+		'pitjantjatjara' : 'pjt', 'sanskryt' : 'sa', 'slovio' : 'slovio', 'sranan tongo' : 'srn',
 		'tetum' : 'tet', 'tok pisin' : 'tpi', 'tupinambá' : 'tpn', 'użycie międzynarodowe' : 'inter',
 		'volapük' : 'vo', 'znak chiński' : 'zh-char', 'jidysz' : 'yi', 'jèrriais' : 'roa',
 		'termin obcy w języku polskim' : 'termin obcy w języku polskim',
@@ -959,7 +960,7 @@ window.EConstants = {
 window.EStr = {
 	TOGGLE_EDITOR :
 		'Przełącz edytor',
-	ADD : 
+	ADD :
 		'+ dodaj',
 	ADD_SECTION_MESSAGE :
 		'Dodajesz nową sekcję językową.<br/>\
@@ -977,17 +978,17 @@ window.EStr = {
 		target="_blank">Zasady tworzenia haseł: Nagłówek</a>.<br/>\
 		Możesz też dodać niestandardowy nagłówek (np. akcenty, linki do poszczególnych wyrazów). W tym celu \
 		wpisz cały kod nagłówka (bez znaków ==).</small>',
-	ADD_SECTION_TEMPLATE : 
+	ADD_SECTION_TEMPLATE :
 		' ({{język …}})',
-	ADD_SECTION_TITLE : 
+	ADD_SECTION_TITLE :
 		'Podaj tytuł sekcji',
-	INTERNATIONAL_USAGE : 
+	INTERNATIONAL_USAGE :
 		'użycie międzynarodowe',
-	POLISH : 
+	POLISH :
 		'język polski',
-	POLISH_FOREIGN : 
+	POLISH_FOREIGN :
 		'termin obcy w języku polskim',
-	LATIN_FOREIGN : 
+	LATIN_FOREIGN :
 		'termin obcy w języku łacińskim',
 	CHINESE_SIGN :
 		'znak chiński',
@@ -1041,7 +1042,7 @@ window.EStr = {
 
 
 window.EUi = {
-	
+
 	oldform : undefined,
 	instruction : undefined,
 	form : $('<div id="ed"/>'),
@@ -1055,7 +1056,7 @@ window.EUi = {
 		EUi.form.append(EUi.menu).append(EUi.content);
 		oldform.before(EUi.form);
 		EUi.usingNew = $.cookie('usenew') == null || $.cookie('usenew') == 1;
-		
+
 		if (EUi.usingNew) {
 			oldform.hide();
 			instruction.hide();
@@ -1068,7 +1069,7 @@ window.EUi = {
 			instruction.toggle();
 			EUi.form.toggle();
 			ESpecialChars.toggle();
-			
+
 			EUi.usingNew = !EUi.usingNew;
 			if (EUi.usingNew) {
 				Ed.resetNew();
@@ -1079,16 +1080,16 @@ window.EUi = {
 			$.cookie('usenew', +EUi.usingNew);
 			return false;
 		});
-		
+
 		EUi.prepareFormSections();
 		EUi.rebindFormActions();
 		EKeyboard.init();
 	},
-	
+
 	reset : function() {
 		EUi.menu.html('');
 		EUi.content.html('');
-		
+
 		EUi.prepareFormSections();
 		EUi.rebindFormActions();
 	},
@@ -1108,7 +1109,7 @@ window.EUi = {
 			$('#ed_menuitem_new').click();
 		}
 	},
-		
+
 	prepareFormSections : function() {
 		var size = 0;
 		for (var id in Ed.content.sections) {
@@ -1116,34 +1117,34 @@ window.EUi = {
 			EUi.prepareFormSubsections(id);
 			size++;
 		}
-		
+
 		if (EUtil.getParameter('section') == '') {
 			var addItem = $('<li id="ed_menuitem_new" class="tip menuitem">' + EStr.ADD + '</li>');
 			addItem.appendTo(EUi.menu).click(function() {
 				EUi.addNewSection();
 			}).data('tip', EStr.ADD_SECTION);
 		}
-		
+
 		if (size > EConstants.ONELINE_SECTIONS) {
 			$('li.menuitem:nth-child(' + Math.floor(size / 2) + ')').css('clear', 'left');
 		}
-		
+
 		EUi.clickSection();
-		EUi.resizeTextareas();		
+		EUi.resizeTextareas();
 		$(window).resize(EUi.resizeTextareas);
 	},
-		
+
 	addSection : function(id) {
 		var sec = Ed.content.sections[id];
 		var fset = $('<fieldset class="ed_section" id="ed_section_' + id + '"/>');
-		
+
 		fset.appendTo(EUi.content);
-		
+
 		if (id == EConstants.SECTION_ID_INTRO) {
 			sec.code = EConstants.INTRO;
 			sec.title = '';
 		}
-		
+
 		var item = $('<li id="ed_menuitem_' + id + '" class="tip menuitem">' + sec.code + '</li>');
 		var tip = id == EConstants.SECTION_ID_INTRO
 				? EStr.INTRO_SECTION
@@ -1151,7 +1152,7 @@ window.EUi = {
 		item.data({
 				'section' : 'ed_section_' + id,
 				'code' : sec['code'],
-				'tip' : tip 
+				'tip' : tip
 			})
 			.click(function() {
 				EKeyboard.hide();
@@ -1160,7 +1161,7 @@ window.EUi = {
 				$(this).addClass('active').siblings().removeClass('active');
 				EUi.resizeTextareas();
 			});
-		
+
 		// insert alphabetically
 		var added = false;
 		EUi.menu.children("li").each(function() {
@@ -1172,7 +1173,7 @@ window.EUi = {
 		});
 		if (!added) {
 			item.appendTo(EUi.menu);
-		}			
+		}
 	},
 
 	addNewSection : function() {
@@ -1183,15 +1184,15 @@ window.EUi = {
 		var defaultText = defaultLang
 				? EParser.getTitleFromCode(defaultLang)
 				: mw.config.get('wgPageName') + EStr.ADD_SECTION_TEMPLATE;
-		var message = defaultLang ? EStr.ADD_SECTION_MESSAGE_DEFAULT : EStr.ADD_SECTION_MESSAGE; 
-		
+		var message = defaultLang ? EStr.ADD_SECTION_MESSAGE_DEFAULT : EStr.ADD_SECTION_MESSAGE;
+
 		jPrompt(message, defaultText, EStr.ADD_SECTION_TITLE,
 			function(val) {
 				if (!val) {
 					return false;
 				}
 				var sec = EParser.getSectionFromInput(val);
-				
+
 				if (sec['code']) {
 					var id = sec['id'];
 					if (Ed.content['sections'][id] !== undefined) {
@@ -1200,7 +1201,7 @@ window.EUi = {
 					else {
 						Ed.content.sections[id] = sec;
 						ESectionParser.parse(sec);
-						
+
 						EUi.addSection(id);
 						EUi.prepareFormSubsections(id);
 						EForm.addDefaultTexts(id, sec['code']);
@@ -1212,11 +1213,11 @@ window.EUi = {
 				else {
 					jAlert(EStr.ADD_SECTION_NONEXISTENT, EStr.ADD_SECTION_NONEXISTENT_TITLE, function() {
 						EUi.addNewSection();
-					});							
+					});
 				}
 			});
 	},
-	
+
 	editSectionTitle : function(id, section) {
 		jPrompt(EStr.EDIT_SECTION_TITLE_MESSAGE, section.title, EStr.EDIT_SECTION_TITLE, function(res) {
 			if (!res) {
@@ -1227,7 +1228,7 @@ window.EUi = {
 			$('#ed_menuitem_' + id).data('tip', tip);
 		});
 	},
-	
+
 	deleteSection : function(id, section, force) {
 		var del = function() {
 			delete Ed.content.sections[id];
@@ -1244,7 +1245,7 @@ window.EUi = {
 			});
 		}
 	},
-	
+
 	deleteEmptySections : function() {
 		for (var id in Ed.content.sections) {
 			var sec = Ed.content.sections[id];
@@ -1259,11 +1260,11 @@ window.EUi = {
 			}
 		}
 	},
-		
+
 	prepareFormSubsections : function(id) {
 		var section = Ed.content['sections'][id];
 		var fset = $('#ed_section_' + id);
-				
+
 		if (id != EConstants.SECTION_ID_INTRO) {
 			var editlink = $('<a/>').text(EStr.EDIT_SECTION_TITLE).click(function() {
 				EUi.editSectionTitle(id, section);
@@ -1275,7 +1276,7 @@ window.EUi = {
 			});
 			fset.append($('<p class="top"/>').append(editlink).append(deletelink));
 		}
-		
+
 		for (i = 0; i < section.subsections.length; i++) {
 			if (section.subsections[i].active) {
 				var obj = EUi.getSubsectionObj(id, section, section.subsections[i]);
@@ -1283,10 +1284,10 @@ window.EUi = {
 			}
 		}
 	},
-	
+
 	getSubsectionObj : function(langid, section, subsection) {
 		var name = langid + '_' + subsection.title.replace(' ', '_');
-		
+
 		var p = $('<p id="ed_subsection_' + name + '"/>');
 		var caption = EConstants.SUBSECTION_TITLE[subsection.title];
 		var label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>');
@@ -1300,10 +1301,10 @@ window.EUi = {
 			textarea.addClass('bot_subsection');
 		}
 		p.append(label).append(textarea);
-		
+
 		return p;
 	},
-	
+
 	rebindFormActions : function() {
 		this.form.find('textarea').removeAttr('name');
 		this.form.parent('form').submit(function() {
@@ -1314,14 +1315,14 @@ window.EUi = {
 			return true;
 		});
 	},
-	
+
 	resizeTextareas : function() {
 		$('fieldset.active').find('textarea').autogrow();
 	}
 };
 
 window.EForm = {
-		
+
 	addDefaultTexts : function(langid, code) {
 		var arr = code == 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
 		for (subs in arr) {
@@ -1329,7 +1330,7 @@ window.EForm = {
 			EForm.val(langid, subs, defaultText);
 		}
 	},
-	
+
 	removeDefaultTexts : function(langid, code) {
 		var arr = code == 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
 		for (subs in arr) {
@@ -1347,17 +1348,17 @@ window.EForm = {
 			$('#ed_' + langid + '_' + subsectionTitle).val(newValue);
 		}
 	}
-	
+
 };
 
 
 
 window.ESpecialChars = {
-	
+
 	obj : undefined,
 	formerParent : undefined,
 	detached : 0,
-	
+
 	detach : function() {
 		if (ESpecialChars.detached) {
 			return;
@@ -1366,11 +1367,11 @@ window.ESpecialChars = {
 		ESpecialChars.obj = $('#editpage-specialchars');
 		ESpecialChars.formerParent = ESpecialChars.obj.parent();
 		ESpecialChars.obj.detach();
-		
+
 		container.append(ESpecialChars.obj);
 		ESpecialChars.detached = 1;
 	},
-	
+
 	attach : function() {
 		if (!ESpecialChars.detached) {
 			return;
@@ -1380,7 +1381,7 @@ window.ESpecialChars = {
 		ESpecialChars.formerParent.append(ESpecialChars.obj);
 		ESpecialChars.detached = 0;
 	},
-	
+
 	toggle : function() {
 		if (ESpecialChars.detached) {
 			ESpecialChars.attach();
@@ -1396,56 +1397,56 @@ window.EKeyboard = {
 	init : function() {
 		var keyboard = $('<div id="keyboard"/>');
 		var keys = $('<div id="keyboard_keys" />');
-		
+
 		keyboard.hide();
 		keys.hide().append(EStr.KEYBOARD_ALWAYS);
 		$('body').append(keyboard).append(keys);
-		
+
 		if (EUi.usingNew) {
 			ESpecialChars.detach();
 		}
-		
+
 		keyboard.click(function() {
 			keys.toggle();
 		});
-		
+
 		$(window).resize(function() {
 			if (document.activeElement) {
 				$(document.activeElement).focus();
 			}
 		});
-		
+
 	},
-	
+
 	hide : function() {
 		$('#keyboard').hide();
-		$('#keyboard_keys').hide();		
+		$('#keyboard_keys').hide();
 	}
 
 };
 
 (function($) {
-			
+
 	$.fn.keyboard = function () {
-		
+
 		$(this).focus(function() {
 			if (!$(this).is(':visible')) {
 				EKeyboard.hide();
 				return;
 			}
 			var nPos = $(this).offset();
-			
+
 			nPos.top += ($(this).height() + 7);
 			nPos.left += 20;
 			$('#keyboard').show().css({ top: nPos.top, left: nPos.left });
-			$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 34 });			
+			$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 34 });
 			$('#keyboard_keys').data('active_area', $(this).attr('id'));
-			
+
 			insertTags = insertTags2;
 		}).blur(function() {
 		});
 		return $(this);
-		
+
 	};
 
 })(jQuery);
@@ -1464,15 +1465,15 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 		txtarea = areas[0];
 	}
 	var selText, isSample = false;
- 
+
 	if (document.selection  && document.selection.createRange) { // IE/Opera
- 
+
 		//save window scroll position
 		if (document.documentElement && document.documentElement.scrollTop)
 			var winScroll = document.documentElement.scrollTop;
 		else if (document.body)
 			var winScroll = document.body.scrollTop;
-		//get current selection  
+		//get current selection
 		txtarea.focus();
 		var range = document.selection.createRange();
 		selText = range.text;
@@ -1483,18 +1484,18 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 		if (isSample && range.moveStart) {
 			if (is_opera && is_opera_seven && !is_opera_95)
 				tagClose = tagClose.replace(/\n/g,'');
-			range.moveStart('character', - tagClose.length - selText.length); 
-			range.moveEnd('character', - tagClose.length); 
+			range.moveStart('character', - tagClose.length - selText.length);
+			range.moveEnd('character', - tagClose.length);
 		}
-		range.select();   
+		range.select();
 		//restore window scroll position
 		if (document.documentElement && document.documentElement.scrollTop)
 			document.documentElement.scrollTop = winScroll;
 		else if (document.body)
 			document.body.scrollTop = winScroll;
- 
+
 	} else if (txtarea.selectionStart || txtarea.selectionStart == '0') { // Mozilla
- 
+
 		//save textarea scroll position
 		var textScroll = txtarea.scrollTop;
 		//get current selection
@@ -1517,8 +1518,8 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 		}
 		//restore textarea scroll position
 		txtarea.scrollTop = textScroll;
-	} 
- 
+	}
+
 	function checkSelectedText(){
 		if (!selText) {
 			selText = sampleText;
@@ -1526,7 +1527,7 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 		} else if (selText.charAt(selText.length - 1) == ' ') { //exclude ending space char
 			selText = selText.substring(0, selText.length - 1);
 			tagClose += ' ';
-		} 
+		}
 	}
 };
 
@@ -1545,7 +1546,7 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 //		jAlert( message, [title, callback] )
 //		jConfirm( message, [title, callback] )
 //		jPrompt( message, [value, title, callback] )
-// 
+//
 // History:
 //
 //		1.00 - Released (29 December 2008)
@@ -1553,16 +1554,16 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 //		1.01 - Fixed bug where unbinding would destroy all resize events
 //
 // License:
-// 
+//
 // This plugin is dual-licensed under the GNU General Public License and the MIT License and
-// is copyright 2008 A Beautiful Site, LLC. 
+// is copyright 2008 A Beautiful Site, LLC.
 //
 (function($) {
-	
+
 	$.alerts = {
-		
+
 		// These properties can be read/written by accessing $.alerts.propertyName from your scripts at any time
-		
+
 		verticalOffset: -75,                // vertical offset of the dialog from center screen, in pixels
 		horizontalOffset: 0,                // horizontal offset of the dialog from center screen, in pixels/
 		repositionOnResize: true,           // re-centers the dialog on window resize
@@ -1572,37 +1573,37 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 		okButton: '&nbsp;' + EStr.OK + '&nbsp;',         // text for the OK button
 		cancelButton: '&nbsp;' + EStr.CANCEL + '&nbsp;', // text for the Cancel button
 		dialogClass: null,                  // if specified, this class will be applied to all dialogs
-		
+
 		// Public methods
-		
+
 		alert: function(message, title, callback) {
 			if( title == null ) title = EStr.WARNING;
 			$.alerts._show(title, message, null, 'alert', function(result) {
 				if( callback ) callback(result);
 			});
 		},
-		
+
 		confirm: function(message, title, callback) {
 			if( title == null ) title = EStr.CONFIRMATION;
 			$.alerts._show(title, message, null, 'confirm', function(result) {
 				if( callback ) callback(result);
 			});
 		},
-			
+
 		prompt: function(message, value, title, callback) {
 			if( title == null ) title = EStr.QUESTION;
 			$.alerts._show(title, message, value, 'prompt', function(result) {
 				if( callback ) callback(result);
 			});
 		},
-		
+
 		// Private methods
-		
+
 		_show: function(title, msg, value, type, callback) {
-			
+
 			$.alerts._hide();
 			$.alerts._overlay('show');
-			
+
 			$("BODY").append(
 			  '<div id="popup_container">' +
 			    '<h1 id="popup_title"></h1>' +
@@ -1610,27 +1611,27 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 			      '<div id="popup_message"></div>' +
 				'</div>' +
 			  '</div>');
-			
+
 			if( $.alerts.dialogClass ) $("#popup_container").addClass($.alerts.dialogClass);
-						
+
 			$("#popup_container").css({
 				padding: 0,
 				margin: 0
 			});
-			
+
 			$("#popup_title").text(title);
 			$("#popup_content").addClass(type);
 			$("#popup_message").text(msg);
 			$("#popup_message").html( $("#popup_message").text().replace(/\n/g, '<br />') );
-			
+
 			$("#popup_container").css({
 				minWidth: $("#popup_container").outerWidth(),
 				maxWidth: $("#popup_container").outerWidth()
 			});
-			
+
 			$.alerts._reposition();
 			$.alerts._maintainPosition(true);
-			
+
 			switch( type ) {
 				case 'alert':
 					$('#popup_container').addClass('alert').removeClass('confirm').removeClass('prompt');
@@ -1686,7 +1687,7 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 					$("#popup_prompt").keyboard().focus().select();
 				break;
 			}
-			
+
 			// Make draggable
 			if( $.alerts.draggable ) {
 				try {
@@ -1695,13 +1696,13 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 				} catch(e) { /* requires jQuery UI draggables */ }
 			}
 		},
-		
+
 		_hide: function() {
 			$("#popup_container").remove();
 			$.alerts._overlay('hide');
 			$.alerts._maintainPosition(false);
 		},
-		
+
 		_overlay: function(status) {
 			switch( status ) {
 				case 'show':
@@ -1722,16 +1723,16 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 				break;
 			}
 		},
-		
+
 		_reposition: function() {
 			var top = (($(window).height() / 2) - ($("#popup_container").outerHeight() / 2)) + $.alerts.verticalOffset;
 			var left = (($(window).width() / 2) - ($("#popup_container").outerWidth() / 2)) + $.alerts.horizontalOffset;
 			if( top < 0 ) top = 0;
 			if( left < 0 ) left = 0;
-			
+
 			// IE6 fix
 			if( $.browser.msie && parseInt($.browser.version) <= 6 ) top = top + $(window).scrollTop();
-			
+
 			$("#popup_container").css({
 				top: top + 'px',
 				left: left + 'px'
@@ -1739,7 +1740,7 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 			$("#popup_overlay").height( $(document).height() );
 			$("#popup_prompt").keyboard().focus().select();
 		},
-		
+
 		_maintainPosition: function(status) {
 			if( $.alerts.repositionOnResize ) {
 				switch(status) {
@@ -1752,22 +1753,22 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 				}
 			}
 		}
-		
+
 	};
-	
+
 	// Shortcut functions
 	jAlert = function(message, title, callback) {
 		$.alerts.alert(message, title, callback);
 	};
-	
+
 	jConfirm = function(message, title, callback) {
 		$.alerts.confirm(message, title, callback);
 	};
-		
+
 	jPrompt = function(message, value, title, callback) {
 		$.alerts.prompt(message, value, title, callback);
 	};
-	
+
 })(jQuery);
 
 
@@ -1785,10 +1786,10 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 	copies of the Software, and to permit persons to whom the
 	Software is furnished to do so, subject to the following
 	conditions:
-	
+
 	The above copyright notice and this permission notice shall be
 	included in all copies or substantial portions of the Software.
-	
+
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
 	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -1799,37 +1800,37 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 	OTHER DEALINGS IN THE SOFTWARE.
 **************************************************************************/
 
-(function($){  
+(function($){
 	$.fn.tooltip = function () {
-		
+
 		var tooltip = $('<div class="tooltip"/>');
 		tooltip.css('position', 'absolute').css('z-index', '1000').appendTo($('body'));
-		
+
 		// When we hover over the element that we want the tooltip applied to
 		$(this).hover(function() {
-					
+
 			tooltip.html($(this).data('tip'));
-			
+
 			// Offsets so that the tooltip is centered over the element it is being applied to but
 			// raise it up above the element so it isn't covering it.
 			var yOffset = tooltip.height() + 17;
 			var xOffset = (((tooltip.width() - 10) / 2)) - ($(this).width() / 2);
-			
+
 			// Grab the coordinates for the element with the tooltip and make a new copy
 			// so that we can keep the original un-touched.
 			var pos = $(this).offset();
 			var nPos = pos;
-			
+
 			// Add the offsets to the tooltip position
 			nPos.top = pos.top - yOffset;
 			nPos.left = pos.left - xOffset;
-			
+
 			tooltip.css(nPos).show();
-			
+
 		}, function() {
-			tooltip.hide();			
+			tooltip.hide();
 		});
-		
+
 	};
 
 })(jQuery);
@@ -1841,14 +1842,14 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
      * Auto-growing textareas; technique ripped from Facebook
      */
     $.fn.autogrow = function(options) {
-        
+
         this.filter('textarea').each(function() {
-            
+
             var $this       = $(this),
                 minHeight   = 20,
                 maxHeight   = 500,
                 lineHeight  = $this.css('lineHeight');
-            
+
             var shadow = $('<div></div>').css({
                 position:   'absolute',
                 top:        -10000,
@@ -1859,34 +1860,34 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
                 lineHeight: $this.css('lineHeight'),
                 resize:     'none'
             }).appendTo(document.body);
-            
+
             var update = function() {
                 var val = this.value.replace(/</g, '&lt;')
                                     .replace(/>/g, '&gt;')
                                     .replace(/&/g, '&amp;')
                                     .replace(/\n$/, '<br/>&nbsp;')
                                     .replace(/\n/g, '<br/>');
-                
+
                 shadow.html(val);
                 $(this).css('height', Math.min(Math.max(shadow.height(), minHeight), maxHeight));
-            
+
             };
-            
+
             $(this).change(update).keyup(update).keydown(update);
-            
+
             update.apply(this);
-            
+
         });
-        
+
         return this;
-        
+
     };
-    
+
 })(jQuery);
 
 
 /*! Copyright (c) 2008 Brandon Aaron (http://brandonaaron.net)
- * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) 
+ * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
  *
  * Version: 1.0.3
@@ -1895,15 +1896,15 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
  */
 
 (function($) {
-	
+
 $.extend($.fn, {
 	livequery: function(type, fn, fn2) {
 		var self = this, q;
-		
+
 		// Handle different call patterns
 		if ($.isFunction(type))
 			fn2 = fn, fn = type, type = undefined;
-			
+
 		// See if Live Query already exists
 		$.each( $.livequery.queries, function(i, query) {
 			if ( self.selector == query.selector && self.context == query.context &&
@@ -1911,34 +1912,34 @@ $.extend($.fn, {
 					// Found the query, exit the each loop
 					return (q = query) && false;
 		});
-		
+
 		// Create new Live Query if it wasn't found
 		q = q || new $.livequery(this.selector, this.context, type, fn, fn2);
-		
+
 		// Make sure it is running
 		q.stopped = false;
-		
+
 		// Run it immediately for the first time
 		q.run();
-		
+
 		// Contnue the chain
 		return this;
 	},
-	
+
 	expire: function(type, fn, fn2) {
 		var self = this;
-		
+
 		// Handle different call patterns
 		if ($.isFunction(type))
 			fn2 = fn, fn = type, type = undefined;
-			
+
 		// Find the Live Query based on arguments and stop it
 		$.each( $.livequery.queries, function(i, query) {
-			if ( self.selector == query.selector && self.context == query.context && 
+			if ( self.selector == query.selector && self.context == query.context &&
 				(!type || type == query.type) && (!fn || fn.$lqguid == query.fn.$lqguid) && (!fn2 || fn2.$lqguid == query.fn2.$lqguid) && !this.stopped )
 					$.livequery.stop(query.id);
 		});
-		
+
 		// Continue the chain
 		return this;
 	}
@@ -1952,14 +1953,14 @@ $.livequery = function(selector, context, type, fn, fn2) {
 	this.fn2      = fn2;
 	this.elements = [];
 	this.stopped  = false;
-	
+
 	// The id is the index of the Live Query in $.livequery.queries
 	this.id = $.livequery.queries.push(this)-1;
-	
+
 	// Mark the functions for matching later on
 	fn.$lqguid = fn.$lqguid || $.livequery.guid++;
 	if (fn2) fn2.$lqguid = fn2.$lqguid || $.livequery.guid++;
-	
+
 	// Return the Live Query
 	return this;
 };
@@ -1967,7 +1968,7 @@ $.livequery = function(selector, context, type, fn, fn2) {
 $.livequery.prototype = {
 	stop: function() {
 		var query = this;
-		
+
 		if ( this.type )
 			// Unbind all bound events
 			this.elements.unbind(this.type, this.fn);
@@ -1976,30 +1977,30 @@ $.livequery.prototype = {
 			this.elements.each(function(i, el) {
 				query.fn2.apply(el);
 			});
-			
+
 		// Clear out matched elements
 		this.elements = [];
-		
+
 		// Stop the Live Query from running until restarted
 		this.stopped = true;
 	},
-	
+
 	run: function() {
 		// Short-circuit if stopped
 		if ( this.stopped ) return;
 		var query = this;
-		
+
 		var oEls = this.elements,
 			els  = $(this.selector, this.context),
 			nEls = els.not(oEls);
-		
+
 		// Set elements to the latest set of matched elements
 		this.elements = els;
-		
+
 		if (this.type) {
 			// Bind events to newly matched elements
 			nEls.bind(this.type, this.fn);
-			
+
 			// Unbind events to elements no longer matched
 			if (oEls.length > 0)
 				$.each(oEls, function(i, el) {
@@ -2012,7 +2013,7 @@ $.livequery.prototype = {
 			nEls.each(function() {
 				query.fn.apply(this);
 			});
-			
+
 			// Call the second function for elements no longer matched
 			if ( this.fn2 && oEls.length > 0 )
 				$.each(oEls, function(i, el) {
@@ -2029,7 +2030,7 @@ $.extend($.livequery, {
 	queue: [],
 	running: false,
 	timeout: null,
-	
+
 	checkQueue: function() {
 		if ( $.livequery.running && $.livequery.queue.length ) {
 			var length = $.livequery.queue.length;
@@ -2038,41 +2039,41 @@ $.extend($.livequery, {
 				$.livequery.queries[ $.livequery.queue.shift() ].run();
 		}
 	},
-	
+
 	pause: function() {
 		// Don't run anymore Live Queries until restarted
 		$.livequery.running = false;
 	},
-	
+
 	play: function() {
 		// Restart Live Queries
 		$.livequery.running = true;
 		// Request a run of the Live Queries
 		$.livequery.run();
 	},
-	
+
 	registerPlugin: function() {
 		$.each( arguments, function(i,n) {
 			// Short-circuit if the method doesn't exist
 			if (!$.fn[n]) return;
-			
+
 			// Save a reference to the original method
 			var old = $.fn[n];
-			
+
 			// Create a new method
 			$.fn[n] = function() {
 				// Call the original method
 				var r = old.apply(this, arguments);
-				
+
 				// Request a run of the Live Queries
 				$.livequery.run();
-				
+
 				// Return the original methods result
 				return r;
 			};
 		});
 	},
-	
+
 	run: function(id) {
 		if (id != undefined) {
 			// Put the particular Live Query in the queue if it doesn't already exist
@@ -2085,13 +2086,13 @@ $.extend($.livequery, {
 				if ( $.inArray(id, $.livequery.queue) < 0 )
 					$.livequery.queue.push( id );
 			});
-		
+
 		// Clear timeout if it already exists
 		if ($.livequery.timeout) clearTimeout($.livequery.timeout);
 		// Create a timeout to check the queue and actually run the Live Queries
 		$.livequery.timeout = setTimeout($.livequery.checkQueue, 20);
 	},
-	
+
 	stop: function(id) {
 		if (id != undefined)
 			// Stop are particular Live Query
@@ -2118,22 +2119,22 @@ var init = $.prototype.init;
 $.prototype.init = function(a,c) {
 	// Call the original init and save the result
 	var r = init.apply(this, arguments);
-	
+
 	// Copy over properties if they exist already
 	if (a && a.selector)
 		r.context = a.context, r.selector = a.selector;
-		
+
 	// Set properties
 	if ( typeof a == 'string' )
 		r.context = c || document, r.selector = a;
-	
+
 	// Return the result
 	return r;
 };
 
 // Give the init function the jQuery prototype for later instantiation (needed after Rev 4091)
 $.prototype.init.prototype = $.prototype;
-	
+
 })(jQuery);
 
 

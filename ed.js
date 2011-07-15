@@ -27,11 +27,11 @@ window.ETryInit = function() {
 };
 
 if ((mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit')
-		&& mw.config.get('wgNamespaceNumber') == 0) {	
+		&& mw.config.get('wgNamespaceNumber') == 0) {
 	for (i in window.EFiles) {
 		mw.loader.load(window.EFiles[i]);
 	}
-		
+
 	window.EFilesLoaded++;
 	window.ETryInit();
 }

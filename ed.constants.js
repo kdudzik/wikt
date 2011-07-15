@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 
 window.EConstants = {
@@ -94,7 +94,7 @@ window.EConstants = {
 	NON_LATIN_LANGS :
 		['ru', 'uk', 'kk', 'be', 'hy', 'ka', 'he', 'yi', 'ar', 'fa', 'th', 'ur',
 		 'hi', 'bg', 'mk', 'el', 'gr', 'bo', 'cau', 'ab', 'ady', 'akk', 'am', 'arc',
-		 'as', 'bn', 'av', 'ba', 'bal', 'my', 'gez', 'gu', 'got', 'myv', 'ky', 'dz', 'cv', 
+		 'as', 'bn', 'av', 'ba', 'bal', 'my', 'gez', 'gu', 'got', 'myv', 'ky', 'dz', 'cv',
 		 'ce', 'kjh', 'bs', 'ta', 'inh', 'iu', 'kn', 'ks', 'mr', 'km', 'kv', 'kok', 'cr',
 		 'ku', 'lo', 'lez', 'ml', 'dv', 'mn', 'ne', 'new', 'os', 'ps', 'pa', 'rom', 'sa',
 		 'sd', 'ckb', 'cu', 'sux', 'si', 'tab', 'tg', 'tzm', 'te', 'zrp'],
@@ -102,10 +102,10 @@ window.EConstants = {
 		['sr', 'tut', 'jdt', 'lad', 'tt', 'tk', 'ug', 'slovio', 'az', 'crh', 'be'],
 	LANG_CODES_SHORT :
 		{
-		'dżuhuri' : 'jdt', 'esperanto' : 'eo', 'ewe' : 'ee', 'hindi' : 'hi', 
-		'ido' : 'io', 'interlingua' : 'ia', 'inuktitut' : 'iu', 'ladino' : 'lad', 
+		'dżuhuri' : 'jdt', 'esperanto' : 'eo', 'ewe' : 'ee', 'hindi' : 'hi',
+		'ido' : 'io', 'interlingua' : 'ia', 'inuktitut' : 'iu', 'ladino' : 'lad',
 		'lingala' : 'ln', 'lojban' : 'jbo', 'novial' : 'nov', 'papiamento' : 'pap',
-		'pitjantjatjara' : 'pjt', 'sanskryt' : 'sa', 'slovio' : 'slovio', 'sranan tongo' : 'srn', 
+		'pitjantjatjara' : 'pjt', 'sanskryt' : 'sa', 'slovio' : 'slovio', 'sranan tongo' : 'srn',
 		'tetum' : 'tet', 'tok pisin' : 'tpi', 'tupinambá' : 'tpn', 'użycie międzynarodowe' : 'inter',
 		'volapük' : 'vo', 'znak chiński' : 'zh-char', 'jidysz' : 'yi', 'jèrriais' : 'roa',
 		'termin obcy w języku polskim' : 'termin obcy w języku polskim',
@@ -280,7 +280,7 @@ window.EConstants = {
 window.EStr = {
 	TOGGLE_EDITOR :
 		'Przełącz edytor',
-	ADD : 
+	ADD :
 		'+ dodaj',
 	ADD_SECTION_MESSAGE :
 		'Dodajesz nową sekcję językową.<br/>\
@@ -298,17 +298,17 @@ window.EStr = {
 		target="_blank">Zasady tworzenia haseł: Nagłówek</a>.<br/>\
 		Możesz też dodać niestandardowy nagłówek (np. akcenty, linki do poszczególnych wyrazów). W tym celu \
 		wpisz cały kod nagłówka (bez znaków ==).</small>',
-	ADD_SECTION_TEMPLATE : 
+	ADD_SECTION_TEMPLATE :
 		' ({{język …}})',
-	ADD_SECTION_TITLE : 
+	ADD_SECTION_TITLE :
 		'Podaj tytuł sekcji',
-	INTERNATIONAL_USAGE : 
+	INTERNATIONAL_USAGE :
 		'użycie międzynarodowe',
-	POLISH : 
+	POLISH :
 		'język polski',
-	POLISH_FOREIGN : 
+	POLISH_FOREIGN :
 		'termin obcy w języku polskim',
-	LATIN_FOREIGN : 
+	LATIN_FOREIGN :
 		'termin obcy w języku łacińskim',
 	CHINESE_SIGN :
 		'znak chiński',

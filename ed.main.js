@@ -1,16 +1,16 @@
 /**
- * 
+ *
  */
 
 window.Ed = {
-	
+
 	code : '',
 	content : {},
-			
+
 	parseContentToSections : function() {
 		Ed.content.sections = EParser.getSections(Ed.code);
 	},
-		
+
 	parseSectionsToSubsections : function() {
 		for (var id in Ed.content.sections) {
 			var sec = Ed.content.sections[id];
@@ -22,15 +22,15 @@ window.Ed = {
 		if (EUtil.getParameter('oldid') && EUtil.getParameter('oldid') != mw.config.get('wgCurRevisionId')) {
 			return;
 		}
-			
+
 		var tbox = $('#wpTextbox1'),
 			oldform = $('.wikiEditor-ui'),
 			instruction = $('#nat-instrukcja');
 		Ed.code = tbox.val();
-		
+
 		Ed.parseContentToSections();
 		Ed.parseSectionsToSubsections();
-		
+
 		EUi.prepareForm(oldform, instruction);
 
         $('.tip').livequery(function() {
@@ -40,17 +40,17 @@ window.Ed = {
 			$(this).keyboard();
 		});
 	},
-	
+
 	resetNew : function() {
 		var tbox = $('#wpTextbox1');
 		Ed.content = {};
 		Ed.code = tbox.val();
 		Ed.parseContentToSections();
 		Ed.parseSectionsToSubsections();
-		
+
 		EUi.reset();
-	}	
-	
+	}
+
 };
 
 window.EUtil = {
@@ -65,7 +65,7 @@ window.EUtil = {
 	  else
 	    return decodeURIComponent(results[1].replace(/\+/g, " "));
 	},
-	
+
 	getSection : function() {
 		return self.document.location.hash.replace('#', '');
 	}

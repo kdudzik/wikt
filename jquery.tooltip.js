@@ -12,10 +12,10 @@
 	copies of the Software, and to permit persons to whom the
 	Software is furnished to do so, subject to the following
 	conditions:
-	
+
 	The above copyright notice and this permission notice shall be
 	included in all copies or substantial portions of the Software.
-	
+
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
 	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -26,37 +26,37 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 **************************************************************************/
 
-(function($){  
+(function($){
 	$.fn.tooltip = function () {
-		
+
 		var tooltip = $('<div class="tooltip"/>');
 		tooltip.css('position', 'absolute').css('z-index', '1000').appendTo($('body'));
-		
+
 		// When we hover over the element that we want the tooltip applied to
 		$(this).hover(function() {
-					
+
 			tooltip.html($(this).data('tip'));
-			
+
 			// Offsets so that the tooltip is centered over the element it is being applied to but
 			// raise it up above the element so it isn't covering it.
 			var yOffset = tooltip.height() + 17;
 			var xOffset = (((tooltip.width() - 10) / 2)) - ($(this).width() / 2);
-			
+
 			// Grab the coordinates for the element with the tooltip and make a new copy
 			// so that we can keep the original un-touched.
 			var pos = $(this).offset();
 			var nPos = pos;
-			
+
 			// Add the offsets to the tooltip position
 			nPos.top = pos.top - yOffset;
 			nPos.left = pos.left - xOffset;
-			
+
 			tooltip.css(nPos).show();
-			
+
 		}, function() {
-			tooltip.hide();			
+			tooltip.hide();
 		});
-		
+
 	};
 
 })(jQuery);

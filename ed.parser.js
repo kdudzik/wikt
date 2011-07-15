@@ -8,7 +8,7 @@ window.EParser = {
 				continue;
 			}
 			sec = sections[s].split('<EN>');
-			
+
 			if (sec.length == 1) {
 				// sekcja zerowa
 				reta[EConstants.SECTION_ID_INTRO] = {
@@ -22,13 +22,13 @@ window.EParser = {
 				var section = this.getSectionFromTitle($.trim(sec[0]));
 				var id = section.id;
 				reta[id] = section;
-				reta[id].content = $.trim(sec[1]);					
+				reta[id].content = $.trim(sec[1]);
 			}
 		}
 
 		return reta;
 	},
-		
+
 	getSectionFromTitle : function(str) {
 		var template = this.insideTemplate(str);
 		return {
@@ -40,7 +40,7 @@ window.EParser = {
 			'initcontent' : ''
 		};
 	},
-	
+
 	getTitleFromCode : function(code) {
 		var pagename = mw.config.get('wgPageName').replace('_', ' ');
 		if (code == 'zh-char' || code == 'zh') {
@@ -50,9 +50,9 @@ window.EParser = {
 			pagename = '{{' + code + '|' + pagename + '}}';
 		}
 		var lang = EConstants.CODE_TO_LANG[code] ? EConstants.CODE_TO_LANG[code] : code;
-		return pagename + ' ({{' + lang + '}})';		
+		return pagename + ' ({{' + lang + '}})';
 	},
-	
+
 	getSectionFromCodeAndLang : function(code, lang) {
 		return {
 			'title' : EParser.getTitleFromCode(code),
@@ -63,7 +63,7 @@ window.EParser = {
 			'initcontent' : ''
 		};
 	},
-	
+
 	langId : function(langname) {
 		if (langname == EStr.INTERNATIONAL_USAGE) {
 			return EConstants.SECTION_ID_INTERNATIONAL;
@@ -88,13 +88,13 @@ window.EParser = {
 			.replace(/ź/g, 'zzy').replace(/ż/g, 'zzz')
 			.replace(/[ \|!\(\)]/g, '_');
 	},
-		
+
 	getSectionFromInput : function(str) {
 		var langname = EConstants.CODE_TO_LANG[str];
 		if (langname !== undefined) {
 			return this.getSectionFromCodeAndLang(str, langname);
 		}
-		
+
 		var code = EConstants.LANG_CODES_SHORT[str];
 		if (code !== undefined) {
 			return this.getSectionFromCodeAndLang(code, str);
@@ -109,7 +109,7 @@ window.EParser = {
 	insideTemplate  : function(str) {
 		return str.replace(/.*\{\{(.*?)(\}\}|\|).*/g, '$1');
 	},
-		
+
 	langCode : function(lang) {
 		var code;
 		if (lang.indexOf('język ') != -1) {
@@ -124,12 +124,12 @@ window.EParser = {
 };
 
 window.ESectionParser = {
-		
+
 	parse: function(section) {
 		var subsections = [];
 		var mode = '';
 		var code = section.code;
-		
+
 		if (!section.title) {
 			mode = 'INTRO';
 		} else if (code == 'pl') {
@@ -151,10 +151,10 @@ window.ESectionParser = {
 		} else {
 			mode = 'LATIN';
 		}
-		subsections.push({ title: '', content: '', shortened: false, active: true });		
+		subsections.push({ title: '', content: '', shortened: false, active: true });
 		for (i in EConstants.SUBSECTIONS.ALL) {
 			subsections.push({
-				title: EConstants.SUBSECTIONS.ALL[i], 
+				title: EConstants.SUBSECTIONS.ALL[i],
 				content: '',
 				shortened: true,
 				initcontent: '',
@@ -162,7 +162,7 @@ window.ESectionParser = {
 				active: true
 			});
 		}
-		
+
 		var targetSubsections;
 		switch (mode) {
 		case 'INTRO':
@@ -186,12 +186,12 @@ window.ESectionParser = {
 		case 'LATIN':
 			targetSubsections = EConstants.SUBSECTIONS.LATIN; break;
 		}
-		
+
 		section.subsections = subsections;
-		section.mode = mode; 
+		section.mode = mode;
 		ESectionParser.parsePreparedSubsections(section, targetSubsections);
 	},
-	
+
 	alternateTitle : function(title) {
 		switch (title) {
 		case 'transliteracja' : return '|trans';
@@ -201,7 +201,7 @@ window.ESectionParser = {
 		default: return '';
 		}
 	},
-		
+
 	parsePreparedSubsections : function(section, targetSubsections) {
 		var str = section.content;
 		var subsections = section.subsections;
@@ -221,7 +221,7 @@ window.ESectionParser = {
 			}
 			return a.index - b.index;
 		});
-		
+
 		for (i in subsections) {
 			var sub = subsections[i];
 			for (j in positions) {
@@ -238,7 +238,7 @@ window.ESectionParser = {
 						var alt = ESectionParser.alternateTitle(sub.title);
 						var repl = new RegExp('\\{\\{(' + sub.title + alt + ')\\}\\}');
 						var changed = sub.content.replace(repl, '');
-						
+
 						if (changed != sub.content) {
 							var firstbreak = changed.search(/\n/);
 							if (firstbreak != -1 && firstbreak < changed.search(/\S/)) {
@@ -259,11 +259,11 @@ window.ESectionParser = {
 			}
 		}
 	},
-	
+
 	obligatorySubsection : function(subsection, section) {
 		return (subsection.title == 'znaczenia') && (section.mode != 'CHINESE');
 	},
-	
+
 	botSubsection : function(subsection, section) {
 		return (subsection.title == 'wymowa') && (section.mode == 'POLISH') && !subsection.content;
 	}
