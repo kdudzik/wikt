@@ -6,6 +6,9 @@
 \usepackage{upquote}
 \usepackage{tabularx}
 \usepackage{setspace}
+\usepackage{listings}
+\usepackage{mdwlist}
+\usepackage{ucs}
 \usepackage[utf8]{inputenc}
 
 \author{Krzysztof Dudzik}
@@ -20,13 +23,6 @@
 \keywords{Wikisłownik, Fundacja Wikimedia, MediaWiki, wiki, edytor, API, JavaScript, jQuery, interfejs użytkownika, społeczność internetowa}
 
 % Tu jest dobre miejsce na Twoje własne makra i~środowiska:
-\newenvironment{illustration}[0]{
-	\begin{figure}[ht]
-	\begin{center}
-}{
-	\end{center}
-	\end{figure}
-}
 \setkeys{Gin}{width=0.9\textwidth}
 \graphicspath{{./screeny/}}
 \setlength{\fboxsep}{0pt}
@@ -34,7 +30,34 @@
 \setlength{\parskip}{1.2ex plus 0.5ex minus 0.2ex}
 \setlength{\parindent}{5ex}
 \frenchspacing
-\renewcommand*{\figurename}{Ilustracja}
+\brokenpenalty=1000
+\clubpenalty=1000
+\widowpenalty=1000
+\renewcommand*{\figurename}{
+	Ilustracja
+}
+\newcommand{\dotrule}{
+	\begin{center}
+		\parbox{250pt}{\dotfill}
+	\end{center}
+}
+\newcommand{\solidrule}{
+	\begin{center}
+		\line(1,0){250}
+	\end{center}
+}
+\newenvironment{illustration}[0]{
+	\begin{figure}[ht]
+	\begin{center}
+}{
+	\end{center}
+	\end{figure}
+}
+\newenvironment{description-sub}[0]{
+	\begin{basedescript}{\desclabelstyle{\pushlabel}\desclabelwidth{6em}}\setlength{\itemsep}{-2mm}
+}{
+	\end{basedescript}
+}
 
 % koniec definicji
 
@@ -98,11 +121,10 @@ System MediaWiki używany jest nie tylko w~projektach wspieranych przez Fundacj�
 \subsection{Edytowanie i~wikitekst}
 Strony w~projektach opartych na platformie MediaWiki na~ogół nie mogą być czystym tekstem, pozbawionym formatowania. Przykładowo hasła w~encyklopedii muszą zachowywać określoną strukturę -- występuje więc podział na sekcje, ilustracje, różne rodzaje formatowania (kursywa, wytłuszczenie), przypisy czy powtarzalne fragmenty. Szczególnie istotnym elementem są linki pomiędzy poszczególnymi artykułami, wyróżniające projekty Fundacji na tle ich papierowych, ale też elektronicznych konkurentów. Odnośniki pozwalają błyskawicznie przemieszczać się między hasłami, by w~ten sposób uzyskiwać kolejne informacje wspomagające przyswajanie wiedzy.
 
-Linki i~formatowanie na stronach internetowych tworzone są za pomocą elementów języka HTML lub XHTML. O~ile języki te są proste w~obsłudze dla specjalisty informatyka, to laik nie jest w~stanie tworzyć za ich pomocą stron bez uprzedniego dłuższego przygotowania. Aby umożliwić bezproblemową edycję stron internetowych osobom bez wykształcenia informatycznego, programiści MediaWiki zaprojektowali tzw.\ wikitekst -- uproszczony język opisu stron, pozwalający na realizację wymienionych elementów. Porównanie niektórych z~nich znajduje się w~tabeli \ref{html-wiki}.
+Linki i~formatowanie na stronach internetowych tworzone są za pomocą elementów języka HTML lub XHTML. O~ile języki te są proste w~obsłudze dla specjalisty informatyka, to laik nie jest w~stanie tworzyć za ich pomocą stron bez uprzedniego dłuższego przygotowania. Aby umożliwić bezproblemową edycję stron internetowych osobom bez wykształcenia informatycznego, programiści MediaWiki zaprojektowali tzw.\ wikitekst -- uproszczony język opisu stron, pozwalający na realizację wymienionych elementów. Porównanie niektórych z~nich znajduje się w~tabeli \ref{tab:html-wiki}.
 
 \begin{table}[h]
 \begin{center}
-\label{html-wiki}
 \footnotesize{
 	\begin{tabularx}{\textwidth}{ |l|X|X| }
 		\hline & Wikitekst & XHTML \\
@@ -126,6 +148,7 @@ Linki i~formatowanie na stronach internetowych tworzone są za pomocą elementó
 	\end{tabularx}
 }
 \caption{Porównanie HTML i wikitekstu}
+\label{tab:html-wiki}
 \end{center}
 \end{table}
 
@@ -154,7 +177,7 @@ Dla porównania Wikipedia w~języku angielskim ma 1541~administratorów (niekoni
 
 Podobnie jak w~przypadku Wikipedii, hasła w~poszczególnych wersjach językowych Wikisłownika są łączone poprzez odnośniki interwiki, znajdujące się na dole lewego menu w~większości haseł. W~stosunku do encyklopedii występuje znacząca różnica w~sposobie funkcjonowania tych linków. Wikipedia poprzez interwiki łączy artykuły na ten sam temat, często różniące się tytułem (polski artykuł \emph{Kot domowy} odsyła do angielskiego \emph{Cat} czy niemieckiego \emph{Hauskatze}). W~Wikisłowniku mechanizm interwiki łączy zaś strony o~tym samym tytule, niezależnie od ich zawartości. Polskie hasło \emph{kot} zawiera więc łącza do haseł o~tytule \emph{kot} w~innych językach, które mogą, ale nie muszą zawierać m.in.\ objaśnienia polskiego znaczenia tego słowa. Z~tego względu łatwo jest odnaleźć brakujące informacje o~wybranym słowie w~danym języku, jeśli skorzysta się z~kilku edycji językowych Wikisłownika. Natomiast tłumaczenia tytułu hasła na inne języki znajdują się bezpośrednio w~treści artykułu, w~miejscu przeznaczonym dla takich informacji.
 
-Choć poszczególne wersje Wikisłownika różnią się między sobą, wspólna jest struktura hasła na najogólniejszym poziomie. Każde hasło jest podzielone na sekcje nagłówkami 2.~stopnia (patrz tabela \ref{html-wiki}), podobnie jak w~innych projektach Fundacji. W~przypadku słownika sposób podziału artykułu został jasno sprecyzowany i~jest wspólny dla wszystkich edycji. W~każdej z~sekcji objaśniono znaczenie tytułowego hasła w~innym języku. Przykładowo hasło \emph{nie} w~większości wersji językowych ma sekcje objaśniające znaczenie m.in.\ w~języku polskim oraz języku niemieckim (\emph{nigdy}). Właśnie ta ogólna cecha struktury haseł pozwala na częściową automatyzację niektórych często wykonywanych w~trakcie edycji czynności.
+Choć poszczególne wersje Wikisłownika różnią się między sobą, wspólna jest struktura hasła na najogólniejszym poziomie. Każde hasło jest podzielone na sekcje nagłówkami 2.~stopnia (patrz tabela \ref{tab:html-wiki}), podobnie jak w~innych projektach Fundacji. W~przypadku słownika sposób podziału artykułu został jasno sprecyzowany i~jest wspólny dla wszystkich edycji. W~każdej z~sekcji objaśniono znaczenie tytułowego hasła w~innym języku. Przykładowo hasło \emph{nie} w~większości wersji językowych ma sekcje objaśniające znaczenie m.in.\ w~języku polskim oraz języku niemieckim (\emph{nigdy}). Właśnie ta ogólna cecha struktury haseł pozwala na częściową automatyzację niektórych często wykonywanych w~trakcie edycji czynności.
 
 Aplikacja opisana w~niniejszej pracy przeznaczona jest dla polskiej edycji Wikisłownika. Konieczne jest zatem scharakteryzowanie specyfiki tego projektu (patrz sekcja \ref{sec:plwikt}). Ze~względu na odmienność poszczególnych wersji językowych prawdopodobnie w~innych nie będzie można wykorzystać wykorzystać aplikacji. Z~pewnością może ona być dla nich jednak bardzo przydatna -- duża część funkcji przez nią realizowanych może być używana niezależnie od specyfiki danej wersji, a~budowa aplikacji pozwoli na ich wyodrębnienie.
 
@@ -164,16 +187,335 @@ Wikisłownik w~języku polskim powstał 22 marca 2004 r. %http://pl.wiktionary.o
 i~jest dziś jedną z~najlepiej rozwiniętych edycji. Jeśli chodzi o~liczbę haseł, polska wersja zawiera ich ponad 230~000 i~znajduje się na 8.~miejscu (pierwsze trzy miejsca zajmują z~dużą przewagą edycje angielska, francuska i~chińska). Warto zwrócić jednak uwagę, że liczba artykułów nie musi odzwierciedlać ogólnego poziomu rozwoju danej edycji, a~przynajmniej w~o~wiele mniejszym stopniu niż w~Wikipedii. Automatyczne importowanie haseł słownikowych z~innych źródeł jest prostsze niż w~przypadku wpisów do~encyklopedii, a~hasła takie oczywiście nie wyróżniają się pozytywnie pod względem jakości. Wydaje się, że lepszym wskaźnikiem rozwoju są np.\ liczby aktywnych użytkowników lub administratorów. Tutaj polski Wikisłownik okazuje się wielokrotnie lepszy niż edycje litewska czy malajska, górujące nad nim pod względem liczby haseł.
 %http://meta.wikimedia.org/wiki/Wiktionary#List_of_Wiktionaries
 
-
+W~kolejnej podsekcji opisana została dokładnie struktura haseł w~polskim Wikisłowniku. Społeczność tego projektu scharakteryzowano natomiast w~sekcji \ref{sec:plsoc}.
 
 \subsection{Struktura hasła}
+Jak wspomniano, wspólny dla wszystkich wersji językowych Wikisłownika jest podział na sekcje, odpowiadające poszczególnym językom. Polska edycja Wikisłownika jest bardzo dobrze ustrukturyzowana w~dalszym zakresie, co niekoniecznie jest regułą dla pozostałych edycji. Wynikiem tego jest jednolity wygląd hasła, który otrzymuje czytelnik, oraz jednolity kod widziany przez redaktora. Przykładowy artykuł z~jedną sekcją językową znajduje się na ilustracji \ref{fig:plhaslo}.
+
+\begin{illustration}
+	\fbox{\includegraphics{plwikt-art}}
+	\caption{Hasło \emph{gefst upp} w~polskim Wikisłowniku (\texttt{http://pl.wiktionary.org/wiki/ gefst\_upp})}
+	\label{fig:plhaslo}
+\end{illustration}
+
+Na zrzucie ekranu widoczny jest układ sekcji typowy dla polskiego projektu. Z~małymi wyjątkami sekcje danego języka wyglądają tak samo we~wszystkich hasłach. To oznacza, że także w~innych opisanych wyrazach języka islandzkiego znaleźć można elementy: wymowa, znaczenia, odmiana, przykłady, składnia, kolokacje, synonimy, antonimy, wyrazy pokrewne, związki frazeologiczne, etymologia, uwagi, źródła. W~rzeczywistości jest to układ typowy dla znakomitej większości występujących w~Wikisłowniku języków. Odstępstwa od tego szkieletu hasła są niewielkie i~zostaną przedstawione poniżej.
+
+Ilustracja \ref{fig:plhaslo-edit} przedstawia wygląd przykładowej strony po przejściu do trybu edycji, dostępnego dla każdego użytkownika (bez konieczności logowania). Widok ten prezentuje źródłowy wikikod hasła, dodatkowo edytor ma kilka ikon ułatwiających wstawianie często używanych elementów. W~kodzie tym widoczne są szablony definiujące tytuły poszczególnych elementów sekcji (nazywanych dalej \emph{podsekcjami}). Podział na sekcje i~podsekcje jest dość prosty do wykonania za pomocą programu komputerowego i~już sama ta procedura pozwala na znaczne zwiększenie przejrzystości w~nowym edytorze, opisanym w rozdziale \ref{chap:impl}.
+
+\begin{illustration}
+	\fbox{\includegraphics{plwikt-edit}}
+	\caption{Edycja hasła \emph{gefst upp} w~polskim Wikisłowniku (\texttt{http://pl.wiktionary.org/ w/index.php?title=gefst\_upp\&action=edit})}
+	\label{fig:plhaslo-edit}
+\end{illustration}
+
+Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której polski Wikisłownik jest jednolity. Poniżej zostały omówione wszystkie podsekcje występujące w~artykułach, w~jedynej przyjętej jako poprawną kolejności. Duża ich część pojawia się jedynie w~niektórych językach, dlatego choć lista podsekcji jest dość długa, to każde hasło będzie miało ich o~wiele mniej. Szablony podsekcji zebrane są na stronie \texttt{http://pl.wiktionary.org/wiki/ Kategoria:Szablony\_szablonów\_haseł}.
+\subsubsection{Podsekcje występujące w~hasłach polskiego Wikisłownika}
+\begin{description-sub}
+	\item[Szablon] \verb|{{zapis hieroglificzny}}|
+	\item[Zawartość] Zapis hieroglificzny słowa w~języku staroegipskim, pokazany za~pomocą grafik PNG z~repozytorium Wikimedia Commons. Oznaczenie \texttt{(1.1)} odnosi się do numeracji w~sekcji \emph{znaczenia}.
+	\item[Języki] Tylko staroegipski\footnote{Rubryka \emph{Języki} precyzuje, w~których sekcjach językowych występuje dana podsekcja. Oprócz zwykłych sekcji, odpowiadających danemu językowi, istnieją także nietypowe: \emph{użycie słowa obcego w~języku polskim} i~\emph{znak chiński}}.
+	\item[Przykład]
+		\begin{verbatim}
+			{{zapis hieroglificzny}}
+			: (1.1) [[Plik:Egyptian-Pr-cnḫ.PNG]];
+			[[Plik:Egyptian-Pr-cnḫ2.PNG]];
+			[[Plik:Egyptian-Pr-cnḫ3.PNG]]
+		\end{verbatim}
+		%Pr-ʿnḫ''
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{ortografie}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{transliteracja}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{transkrypcja}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{czytania}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{klucz}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{kreski}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{warianty}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{kolejność}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{wymowa}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{znaczenia}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{determinatywy}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{odmiana}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{przykłady}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{składnia}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{kolokacje}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{synonimy}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{antonimy}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{złożenia}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{pokrewne}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{pochodne}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{frazeologia}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{etymologia}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{kody}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{hanja}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{słowniki}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{uwagi}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{tłumaczenia}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+\begin{description-sub}
+	\item[Szablon] \verb|{{źródła}}|
+	\item[Zawartość]
+	\item[Języki]
+	\item[Przykład]
+		\begin{verbatim}
+			{{ }}
+		\end{verbatim}
+\end{description-sub}
+\dotrule
+
+%plwikt-edit-non
 
 \chapter{Aspekty społecznościowe}
 \section{Koncepcja \emph{wiki}}
 \section{Społeczność polskiej edycji Wikisłownika}
+\label{sec:plsoc}
+
 \section{Specyfika tworzenia aplikacji dla wikispołeczności}
 
 \chapter{Opis implementacji}
+\label{chap:impl}
 \section{Wprowadzenie}
 \section{Formularz edycyjny}
 \section{Automatyzacja edycji hasła}
