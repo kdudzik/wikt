@@ -28,7 +28,7 @@ Rozdział ten stanowi charakterystykę Wikisłownika -- sieciowego słownika opa
 
 \section{Projekty Fundacji Wikimedia}
 Podmiotem odpowiedzialnym m.in. za rozwój Wikisłownika jest Wikimedia Foundation Inc.\ (opisywana dalej jako ,,Fundacja'') -- organizacja non-profit mająca siedzibę w~San Francisco w~Stanach Zjednoczonych, istniejąca od 2003 roku. Jak informuje strona internetowa polskiego partnera Fundacji, Stowarzyszenia Wikimedia Polska, \emph{celem fundacji jest sprzyjanie tworzeniu i~rozwojowi projektów o~otwartej treści opartych na technologii WikiWiki oraz dostarczanie społeczności internetowej pełnej zawartości wymienionych projektów za darmo i~bez zamieszczania reklam.} %cite
-Doskonale znaną, sztandarową inicjatywą Fundacji jest Wikipedia (\texttt{http://www.wikipedia.org}) -- największa obecnie encyklopedia internetowa, dostępna w~281 językach (stan z~maja 2011 roku) i~zawierająca ponad 18~milionów haseł, w~tym ponad 3,6~miliona w~największej, angielskojęzycznej\footnote{Oficjalnie w~projektach Fundacji używane są określenia typu \emph{angielskojęzyczny}, \emph{polskojęzyczny}. Choć w~przypadku wersji polskojęzycznej znakomita większość uczestników projektów pochodzi z~Polski, nie jest to regułą dla innych edycji. W~dalszej części pracy przyjęto uproszczenie polegające na tym, że określenia typu \emph{polska Wikipedia}, \emph{angielski Wikisłownik} traktowane są jako tożsame z~określeniami używającymi sformułowań z~cząstką \emph{-języczny}.} edycji. Mimo częstej krytyki tego przedsięwzięcia faktem jest, że Wikipedia jest miejscem, z~którego miliony osób korzystają, by pozyskać informacje z~najróżniejszych dziedzin. Obecny stan rzeczy możliwy jest dzięki pracy wielkiej liczby wolontariuszy tworzących artykuły bez wynagrodzenia.
+Doskonale znaną, sztandarową inicjatywą Fundacji jest Wikipedia (\protect\url{http://www.wikipedia.org}) -- największa obecnie encyklopedia internetowa, dostępna w~281 językach (stan z~maja 2011 roku) i~zawierająca ponad 18~milionów haseł, w~tym ponad 3,6~miliona w~największej, angielskojęzycznej\footnote{Oficjalnie w~projektach Fundacji używane są określenia typu \emph{angielskojęzyczny}, \emph{polskojęzyczny}. Choć w~przypadku wersji polskojęzycznej znakomita większość uczestników projektów pochodzi z~Polski, nie jest to regułą dla innych edycji. W~dalszej części pracy przyjęto uproszczenie polegające na tym, że określenia typu \emph{polska Wikipedia}, \emph{angielski Wikisłownik} traktowane są jako tożsame z~określeniami używającymi sformułowań z~cząstką \emph{-języczny}.} edycji. Mimo częstej krytyki tego przedsięwzięcia faktem jest, że Wikipedia jest miejscem, z~którego miliony osób korzystają, by pozyskać informacje z~najróżniejszych dziedzin. Obecny stan rzeczy możliwy jest dzięki pracy wielkiej liczby wolontariuszy tworzących artykuły bez wynagrodzenia.
 
 \begin{illustration}
 	\fbox{\includegraphics{plwikipedia}}
@@ -66,25 +66,24 @@ Linki i~formatowanie na stronach internetowych tworzone są za pomocą elementó
 \begin{table}[h]
 \begin{center}
 \footnotesize{
-	\begin{tabularx}{\textwidth}{ |l|X|X| }
-		\hline & Wikitekst & XHTML \\
-		\hline
-		\hline Kursywa & \texttt{''Tekst''} & \texttt{<em>Tekst</em>} \\
-		\hline Wytłuszczenie & \texttt{'''Tekst'''} & \texttt{<strong>Tekst</strong>} \\
-		\hline Nagłówek & \texttt{== Nagłówek ==} & \texttt{<h2>Nagłówek</h2>} \\
+	\begin{tabularx}{\textwidth}{ lXX }
+		\toprule & Wikitekst & XHTML \\
+		\toprule Kursywa & \texttt{''Tekst''} & \texttt{<em>Tekst</em>} \\
+		\midrule Wytłuszczenie & \texttt{'''Tekst'''} & \texttt{<strong>Tekst</strong>} \\
+		\midrule Nagłówek & \texttt{== Nagłówek ==} & \texttt{<h2>Nagłówek</h2>} \\
 		 & \texttt{=== Nagłówek ===} & \texttt{<h3>Nagłówek</h3>} \\
-		\hline Odnośnik wewnętrzny & \texttt{[[Strona]]} & \texttt{<a href="/wiki/Strona">Strona</a>} \\
+		\midrule Odnośnik wewnętrzny & \texttt{[[Strona]]} & \texttt{<a href="/wiki/Strona">Strona</a>} \\
 		 & \texttt{[[Strona|strony]]} & \texttt{<a href="/wiki/Strona">strony</a>} \\
-		\hline Odnośnik zewnętrzny & \texttt{[http://www.google.com Google]}
+		\midrule Odnośnik zewnętrzny & \texttt{[http://www.google.com Google]}
 		 & \texttt{<a href="http://www.google.com">\newline Google</a>} \\
-		\hline Obraz & \texttt{[[Plik:Przykład.png|thumb|Podpis]]} & \texttt{<img src="\dots /Przykład.png"/><br/>\newline <div class="caption">Podpis</div>} \\
-		\hline Podział na akapity & \texttt{Pierwszy akapit \newline \newline Drugi akapit}
+		\midrule Obraz & \texttt{[[Plik:Przykład.png|thumb|Podpis]]} & \texttt{<img src="\dots /Przykład.png"/><br/>\newline <div class="caption">Podpis</div>} \\
+		\midrule Podział na akapity & \texttt{Pierwszy akapit \newline \newline Drugi akapit}
 		 & \texttt{<p>Pierwszy akapit</p>\newline <p>Drugi akapit</p>} \\
-		\hline Lista nienumerowana & \texttt{* Element\newline * Element\newline * Element}
+		\midrule Lista nienumerowana & \texttt{* Element\newline * Element\newline * Element}
 		 & \texttt{<ul>\newline <li>Element</li>\newline <li>Element</li>\newline <li>Element</li>\newline </ul>}\\
-		\hline Lista numerowana & \texttt{\# Element\newline \# Element\newline \# Element}
+		\midrule Lista numerowana & \texttt{\# Element\newline \# Element\newline \# Element}
 		 & \texttt{<ol>\newline <li>Element</li>\newline <li>Element</li>\newline <li>Element</li>\newline </ol>}\\
-		\hline
+		\bottomrule
 	\end{tabularx}
 }
 \caption{Porównanie HTML i wikitekstu}
@@ -109,9 +108,9 @@ Szablony mogą być wykorzystywane w~prosty sposób nawet przez początkujących
 	\fbox{\includegraphics{plwikt}}
 	\caption{Polska edycja Wikisłownika}
 \end{illustration}
-Jednym z~największych projektów siostrzanych Wikipedii jest Wikisłownik, w~wersji angielskiej (i~wielu innych) noszący nazwę \emph{Wiktionary} (\texttt{http://www.wiktionary.org}). Ten słownik internetowy nie rozwinął się jeszcze tak prężnie jak encyklopedia, zwłaszcza jeśli chodzi o~polską edycję. Jest dziś jednak jednym z~największych słowników w~sieci, a~w~pewnych zastosowaniach stanowi najlepszy wybór. Dużą zaletą Wikisłownika jest jego wielojęzyczność -- w~tym samym serwisie znaleźć można hasła w~ponad~250~językach. W~przypadku niektórych z~nich jest to praktycznie jedyny słownik internetowy lub nawet jedyny dostępny słownik w~ogóle. Przykładem może być polski Wikisłownik, który zawiera prawdopodobnie jedyny polski słownik języka hawajskiego czy największe słowniki języków suahili i~jidysz. %cite http://pl.wiktionary.org/wiki/Wikis%C5%82ownik:Dlaczego_Wikis%C5%82ownik
+Jednym z~największych projektów siostrzanych Wikipedii jest Wikisłownik, w~wersji angielskiej (i~wielu innych) noszący nazwę \emph{Wiktionary} (\protect\url{http://www.wiktionary.org}). Ten słownik internetowy nie rozwinął się jeszcze tak prężnie jak encyklopedia, zwłaszcza jeśli chodzi o~polską edycję. Jest dziś jednak jednym z~największych słowników w~sieci, a~w~pewnych zastosowaniach stanowi najlepszy wybór. Dużą zaletą Wikisłownika jest jego wielojęzyczność -- w~tym samym serwisie znaleźć można hasła w~ponad~250~językach. W~przypadku niektórych z~nich jest to praktycznie jedyny słownik internetowy lub nawet jedyny dostępny słownik w~ogóle. Przykładem może być polski Wikisłownik, który zawiera prawdopodobnie jedyny polski słownik języka hawajskiego czy największe słowniki języków suahili i~jidysz. %cite http://pl.wiktionary.org/wiki/Wikis%C5%82ownik:Dlaczego_Wikis%C5%82ownik
 
-Wspomniane zostało zastosowanie szablonów do standaryzacji kodu źródłowego i~struktury haseł. Trzeba jednak zaznaczyć, że dotyczy to wyłącznie haseł w~obrębie jednej wersji językowej Wikisłownika, są one bowiem niezależne od siebie i~od Fundacji. Wspólne dla wszystkich edycji jest jedynie oprogramowanie MediaWiki i~umiejscowienie na serwerach Fundacji pod adresem \texttt{xxx.wiktionary.org}, gdzie zamiast \texttt{xxx} wstawiany jest dwu- lub trzyliterowy skrót ISO języka (np. \texttt{pl.wiktionary.org} = język polski, \texttt{de.wiktionary.org} = język niemiecki, \texttt{sq.wiktionary.org} = język albański, \texttt{csb.wiktionary.org} = język kaszubski). Wszystkie kwestie organizacyjne w~obrębie wersji językowej ustalane są w~ramach dyskusji i~głosowań przez internetową społeczność. Głosowania służą także wyborowi administratorów projektu, czyli użytkowników mających dodatkowe uprawnienia, spośród których najważniejsze to usuwanie i~zabezpieczanie haseł oraz blokowanie użytkowników działających na szkodę projektu. W~lipcu 2011~roku w~angielskim Wikisłowniku działało aktywnie 76~administratorów, %cite http://en.wiktionary.org/wiki/Wiktionary:Administrators
+Wspomniane zostało zastosowanie szablonów do standaryzacji kodu źródłowego i~struktury haseł. Trzeba jednak zaznaczyć, że dotyczy to wyłącznie haseł w~obrębie jednej wersji językowej Wikisłownika, są one bowiem niezależne od siebie i~od Fundacji. Wspólne dla wszystkich edycji jest jedynie oprogramowanie MediaWiki i~umiejscowienie na serwerach Fundacji pod adresem \verb|xxx.wiktionary.org|, gdzie zamiast \verb|xxx| wstawiany jest dwu- lub trzyliterowy skrót ISO języka (np. \protect\url{pl.wiktionary.org} = język polski, \protect\url{de.wiktionary.org} = język niemiecki, \protect\url{sq.wiktionary.org} = język albański, \protect\url{csb.wiktionary.org} = język kaszubski). Wszystkie kwestie organizacyjne w~obrębie wersji językowej ustalane są w~ramach dyskusji i~głosowań przez internetową społeczność. Głosowania służą także wyborowi administratorów projektu, czyli użytkowników mających dodatkowe uprawnienia, spośród których najważniejsze to usuwanie i~zabezpieczanie haseł oraz blokowanie użytkowników działających na szkodę projektu. W~lipcu 2011~roku w~angielskim Wikisłowniku działało aktywnie 76~administratorów, %cite http://en.wiktionary.org/wiki/Wiktionary:Administrators
 zaś w~polskim -- 14. %cite http://pl.wiktionary.org/wiki/Wikis%C5%82ownik:Administratorzy
 Dla porównania Wikipedia w~języku angielskim ma 1541~administratorów (niekoniecznie aktywnych), wersja polska natomiast 163. %cite http://meta.wikimedia.org/wiki/Administrators_of_various_Wikipedias
 
@@ -134,25 +133,26 @@ Jak wspomniano, wspólny dla wszystkich wersji językowych Wikisłownika jest po
 
 \begin{illustration}
 	\fbox{\includegraphics{plwikt-art}}
-	\caption{Hasło \emph{gefst upp} w~polskim Wikisłowniku (\texttt{http://pl.wiktionary.org/wiki/ gefst\_upp})}
+	\caption{Hasło \emph{gefst upp} w~polskim Wikisłowniku (\protect\url{http://pl.wiktionary.org/wiki/gefst_upp})}
 	\label{fig:plhaslo}
 \end{illustration}
 
 Na zrzucie ekranu widoczny jest układ sekcji typowy dla polskiego projektu. Z~małymi wyjątkami sekcje danego języka wyglądają tak samo we~wszystkich hasłach. To oznacza, że także w~innych opisanych wyrazach języka islandzkiego znaleźć można elementy: wymowa, znaczenia, odmiana, przykłady, składnia, kolokacje, synonimy, antonimy, wyrazy pokrewne, związki frazeologiczne, etymologia, uwagi, źródła. W~rzeczywistości jest to układ typowy dla znakomitej większości występujących w~Wikisłowniku języków. Odstępstwa od tego szkieletu hasła są niewielkie i~zostaną przedstawione poniżej.
 
-Ilustracja \ref{fig:plhaslo-edit} przedstawia wygląd przykładowej strony po przejściu do trybu edycji, dostępnego dla każdego użytkownika (bez konieczności logowania). Widok ten prezentuje źródłowy wikikod hasła, dodatkowo edytor ma kilka ikon ułatwiających wstawianie często używanych elementów. W~kodzie tym widoczne są szablony definiujące tytuły poszczególnych elementów sekcji (nazywanych dalej \emph{podsekcjami}). Podział na sekcje i~podsekcje jest dość prosty do wykonania za pomocą programu komputerowego i~już sama ta procedura pozwala na znaczne zwiększenie przejrzystości w~nowym edytorze, opisanym w rozdziale \ref{chap:impl}.
+Ilustracja \ref{fig:plhaslo-edit} przedstawia wygląd przykładowej strony po przejściu do trybu edycji, dostępnego dla każdego użytkownika (bez konieczności logowania). Widok ten prezentuje źródłowy wikikod hasła, dodatkowo edytor ma kilka ikon ułatwiających wstawianie często używanych elementów. W~kodzie tym widoczne są szablony definiujące tytuły poszczególnych elementów sekcji (nazywanych dalej \emph{podsekcjami}). Podział na sekcje i~podsekcje jest dość prosty do wykonania za pomocą programu komputerowego i~już sama ta procedura pozwala na znaczne zwiększenie przejrzystości w~nowym edytorze, opisanym w~rozdziale \ref{chap:impl}.
 
 \begin{illustration}
 	\fbox{\includegraphics{plwikt-edit}}
-	\caption{Edycja hasła \emph{gefst upp} w~polskim Wikisłowniku (\texttt{http://pl.wiktionary.org/ w/index.php?title=gefst\_upp\&action=edit})}
+	\caption{Edycja hasła \emph{gefst upp} w~polskim Wikisłowniku (\protect\url{http://pl.wiktionary.org/w/index.php?title=gefst_upp&action=edit})}
 	\label{fig:plhaslo-edit}
 \end{illustration}
 
-Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której polski Wikisłownik jest jednolity. Poniżej zostały omówione wszystkie podsekcje występujące w~artykułach, w~jedynej przyjętej jako poprawną kolejności. Duża ich część pojawia się jedynie w~niektórych językach, dlatego choć lista podsekcji jest dość długa, to każde hasło będzie miało ich o~wiele mniej. Szablony podsekcji zebrane są na stronie \texttt{http://pl.wiktionary.org/wiki/ Kategoria:Szablony\_szablonów\_haseł}.
+Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której polski Wikisłownik jest jednolity. Poniżej zostały omówione wszystkie podsekcje występujące w~artykułach, w~jedynej przyjętej jako poprawną kolejności. Duża ich część pojawia się jedynie w~niektórych językach, dlatego choć lista podsekcji jest dość długa, to każde hasło będzie miało ich o~wiele mniej. Szablony podsekcji zebrane są na stronie \protect\url{http://pl.wiktionary.org/wiki/Kategoria:Szablony_szablonów_haseł}.
 \subsubsection{Podsekcje występujące w~hasłach polskiego Wikisłownika}
+
 \begin{description-sub}
 	\item[Szablon] \verb|{{zapis hieroglificzny}}|
-	\item[Zawartość] Zapis hieroglificzny słowa w~języku staroegipskim, pokazany za~pomocą grafik PNG z~repozytorium Wikimedia Commons. Oznaczenie \texttt{(1.1)} odnosi się do numeracji w~sekcji \emph{znaczenia}.
+	\item[Zawartość] Zapis hieroglificzny słowa w~języku staroegipskim, pokazany za~pomocą grafik PNG z~repozytorium Wikimedia Commons. Oznaczenie \verb|(1.1)| odnosi się do numeracji w~sekcji \emph{znaczenia}.
 	\item[Języki] tylko staroegipski\footnote{Rubryka \emph{Języki} precyzuje, w~których sekcjach językowych występuje dana podsekcja. Oprócz zwykłych sekcji, odpowiadających danemu językowi, istnieją także nietypowe: \emph{użycie słowa obcego w~języku polskim} i~\emph{znak chiński}}.
 	\item[Przykład]
 		\begin{verbatim}
@@ -161,7 +161,6 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 			[[Plik:Egyptian-Pr-cnḫ2.PNG]];
 			[[Plik:Egyptian-Pr-cnḫ3.PNG]]
 		\end{verbatim}
-		%Pr-ʿnḫ''
 \end{description-sub}
 \spacer
 \begin{description-sub}
@@ -170,9 +169,8 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 	\item[Języki] serbski, gagauski, dżuhuri, ladino, tatarski, krymskotatarski, turkmeński, ujgurski, slovio, azerski, białoruski
 	\item[Przykład]
 		\begin{verbatim}
-			{{ortografie}} alternatywny zapis
+			{{ortografie}} Мацедониа
 		\end{verbatim}
-		% kitap
 \end{description-sub}
 \spacer
 \begin{description-sub}
@@ -205,8 +203,8 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 	\item[Języki] tylko japoński
 	\item[Przykład]
 		\begin{verbatim}
-			{{czytania}} {{on}} bi; {{kun}} hana 鼻
-		\end{verbatim} % 鼻
+			{{czytania}} {{on}} ビ (bi); {{kun}} はな (hana)
+		\end{verbatim}
 \end{description-sub}
 \spacer
 \begin{description-sub}
@@ -215,7 +213,7 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 	\item[Języki] tylko znak chiński
 	\item[Przykład]
 		\begin{verbatim}
-			{{ }}
+			{{klucz}} 157 足 + 6
 		\end{verbatim}
 \end{description-sub}
 \spacer
