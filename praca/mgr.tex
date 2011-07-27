@@ -7,6 +7,7 @@
 \usepackage{tabularx}
 \usepackage{setspace}
 \usepackage{listings}
+\usepackage{hyphenat}
 \usepackage{mdwlist}
 \usepackage{ucs}
 \usepackage[utf8]{inputenc}
@@ -36,9 +37,9 @@
 \renewcommand*{\figurename}{
 	Ilustracja
 }
-\newcommand{\dotrule}{
+\newcommand{\spacer}{
 	\begin{center}
-		\parbox{250pt}{\dotfill}
+		\textasteriskcentered
 	\end{center}
 }
 \newcommand{\solidrule}{
@@ -213,7 +214,7 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 \begin{description-sub}
 	\item[Szablon] \verb|{{zapis hieroglificzny}}|
 	\item[Zawartość] Zapis hieroglificzny słowa w~języku staroegipskim, pokazany za~pomocą grafik PNG z~repozytorium Wikimedia Commons. Oznaczenie \texttt{(1.1)} odnosi się do numeracji w~sekcji \emph{znaczenia}.
-	\item[Języki] Tylko staroegipski\footnote{Rubryka \emph{Języki} precyzuje, w~których sekcjach językowych występuje dana podsekcja. Oprócz zwykłych sekcji, odpowiadających danemu językowi, istnieją także nietypowe: \emph{użycie słowa obcego w~języku polskim} i~\emph{znak chiński}}.
+	\item[Języki] tylko staroegipski\footnote{Rubryka \emph{Języki} precyzuje, w~których sekcjach językowych występuje dana podsekcja. Oprócz zwykłych sekcji, odpowiadających danemu językowi, istnieją także nietypowe: \emph{użycie słowa obcego w~języku polskim} i~\emph{znak chiński}}.
 	\item[Przykład]
 		\begin{verbatim}
 			{{zapis hieroglificzny}}
@@ -223,287 +224,292 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 		\end{verbatim}
 		%Pr-ʿnḫ''
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{ortografie}}|
-	\item[Zawartość]
-	\item[Języki]
+	\item[Zawartość] Inne sposoby zapisu tytułu hasła. Zazwyczaj chodzi o~alternatywną pisownię w~języku, do zapisu którego używane są dwa alfabety (np.\ serbski). Do prezentacji pisowni mogą być używane szablony wyświetlające dodatkowe informacje.
+	\item[Języki] serbski, gagauski, dżuhuri, ladino, tatarski, krymskotatarski, turkmeński, ujgurski, slovio, azerski, białoruski
 	\item[Przykład]
 		\begin{verbatim}
-			{{ }}
+			{{ortografie}} alternatywny zapis
 		\end{verbatim}
+		% kitap
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{transliteracja}}|
-	\item[Zawartość]
-	\item[Języki]
+	\item[Zawartość] Transliteracja słowa zapisanego w~obcym alfabecie na alfabet łaciński. W~przeciwieństwie do transkrypcji transliteracja może być wykonywana automatycznie -- każda litera alfabetu obcego konwertowana jest na jeden lub więcej znaków w~alfabecie łacińskim. Obecnie często używany jest szablon \verb|{{translit}}|, który umożliwia automatyczną konwersję za pomocą JavaScriptu niektórych alfabetów podczas odczytywania strony.
+	\item[Języki] rosyjski, ukraiński, kazachski, ormiański, gruziński, hebrajski, jidysz, arabski, perski, tajski, urdu, hindi, bułgarski, macedoński, starogrecki, nowogrecki, tybetański, abazyński, abchaski, adygejski, akadyjski, amharski, aramejski, assamski, bengali, awarski, baszkirski, beludżi, birmański, gyyz, gudźarati, gocki, erzja, kirgiski, dzongkha, czuwaski, czeczeński, chakaski, bośniacki, tamilski, inguski, inuktitut, kannada, kaszmirski, marathi, khmerski, komi, komi\hyp{}jaźwiński, kri, kurdyjski, laotański, lezgiński, malajalam, malediwski, mongolski, nepalski, newarski, osetyjski, paszto, pendżabski, romski, sanskryt, sindhi, sorani, staro-cerkiewno-słowiański, sumeryjski, syngaleski, tabasarański, tadżycki, tamazight, telugu, zarfatit
 	\item[Przykład]
 		\begin{verbatim}
-			{{ }}
+			{{transliteracja}} Moskva
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{transkrypcja}}|
-	\item[Zawartość]
-	\item[Języki]
+	\item[Zawartość] Transkrypcja słowa zapisanego w~obcym alfabecie na język polski, czyli przedstawienie go w~formie dającej informacje o~rzeczywistej wymowie
+	\item[Języki] standardowo tylko staroegipski, podsekcja ta może być jednak dodawana w~wielu innych językach (przykład w~jidysz)
 	\item[Przykład]
 		\begin{verbatim}
-			{{ }}
+			{{transkrypcja}}
+			: (1.1-3) {{YIVO|{{lp}} khaver {{lm}} khaveyrim}}; polska: {{lp}}
+			chawer {{lm}} chawejrim
+			: (1.4) {{YIVO|{{lp}} khover {{lm}} khovers}}; polska: {{lp}}
+			chower; {{lm}} chowers
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer %http://pl.wiktionary.org/wiki/Kategoria:Szablony_szablon%C3%B3w_hase%C5%82
 \begin{description-sub}
 	\item[Szablon] \verb|{{czytania}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] tylko japoński
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{klucz}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] tylko znak chiński
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{kreski}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] znak chiński, koreański
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{warianty}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] tylko znak chiński
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{kolejność}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] tylko znak chiński
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{wymowa}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] wszystkie poza znakiem chińskim i~użyciem międzynarodowym
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{znaczenia}}|
-	\item[Zawartość]
-	\item[Języki]
+	\item[Zawartość] Jedyna sekcja obowiązkowa
+	\item[Języki] wszystkie
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{determinatywy}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] tylko staroegipski
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{odmiana}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] wszystkie poza znakiem chińskim
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{przykłady}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] wszystkie poza znakiem chińskim
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{składnia}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] wszystkie poza znakiem chińskim
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{kolokacje}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] wszystkie poza znakiem chińskim
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{synonimy}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] wszystkie poza znakiem chińskim
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{antonimy}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] wszystkie poza znakiem chińskim
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{złożenia}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] koreański i~japoński
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{pokrewne}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] wszystkie poza znakiem chińskim
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{pochodne}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] esperanto
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{frazeologia}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] wszystkie poza znakiem chińskim
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{etymologia}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] wszystkie
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{kody}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] tylko znak chiński
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{hanja}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] tylko koreański
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{słowniki}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] tylko znak chiński
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{uwagi}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] wszystkie
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{tłumaczenia}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] tylko polski
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{źródła}}|
 	\item[Zawartość]
-	\item[Języki]
+	\item[Języki] wszystkie
 	\item[Przykład]
 		\begin{verbatim}
 			{{ }}
 		\end{verbatim}
 \end{description-sub}
-\dotrule
+\spacer
 
 %plwikt-edit-non
 
