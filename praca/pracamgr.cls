@@ -41,7 +41,7 @@
     \begin{center}%
       {\LARGE\textbf{Uniwersytet Warszawski}\\
         Wydzia\l{} Matematyki, Informatyki i Mechaniki\par}
-      \vspace{1cm plus 1fill} 
+      \vspace{1cm plus 1fill}
       {\Large\bf\@author\par}
       \vspace{0.2cm}
       {\large Nr albumu: \@nralbumu\par}
@@ -69,31 +69,31 @@
     \large
     \null
     \vfill
-    
-   \textbf{\Large O\'swiadczenie kieruj¡cego prac¡ }
+
+   \textbf{\Large O\'swiadczenie kierujÄ…cego pracÄ… }
       \vspace{10mm}
-      
-   Potwierdzam, {\.z}e niniejsza praca zosta{\l}a przygotowana pod moim 
-   kierunkiem i kwalifikuje si¦ do przedstawienia jej w post¦powaniu 
-   o nadanie tytu{\l}u zawodowego. 
+
+   Potwierdzam, {\.z}e niniejsza praca zosta{\l}a przygotowana pod moim
+   kierunkiem i kwalifikuje siÄ™ do przedstawienia jej w postÄ™powaniu
+   o nadanie tytu{\l}u zawodowego.
    \vspace{15mm}
-   
-   Data \hfill Podpis kieruj¡cego prac¡ 
-   
+
+   Data \hfill Podpis kierujÄ…cego pracÄ…
+
    \vspace{3cm}
    \textbf{\Large O\'swiadczenie autora pracy}
     \vspace{10mm}
-    
-   \'{S}wiadom odpowiedzialno\'sci prawnej o\'swiadczam, {\.z}e niniejsza praca dyplomowa zosta{\l}a 
-   napisana przeze mnie samodzielnie i nie zawiera tre\'sci uzyskanych w spos\'ob niezgodny 
-   z obowi¡zuj¡cymi przepisami. 
-   
-   O\'swiadczam r\'ownie{\.z}, {\.z}e przedstawiona praca nie by{\l}a 
-   wcze\'sniej przedmiotem procedur zwi¡zanych z uzyskaniem tytu{\l}u zawodowego w wy{\.z}szej uczelni. 
-   
-   O\'swiadczam ponadto, {\.z}e niniejsza wersja pracy jest identyczna z za{\l}¡czon¡ wersj¡ elektroniczn¡. 
+
+   \'{S}wiadom odpowiedzialno\'sci prawnej o\'swiadczam, {\.z}e niniejsza praca dyplomowa zosta{\l}a
+   napisana przeze mnie samodzielnie i nie zawiera tre\'sci uzyskanych w spos\'ob niezgodny
+   z obowiÄ…zujÄ…cymi przepisami.
+
+   O\'swiadczam r\'ownie{\.z}, {\.z}e przedstawiona praca nie by{\l}a
+   wcze\'sniej przedmiotem procedur zwiÄ…zanych z uzyskaniem tytu{\l}u zawodowego w wy{\.z}szej uczelni.
+
+   O\'swiadczam ponadto, {\.z}e niniejsza wersja pracy jest identyczna z za{\l}Ä…czonÄ… wersjÄ… elektronicznÄ….
    \vspace{15mm}
-   
+
    Data \hfill Podpis autora pracy
     \vspace{4cm}
   \end{titlepage}
@@ -137,7 +137,7 @@
     \bfseries\large \abstractname
     \@endparpenalty\@M
   \end{center}}%
-{\par  
+{\par
   \vspace*{26pt}%
   \begin{center}%
     \bfseries\large S{\l}owa kluczowe
@@ -159,7 +159,7 @@
   \vspace*{26pt}%
 %-------------------nowosc----------------
   \begin{center}%
-    \bfseries\large Tytu{\l} pracy w j¦zyku angielskim
+    \bfseries\large Tytu{\l} pracy w jÄ™zyku angielskim
     \@endparpenalty\@M
   \end{center}
   \@tytulang\par

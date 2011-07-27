@@ -1,66 +1,5 @@
 \documentclass{pracamgr}
-\usepackage{polski}
-\usepackage{indentfirst}
-\usepackage{parskip}
-\usepackage{graphicx}
-\usepackage{upquote}
-\usepackage{tabularx}
-\usepackage{setspace}
-\usepackage{listings}
-\usepackage{hyphenat}
-\usepackage{mdwlist}
-\usepackage{ucs}
-\usepackage[utf8]{inputenc}
-
-\author{Krzysztof Dudzik}
-\nralbumu{248349}
-\title{Aplikacja wspomagająca tworzenie i~edycję haseł w~polskim Wikisłowniku}
-\tytulang{An application supporting article creation and edition for the Polish Wiktionary}
-\kierunek{Informatyka}
-\opiekun{dr. hab. Jerzego Tyszkiewicza, prof. UW\\Instytut Informatyki\\}
-\date{Czerwiec 2011}
-\dziedzina{11.3 Informatyka\\}
-\klasyfikacja{D. Software\\D.2. Software Engineering\\D.2.10. Design}
-\keywords{Wikisłownik, Fundacja Wikimedia, MediaWiki, wiki, edytor, API, JavaScript, jQuery, interfejs użytkownika, społeczność internetowa}
-
-% Tu jest dobre miejsce na Twoje własne makra i~środowiska:
-\setkeys{Gin}{width=0.9\textwidth}
-\graphicspath{{./screeny/}}
-\setlength{\fboxsep}{0pt}
-\setlength{\fboxrule}{0.2pt}
-\setlength{\parskip}{1.2ex plus 0.5ex minus 0.2ex}
-\setlength{\parindent}{5ex}
-\frenchspacing
-\brokenpenalty=1000
-\clubpenalty=1000
-\widowpenalty=1000
-\renewcommand*{\figurename}{
-	Ilustracja
-}
-\newcommand{\spacer}{
-	\begin{center}
-		\textasteriskcentered
-	\end{center}
-}
-\newcommand{\solidrule}{
-	\begin{center}
-		\line(1,0){250}
-	\end{center}
-}
-\newenvironment{illustration}[0]{
-	\begin{figure}[ht]
-	\begin{center}
-}{
-	\end{center}
-	\end{figure}
-}
-\newenvironment{description-sub}[0]{
-	\begin{basedescript}{\desclabelstyle{\pushlabel}\desclabelwidth{6em}}\setlength{\itemsep}{-2mm}
-}{
-	\end{basedescript}
-}
-
-% koniec definicji
+\input{intro}
 
 \begin{document}
 \maketitle
@@ -262,12 +201,12 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 \spacer %http://pl.wiktionary.org/wiki/Kategoria:Szablony_szablon%C3%B3w_hase%C5%82
 \begin{description-sub}
 	\item[Szablon] \verb|{{czytania}}|
-	\item[Zawartość]
+	\item[Zawartość] Wyjaśnienie możliwego wymawiania znaków kanji używanych w~języku japońskim. Występują dwa sposoby czytania: on'yomi i~kun'yomi. Do ich prezentacji używane są szablony \verb|{{on}}| i~\verb|{{kun}}|.
 	\item[Języki] tylko japoński
 	\item[Przykład]
 		\begin{verbatim}
-			{{ }}
-		\end{verbatim}
+			{{czytania}} {{on}} bi; {{kun}} hana 鼻
+		\end{verbatim} % 鼻
 \end{description-sub}
 \spacer
 \begin{description-sub}
@@ -282,11 +221,11 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 \spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{kreski}}|
-	\item[Zawartość]
+	\item[Zawartość] Liczba kresek użytych do napisania danego znaku. Informacja służy m.in.\ do ułatwienia odnajdywania znaków w~papierowych słownikach.
 	\item[Języki] znak chiński, koreański
 	\item[Przykład]
 		\begin{verbatim}
-			{{ }}
+			{{kreski}} 13
 		\end{verbatim}
 \end{description-sub}
 \spacer
@@ -529,14 +468,5 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 
 \chapter{Podsumowanie}
 
-
-\appendix
-
-\bibliographystyle{unsrt}
-\addcontentsline{toc}{chapter}{Bibliografia}
-%\sbibliography{mgr}{}
-%\listoffigures
-%\listoftables
-
-
+\input{outro}
 \end{document}
