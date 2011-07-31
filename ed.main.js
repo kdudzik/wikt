@@ -22,6 +22,7 @@ window.Ed = {
 		if (EUtil.getParameter('oldid') && EUtil.getParameter('oldid') != mw.config.get('wgCurRevisionId')) {
 			return;
 		}
+		EConstants.init();
 
 		var tbox = $('#wpTextbox1'),
 			oldform = $('.wikiEditor-ui'),
