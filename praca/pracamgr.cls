@@ -74,7 +74,7 @@
       \vspace{10mm}
 
    Potwierdzam, {\.z}e niniejsza praca zosta{\l}a przygotowana pod moim
-   kierunkiem i kwalifikuje się do przedstawienia jej w postępowaniu
+   kierunkiem i~kwalifikuje się do przedstawienia jej w~postępowaniu
    o nadanie tytu{\l}u zawodowego.
    \vspace{15mm}
 
@@ -85,13 +85,13 @@
     \vspace{10mm}
 
    \'{S}wiadom odpowiedzialno\'sci prawnej o\'swiadczam, {\.z}e niniejsza praca dyplomowa zosta{\l}a
-   napisana przeze mnie samodzielnie i nie zawiera tre\'sci uzyskanych w spos\'ob niezgodny
+   napisana przeze mnie samodzielnie i~nie zawiera tre\'sci uzyskanych w~spos\'ob niezgodny
    z obowiązującymi przepisami.
 
    O\'swiadczam r\'ownie{\.z}, {\.z}e przedstawiona praca nie by{\l}a
-   wcze\'sniej przedmiotem procedur związanych z uzyskaniem tytu{\l}u zawodowego w wy{\.z}szej uczelni.
+   wcze\'sniej przedmiotem procedur związanych z~uzyskaniem tytu{\l}u zawodowego w wy{\.z}szej uczelni.
 
-   O\'swiadczam ponadto, {\.z}e niniejsza wersja pracy jest identyczna z za{\l}ączoną wersją elektroniczną.
+   O\'swiadczam ponadto, {\.z}e niniejsza wersja pracy jest identyczna z~za{\l}ączoną wersją elektroniczną.
    \vspace{15mm}
 
    Data \hfill Podpis autora pracy

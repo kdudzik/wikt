@@ -17,7 +17,7 @@ Wszechobecny dostęp do internetu sprawia, że to właśnie w~sieci WWW powstaj�
 
 O~ile przewrót w~kategorii encyklopedii właściwie już się dokonał, nieco inaczej wygląda rywalizacja słowników. Oczywiście wyraźnie widać, że i~tu papierowe edycje są coraz mniej popularne. Różnice uwidaczniają się, gdy przeanalizowana zostanie sytuacja słowników internetowych. Tak zwany siostrzany projekt Wikipedii, Wikisłownik, nie dominuje wśród konkurencji -- zarówno na świecie, jak i~w~Polsce. Przyczyny tego stanu rzeczy są złożone. Autor postanowił skupić się na kilku zagadnieniach, uwidaczniających się w~polskojęzycznej wersji Wikisłownika. W~tym celu konieczne było zbadanie społeczności zaangażowanej w~tworzenie tego projektu. Jego efektem było wykonanie prac programistycznych, których opis stanowi główną część niniejszego opracowania.
 
-W~przypadku wszystkich projektów opartych na silniku programistycznym MediaWiki istotną barierą rozwoju jest sama technologia. Każdy ochotnik ma możliwość uczestniczenia w~rozwoju portalu, wiąże się to jednak z~koniecznością przystosowania się do wymagań stawianych przez oprogramowanie. Edytowanie haseł w~internetowej encyklopedii czy słowniku jest praktycznie niemożliwe dla osoby bez wcześniejszego przygotowania lub znacznej wiedzy techniczno-informatycznej. Oprogramowanie MediaWiki oparte jest bowiem na tzw. wikikodzie (także: wikitekst, wikiskładnia), czyli języku opisu struktury i~wyglądu strony internetowej -- prostszym niż HTML, jednak wciąż nieintuicyjnym dla kogoś, kto nie miał wcześniej do czynienia z~tego typu edytorami. Dlatego wielu potencjalnych współautorów zniechęca się do projektu już przy pierwszej próbie poprawy artykułu.
+W~przypadku wszystkich projektów opartych na silniku programistycznym MediaWiki istotną barierą rozwoju jest sama technologia. Każdy ochotnik ma możliwość uczestniczenia w~rozwoju portalu, wiąże się to jednak z~koniecznością przystosowania się do wymagań stawianych przez oprogramowanie. Edytowanie haseł w~internetowej encyklopedii czy słowniku jest praktycznie niemożliwe dla osoby bez wcześniejszego przygotowania lub znacznej wiedzy techniczno\dywiz{}informatycznej. Oprogramowanie MediaWiki oparte jest bowiem na tzw. wikikodzie (także: wikitekst, wikiskładnia), czyli języku opisu struktury i~wyglądu strony internetowej -- prostszym niż HTML, jednak wciąż nieintuicyjnym dla kogoś, kto nie miał wcześniej do czynienia z~tego typu edytorami. Dlatego wielu potencjalnych współautorów zniechęca się do projektu już przy pierwszej próbie poprawy artykułu.
 
 Aby zmienić tę sytuację, przygotowany został nowy edytor, dostosowany specjalnie do potrzeb polskiego Wikisłownika. Aplikacja pozwala na o~wiele prostsze tworzenie nowych i~zmienianie starych haseł niż poprzednia, standardowa. Dzięki użyciu jej jako domyślnej w~projekcie popularyzacja edytowania Wikisłownika wśród fachowców w~dziedzinach lingwistycznych okaże się łatwiejsze -- zniknie podstawowa bariera, jaką jest konieczność dostosowania się do skomplikowanych technicznych wymagań stawianych przez użyte oprogramowanie. Dodatkowo nowa aplikacja umożliwia zaawansowaną automatyzację tworzenia hasła. Wiele z~czynności zintegrowanych z~nowym edytorem do tej pory wymagało mozolnych poszukiwań w~artykułach Wikisłownika oraz innych projektach. Dzięki użyciu API udostępnianego przez serwisy Fundacji Wikimedia skomplikowane przeszukiwanie tysięcy stron udało się sprowadzić do kilku kliknięć.
 
@@ -27,7 +27,7 @@ W~dalszej części pracy opisany został proces tworzenia tego edytora. Pierwszy
 Rozdział ten stanowi charakterystykę Wikisłownika -- sieciowego słownika opartego na oprogramowaniu MediaWiki. Wikisłownik jest jednym z~największych i~najpopularniejszych słowników dostępnych w~polskim internecie. W~kolejnych sekcjach projekt ten został opisany na różnych poziomach szczegółowości. Omówiono zarówno oprogramowanie, na jakim bazuje słownik, jak i~swego rodzaju ,,ekosystem'', w~którym znajduje on swoje miejsce.
 
 \section{Projekty Fundacji Wikimedia}
-Podmiotem odpowiedzialnym m.in. za rozwój Wikisłownika jest Wikimedia Foundation Inc.\ (opisywana dalej jako ,,Fundacja'') -- organizacja non-profit mająca siedzibę w~San Francisco w~Stanach Zjednoczonych, istniejąca od 2003 roku. Jak informuje strona internetowa polskiego partnera Fundacji, Stowarzyszenia Wikimedia Polska, \emph{celem fundacji jest sprzyjanie tworzeniu i~rozwojowi projektów o~otwartej treści opartych na technologii WikiWiki oraz dostarczanie społeczności internetowej pełnej zawartości wymienionych projektów za darmo i~bez zamieszczania reklam.} %cite
+Podmiotem odpowiedzialnym m.in. za rozwój Wikisłownika jest Wikimedia Foundation Inc.\ (opisywana dalej jako ,,Fundacja'') -- organizacja non\dywiz{}profit mająca siedzibę w~San Francisco w~Stanach Zjednoczonych, istniejąca od 2003 roku. Jak informuje strona internetowa polskiego partnera Fundacji, Stowarzyszenia Wikimedia Polska, \emph{celem fundacji jest sprzyjanie tworzeniu i~rozwojowi projektów o~otwartej treści opartych na technologii WikiWiki oraz dostarczanie społeczności internetowej pełnej zawartości wymienionych projektów za darmo i~bez zamieszczania reklam.} %cite
 Doskonale znaną, sztandarową inicjatywą Fundacji jest Wikipedia (\protect\url{http://www.wikipedia.org}) -- największa obecnie encyklopedia internetowa, dostępna w~281 językach (stan z~maja 2011 roku) i~zawierająca ponad 18~milionów haseł, w~tym ponad 3,6~miliona w~największej, angielskojęzycznej\footnote{Oficjalnie w~projektach Fundacji używane są określenia typu \emph{angielskojęzyczny}, \emph{polskojęzyczny}. Choć w~przypadku wersji polskojęzycznej znakomita większość uczestników projektów pochodzi z~Polski, nie jest to regułą dla innych edycji. W~dalszej części pracy przyjęto uproszczenie polegające na tym, że określenia typu \emph{polska Wikipedia}, \emph{angielski Wikisłownik} traktowane są jako tożsame z~określeniami używającymi sformułowań z~cząstką \emph{-języczny}.} edycji. Mimo częstej krytyki tego przedsięwzięcia faktem jest, że Wikipedia jest miejscem, z~którego miliony osób korzystają, by pozyskać informacje z~najróżniejszych dziedzin. Obecny stan rzeczy możliwy jest dzięki pracy wielkiej liczby wolontariuszy tworzących artykuły bez wynagrodzenia.
 
 \begin{illustration}
@@ -46,11 +46,11 @@ Wikipedia jest najbardziej znanym, ale nie jedynym projektem pod opieką Fundacj
 	\item Wikispecies -- katalog gatunków organizmów żywych,
 	\item Wikiversity -- materiały edukacyjne i~naukowe,
 	\item Wikimedia Incubator -- metaprojekt umożliwiający tworzenie nowych inicjatyw wspieranych przez Fundację.
-	\item Meta-Wiki -- projekt ułatwiający koordynację wszystkich pozostałych.
+	\item Meta\dywiz{}Wiki -- projekt ułatwiający koordynację wszystkich pozostałych.
 \end{itemize}
 Wszystkie projekty łączy sposób ich powstawania -- możliwość edycji dostępna jest praktycznie dla każdego internauty. Nie dotyczy to co~prawda kilku krajów, w~których projekty Fundacji zablokowane są w~ramach cenzury internetu, jednak ogromna większość osób dysponujących łączem internetowym ma szansę stać się jednymi spośród współautorów haseł.
 
-Drugą cechą wspólną są wolne licencje, na których udostępniana jest zawartość wszystkich serwisów. Po reformie w~czerwcu 2009~roku treść Wikipedii i~projektów siostrzanych dostępna jest nie tylko na licencji GNU FDL (Free Documentation License), ale także na kompatybilnej z~nią CC-BY-SA 3.0 (Creative Commons Attribution-ShareAlike / Uznanie Autorstwa -- Na Tych Samych Warunkach). %cite http://meta.wikimedia.org/wiki/Licensing_update/Result
+Drugą cechą wspólną są wolne licencje, na których udostępniana jest zawartość wszystkich serwisów. Po reformie w~czerwcu 2009~roku treść Wikipedii i~projektów siostrzanych dostępna jest nie tylko na licencji GNU FDL (Free Documentation License), ale także na kompatybilnej z~nią CC\dywiz{}BY\dywiz{}SA 3.0 (Creative Commons Attribution\dywiz{}ShareAlike / Uznanie Autorstwa -- Na Tych Samych Warunkach). %cite http://meta.wikimedia.org/wiki/Licensing_update/Result
 Oznacza to, że można ją dowolnie wykorzystywać we~własnych dziełach pod warunkiem podania oryginalnych autorów i~zachowania pierwotnej licencji.
 
 \section{Oprogramowanie MediaWiki}
@@ -76,7 +76,7 @@ Linki i~formatowanie na stronach internetowych tworzone są za pomocą elementó
 		 & \texttt{[[Strona|strony]]} & \texttt{<a href="/wiki/Strona">strony</a>} \\
 		\midrule Odnośnik zewnętrzny & \texttt{[http://www.google.com Google]}
 		 & \texttt{<a href="http://www.google.com">\newline Google</a>} \\
-		\midrule Obraz & \texttt{[[Plik:Przykład.png|thumb|Podpis]]} & \texttt{<img src="\dots /Przykład.png"/><br/>\newline <div class="caption">Podpis</div>} \\
+		\midrule Obraz & \texttt{[[Plik:Przykład.png|thumb|Podpis]]} & \texttt{<img src="$\ldots$ /Przykład.png"/><br/>\newline <div class="caption">Podpis</div>} \\
 		\midrule Podział na akapity & \texttt{Pierwszy akapit \newline \newline Drugi akapit}
 		 & \texttt{<p>Pierwszy akapit</p>\newline <p>Drugi akapit</p>} \\
 		\midrule Lista nienumerowana & \texttt{* Element\newline * Element\newline * Element}
@@ -91,7 +91,7 @@ Linki i~formatowanie na stronach internetowych tworzone są za pomocą elementó
 \end{center}
 \end{table}
 
-Łatwo można zauważyć, że używanie wikitekstu jest o~wiele prostsze niż nauka XHTML-a. Jeśli zachodzi potrzeba zaawansowanego formatowania, możliwe jest także użycie znaczników XHTML. W~przypadku standardowego formatowania jest to jednak niewskazane ze względu na dobro niedoświadczonych edytorów.
+Łatwo można zauważyć, że używanie wikitekstu jest o~wiele prostsze niż nauka XHTML\dywiz{}a. Jeśli zachodzi potrzeba zaawansowanego formatowania, możliwe jest także użycie znaczników XHTML. W~przypadku standardowego formatowania jest to jednak niewskazane ze względu na dobro niedoświadczonych edytorów.
 
 Bardzo istotnym elementem wikitekstu są szablony -- predefiniowane fragmenty kodu z~opcjonalnymi parametrami. Szablony można uznać za odpowiednik procedur/funkcji w~językach programowania. W~projektach opartych na MediaWiki szablony pełnią przede wszystkim dwie główne funkcje:
 \begin{itemize}
@@ -101,7 +101,7 @@ Bardzo istotnym elementem wikitekstu są szablony -- predefiniowane fragmenty ko
 We~wszystkich większych projektach Fundacji szablony są bardzo często wykorzystywane. Przy tym stanowią duże ułatwienie dla technicznie zaawansowanych autorów, którzy wspomagają się przy tworzeniu haseł dodatkowymi technologiami. Na używaniu szablonów korzystają przede wszystkim boty, czyli programy dokonujące edycji samodzielnie po uprzednim przygotowaniu lub pod stałą opieką programisty. W~większości projektów przyjęte jest, że każdy bot ma własne konto użytkownika, nie używa natomiast konta swojego ,,właściciela''. Dzięki botom możliwe jest np.\ masowe tworzenie haseł w~Wikipedii na ściśle określony temat, jeśli istnieje dobre źródło w~formie czytelnej dla komputera (takich jak opisy asteroid czy wszystkich miejscowości lub jednostek administracyjnych w~danym kraju). Innym ich zastosowaniem jest automatycznie uzupełnianie tzw.\ interwiki -- czyli odnośników pomiędzy poszczególnymi wersjami językowymi tego samego hasła.
 
 Szablony mogą być wykorzystywane w~prosty sposób nawet przez początkujących użytkowników -- aby wywołać szablon, wystarczy wpisać jego nazwę
- pomiędzy podwójnymi nawiasami klamrowymi (\verb@{{Nazwa szablonu}}@ lub \verb@{{Nazwa szablonu|parametr=wartość}}@). W~polskim Wikisłowniku szablony pełnią szczególną rolę -- i~to m.in.\ dzięki ich szerokiemu zastosowaniu w~projekcie zrodził się pomysł na niniejszą pracę. Szczegóły tego zagadnienia zostaną przedstawione w~sekcji~\ref{sec:plwikt}.
+ pomiędzy podwójnymi nawiasami klamrowymi (\lstinline@{{Nazwa szablonu}}@ lub \lstinline@{{Nazwa szablonu|parametr=abc}}@). W~polskim Wikisłowniku szablony pełnią szczególną rolę -- i~to m.in.\ dzięki ich szerokiemu zastosowaniu w~projekcie zrodził się pomysł na niniejszą pracę. Szczegóły tego zagadnienia zostaną przedstawione w~sekcji~\ref{sec:plwikt}.
 
 \section{Wiktionary -- Wikisłownik}
 \begin{illustration}
@@ -110,7 +110,7 @@ Szablony mogą być wykorzystywane w~prosty sposób nawet przez początkujących
 \end{illustration}
 Jednym z~największych projektów siostrzanych Wikipedii jest Wikisłownik, w~wersji angielskiej (i~wielu innych) noszący nazwę \emph{Wiktionary} (\protect\url{http://www.wiktionary.org}). Ten słownik internetowy nie rozwinął się jeszcze tak prężnie jak encyklopedia, zwłaszcza jeśli chodzi o~polską edycję. Jest dziś jednak jednym z~największych słowników w~sieci, a~w~pewnych zastosowaniach stanowi najlepszy wybór. Dużą zaletą Wikisłownika jest jego wielojęzyczność -- w~tym samym serwisie znaleźć można hasła w~ponad~250~językach. W~przypadku niektórych z~nich jest to praktycznie jedyny słownik internetowy lub nawet jedyny dostępny słownik w~ogóle. Przykładem może być polski Wikisłownik, który zawiera prawdopodobnie jedyny polski słownik języka hawajskiego czy największe słowniki języków suahili i~jidysz. %cite http://pl.wiktionary.org/wiki/Wikis%C5%82ownik:Dlaczego_Wikis%C5%82ownik
 
-Wspomniane zostało zastosowanie szablonów do standaryzacji kodu źródłowego i~struktury haseł. Trzeba jednak zaznaczyć, że dotyczy to wyłącznie haseł w~obrębie jednej wersji językowej Wikisłownika, są one bowiem niezależne od siebie i~od Fundacji. Wspólne dla wszystkich edycji jest jedynie oprogramowanie MediaWiki i~umiejscowienie na serwerach Fundacji pod adresem \verb|xxx.wiktionary.org|, gdzie zamiast \verb|xxx| wstawiany jest dwu- lub trzyliterowy skrót ISO języka (np. \protect\url{pl.wiktionary.org} = język polski, \protect\url{de.wiktionary.org} = język niemiecki, \protect\url{sq.wiktionary.org} = język albański, \protect\url{csb.wiktionary.org} = język kaszubski). Wszystkie kwestie organizacyjne w~obrębie wersji językowej ustalane są w~ramach dyskusji i~głosowań przez internetową społeczność. Głosowania służą także wyborowi administratorów projektu, czyli użytkowników mających dodatkowe uprawnienia, spośród których najważniejsze to usuwanie i~zabezpieczanie haseł oraz blokowanie użytkowników działających na szkodę projektu. W~lipcu 2011~roku w~angielskim Wikisłowniku działało aktywnie 76~administratorów, %cite http://en.wiktionary.org/wiki/Wiktionary:Administrators
+Wspomniane zostało zastosowanie szablonów do standaryzacji kodu źródłowego i~struktury haseł. Trzeba jednak zaznaczyć, że dotyczy to wyłącznie haseł w~obrębie jednej wersji językowej Wikisłownika, są one bowiem niezależne od siebie i~od Fundacji. Wspólne dla wszystkich edycji jest jedynie oprogramowanie MediaWiki i~umiejscowienie na serwerach Fundacji pod adresem \lstinline|xxx.wiktionary.org|, gdzie zamiast \lstinline|xxx| wstawiany jest dwu- lub trzyliterowy skrót ISO języka (np. \protect\url{pl.wiktionary.org} = język polski, \protect\url{de.wiktionary.org} = język niemiecki, \protect\url{sq.wiktionary.org} = język albański, \protect\url{csb.wiktionary.org} = język kaszubski). Wszystkie kwestie organizacyjne w~obrębie wersji językowej ustalane są w~ramach dyskusji i~głosowań przez internetową społeczność. Głosowania służą także wyborowi administratorów projektu, czyli użytkowników mających dodatkowe uprawnienia, spośród których najważniejsze to usuwanie i~zabezpieczanie haseł oraz blokowanie użytkowników działających na szkodę projektu. W~lipcu 2011~roku w~angielskim Wikisłowniku działało aktywnie 76~administratorów, %cite http://en.wiktionary.org/wiki/Wiktionary:Administrators
 zaś w~polskim -- 14. %cite http://pl.wiktionary.org/wiki/Wikis%C5%82ownik:Administratorzy
 Dla porównania Wikipedia w~języku angielskim ma 1541~administratorów (niekoniecznie aktywnych), wersja polska natomiast 163. %cite http://meta.wikimedia.org/wiki/Administrators_of_various_Wikipedias
 
@@ -152,7 +152,7 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 
 \begin{description-sub}
 	\item[Szablon] \verb|{{zapis hieroglificzny}}|
-	\item[Zawartość] Zapis hieroglificzny słowa w~języku staroegipskim, pokazany za~pomocą grafik PNG z~repozytorium Wikimedia Commons. Oznaczenie \verb|(1.1)| odnosi się do numeracji w~sekcji \emph{znaczenia}.
+	\item[Zawartość] Zapis hieroglificzny słowa w~języku staroegipskim, pokazany za~pomocą grafik PNG z~repozytorium Wikimedia Commons. Oznaczenie \lstinline|(1.1)| odnosi się do numeracji w~sekcji \emph{znaczenia}.
 	\item[Języki] tylko staroegipski\footnote{Rubryka \emph{Języki} precyzuje, w~których sekcjach językowych występuje dana podsekcja. Oprócz zwykłych sekcji, odpowiadających danemu językowi, istnieją także nietypowe: \emph{użycie słowa obcego w~języku polskim} i~\emph{znak chiński}}.
 	\item[Przykład]
 		\begin{verbatim}
@@ -175,8 +175,8 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 \spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{transliteracja}}|
-	\item[Zawartość] Transliteracja słowa zapisanego w~obcym alfabecie na alfabet łaciński. W~przeciwieństwie do transkrypcji transliteracja może być wykonywana automatycznie -- każda litera alfabetu obcego konwertowana jest na jeden lub więcej znaków w~alfabecie łacińskim. Obecnie często używany jest szablon \verb|{{translit}}|, który umożliwia automatyczną konwersję za pomocą JavaScriptu niektórych alfabetów podczas odczytywania strony.
-	\item[Języki] abazyński, abchaski, adygejski, akadyjski, amharski, arabski, aramejski, assamski, awarski, baszkirski, beludżi, bengali, birmański, bośniacki, bułgarski, chakaski, czeczeński, czuwaski, dzongkha, erzja, gocki, gruziński, gudźarati, gyyz, hebrajski, hindi, inguski, inuktitut, jidysz, kannada, kaszmirski, kazachski, khmerski, kirgiski, komi, komi\hyp{}jaźwiński, kri, kurdyjski, laotański, lezgiński, macedoński, malajalam, malediwski, marathi, maryjski, mongolski, nepalski, newarski, nowogrecki, orija, ormiański, osetyjski, paszto, pendżabski, perski, romski, rosyjski, sanskryt, sindhi, sorani, staro-cerkiewno-słowiański, starogrecki, staroormiański, sumeryjski, syngaleski, tabasarański, tadżycki, tajski, tamazight, tamilski, telugu, tybetański, ukraiński, urdu, zarfatit
+	\item[Zawartość] Transliteracja słowa zapisanego w~obcym alfabecie na alfabet łaciński. W~przeciwieństwie do transkrypcji transliteracja może być wykonywana automatycznie -- każda litera alfabetu obcego konwertowana jest na jeden lub więcej znaków w~alfabecie łacińskim. Obecnie często używany jest szablon \lstinline|{{translit}}|, który umożliwia automatyczną konwersję za pomocą JavaScriptu niektórych alfabetów podczas odczytywania strony.
+	\item[Języki] abazyński, abchaski, adygejski, akadyjski, amharski, arabski, aramejski, assamski, awarski, baszkirski, beludżi, bengali, birmański, bośniacki, bułgarski, chakaski, czeczeński, czuwaski, dzongkha, erzja, gocki, gruziński, gudźarati, gyyz, hebrajski, hindi, inguski, inuktitut, jidysz, kannada, kaszmirski, kazachski, khmerski, kirgiski, komi, komi\dywiz{}jaźwiński, kri, kurdyjski, laotański, lezgiński, macedoński, malajalam, malediwski, marathi, maryjski, mongolski, nepalski, newarski, nowogrecki, orija, ormiański, osetyjski, paszto, pendżabski, perski, romski, rosyjski, sanskryt, sindhi, sorani, staro\dywiz{}cerkiewno\dywiz{}słowiański, starogrecki, staroormiański, sumeryjski, syngaleski, tabasarański, tadżycki, tajski, tamazight, tamilski, telugu, tybetański, ukraiński, urdu, zarfatit
 	\item[Przykład]
 		\begin{verbatim}
 			{{transliteracja}} Moskva
@@ -199,7 +199,7 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 \spacer %http://pl.wiktionary.org/wiki/Kategoria:Szablony_szablon%C3%B3w_hase%C5%82
 \begin{description-sub}
 	\item[Szablon] \verb|{{czytania}}|
-	\item[Zawartość] Wyjaśnienie możliwego wymawiania znaków kanji używanych w~języku japońskim. Występują dwa sposoby czytania: on'yomi i~kun'yomi. Do ich prezentacji używane są szablony \verb|{{on}}| i~\verb|{{kun}}|.
+	\item[Zawartość] Wyjaśnienie możliwego wymawiania znaków kanji używanych w~języku japońskim. Występują dwa sposoby czytania: on'yomi i~kun'yomi. Do ich prezentacji używane są szablony \lstinline|{{on}}| i~\lstinline|{{kun}}|.
 	\item[Języki] tylko japoński
 	\item[Przykład]
 		\begin{verbatim}
@@ -229,7 +229,7 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 \spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{warianty}}|
-	\item[Zawartość] Szablon powiększający znak chiński i~ewentualnie jego warianty. Szablon ten jest używany inaczej niż większość: nie odpowiada jedynie za wyświetlenie nagłówka, a~zawartość sekcji wstawiana jest jako parametr. Najczęściej w~parametrze pojawia się szablon \verb|{{zch-w}}|, odpowiadający za prezentację znaku.
+	\item[Zawartość] Szablon powiększający znak chiński i~ewentualnie jego warianty. Szablon ten jest używany inaczej niż większość: nie odpowiada jedynie za wyświetlenie nagłówka, a~zawartość sekcji wstawiana jest jako parametr. Najczęściej w~parametrze pojawia się szablon \lstinline|{{zch-w}}|, odpowiadający za prezentację znaku.
 	\item[Języki] tylko znak chiński
 	\item[Przykład]
 		\begin{verbatim}
@@ -239,7 +239,7 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 \spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{kolejność}}|
-	\item[Zawartość] Kolejność stawiania kresek w~znaku chińskim, ilustrowana za pomocą grafiki dostępnej w~projekcie Wikimedia Commons. W~tej podsekcji używane są szablony \verb|{{zch-komiks}}|, \verb|{{zch-cienie}}| i~\verb|{{zch-animacja}}|, które ładują automatycznie grafiki o~nazwie odpowiadającej hasłu, jeśli te istnieją.
+	\item[Zawartość] Kolejność stawiania kresek w~znaku chińskim, ilustrowana za pomocą grafiki dostępnej w~projekcie Wikimedia Commons. W~tej podsekcji używane są szablony \lstinline|{{zch-komiks}}|, \lstinline|{{zch-cienie}}| i~\lstinline|{{zch-animacja}}|, które ładują automatycznie grafiki o~nazwie odpowiadającej hasłu, jeśli te istnieją.
 	\item[Języki] tylko znak chiński
 	\item[Przykład]
 		\begin{verbatim}
@@ -250,8 +250,8 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 \spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{wymowa}}|
-	\item[Zawartość] Jedna z~kluczowych podsekcji we~wszystkich językach. Podawane są w~niej informacje na temat wymowy danego hasła, zarówno za pomocą alfabetów fonetycznych (IPA oraz alfabet słowiański), jak i~nagrań dźwiękowych umieszczonych w~Wikimedia Commons. Do opisywania wymowy stosowane są szablony \verb|{{IPA}}|, \verb|{{IPA2}}|, \verb|{{IPA3}}|, \verb|{{IPA4}}|. Wymowa słów polskich dodawana jest automatycznie przez bota uruchomionego przez jednego z~administratorów Wikisłownika. Bot ten jest skomplikowanym programem napisanym w~Javie, generującym wymowę na podstawie publikacji Ostaszewskiej i~Tambora. %cite
-	Pliki dźwiękowe dodawane są szablonem \verb|{{audio}}|.
+	\item[Zawartość] Jedna z~kluczowych podsekcji we~wszystkich językach. Podawane są w~niej informacje na temat wymowy danego hasła, zarówno za pomocą alfabetów fonetycznych (jak np.\ IPA oraz alfabet słowiański), jak i~nagrań dźwiękowych umieszczonych w~Wikimedia Commons. Do opisywania wymowy stosowane są szablony \lstinline|{{IPA}}|, \lstinline|{{IPA2}}|, \lstinline|{{IPA3}}|, \lstinline|{{IPA4}}|. Wymowa słów polskich dodawana jest automatycznie przez bota uruchomionego przez jednego z~administratorów Wikisłownika. Bot ten jest skomplikowanym programem napisanym w~Javie, generującym wymowę na podstawie publikacji Ostaszewskiej i~Tambora. %cite
+	Pliki dźwiękowe dodawane są szablonem \lstinline|{{audio}}|.
 	\item[Języki] wszystkie poza znakiem chińskim i~użyciem międzynarodowym
 	\item[Przykład]
 		\begin{verbatim}
@@ -321,7 +321,7 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 \spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{przykłady}}|
-	\item[Zawartość] Przykłady użycia danego słowa w~zdaniu. W~przypadku języków innych niż polski tłumaczenie przykładu podane jest po znaku \verb|→|. Podobnie jak znaczenia, przykłady są linkowane.
+	\item[Zawartość] Przykłady użycia danego słowa w~zdaniu. W~przypadku języków innych niż polski tłumaczenie przykładu podane jest po znaku →. Podobnie jak znaczenia, przykłady są linkowane.
 	\item[Języki] wszystkie poza znakiem chińskim
 	\item[Przykład]
 		\begin{verbatim}
@@ -377,7 +377,7 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 \spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{złożenia}}|
-	\item[Zawartość] W~językach japońskim i~koreańskim podsekcja ta podaje słowa, które powstają jako złożenie danego hasła z~innym. Użyty w~przykładzie szablon \verb|{{furi}}| pomaga dobrze wyświetlić furiganę -- japońskie pismo.
+	\item[Zawartość] W~językach japońskim i~koreańskim podsekcja ta podaje słowa, które powstają jako złożenie danego hasła z~innym. Użyty w~przykładzie szablon \lstinline|{{furi}}| pomaga dobrze wyświetlić furiganę -- japońskie pismo.
 	\item[Języki] koreański i~japoński
 	\item[Przykład]
 		\begin{verbatim}
@@ -388,7 +388,7 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 \spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{pokrewne}}|
-	\item[Zawartość] Wyrazy pokrewne do danego wyrazu podstawowego. W~przypadku większej grupy wyrazów wspólnej dla wielu haseł może wystąpić odsyłacz do wyrazu podstawowego, np. w~haśle \emph{kocur}: \verb@{{zob|[[kot]]}}@.
+	\item[Zawartość] Wyrazy pokrewne do danego wyrazu podstawowego. W~przypadku większej grupy wyrazów wspólnej dla wielu haseł może wystąpić odsyłacz do wyrazu podstawowego, np. w~haśle \emph{kocur}: \lstinline@{{zob|[[kot]]}}@.
 	\item[Języki] wszystkie poza znakiem chińskim
 	\item[Przykład]
 		\begin{verbatim}
@@ -436,7 +436,7 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 \spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{etymologia}}|
-	\item[Zawartość] Pochodzenie wyrazu, zapisywane za pomocą szablonów \verb|{{etym}}| i~\verb|{{etymn}}|.
+	\item[Zawartość] Pochodzenie wyrazu, zapisywane za pomocą szablonów \lstinline|{{etym}}| i~\lstinline|{{etymn}}|.
 	\item[Języki] wszystkie
 	\item[Przykład]
 		\begin{verbatim}
@@ -507,7 +507,7 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 \spacer
 \begin{description-sub}
 	\item[Szablon] \verb|{{źródła}}|
-	\item[Zawartość] Źródła dla informacji podanych w~haśle. Zazwyczaj sekcja ta składa się ze znacznika \verb|<references/>|, który powoduje wyświetlenie w~tym miejscu przypisów wstawionych w~poprzedzającej zawartości strony znaczników \verb|<ref>...</ref>|.
+	\item[Zawartość] Źródła dla informacji podanych w~haśle. Zazwyczaj sekcja ta składa się ze znacznika \lstinline|<references/>|, który powoduje wyświetlenie w~tym miejscu przypisów wstawionych w~poprzedzającej zawartości strony znaczników \lstinline|<ref>...</ref>|.
 	\item[Języki] wszystkie
 	\item[Przykład]
 		\begin{verbatim}
@@ -517,8 +517,16 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 \end{description-sub}
 \spacer
 
+\subsubsection{Wady dotychczasowych rozwiązań}
 W~obecnym systemie edycji w~Wikisłowniku powyższa regularna struktura nie jest wykorzystywana w~wystarczającym stopniu.
-%plwikt-edit-non
+
+Ilustracja \ref{fig:plnew} pokazuje to i~owo.
+
+\begin{illustration}
+	\fbox{\includegraphics{plwikt-edit-non}}
+	\caption{Próba stworzenia nowego hasła w~polskim Wikisłowniku}
+	\label{fig:plnew}
+\end{illustration}
 
 \chapter{Aspekty społecznościowe}
 \section{Koncepcja \emph{wiki}}

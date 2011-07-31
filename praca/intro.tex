@@ -2,7 +2,6 @@
 \usepackage{indentfirst}
 \usepackage{parskip}
 \usepackage{graphicx}
-\usepackage{upquote}
 \usepackage{tabularx}
 \usepackage{setspace}
 \usepackage{listings}
@@ -17,11 +16,23 @@
 
 \hyphenation{MySQL jQuery}
 
-\defaultfontfeatures{Scale=MatchLowercase}
-\setmainfont[Mapping=tex-text]{Gentium}
+\setmainfont[Mapping=tex-text,Bold=Charis SIL Bold]{Gentium}
 \setsansfont[Mapping=tex-text]{Calibri}
 \setmonofont[Scale=0.7]{DejaVu Sans Mono}
 \setCJKmainfont{Sazanami Mincho}
+
+\lstset{
+	tabsize=4,
+	basicstyle=\ttfamily,
+	columns=fixed,
+	showstringspaces=false,
+	extendedchars=true,
+	breaklines=true,
+	%prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+	showtabs=false,
+	showspaces=false,
+	showstringspaces=false,
+}
 
 \author{Krzysztof Dudzik}
 \nralbumu{248349}
