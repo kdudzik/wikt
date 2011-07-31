@@ -19,7 +19,7 @@
 \setmainfont[Mapping=tex-text,Bold=Charis SIL Bold]{Gentium}
 \setsansfont[Mapping=tex-text]{Calibri}
 \setmonofont[Scale=0.7]{DejaVu Sans Mono}
-\setCJKmainfont{Sazanami Mincho}
+\setCJKmainfont[Scale=0.7]{Sazanami Mincho}
 
 \lstset{
 	tabsize=4,
@@ -74,8 +74,9 @@
 	\end{center}
 	\end{figure}
 }
-\newenvironment{description-sub}[0]{
+\newenvironment{opis}[0]{
 	\begin{basedescript}{\desclabelstyle{\pushlabel}\desclabelwidth{6em}}\setlength{\itemsep}{-2mm}
 }{
 	\end{basedescript}
 }
+\let\kod\lstinline
