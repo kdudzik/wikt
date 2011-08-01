@@ -146,7 +146,7 @@ window.EConstants = {
 		'krymskotatarski' : 'crh', 'kurdyjski' : 'ku', 'ladyński' : 'lld', 'langwedocki' : 'oci',
 		'laotański' : 'lo', 'lezgiński' : 'lez', 'liguryjski' : 'lij', 'limburski' : 'lim',
 		'litewski' : 'lt', 'lombardzki' : 'lmo', 'luksemburski' : 'lb', 'luo' : 'luo',
-		'łaciński' : 'la', 'łotewski' : 'lv', 'macedoński' : 'mk', 'malajalam' : 'ml',
+		'łaciński' : 'la', 'łatgalski' : 'ltg', 'łotewski' : 'lv', 'macedoński' : 'mk', 'malajalam' : 'ml',
 		'malajski' : 'ms', 'malediwski' : 'dv', 'malgaski' : 'mg', 'maltański' : 'mt',
 		'maoryski' : 'mi', 'marathi' : 'mr', 'maryjski' : 'chm', 'mikmak' : 'mic', 'minnan' : 'zh',
 		'mołdawski' : 'mo', 'mongolski' : 'mn', 'nahuatl' : 'nah', 'nauruański' : 'na',

@@ -67,7 +67,7 @@ Linki i~formatowanie na stronach internetowych tworzone są za pomocą elementó
 \begin{center}
 \footnotesize{
 	\begin{tabularx}{\textwidth}{ lXX }
-		\toprule & Wikitekst & XHTML \\
+		\toprule & \textbf{Wikitekst} & \textbf{XHTML} \\
 		\toprule Kursywa & \texttt{''Tekst''} & \texttt{<em>Tekst</em>} \\
 		\midrule Wytłuszczenie & \texttt{'''Tekst'''} & \texttt{<strong>Tekst</strong>} \\
 		\midrule Nagłówek & \texttt{== Nagłówek ==} & \texttt{<h2>Nagłówek</h2>} \\
@@ -515,21 +515,63 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 			<references/>
 		\end{verbatim}
 \end{opis}
-\spacer
 
-\subsubsection{Wady dotychczasowych rozwiązań}
+\subsection{Różnice w~stosunku do Wikipedii}
 W~obecnym systemie edycji w~Wikisłowniku przedstawiona wyżej regularna struktura nie jest wykorzystywana w~wystarczającym stopniu. W~dużej mierze wiąże się to z~pierwotnym założeniem, jakim jest oparcie projektu na silniku MediaWiki. Każde hasło przechowywane jest w~bazie danych jako jeden ciąg znaków, a~ich struktura jest wymuszona dopiero przez społeczność -- brakuje jakichkolwiek mechanizmów, które pomagałyby w~utrzymywaniu haseł zgodnie ze standardem.
 
-Baza Wikisłownika nie zachowuje zatem nawet pierwszej postaci normalnej %cite
--- hasła nie są wszak danymi atomowymi. To duża wada projektu takiego jak słownik internetowy, w~którym dane powinny być prezentowane możliwie jednolicie. Postaci normalne pozwalają też na łatwiejszą modyfikację i obróbkę danych. Niestety niemożliwa jest zmiana silnika MediaWiki, dlatego należy dbać o~standaryzację artykułów za pomocą innych środków.
+Po analizie uwidaczniają się liczne różnice w~stosunku do Wikipedii, która była pierwszym projektem Fundacji i~dziś jest jej sztandarowym przedsięwzięciem. W~tabeli \ref{tab:wiki-wikt} zostały ujęte najważniejsze cechy obu witryn.
+\begin{table}[h]
+\begin{center}
+	\begin{tabularx}{\textwidth}{ XX }
+		\toprule \textbf{Wikipedia} & \textbf{Wikisłownik} \\
+		\toprule Struktura hasła różnorodna
+			& Bardzo ściśle określona struktura hasła \\
+		\midrule Przede wszystkim ciągły tekst
+			& Listy, wypunktowania \\
+		\midrule Umiarkowana liczba szablonów używanych w~hasłach w~stosunku do pozostałej treści
+			& Bardzo duży udział szablonów w~treści hasła \\
+		\midrule Duże różnice pomiędzy wersjami językowymi
+			& Małe różnice pomiędzy wersjami językowymi \\
+		\midrule Linki interwiki łączą informacje o~tym samym obiekcie w~różnych językach
+			& Linki interwiki łączą informacje o~tym samym słowie występującym w~wielu językach, objaśnione w~różnych językach \\
+		\midrule Nagłówki dzielą artykuł na sekcje o~dowolnej semantyce
+			& Nagłówki dzielą artykuł na sekcje odpowiadające poszczególnym językom \\
+		\midrule Dużo wandalizmów (edycji wykonywanych w~złej wierze)
+			& Bardzo mało wandalizmów \\
+		\midrule Kilkuset stale aktywnych redaktorów
+			& Kilkunastu stale aktywnych redaktorów \\
+		\midrule Wielu użytkowników mających kłopoty z~dostosowaniem się do zasad
+			& Niewielu użytkowników mających kłopoty z~dostosowaniem się do zasad \\
+		\midrule Liczne wojny edycyjne (wzajemne cofanie swoich edycji przez co najmniej dwóch redaktorów)
+			& Praktycznie brak wojen edycyjnych \\
+		\bottomrule
+	\end{tabularx}
+\caption{Porównanie Wikipedii i~Wikisłownika}
+\label{tab:wiki-wikt}
+\end{center}
+\end{table}
 
-Ilustracja \ref{fig:plnew} pokazuje to i~owo.
+Można uznać, że w~przypadku polskich wersji językowych Wikisłownik jest projektem znacznie spokojniejszym niż Wikipedia, której powszechność powoduje nieuniknione problemy, takie jak zaangażowanie osób chcących wykorzystać projekt do celów marketingowych lub ideologicznych czy liczne wandalizmy w~wykonaniu znudzonych nastolatków. Społeczność redaktorów słownika zdecydowanie skupiona jest na stałym udoskonalaniu projektu. Z~racji jego rozmiaru łatwiej jest o~konsensus w~dyskusjach, a~dzięki mniejszej popularności innowacyjne rozwiązania techniczne mają większą szansę na realizację.
+
+\subsection{Wady dotychczasowych rozwiązań}
+Baza Wikisłownika nie zachowuje nawet pierwszej postaci normalnej %cite
+-- hasła nie są wszak danymi atomowymi. To duża wada projektu takiego jak słownik internetowy, w~którym dane powinny być prezentowane możliwie jednolicie. Postaci normalne pozwalają też na łatwiejszą modyfikację i~obróbkę danych. Niestety niemożliwa jest zmiana silnika MediaWiki, dlatego należy dbać o~standaryzację artykułów za pomocą innych środków. Aby pomieścić i~logicznie powiązać informacje w~każdym haśle, konieczne jest użycie omówionej struktury -- sekcji i~podsekcji, z~zastosowaniem licznych szablonów. Edycja takiego hasła (p.\ ilustracja \ref{fig:plhaslo-edit} na str.\ \pageref{fig:plhaslo-edit}) będzie bardzo trudna dla początkującego redaktora Wikisłownika. Jeszcze większe problemy występują przy tworzeniu nowych haseł. Ilustracja \ref{fig:plnew} pokazuje ekran służący do tego celu (wywoływany np.\ po kliknięciu w~czerwony link w~dowolnym haśle, oznaczający nieistniejący do tej pory artykuł).
 
 \begin{illustration}
 	\fbox{\includegraphics{plwikt-edit-non}}
 	\caption{Próba stworzenia nowego hasła w~polskim Wikisłowniku}
 	\label{fig:plnew}
 \end{illustration}
+
+Jak widać na zrzucie ekranu, sama instrukcja tworzenia nowego hasła jest na tyle skomplikowana, że może zniechęcić do edycji nowego redaktora. Wymagane jest skopiowanie podanego kodu i~pieczołowite podmienianie poszczególnych jego elementów. Niestety w~bardzo ograniczonym stopniu uwzględniane jest, że niektóre języki mają zdecydowanie inną strukturę niż przykładowa. Osoba chcąca dodać do Wikisłownika nowy znak chiński będzie musiała nie tylko zapoznać się z~regułami dla tej specyficznej odmiany haseł, ale też prawdopodobnie skopiować kod istniejącego hasła z~tej kategorii. O~wiele lepsza byłaby sytuacja, w~której po wyborze języka edytujący otrzymuje odpowiedni szkielet hasła, który będzie mógł uzupełnić standardowym formularzem, bez potrzeby wybierania fragmentów, które należy zmienić lub usunąć.
+
+Oparcie projektów Wikimedia na systemie MediaWiki i~wikikodzie powoduje tego typu problemy oczywiście nie tylko w~Wikisłowniku. Także w~Wikipedii komplikacje techniczne są dużą barierą dla nowych użytkowników, najczęściej przyzwyczajonych do narzędzi typu WYSIWYG (\emph{What You See Is What You Get}) takich jak Microsoft Word. W~badaniach przeprowadzonych w~2009~roku czytelnikom wszystkich wersji językowych Wikipedii zadano pytanie o~powody nieuczestniczenia w~pracach edycyjnych. 25,18\% spośród 21~492~ankietowanych odpowiedziało \emph{nie wiem, jak}, 12,49\% stwierdziło, że zbyt słabo zna używane technologie, natomiast 24,43\% wskazało, że obawiałoby się popełnienia błędu i~,,wpadnięcia w~kłopoty'' z~tego powodu (najczęściej wymienianym powodem było \emph{myślę, że nie mam wystarczająco wiele wiedzy, którą mogę się podzielić} -- 51,98\%). %cite http://upload.wikimedia.org/wikipedia/foundation/a/a7/Wikipedia_General_Survey-Overview_0.3.9.pdf
+Wynika z~tego, że aż jedna czwarta czytelników to potencjalni redaktorzy, którzy nie angażują się w~tworzenie encyklopedii ze względu na uwarunkowania techniczne. Brak podobnych badań przeprowadzanych na użytkownikach Wikisłownika, można jednak przypuszczać, że kształtują się one podobnie. Dodatkowym czynnikiem jest specjalizacja projektu -- w~pracach przy słowniku w~dużej części uczestniczą lingwiści, którzy nie muszą biegle posługiwać się platformą MediaWiki.
+
+W~przypadku Wikipedii od dawna podejmowane są wysiłki w~kierunku poprawienia obsługi technicznej serwisu. Istnieje np.\ alternatywny edytor haseł \textbf{wikEd} dostępny po wybraniu w~preferencjach użytkownika, w~ograniczonym zakresie wspomagający redagowanie haseł. %cite http://en.wikipedia.org/wiki/User:Cacycle/wikEd
+Prawdopodobnie jednak edytor WYSIWYG dla przedsięwzięć Fundacji Wikimedia nie powstanie w~przewidywalnej przyszłości. Z~tego powodu korzystne jest usprawnianie poszczególnych projektów z~uwzględnieniem ich cech charakterystycznych.
+
+
 
 \chapter{Aspekty społecznościowe}
 \section{Koncepcja \emph{wiki}}
