@@ -1,0 +1,365 @@
+\begin{opis}
+	\item[Szablon] \verb|{{zapis hieroglificzny}}|
+	\item[Zawartość] Zapis hieroglificzny słowa w~języku staroegipskim, pokazany za~pomocą grafik PNG z~repozytorium Wikimedia Commons. Oznaczenie \kod|(1.1)| odnosi się do numeracji w~sekcji \emph{znaczenia}.
+	\item[Języki] tylko staroegipski\footnote{Rubryka \emph{Języki} precyzuje, w~których sekcjach językowych występuje dana podsekcja. Oprócz zwykłych sekcji, odpowiadających danemu językowi, istnieją także nietypowe: \emph{użycie słowa obcego w~języku polskim} i~\emph{znak chiński}}.
+	\item[Przykład]
+		\begin{verbatim}
+			{{zapis hieroglificzny}}
+			: (1.1) [[Plik:Egyptian-Pr-cnḫ.PNG]];
+			[[Plik:Egyptian-Pr-cnḫ2.PNG]];
+			[[Plik:Egyptian-Pr-cnḫ3.PNG]]
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{ortografie}}|
+	\item[Zawartość] Inne sposoby zapisu tytułu hasła. Zazwyczaj chodzi o~alternatywną pisownię w~języku, do zapisu którego używane są dwa alfabety (np.\ serbski). Do prezentacji pisowni mogą być używane szablony wyświetlające dodatkowe informacje.
+	\item[Języki] azerski, białoruski, dżuhuri, gagauski, krymskotatarski, ladino, serbski, slovio, tatarski, turkmeński, ujgurski
+	\item[Przykład]
+		\begin{verbatim}
+			{{ortografie}} Мацедониа
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{transliteracja}}|
+	\item[Zawartość] Transliteracja słowa zapisanego w~obcym alfabecie na alfabet łaciński. W~przeciwieństwie do transkrypcji transliteracja może być wykonywana automatycznie -- każda litera alfabetu obcego konwertowana jest na jeden lub więcej znaków w~alfabecie łacińskim. Obecnie często używany jest szablon \kod|{{translit}}|, który umożliwia automatyczną konwersję za pomocą JavaScriptu niektórych alfabetów podczas odczytywania strony.
+	\item[Języki] abazyński, abchaski, adygejski, akadyjski, amharski, arabski, aramejski, assamski, awarski, baszkirski, beludżi, bengali, birmański, bośniacki, bułgarski, chakaski, czeczeński, czuwaski, dzongkha, erzja, gocki, gruziński, gudźarati, gyyz, hebrajski, hindi, inguski, inuktitut, jidysz, kannada, kaszmirski, kazachski, khmerski, kirgiski, komi, komi\dywiz{}jaźwiński, kri, kurdyjski, laotański, lezgiński, macedoński, malajalam, malediwski, marathi, maryjski, mongolski, nepalski, newarski, nowogrecki, orija, ormiański, osetyjski, paszto, pendżabski, perski, romski, rosyjski, sanskryt, sindhi, sorani, staro\dywiz{}cerkiewno\dywiz{}słowiański, starogrecki, staroormiański, sumeryjski, syngaleski, tabasarański, tadżycki, tajski, tamazight, tamilski, telugu, tybetański, ukraiński, urdu, zarfatit
+	\item[Przykład]
+		\begin{verbatim}
+			{{transliteracja}} Moskva
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{transkrypcja}}|
+	\item[Zawartość] Transkrypcja słowa zapisanego w~obcym alfabecie na język polski, czyli przedstawienie go w~formie dającej informacje o~rzeczywistej wymowie
+	\item[Języki] standardowo tylko staroegipski, podsekcja ta może być jednak dodawana w~wielu innych językach (przykład w~jidysz)
+	\item[Przykład]
+		\begin{verbatim}
+			{{transkrypcja}}
+			: (1.1-3) {{YIVO|{{lp}} khaver {{lm}} khaveyrim}}; polska: {{lp}}
+			chawer {{lm}} chawejrim
+			: (1.4) {{YIVO|{{lp}} khover {{lm}} khovers}}; polska: {{lp}}
+			chower; {{lm}} chowers
+		\end{verbatim}
+\end{opis}
+\spacer %http://pl.wiktionary.org/wiki/Kategoria:Szablony_szablon%C3%B3w_hase%C5%82
+\begin{opis}
+	\item[Szablon] \verb|{{czytania}}|
+	\item[Zawartość] Wyjaśnienie możliwego wymawiania znaków kanji używanych w~języku japońskim. Występują dwa sposoby czytania: on'yomi i~kun'yomi. Do ich prezentacji używane są szablony \kod|{{on}}| i~\kod|{{kun}}|.
+	\item[Języki] tylko japoński
+	\item[Przykład]
+		\begin{verbatim}
+			{{czytania}} {{on}} ビ (bi); {{kun}} はな (hana)
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{klucz}}|
+	\item[Zawartość] Elementy, według których układane są słowniki języka chińskiego.
+	\item[Języki] tylko znak chiński
+	\item[Przykład]
+		\begin{verbatim}
+			{{klucz}} 157 足 + 6
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{kreski}}|
+	\item[Zawartość] Liczba kresek użytych do napisania danego znaku. Informacja służy m.in.\ do ułatwienia odnajdywania znaków w~papierowych słownikach.
+	\item[Języki] znak chiński, koreański
+	\item[Przykład]
+		\begin{verbatim}
+			{{kreski}} 13
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{warianty}}|
+	\item[Zawartość] Szablon powiększający znak chiński i~ewentualnie jego warianty. Szablon ten jest używany inaczej niż większość: nie odpowiada jedynie za wyświetlenie nagłówka, a~zawartość sekcji wstawiana jest jako parametr. Najczęściej w~parametrze pojawia się szablon \kod|{{zch-w}}|, odpowiadający za prezentację znaku.
+	\item[Języki] tylko znak chiński
+	\item[Przykład]
+		\begin{verbatim}
+			{{warianty|{{zch-w}}}}
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{kolejność}}|
+	\item[Zawartość] Kolejność stawiania kresek w~znaku chińskim, ilustrowana za pomocą grafiki dostępnej w~projekcie Wikimedia Commons. W~tej podsekcji używane są szablony \kod|{{zch-komiks}}|, \kod|{{zch-cienie}}| i~\kod|{{zch-animacja}}|, które ładują automatycznie grafiki o~nazwie odpowiadającej hasłu, jeśli te istnieją.
+	\item[Języki] tylko znak chiński
+	\item[Przykład]
+		\begin{verbatim}
+		{{kolejność}}
+		{{zch-komiks}}
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{wymowa}}|
+	\item[Zawartość] Jedna z~kluczowych podsekcji we~wszystkich językach. Podawane są w~niej informacje na temat wymowy danego hasła, zarówno za pomocą alfabetów fonetycznych (jak np.\ IPA oraz alfabet słowiański), jak i~nagrań dźwiękowych umieszczonych w~Wikimedia Commons. Do opisywania wymowy stosowane są szablony \kod|{{IPA}}|, \kod|{{IPA2}}|, \kod|{{IPA3}}|, \kod|{{IPA4}}|. Wymowa słów polskich dodawana jest automatycznie przez bota uruchomionego przez jednego z~administratorów Wikisłownika. Bot ten jest skomplikowanym programem napisanym w~Javie, generującym wymowę na podstawie publikacji Ostaszewskiej i~Tambora. %cite
+	Pliki dźwiękowe dodawane są szablonem \kod|{{audio}}|.
+	\item[Języki] wszystkie poza znakiem chińskim i~użyciem międzynarodowym
+	\item[Przykład]
+		\begin{verbatim}
+		{{wymowa}} {{audio|Pl-samochód.ogg}}, {{IPA3|sãˈmɔxut}}, {{AS3|sãm'''o'''χut}},
+		{{objaśnienie wymowy|WYG|NAZAL}}
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{znaczenia}}|
+	\item[Zawartość] Jedyna podsekcja obowiązkowa, w~której podawane jest znaczenie hasła. Zawartość podsekcji dzielona jest najpierw na części mowy, potem na poszczególne znaczenia, które zostają ponumerowane zgodnie z~obowiązującym schematem. W~hasłach polskich podawane jest dłuższe znaczenie, w~innych językach tłumaczenie na polski. Znaczenia te są linkami do objaśnień form podstawowych poszczególnych słów -- linkowanie to stanowi dość duże utrudnienie przy tworzeniu hasła.
+	\item[Języki] wszystkie
+	\item[Przykłady] Hasło angielskie:
+		\begin{verbatim}
+		{{znaczenia}}
+		''rzeczownik''
+		: (1.1) [[zamówienie]]
+		: (1.2) [[rozkaz]]
+		: (1.3) [[porządek]]
+		: (1.4) {{syst}} [[rząd]]
+		: (1.5) {{mat}} [[rząd]]
+		''czasownik''
+		: (2.1) [[zamawiać]]
+		: (2.2) [[rozkazywać]]
+		\end{verbatim}
+		Hasło polskie:
+		\begin{verbatim}
+		{{znaczenia}}
+		''rzeczownik, rodzaj męski''
+		: (1.1) [[budynek]] [[warowny]]; {{wikipedia|zamek (architektura)}}
+		: (1.2) [[mechanizm]] [[zamykać|zamykający]] [[drzwi]], [[szuflada|szuflady]];
+		{{wikipedia|zamek (urządzenie)}}
+		: (1.3) [[zapięcie]] [[garderoba|garderoby]], {{zob|[[zamek błyskawiczny]]}}.
+		: (1.4) [[element]] [[składowy]] [[broń|broni]] [[palny|palnej]];
+		{{wikipedia|zamek (broń)}}
+		: (1.5) {{sport}} [[w]] [[hokej]]u: [[zamykać|zamknięcie]] [[przeciwnik]]a [[w]]
+		[[tercja|tercji]], [[gdy]] [[drużyna]] [[atakować|atakująca]]
+		[[rozgrywać|rozgrywa]] [[krążek]] [[w]] [[tercja|tercji]] [[przeciwnik]]a [[nie]]
+		[[pozwalać|pozwalając]] [[on|mu]] [[wyjść]] [[poza]] [[niebieski|niebieską]]
+		[[linia|linię]]
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{determinatywy}}|
+	\item[Zawartość] Znak określający, o~jaką klasę znaczeniową wyrazów chodzi w~danym haśle. Wyświetlana jest grafika z~Wikimedia Commons.
+	\item[Języki] tylko staroegipski
+	\item[Przykład]
+		\begin{verbatim}
+			{{determinatywy}}
+			: (1.1) [[Plik:Egyptian-nb ʿnḫ-determinative.PNG]]
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{odmiana}}|
+	\item[Zawartość] Odmiana wyrazu, prezentowana na różne sposoby. Występują np.\ szablony, które generują odmianę na podstawie formy podstawowej hasła. Niekiedy podawana jest jedynie deklinacja lub koniugacja (z~odnośnikiem do tabel ją przedstawiających), gdzie indziej cała odmiana.
+	\item[Języki] wszystkie poza znakiem chińskim
+	\item[Przykład]
+		\begin{verbatim}
+			{{odmiana}}
+			: (1.1-2) читать {{ter}} {{lp}} читаю, читаешь, читает; {{lm}} читаем, читаете,
+			читают; {{przesz}} {{lp}} читал / читала / читало; {{lm}} читали; {{rozk}} {{lp}}
+			читай; {{ims}} читающий; читаемый; читая
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{przykłady}}|
+	\item[Zawartość] Przykłady użycia danego słowa w~zdaniu. W~przypadku języków innych niż polski tłumaczenie przykładu podane jest po znaku →. Podobnie jak znaczenia, przykłady są linkowane.
+	\item[Języki] wszystkie poza znakiem chińskim
+	\item[Przykład]
+		\begin{verbatim}
+			{{przykłady}}
+			: (2.1) ''[[Michael]] '''locks''' [[his]] [[house]] [[every]] [[day]]. '' →
+			[[Michał]] [[codziennie]] '''[[zamykać|zamyka]]''' [[swój]] [[dom]] (na klucz).
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{składnia}}|
+	\item[Zawartość] Podsekcja zawiera informacje o~używaniu słowa w~połączeniu z~przyimkami czy przypadkami.
+	\item[Języki] wszystkie poza znakiem chińskim
+	\item[Przykład]
+		\begin{verbatim}
+			{{składnia}}
+			: (1.2) jechać +{{N}}; jechać [[do]] +{{D}}, jechać [[na]] +{{B}}
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{kolokacje}}|
+	\item[Zawartość] Kolokacje to często używane zestawienia słów, w~których (w~przeciwieństwie do związków frazeologicznych) znaczenie całości wynika ze znaczenia poszczególnych wyrazów.
+	\item[Języki] wszystkie poza znakiem chińskim
+	\item[Przykład]
+		\begin{verbatim}
+			{{kolokacje}} [[mieć]] / [[budzić]] / [[odbierać]] nadzieję • [[promyk]]
+			nadziei • [[ziścić]] nadzieje • [[karmić]] [[się]] nadzieją
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{synonimy}}|
+	\item[Zawartość] Wyrazy bliskoznaczne, synonimy.
+	\item[Języki] wszystkie poza znakiem chińskim
+	\item[Przykład]
+		\begin{verbatim}
+			{{synonimy}}
+			: (1.1) [[ufność]], [[wiara]], [[zawierzenie]], [[pociecha]]
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{antonimy}}|
+	\item[Zawartość] Wyrazy przeciwstawne, antonimy
+	\item[Języki] wszystkie poza znakiem chińskim
+	\item[Przykład]
+		\begin{verbatim}
+			{{antonimy}}
+			: (1.1) [[rezygnacja]], [[zwątpienie]], [[beznadzieja]]
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{złożenia}}|
+	\item[Zawartość] W~językach japońskim i~koreańskim podsekcja ta podaje słowa, które powstają jako złożenie danego hasła z~innym. Użyty w~przykładzie szablon \kod|{{furi}}| pomaga dobrze wyświetlić furiganę -- japońskie pismo.
+	\item[Języki] koreański i~japoński
+	\item[Przykład]
+		\begin{verbatim}
+			{{złożenia}} {{furi|五日|いつか}}, {{furi|五月|ごがつ}},
+			{{furi|五輪|ごりん}}, {{furi|五輪大会|ごりんたいかい}}
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{pokrewne}}|
+	\item[Zawartość] Wyrazy pokrewne do danego wyrazu podstawowego. W~przypadku większej grupy wyrazów wspólnej dla wielu haseł może wystąpić odsyłacz do wyrazu podstawowego, np. w~haśle \emph{kocur}: \kod@{{zob|[[kot]]}}@.
+	\item[Języki] wszystkie poza znakiem chińskim
+	\item[Przykład]
+		\begin{verbatim}
+			{{pokrewne}}
+			: (1.1) {{rzecz}} [[picklock]], [[locksmith]], [[locknut]]
+			: (1.2) {{rzecz}} [[dreadlock]]
+			: (1.3) {{rzecz}} [[airlock]], [[lockage]]
+			: (2.1) {{przym}} [[lockable]]; {{rzecz}} [[locker]]
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{pochodne}}|
+	\item[Zawartość] Odpowiednik podsekcji \emph{pokrewne} dla morfemów w~esperanto, stanowiących osobne hasła.
+	\item[Języki] esperanto
+	\item[Przykład]
+		\begin{verbatim}
+			{{pochodne}} {{rzecz}} [[zebro]], [[zebrino]], [[zebrido]]
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{frazeologia}}|
+	\item[Zawartość] Podsekcja zawiera związki frazeologiczne, które prezentowane są podobnie jak kolokacje. Różnica między kolokacjami a~związkami frazeologicznymi polega na tym, że w~przypadku tych drugich znaczenie związku nie wynika bezpośrednio ze znaczeń poszczególnych wyrazów.
+	\item[Języki] wszystkie poza znakiem chińskim
+	\item[Przykład]
+		\begin{verbatim}
+			{{frazeologia}}
+			: [[psi urok]] • [[tu leży pies pogrzebany]] • {{wulg}} [[pies kogoś jebał]] •
+			[[pies ogrodnika]] • {{pot}} [[pies na baby]] • [[pogoda pod psem]] • [[psu na
+			budę]] • [[pieskie życie]] • [[psia wachta]] • [[psia koja]] • [[pies
+			Pawłowa]] • [[nie dla psa kiełbasa]] • [[pies łańcuchowy Darwina]] • [[na psa
+			urok]] • [[ni pies, ni wydra]] • [[schodzić na psy]] • [[łgać jak pies]] •
+			[[delikatny jak francuski piesek]] • [[francuski piesek]] • [[pies z nim
+			tańcował]] • [[psi żywot]] • [[psie figle]] • [[psi obowiązek]] • [[całować
+			psa w nos]] • [[wyć jak pies do księżyca]] • [[żyć jak pies z kotem]] •
+			[[wieszać na kimś psy]] • [[lubić kogoś jak psy dziada w ciasnej ulicy]] •
+			[[robić coś psim swędem]] • [[wyglądać jak zbity pies]] • [[być wyszczekanym
+			jak pies]] • [[psia kość]] • [[kupować za psie pieniądze]] • [[wyszczekać coś
+			jak pies]] • [[odszczekać coś jak pies]] • [[wierny jak pies]] • [[pies ci
+			mordę lizał]]
+			: zobacz też: [[Aneks:Przysłowia polskie - zwierzęta#pies|przysłowia o psie]]
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{etymologia}}|
+	\item[Zawartość] Pochodzenie wyrazu, zapisywane za pomocą szablonów \kod|{{etym}}| i~\kod|{{etymn}}|.
+	\item[Języki] wszystkie
+	\item[Przykład]
+		\begin{verbatim}
+			{{etymologia}}
+			: {{etym|prasłowiański|*ne}} < {{etym|praindoeuropejski|*ne}} 'nie'
+			: {{por}} {{etymn|czeski|ne}}, {{etymn|rosyjski|не}}, {{etymn|litewski|ne}},
+			{{etymn|łaciński|ne}}
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{kody}}|
+	\item[Zawartość] Informacje na temat wprowadzania znaków chińskich za pomocą klawiatury w~różnych metodach oraz kodowania Unicode. Podobnie jak w~przypadku podsekcji \emph{warianty}, i~tutaj szablon przyjmuje parametry pozwalające na zestandaryzowane wyświetlanie.
+	\item[Języki] tylko znak chiński
+	\item[Przykład]
+		\begin{verbatim}
+			{{kody |cjz=田金 |cjl=WC |cr=6021<sub>0</sub> |u=56db}}
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{hanja}}|
+	\item[Zawartość] W~tej podsekcji podawana jest pisownia danego słowa koreańskiego w~piśmie hanja (hancha), czyli pisownia zapożyczona z~języka chińskiego. Częściej w~koreańskim używany jest alfabet hangul.
+	\item[Języki] tylko koreański
+	\item[Przykład]
+		\begin{verbatim}
+			{{hanja}} [[憲法]]
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{słowniki}}|
+	\item[Zawartość] Informacja na temat występowania danego znaku chińskiego w~słownikach KangXi, Dai Kanwa Jiten, Dae Jaweon i~Hanyu Da Zidian.
+	\item[Języki] tylko znak chiński
+	\item[Przykład]
+		\begin{verbatim}
+			{{słowniki|kx=1163.080|dkj=35533|dj=1628.020|hdz=63974.090}}
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{uwagi}}|
+	\item[Zawartość] Dodatkowe informacje, np.\ częste błędy, odpowiedzi na typowe wątpliwości.
+	\item[Języki] wszystkie
+	\item[Przykład]
+		\begin{verbatim}
+			{{uwagi}}
+			: (1.1) forma ''tylni'' dla przymiotnika rodzaju męskiego w liczbie pojedynczej
+			jest błędna, może odnosić się ona jedynie do liczby mnogiej<ref>{{PoradniaPWN|id=
+			9687|hasło=tylny czy tylni?}}</ref>
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{tłumaczenia}}|
+	\item[Zawartość] Podsekcja ta pełni funkcję słownika z~języka polskiego na inne. Podawane są odnośniki do wyrazów będących tłumaczeniami danego słowa polskiego.
+	\item[Języki] tylko polski
+	\item[Przykład]
+		\begin{verbatim}
+			{{tłumaczenia}}
+			* angielski: (1.1) [[date]], [[appointment]]
+			* arabski: (1.1) [[تعيين]]
+			* francuski: (1.1) [[rendez-vous]]
+			* rosyjski: (1.1) [[свидание]], {{pot}} [[свиданка]]
+			* szwedzki: (1.1) [[träff]] {{w}}
+		\end{verbatim}
+\end{opis}
+\spacer
+\begin{opis}
+	\item[Szablon] \verb|{{źródła}}|
+	\item[Zawartość] Źródła dla informacji podanych w~haśle. Zazwyczaj sekcja ta składa się ze znacznika \kod|<references/>|, który powoduje wyświetlenie w~tym miejscu przypisów wstawionych w~poprzedzającej zawartości strony znaczników \kod|<ref>...</ref>|.
+	\item[Języki] wszystkie
+	\item[Przykład]
+		\begin{verbatim}
+			{{źródła}}
+			<references/>
+		\end{verbatim}
+\end{opis}
