@@ -13,7 +13,10 @@
 \usepackage{xeCJK}
 \usepackage{url}
 \usepackage{booktabs}
+\usepackage{tocloft}
+\usepackage[sorting=none]{biblatex}
 
+\bibliography{mgr.bib}
 \hyphenation{MySQL jQuery}
 
 \setmainfont[Mapping=tex-text,Bold=Charis SIL Bold]{Gentium}
@@ -58,6 +61,8 @@
 \widowpenalty=1000
 \renewcommand*{\figurename}{Ilustracja}
 \renewcommand*{\listfigurename}{Spis ilustracji}
+\renewcommand{\cftpartdotsep}{\cftdotsep}
+\renewcommand{\cftchapdotsep}{\cftdotsep}
 \newcommand{\spacer}{
 	\begin{center}
 		\textasteriskcentered

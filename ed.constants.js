@@ -105,8 +105,8 @@ window.EConstants = {
 		{
 		'dżuhuri' : 'jdt', 'esperanto' : 'eo', 'ewe' : 'ee', 'hindi' : 'hi',
 		'ido' : 'io', 'interlingua' : 'ia', 'inuktitut' : 'iu', 'jèrriais' : 'roa',
-		'jidysz' : 'yi', 'ladino' : 'lad', 'lingala' : 'ln', 'lojban' : 'jbo',
-		'novial' : 'nov', 'papiamento' : 'pap', 'pitjantjatjara' : 'pjt', 'sanskryt' : 'sa',
+		'jidysz' : 'yi', 'ladino' : 'lad', 'lingala' : 'ln', 'novial' : 'nov',
+		'papiamento' : 'pap', 'pitjantjatjara' : 'pjt', 'sanskryt' : 'sa',
 		'slovio' : 'slovio', 'sranan tongo' : 'srn',
 		'termin obcy w języku łacińskim' : 'termin obcy w języku łacińskim',
 		'termin obcy w języku polskim' : 'termin obcy w języku polskim',
