@@ -72,5 +72,7 @@ window.EUtil = {
 	}
 };
 
+$.fn.reverse = [].reverse;
+
 window.EFilesLoaded++;
 window.ETryInit();

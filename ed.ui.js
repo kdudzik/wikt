@@ -165,7 +165,7 @@ window.EUi = {
 						$.cookie('lastAdded', sec['code']);
 					}
 					$('#ed_menuitem_' + id).click();
-					$('#ed_section_' + id + ' textarea').autogrow();
+					$('#ed_section_' + id + ' textarea').reverse().autogrow();
 				}
 				else {
 					jAlert(EStr.ADD_SECTION_NONEXISTENT, EStr.ADD_SECTION_NONEXISTENT_TITLE, function() {
@@ -274,7 +274,7 @@ window.EUi = {
 	},
 
 	resizeTextareas : function() {
-		$('fieldset.active').find('textarea').autogrow();
+		$('fieldset.active').find('textarea').reverse().autogrow();
 	}
 };
 
