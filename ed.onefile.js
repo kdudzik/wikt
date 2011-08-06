@@ -237,7 +237,6 @@ label.oblig_subsection {\
 	text-decoration: none;\
 	border: 1px solid darkkhaki;\
 }\
-
 ";
 mw.util.addCSS(css);
 /**
