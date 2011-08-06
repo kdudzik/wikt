@@ -18,24 +18,16 @@
 
 \hyphenation{MySQL jQuery}
 
+% USTAWIENIA PAKIETÓW
 \setmainfont[Mapping=tex-text,Bold=Charis SIL Bold]{Gentium}
 \setsansfont[Mapping=tex-text]{Calibri}
 \setmonofont[Scale=0.7]{DejaVu Sans Mono}
 \setCJKmainfont[Scale=0.7]{Sazanami Mincho}
+\lstset{tabsize=4, basicstyle=\ttfamily, columns=fixed, showstringspaces=false, extendedchars=true, breaklines=true,
+	showtabs=false, showspaces=false, showstringspaces=false}
+\graphicspath{{./screeny/}}
 
-\lstset{
-	tabsize=4,
-	basicstyle=\ttfamily,
-	columns=fixed,
-	showstringspaces=false,
-	extendedchars=true,
-	breaklines=true,
-	%prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
-	showtabs=false,
-	showspaces=false,
-	showstringspaces=false,
-}
-
+% USTAWIENIA KLASY PRACAMGR
 \author{Krzysztof Dudzik}
 \nralbumu{248349}
 \title{Aplikacja wspomagająca tworzenie i~edycję haseł w~polskim Wikisłowniku}
@@ -45,11 +37,10 @@
 \date{2011}
 \dziedzina{11.3 Informatyka\\}
 \klasyfikacja{D. Software\\D.2. Software Engineering\\D.2.10. Design}
-\keywords{Wikisłownik, Fundacja Wikimedia, MediaWiki, wiki, edytor, API, JavaScript, jQuery, interfejs użytkownika, społeczność internetowa}
+\keywords{Wikisłownik, Fundacja Wikimedia, MediaWiki, wiki, edytor, API, JavaScript, jQuery, interfejs użytkownika, społeczność internetowa, open source}
 
-% Tu jest dobre miejsce na Twoje własne makra i~środowiska:
+% USTAWIENIA TYPOGRAFII
 \setkeys{Gin}{width=0.9\textwidth}
-\graphicspath{{./screeny/}}
 \setlength{\fboxsep}{0pt}
 \setlength{\fboxrule}{0.2pt}
 \setlength{\parskip}{1.2ex plus 0.5ex minus 0.2ex}
@@ -58,6 +49,9 @@
 \brokenpenalty=1000
 \clubpenalty=1000
 \widowpenalty=1000
+
+% MAKRA I DEFINICJE
+\let\kod\lstinline
 \renewcommand*{\figurename}{Ilustracja}
 \renewcommand*{\listfigurename}{Spis ilustracji}
 \renewcommand{\cftpartdotsep}{\cftdotsep}
@@ -84,8 +78,8 @@
 }{
 	\end{basedescript}
 }
-\let\kod\lstinline
 
+% POCZĄTEK DOKUMENTU
 \begin{document}
 \maketitle
 
