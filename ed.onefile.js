@@ -808,7 +808,7 @@ window.EConstants = {
 		'białoruski' : 'be', 'birmański' : 'my', 'boloński' : 'egl', 'bośniacki' : 'bs',
 		'bretoński' : 'br', 'bułgarski' : 'bg', 'cebuano' : 'ceb', 'chakaski' : 'kjh',
 		'chickasaw' : 'nai', 'chiński standardowy' : 'zh', 'chorwacki' : 'hr', 'czagatajski' : 'chg',
-		'czarnogórski' : 'ch', 'czeczeński' : 'ce', 'czeski' : 'cs', 'czirokeski' : 'chr',
+		'czamorro' : 'ch', 'czarnogórski' : 'ch', 'czeczeński' : 'ce', 'czeski' : 'cs', 'czirokeski' : 'chr',
 		'czuwaski' : 'cv', 'dalmatyński' : 'dlm', 'dolnołużycki' : 'dsb', 'dolnoniemiecki' : 'nds',
 		'duński' : 'da', 'dzongkha' : 'dz', 'erzja' : 'myv', 'estoński' : 'et',
 		'etruski' : 'ett', 'farerski' : 'fo', 'fidżyjski' : 'fj', 'filipino' : 'fil',
@@ -890,7 +890,12 @@ window.EConstants = {
 		'0004',
 	SECTION_ID_LATIN_FOREIGN :
 		'lzzacinzzski2',
-
+	WIKIPEDIA :
+		'wikipedia',
+	WIKTIONARY :
+		'wikt',
+	WIKIMEDIA :
+		'wikimedia',
 	init : function() {
 		for (name in EConstants.LANG_CODES_SHORT) {
 			EConstants.CODE_TO_LANG[EConstants.LANG_CODES_SHORT[name]] = name;
@@ -1472,6 +1477,36 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 			selText = selText.substring(0, selText.length - 1);
 			tagClose += ' ';
 		}
+	}
+};
+
+
+window.EApi = {
+	url : function(lang, project) {
+		if (lang == undefined) {
+			lang = 'pl';
+		}
+		if (project == undefined) {
+			project = EConstants.WIKTIONARY;
+		}
+		return "http://" + lang + "." + project + ".org/w/api.php?";
+	}
+
+	commonsUrl : function() {
+		return EApi.url('commons', EConstants.WIKIMEDIA);
+	}
+
+	wikiUrl : function(lang) {
+		return EApi.url(lang, EConstants.WIKIPEDIA);
+	}
+
+	call : function(query, url) {
+		if (url == undefined) {
+			url = EApi.url();
+		}
+		query['format'] = 'json';
+		url += $.param(query);
+		mw.loader.load(url);
 	}
 };
 
