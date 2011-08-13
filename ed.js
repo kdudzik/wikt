@@ -13,6 +13,7 @@ window.EFiles =
 	'http://localhost/wikt/ed.ui.js',
 	'http://localhost/wikt/ed.keyboard.js',
 	'http://localhost/wikt/ed.api.js',
+	'http://localhost/wikt/ed.automator.js',
 	'http://localhost/wikt/jquery.alerts.js',
 	'http://localhost/wikt/jquery.tooltip.js',
 	'http://localhost/wikt/jquery.autoresize.js',

@@ -33,6 +33,7 @@ window.Ed = {
 		Ed.parseSectionsToSubsections();
 
 		EUi.prepareForm(oldform, instruction);
+		EAutomator.initTest();
 
         $('.tip').livequery(function() {
 			$(this).tooltip('tip');

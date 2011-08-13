@@ -211,7 +211,7 @@ window.EConstants = {
 	WIKIPEDIA :
 		'wikipedia',
 	WIKTIONARY :
-		'wikt',
+		'wiktionary',
 	WIKIMEDIA :
 		'wikimedia',
 	init : function() {

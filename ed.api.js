@@ -7,21 +7,23 @@ window.EApi = {
 			project = EConstants.WIKTIONARY;
 		}
 		return "http://" + lang + "." + project + ".org/w/api.php?";
-	}
+	},
 
 	commonsUrl : function() {
 		return EApi.url('commons', EConstants.WIKIMEDIA);
-	}
+	},
 
 	wikiUrl : function(lang) {
 		return EApi.url(lang, EConstants.WIKIPEDIA);
-	}
+	},
 
-	call : function(query, url) {
+	ask : function(query, callback, url) {
 		if (url == undefined) {
 			url = EApi.url();
 		}
+		query['action'] = 'query';
 		query['format'] = 'json';
+		query['callback'] = callback;
 		url += $.param(query);
 		mw.loader.load(url);
 	}

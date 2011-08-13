@@ -40,6 +40,7 @@ window.EUi = {
 
 		EUi.prepareFormSections();
 		EUi.rebindFormActions();
+		EUi.prepareAutomatorForm();
 		EKeyboard.init();
 	},
 
@@ -275,6 +276,10 @@ window.EUi = {
 
 	resizeTextareas : function() {
 		$('fieldset.active').find('textarea').reverse().autogrow();
+	},
+
+	prepareAutomatorForm : function() {
+
 	}
 };
 

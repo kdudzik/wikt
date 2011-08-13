@@ -274,6 +274,7 @@ window.Ed = {
 		Ed.parseSectionsToSubsections();
 
 		EUi.prepareForm(oldform, instruction);
+		EAutomator.initTest();
 
         $('.tip').livequery(function() {
 			$(this).tooltip('tip');
@@ -893,7 +894,7 @@ window.EConstants = {
 	WIKIPEDIA :
 		'wikipedia',
 	WIKTIONARY :
-		'wikt',
+		'wiktionary',
 	WIKIMEDIA :
 		'wikimedia',
 	init : function() {
@@ -1032,6 +1033,7 @@ window.EUi = {
 
 		EUi.prepareFormSections();
 		EUi.rebindFormActions();
+		EUi.prepareAutomatorForm();
 		EKeyboard.init();
 	},
 
@@ -1267,6 +1269,10 @@ window.EUi = {
 
 	resizeTextareas : function() {
 		$('fieldset.active').find('textarea').reverse().autogrow();
+	},
+
+	prepareAutomatorForm : function() {
+
 	}
 };
 
@@ -1490,23 +1496,45 @@ window.EApi = {
 			project = EConstants.WIKTIONARY;
 		}
 		return "http://" + lang + "." + project + ".org/w/api.php?";
-	}
+	},
 
 	commonsUrl : function() {
 		return EApi.url('commons', EConstants.WIKIMEDIA);
-	}
+	},
 
 	wikiUrl : function(lang) {
 		return EApi.url(lang, EConstants.WIKIPEDIA);
-	}
+	},
 
-	call : function(query, url) {
+	ask : function(query, callback, url) {
 		if (url == undefined) {
 			url = EApi.url();
 		}
+		query['action'] = 'query';
 		query['format'] = 'json';
+		query['callback'] = callback;
 		url += $.param(query);
 		mw.loader.load(url);
+	}
+};
+
+
+window.EAutomator = {
+	search : function(title, cb, lang) {
+		var query = { titles: title, prop: 'revisions', rvprop: 'content' };
+		EApi.ask(query, "EAutomator." + cb, EApi.url(lang));
+	},
+
+	searchCB : function(res) {
+		$.each(res.query.pages, function(i, page) {
+			console.log(page.revisions[0]['*']);
+		});
+	},
+
+	initTest : function() {
+		EAutomator.search('dupa', 'searchCB', 'de');
+		EAutomator.search('dupa', 'searchCB', 'fr');
+		EAutomator.search('dupa', 'searchCB', 'ru');
 	}
 };
 
