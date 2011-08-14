@@ -102,6 +102,21 @@ label.oblig_subsection {\
 	font-weight: bold;\
 }\
 \
+div.subsection_extra.active {\
+	margin-top: 6px;\
+}\
+\
+div.subsection_extra > span {\
+	cursor: pointer;\
+	background-color: lemonchiffon;\
+	border: 1px dotted khaki;\
+	padding: 5px;\
+}\
+\
+div.subsection_extra > span.done {\
+	padding-right: 25px;\
+	background: url(http://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Gtk-ok.svg/20px-Gtk-ok.svg.png) no-repeat right;\
+}\
 \
 #popup_container {\
 	font-size: 0.8em;\
@@ -274,7 +289,6 @@ window.Ed = {
 		Ed.parseSectionsToSubsections();
 
 		EUi.prepareForm(oldform, instruction);
-		EAutomator.initTest();
 
         $('.tip').livequery(function() {
 			$(this).tooltip('tip');
@@ -313,8 +327,22 @@ window.EUtil = {
 		return self.document.location.hash.replace('#', '');
 	},
 
-	getActiveLang : function() {
-		return EUi.activeLang;
+	getActiveLangCode : function() {
+		return EUi.activeLangcode;
+	},
+
+	getActiveLangId : function() {
+		return EUi.activeLangId;
+	},
+
+	executeFn : function(functionName, context /*, args */) {
+		var args = Array.prototype.slice.call(arguments, 2);
+		var namespaces = functionName.split(".");
+		var func = namespaces.pop();
+		for (var i = 0; i < namespaces.length; i++) {
+			context = context[namespaces[i]];
+		}
+		return context[func].apply(context, args);
 	}
 };
 
@@ -1043,7 +1071,17 @@ window.EStr = {
 		<a href="#" onclick="insertTags(\'„\', \'”\', \'\'); return false">„”</a> \
 		</div>',
 	WAITING_FOR_API:
-		'Proszę poczekać, trwa wyszukiwanie za pomocą API…'
+		'Proszę poczekać, trwa wyszukiwanie za pomocą API…',
+	ADD_IPA:
+		'Dodaj IPA',
+	GET_IPA:
+		'Spróbuj pobrać wymowę zapisaną w IPA z innych wersji językowych Wikisłownika',
+	ADD_INTERWIKI:
+		'Dodaj (zaktualizuj) interwiki',
+	GET_INTERWIKI:
+		'Pobierz interwiki z innych wersji językowych Wikisłownika',
+	WILL_BE_INSERTED:
+		'<br/><small>Wynik zapytania zostanie wstawione w miejscu, w którym znajduje się teraz kursor</small>'
 };
 
 
@@ -1056,7 +1094,8 @@ window.EUi = {
 	menu : $('<ul id="ed_menu"/>'),
 	content : $('<div id="ed_content"/>'),
 	usingNew : true,
-	activeLang : '',
+	activeLangCode : '',
+	activeLangId : '',
 
 	prepareForm : function(oldform, instruction) {
 		this.oldform = oldform;
@@ -1165,7 +1204,8 @@ window.EUi = {
 				EUi.content.find('#' + $(this).data('section')).addClass('active');
 				$(this).addClass('active').siblings().removeClass('active');
 				EUi.resizeTextareas();
-				EUi.activeLang = $(this).data('code');
+				EUi.activeLangCode = $(this).data('code');
+				EUi.activeLangId = id;
 			});
 
 		// insert alphabetically
@@ -1306,7 +1346,8 @@ window.EUi = {
 			label.addClass('bot_subsection').append(EStr.BOT_SUBSECTION);
 			textarea.addClass('bot_subsection');
 		}
-		p.append(label).append(textarea);
+		var extra = $('<div class="subsection_extra" id="ed_' + name + '_extra"/>')
+		p.append(label).append(textarea).append(extra);
 
 		return p;
 	},
@@ -1345,10 +1386,36 @@ window.EUi = {
 		}).data('tip', EStr.ADD_INTRO_SECTION);
 	},
 
+	addExtraButtons : function(subsectionName, idpart, buttonContent, onclick, tooltip, section) {
+		if (section != undefined) {
+			var input = $('#ed_' + section + '_' + subsectionName);
+			var extra = $('#ed_' + section + '_' + subsectionName + '_extra');
+			var button = $('<span class="tip tipdown"/>')
+				.html(buttonContent)
+				.click(onclick)
+				.data('tip', tooltip)
+				.attr('id', 'ed_' + section + '_extra_' + idpart);
+			extra.append(button).addClass('active');
+		} else {
+			$.each(Ed.content.sections, function(id, sec) {
+				var input = $('#ed_' + id + '_' + subsectionName);
+				var extra = $('#ed_' + id + '_' + subsectionName + '_extra');
+				var button = $('<span class="tip tipdown"/>')
+					.html(buttonContent)
+					.click(onclick)
+					.data('tip', tooltip)
+					.attr('id', 'ed_' + id + '_extra_' + idpart);
+				extra.append(button).addClass('active');
+			});
+		}
+	},
+
 	prepareAutomatorForm : function() {
 		if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length == 0) {
 			EUi.addIntroAdder();
 		}
+		EUi.addExtraButtons('wymowa', 'add_ipa', EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_INSERTED);
+		EUi.addExtraButtons('', 'add_iw', EStr.ADD_INTERWIKI, EAutomator.fillInterwiki, EStr.GET_INTERWIKI, EConstants.SECTION_ID_INTRO);
 	}
 };
 
@@ -1632,23 +1699,10 @@ window.EApi = {
 
 
 window.EAutomator = {
-	search : function(title, cb, lang) {
-		var query = { titles: title, prop: 'revisions', rvprop: 'content' };
-		EApi.ask(query, "EAutomator." + cb, EApi.url(lang));
-	},
-
-	searchCB : function(res) {
-		$.each(res[0].query.pages, function(i, page) {
-			console.log(page.revisions[0]['*']);
-		});
-	},
-
-	initTest : function() {
-	},
 
 	getActiveLangs : function() {
 		var ret = EConstants.USED_WIKTIONARIES;
-		var act = EUtil.getActiveLang();
+		var act = EUtil.getActiveLangCode();
 		if (ret.indexOf(act) == -1) {
 			ret.push(act);
 		}
@@ -1671,9 +1725,7 @@ window.EAutomator = {
 	},
 
 	fillInterwiki : function() {
-		if ($('#ed_0000_').length == 0) {
-			return;
-		}
+		EAutomator.started('add_iw');
 		var langs = $.grep(EAutomator.getAllLangs(), function(val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) != -1 });
 		langs.push('pl');
 		var urls = $.map(langs, function(val) { return EApi.url(val) });
@@ -1698,7 +1750,7 @@ window.EAutomator = {
 					return false;
 				}
 				$.each(val.langlinks, function(k, link) {
-					if (link['*'] == mw.config.get('wgTitle') && link.lang != 'pl' && iwikis.indexOf(link.lang) == -1) {
+					if (link['*'] == mw.config.get('wgTitle') && iwikis.indexOf(link.lang) == -1 && link.lang != 'pl') {
 						iwikis.push(link.lang);
 					}
 				});
@@ -1713,7 +1765,21 @@ window.EAutomator = {
 			var re = new RegExp('(\\[\\[[a-z\\-]+' + ':' + mw.config.get('wgTitle') + '\\]\\]\\s*)+');
 			$('#ed_0000_').val(iwikiString + curIwiki.replace(re, '\n'));
 		}
-	}
+		EAutomator.done('add_iw');
+	},
+
+	getIPA : function() {
+		alert('DUPA!');
+		EAutomator.done('add_ipa');
+	},
+
+	done : function(idpart) {
+		$('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart).addClass('done');
+	},
+
+	started : function(idpart) {
+		$('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart).removeClass('done');
+	},
 };
 
 
@@ -2007,9 +2073,13 @@ window.EAutomator = {
 
 			tooltip.html($(this).data('tip'));
 
-			// Offsets so that the tooltip is centered over the element it is being applied to but
-			// raise it up above the element so it isn't covering it.
-			var yOffset = tooltip.height() + 17;
+			var yOffset;
+			if ($(this).hasClass('tipdown')) {
+				yOffset = -$(this).outerHeight() - 3;
+			} else {
+				yOffset = tooltip.height() + 17;
+			}
+
 			var xOffset = (((tooltip.width() - 10) / 2)) - ($(this).width() / 2);
 
 			// Grab the coordinates for the element with the tooltip and make a new copy

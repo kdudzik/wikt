@@ -1,21 +1,8 @@
 window.EAutomator = {
-	search : function(title, cb, lang) {
-		var query = { titles: title, prop: 'revisions', rvprop: 'content' };
-		EApi.ask(query, "EAutomator." + cb, EApi.url(lang));
-	},
-
-	searchCB : function(res) {
-		$.each(res[0].query.pages, function(i, page) {
-			console.log(page.revisions[0]['*']);
-		});
-	},
-
-	initTest : function() {
-	},
 
 	getActiveLangs : function() {
 		var ret = EConstants.USED_WIKTIONARIES;
-		var act = EUtil.getActiveLang();
+		var act = EUtil.getActiveLangCode();
 		if (ret.indexOf(act) == -1) {
 			ret.push(act);
 		}
@@ -38,9 +25,7 @@ window.EAutomator = {
 	},
 
 	fillInterwiki : function() {
-		if ($('#ed_0000_').length == 0) {
-			return;
-		}
+		EAutomator.started('add_iw');
 		var langs = $.grep(EAutomator.getAllLangs(), function(val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) != -1 });
 		langs.push('pl');
 		var urls = $.map(langs, function(val) { return EApi.url(val) });
@@ -65,7 +50,7 @@ window.EAutomator = {
 					return false;
 				}
 				$.each(val.langlinks, function(k, link) {
-					if (link['*'] == mw.config.get('wgTitle') && link.lang != 'pl' && iwikis.indexOf(link.lang) == -1) {
+					if (link['*'] == mw.config.get('wgTitle') && iwikis.indexOf(link.lang) == -1 && link.lang != 'pl') {
 						iwikis.push(link.lang);
 					}
 				});
@@ -80,7 +65,21 @@ window.EAutomator = {
 			var re = new RegExp('(\\[\\[[a-z\\-]+' + ':' + mw.config.get('wgTitle') + '\\]\\]\\s*)+');
 			$('#ed_0000_').val(iwikiString + curIwiki.replace(re, '\n'));
 		}
-	}
+		EAutomator.done('add_iw');
+	},
+
+	getIPA : function() {
+		alert('DUPA!');
+		EAutomator.done('add_ipa');
+	},
+
+	done : function(idpart) {
+		$('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart).addClass('done');
+	},
+
+	started : function(idpart) {
+		$('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart).removeClass('done');
+	},
 };
 
 window.EFilesLoaded++;

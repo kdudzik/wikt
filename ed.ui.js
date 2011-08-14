@@ -6,7 +6,8 @@ window.EUi = {
 	menu : $('<ul id="ed_menu"/>'),
 	content : $('<div id="ed_content"/>'),
 	usingNew : true,
-	activeLang : '',
+	activeLangCode : '',
+	activeLangId : '',
 
 	prepareForm : function(oldform, instruction) {
 		this.oldform = oldform;
@@ -115,7 +116,8 @@ window.EUi = {
 				EUi.content.find('#' + $(this).data('section')).addClass('active');
 				$(this).addClass('active').siblings().removeClass('active');
 				EUi.resizeTextareas();
-				EUi.activeLang = $(this).data('code');
+				EUi.activeLangCode = $(this).data('code');
+				EUi.activeLangId = id;
 			});
 
 		// insert alphabetically
@@ -256,7 +258,8 @@ window.EUi = {
 			label.addClass('bot_subsection').append(EStr.BOT_SUBSECTION);
 			textarea.addClass('bot_subsection');
 		}
-		p.append(label).append(textarea);
+		var extra = $('<div class="subsection_extra" id="ed_' + name + '_extra"/>')
+		p.append(label).append(textarea).append(extra);
 
 		return p;
 	},
@@ -295,10 +298,36 @@ window.EUi = {
 		}).data('tip', EStr.ADD_INTRO_SECTION);
 	},
 
+	addExtraButtons : function(subsectionName, idpart, buttonContent, onclick, tooltip, section) {
+		if (section != undefined) {
+			var input = $('#ed_' + section + '_' + subsectionName);
+			var extra = $('#ed_' + section + '_' + subsectionName + '_extra');
+			var button = $('<span class="tip tipdown"/>')
+				.html(buttonContent)
+				.click(onclick)
+				.data('tip', tooltip)
+				.attr('id', 'ed_' + section + '_extra_' + idpart);
+			extra.append(button).addClass('active');
+		} else {
+			$.each(Ed.content.sections, function(id, sec) {
+				var input = $('#ed_' + id + '_' + subsectionName);
+				var extra = $('#ed_' + id + '_' + subsectionName + '_extra');
+				var button = $('<span class="tip tipdown"/>')
+					.html(buttonContent)
+					.click(onclick)
+					.data('tip', tooltip)
+					.attr('id', 'ed_' + id + '_extra_' + idpart);
+				extra.append(button).addClass('active');
+			});
+		}
+	},
+
 	prepareAutomatorForm : function() {
 		if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length == 0) {
 			EUi.addIntroAdder();
 		}
+		EUi.addExtraButtons('wymowa', 'add_ipa', EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_INSERTED);
+		EUi.addExtraButtons('', 'add_iw', EStr.ADD_INTERWIKI, EAutomator.fillInterwiki, EStr.GET_INTERWIKI, EConstants.SECTION_ID_INTRO);
 	}
 };
 

@@ -37,9 +37,13 @@
 
 			tooltip.html($(this).data('tip'));
 
-			// Offsets so that the tooltip is centered over the element it is being applied to but
-			// raise it up above the element so it isn't covering it.
-			var yOffset = tooltip.height() + 17;
+			var yOffset;
+			if ($(this).hasClass('tipdown')) {
+				yOffset = -$(this).outerHeight() - 3;
+			} else {
+				yOffset = tooltip.height() + 17;
+			}
+
 			var xOffset = (((tooltip.width() - 10) / 2)) - ($(this).width() / 2);
 
 			// Grab the coordinates for the element with the tooltip and make a new copy

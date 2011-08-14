@@ -101,6 +101,21 @@ label.oblig_subsection {
 	font-weight: bold;
 }
 
+div.subsection_extra.active {
+	margin-top: 6px;
+}
+
+div.subsection_extra > span {
+	cursor: pointer;
+	background-color: lemonchiffon;
+	border: 1px dotted khaki;
+	padding: 5px;
+}
+
+div.subsection_extra > span.done {
+	padding-right: 25px;
+	background: url(http://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Gtk-ok.svg/20px-Gtk-ok.svg.png) no-repeat right;
+}
 
 #popup_container {
 	font-size: 0.8em;

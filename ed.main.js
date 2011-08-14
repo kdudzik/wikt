@@ -33,7 +33,6 @@ window.Ed = {
 		Ed.parseSectionsToSubsections();
 
 		EUi.prepareForm(oldform, instruction);
-		EAutomator.initTest();
 
         $('.tip').livequery(function() {
 			$(this).tooltip('tip');
@@ -72,8 +71,22 @@ window.EUtil = {
 		return self.document.location.hash.replace('#', '');
 	},
 
-	getActiveLang : function() {
-		return EUi.activeLang;
+	getActiveLangCode : function() {
+		return EUi.activeLangcode;
+	},
+
+	getActiveLangId : function() {
+		return EUi.activeLangId;
+	},
+
+	executeFn : function(functionName, context /*, args */) {
+		var args = Array.prototype.slice.call(arguments, 2);
+		var namespaces = functionName.split(".");
+		var func = namespaces.pop();
+		for (var i = 0; i < namespaces.length; i++) {
+			context = context[namespaces[i]];
+		}
+		return context[func].apply(context, args);
 	}
 };
 

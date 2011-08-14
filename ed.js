@@ -28,8 +28,7 @@ window.ETryInit = function() {
 	}
 };
 
-if ((mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit')
-		&& mw.config.get('wgNamespaceNumber') == 0) {
+if ((mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit') && mw.config.get('wgNamespaceNumber') == 0) {
 	for (i in window.EFiles) {
 		mw.loader.load(window.EFiles[i]);
 	}

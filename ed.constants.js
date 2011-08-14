@@ -356,7 +356,17 @@ window.EStr = {
 		<a href="#" onclick="insertTags(\'„\', \'”\', \'\'); return false">„”</a> \
 		</div>',
 	WAITING_FOR_API:
-		'Proszę poczekać, trwa wyszukiwanie za pomocą API…'
+		'Proszę poczekać, trwa wyszukiwanie za pomocą API…',
+	ADD_IPA:
+		'Dodaj IPA',
+	GET_IPA:
+		'Spróbuj pobrać wymowę zapisaną w IPA z innych wersji językowych Wikisłownika',
+	ADD_INTERWIKI:
+		'Dodaj (zaktualizuj) interwiki',
+	GET_INTERWIKI:
+		'Pobierz interwiki z innych wersji językowych Wikisłownika',
+	WILL_BE_INSERTED:
+		'<br/><small>Wynik zapytania zostanie wstawione w miejscu, w którym znajduje się teraz kursor</small>'
 };
 
 
