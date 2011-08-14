@@ -311,6 +311,10 @@ window.EUtil = {
 
 	getSection : function() {
 		return self.document.location.hash.replace('#', '');
+	},
+
+	getActiveLang : function() {
+		return EUi.activeLang;
 	}
 };
 
@@ -463,9 +467,9 @@ window.ESectionParser = {
 			mode = 'JAPANESE';
 		} else if (code == 'inter') {
 			mode = 'INTERNATIONAL';
-		} else if ($.inArray(code, EConstants.NON_LATIN_LANGS) != -1) {
+		} else if (EConstants.NON_LATIN_LANGS.indexOf(code) != -1) {
 			mode = 'NON_LATIN';
-		} else if ($.inArray(code, EConstants.DOUBLE_LANGS) != -1) {
+		} else if (EConstants.DOUBLE_LANGS.indexOf(code) != -1) {
 			mode = 'DOUBLE';
 		} else {
 			mode = 'LATIN';
@@ -571,7 +575,7 @@ window.ESectionParser = {
 						sub.initcontent = sub.content;
 						break;
 					}
-					else if ($.inArray(pos.title, targetSubsections) == -1) {
+					else if (targetSubsections.indexOf(pos.title) == -1) {
 						sub.active = false;
 					}
 				}
@@ -649,7 +653,7 @@ window.EPrinter = {
 		 * ...teksty w polach "znaczenia", "przykłady" oraz "tłumaczenia" nie mogą występować zaraz po szablonie, jeśli
 		 * występują muszą być przeniesione bez dodawania dwukropka.
 		 */
-		if ($.inArray(subsection.title, EConstants.SUBSECTIONS_WITH_NL) != -1) {
+		if (EConstants.SUBSECTIONS_WITH_NL.indexOf(subsection.title) != -1) {
 			return '\n';
 		}
 		/*
@@ -669,7 +673,7 @@ window.EPrinter = {
 		 * w polach pustych przed edycją: w sekcjach "wymowa", "transliteracja", "transkrypcja", "ortografie", "klucz",
 		 * "kreski", "czytania", "hanja-kreski" defaultem jest pisanie bezpośrednio po szablonie (po spacji)...
 		 */
-		if ($.inArray(subsection.title, EConstants.SUBSECTIONS_WITHOUT_NL) != -1) {
+		if (EConstants.SUBSECTIONS_WITHOUT_NL.indexOf(subsection.title) != -1) {
 			return ' ';
 		}
 		/*
@@ -897,6 +901,53 @@ window.EConstants = {
 		'wiktionary',
 	WIKIMEDIA :
 		'wikimedia',
+	USED_WIKTIONARIES :
+		['en', 'de', 'es', 'it', 'ru', 'fr'],
+	INTERWIKI_ORDER: // http://meta.wikimedia.org/wiki/Interwiki_sorting_order
+		['ace', 'af', 'ak', 'als', 'am', 'ang', 'ab', 'ar', 'an', 'arc',
+		'roa-rup', 'frp', 'as', 'ast', 'gn', 'av', 'ay', 'az', 'bjn', 'id',
+		'ms', 'bm', 'bn', 'zh-min-nan', 'nan', 'map-bms', 'jv', 'su', 'ba',
+		'be', 'be-x-old', 'bh', 'bcl', 'bi', 'bar', 'bo', 'bs', 'br', 'bug',
+		'bg', 'bxr', 'ca', 'ceb', 'cv', 'cs', 'ch', 'cbk-zam', 'ny', 'sn',
+		'tum', 'cho', 'co', 'cy', 'da', 'dk', 'pdc', 'de', 'dv', 'nv',
+		'dsb', 'na', 'dz', 'mh', 'et', 'el', 'eml', 'en', 'myv', 'es', 'eo',
+		'ext', 'eu', 'ee', 'fa', 'hif', 'fo', 'fr', 'fy', 'ff', 'fur', 'ga',
+		'gv', 'sm', 'gag', 'gd', 'gl', 'gan', 'ki', 'glk', 'gu', 'got',
+		'hak', 'xal', 'ko', 'ha', 'haw', 'hy', 'hi', 'ho', 'hsb', 'hr',
+		'io', 'ig', 'ilo', 'bpy', 'ia', 'ie', 'iu', 'ik', 'os', 'xh', 'zu',
+		'is', 'it', 'he', 'kl', 'kn', 'kr', 'pam', 'ka', 'ks', 'csb', 'kk',
+		'kw', 'rw', 'ky', 'rn', 'mrj', 'sw', 'kv', 'kg', 'ht', 'ku', 'kj',
+		'lad', 'lbe', 'lo', 'la', 'ltg', 'lv', 'to', 'lb', 'lt', 'lij',
+		'li', 'ln', 'jbo', 'lg', 'lmo', 'hu', 'mk', 'mg', 'ml', 'krc', 'mt',
+		'mi', 'mr', 'xmf', 'arz', 'mzn', 'cdo', 'mwl', 'koi', 'mdf', 'mo',
+		'mn', 'mus', 'my', 'nah', 'fj', 'nl', 'nds-nl', 'cr', 'ne', 'new',
+		'ja', 'nap', 'ce', 'frr', 'pih', 'no', 'nb', 'nn', 'nrm', 'nov',
+		'ii', 'oc', 'mhr', 'or', 'om', 'ng', 'hz', 'uz', 'pa', 'pi', 'pfl',
+		'pag', 'pnb', 'pap', 'ps', 'km', 'pcd', 'pms', 'nds', 'pl', 'pnt',
+		'pt', 'aa', 'kbd', 'kaa', 'crh', 'ty', 'ksh', 'ro', 'rmy', 'rm',
+		'qu', 'ru', 'rue', 'sah', 'se', 'sa', 'sg', 'sc', 'sco', 'stq',
+		'st', 'tn', 'sq', 'scn', 'si', 'simple', 'sd', 'ss', 'sk', 'sl',
+		'cu', 'szl', 'so', 'ckb', 'srn', 'sr', 'sh', 'fi', 'sv', 'tl', 'ta',
+		'kab',  'roa-tara', 'tt', 'te', 'tet', 'th', 'vi', 'ti', 'tg',
+		'tpi', 'tokipona', 'tp', 'chr', 'chy', 've', 'tr', 'tk', 'tw',
+		'udm', 'uk', 'ur', 'ug', 'za', 'vec', 'vo', 'fiu-vro', 'wa',
+		'zh-classical', 'vls', 'war', 'wo', 'wuu', 'ts', 'yi', 'yo',
+		'zh-yue', 'diq', 'zea', 'bat-smg', 'zh', 'zh-tw', 'zh-cn',
+        ],
+	ALL_WIKTIONARIES:
+		['af', 'als', 'an', 'roa-rup', 'ast', 'gn', 'ay', 'az', 'id', 'ms', 'zh-min-nan',
+		'jv', 'su', 'mt', 'bs', 'br', 'ca', 'cs', 'co', 'za', 'cy', 'da', 'de', 'na',
+		'et', 'ang', 'en', 'bo', 'es', 'eo', 'eu', 'fo', 'fr', 'fy', 'gd', 'ga', 'gv',
+		'sm', 'gl', 'hr', 'io', 'ia', 'ie', 'ik', 'zu', 'is', 'it', 'kl', 'csb', 'ku',
+		'kw', 'rw', 'sw', 'la', 'lv', 'lb', 'lt', 'li', 'ln', 'jbo', 'hu', 'mg', 'mi',
+		'nah', 'fj', 'nl', 'no', 'nn', 'oc', 'om', 'uz', 'nds', 'pl', 'pt', 'ro', 'qu',
+		'sg', 'st', 'tn', 'scn', 'simple', 'sk', 'sl', 'sq', 'ss', 'so', 'sh', 'fi',
+		'sv', 'tl', 'tt', 'vi', 'tpi', 'tr', 'tk', 'vo', 'wa', 'wo', 'ts', 'el', 'tsd',
+		'be', 'bg', 'kk', 'ky', 'mk', 'mn', 'ru', 'sr', 'tg', 'uk', 'hy', 'ka', 'he',
+		'yi', 'ar', 'fa', 'ha', 'ps', 'sd', 'ug', 'ur', 'dv', 'bn', 'gu', 'hi', 'ks',
+		'ne', 'sa', 'mr', 'kn', 'ml', 'pa', 'ta', 'te', 'km', 'lo', 'my', 'si', 'th',
+		'am', 'ti', 'iu', 'chr', 'ko', 'ja', 'zh'
+		],
 	init : function() {
 		for (name in EConstants.LANG_CODES_SHORT) {
 			EConstants.CODE_TO_LANG[EConstants.LANG_CODES_SHORT[name]] = name;
@@ -912,6 +963,8 @@ window.EStr = {
 		'Przełącz edytor',
 	ADD :
 		'+ dodaj',
+	ADD_INTRO:
+		'+ sekcja wstępna',
 	ADD_SECTION_MESSAGE :
 		'Dodajesz nową sekcję językową.<br/>\
 		Podaj nazwę języka (np. <tt>polski</tt>, <tt>tatarski</tt>) lub jego kod ISO (<tt>pl</tt>, <tt>tt</tt>).<br/>\
@@ -955,6 +1008,8 @@ window.EStr = {
 		'Sekcja wstępna:<br/>Interwiki, szablony ogólne',
 	ADD_SECTION:
 		'Dodaj nową sekcję językową',
+	ADD_INTRO_SECTION:
+		'Dodaj sekcję wstępną (interwiki, informacje ogólne).<br /><small>Linki interwiki dodawane są automatycznie po dodaniu sekcji.</small>',
 	INTRO:
 		'Sekcja wstępna',
 	OBLIGATORY_SUBSECTION:
@@ -986,7 +1041,9 @@ window.EStr = {
 		<a href="#" onclick="insertTags(\'~\', \'\', \'\'); return false">~</a> \
 		<a href="#" onclick="insertTags(\'–\', \'\', \'\'); return false">–</a> \
 		<a href="#" onclick="insertTags(\'„\', \'”\', \'\'); return false">„”</a> \
-		</div>'
+		</div>',
+	WAITING_FOR_API:
+		'Proszę poczekać, trwa wyszukiwanie za pomocą API…'
 };
 
 
@@ -999,6 +1056,7 @@ window.EUi = {
 	menu : $('<ul id="ed_menu"/>'),
 	content : $('<div id="ed_content"/>'),
 	usingNew : true,
+	activeLang : '',
 
 	prepareForm : function(oldform, instruction) {
 		this.oldform = oldform;
@@ -1045,7 +1103,7 @@ window.EUi = {
 		EUi.rebindFormActions();
 	},
 
-	clickSection : function() {
+	clickDefaultSection : function() {
 		if (!EUi.usingNew) {
 			return false;
 		}
@@ -1080,7 +1138,7 @@ window.EUi = {
 			$('li.menuitem:nth-child(' + Math.floor(size / 2) + ')').css('clear', 'left');
 		}
 
-		EUi.clickSection();
+		EUi.clickDefaultSection();
 		EUi.resizeTextareas();
 		$(window).resize(EUi.resizeTextareas);
 	},
@@ -1100,17 +1158,14 @@ window.EUi = {
 		var tip = id == EConstants.SECTION_ID_INTRO
 				? EStr.INTRO_SECTION
 				: EParser.insideTemplate(sec.title) + '\<br/><small>tytuł sekcji: <tt>' + sec.title + '</tt></small>';
-		item.data({
-				'section' : 'ed_section_' + id,
-				'code' : sec['code'],
-				'tip' : tip
-			})
+		item.data({ 'section' : 'ed_section_' + id, 'code' : sec['code'], 'tip' : tip })
 			.click(function() {
 				EKeyboard.hide();
 				EUi.content.find('.ed_section').removeClass('active');
 				EUi.content.find('#' + $(this).data('section')).addClass('active');
 				$(this).addClass('active').siblings().removeClass('active');
 				EUi.resizeTextareas();
+				EUi.activeLang = $(this).data('code');
 			});
 
 		// insert alphabetically
@@ -1185,7 +1240,7 @@ window.EUi = {
 			delete Ed.content.sections[id];
 			$('#ed_menuitem_' + id).remove();
 			$('#ed_section_' + id).remove();
-			EUi.clickSection();
+			EUi.clickDefaultSection();
 		};
 		if (force) {
 			del();
@@ -1271,8 +1326,29 @@ window.EUi = {
 		$('fieldset.active').find('textarea').reverse().autogrow();
 	},
 
-	prepareAutomatorForm : function() {
+	addIntroAdder : function() {
+		var addIntro = $('<li id="ed_menuitem_newintro" class="tip menuitem">' + EStr.ADD_INTRO + '</li>');
+		addIntro.appendTo(EUi.menu).click(function() {
+			var sec = {
+				'title' : '',
+				'content' : '',
+				'id' : EConstants.SECTION_ID_INTRO,
+				'initcontent' : ''
+			};
+			Ed.content.sections[EConstants.SECTION_ID_INTRO] = sec;
+			ESectionParser.parse(sec);
+			EUi.addSection(EConstants.SECTION_ID_INTRO);
+			EUi.prepareFormSubsections(EConstants.SECTION_ID_INTRO);
+			$('#ed_menuitem_newintro').hide();
+			$('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).click();
+			EAutomator.fillInterwiki();
+		}).data('tip', EStr.ADD_INTRO_SECTION);
+	},
 
+	prepareAutomatorForm : function() {
+		if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length == 0) {
+			EUi.addIntroAdder();
+		}
 	}
 };
 
@@ -1506,16 +1582,52 @@ window.EApi = {
 		return EApi.url(lang, EConstants.WIKIPEDIA);
 	},
 
-	ask : function(query, callback, url) {
+	_ask : function(query, url) {
 		if (url == undefined) {
 			url = EApi.url();
 		}
 		query['action'] = 'query';
 		query['format'] = 'json';
-		query['callback'] = callback;
+		query['meta'] = 'siteinfo';
+		query['callback'] = 'EApi.callback';
 		url += $.param(query);
 		mw.loader.load(url);
-	}
+	},
+
+	ask : function(query, callback, url) {
+		if (EApi.waiting) {
+			alert(EStr.WAITING_FOR_API);
+			return -1;
+		}
+		EApi.waitingName = callback;
+		EApi.waiting = 1;
+		EApi._ask(query, url);
+	},
+
+	askMore : function(query, callback, urls) {
+		if (EApi.waiting) {
+			alert(EStr.WAITING_FOR_API);
+			return -1;
+		}
+		EApi.waitingName = callback;
+		EApi.waiting = urls.length;
+		$.each(urls, function(i, url) {
+			EApi._ask(query, url);
+		});
+	},
+
+	callback : function(res) {
+		EApi.waitingResults.push(res);
+		if (!--EApi.waiting) {
+			eval(EApi.waitingName + '(EApi.waitingResults)');
+			EApi.waitingName = '';
+			EApi.waitingResults = [];
+		}
+	},
+
+	waiting : 0,
+	waitingName : '',
+	waitingResults : [],
 };
 
 
@@ -1526,15 +1638,81 @@ window.EAutomator = {
 	},
 
 	searchCB : function(res) {
-		$.each(res.query.pages, function(i, page) {
+		$.each(res[0].query.pages, function(i, page) {
 			console.log(page.revisions[0]['*']);
 		});
 	},
 
 	initTest : function() {
-		EAutomator.search('dupa', 'searchCB', 'de');
-		EAutomator.search('dupa', 'searchCB', 'fr');
-		EAutomator.search('dupa', 'searchCB', 'ru');
+	},
+
+	getActiveLangs : function() {
+		var ret = EConstants.USED_WIKTIONARIES;
+		var act = EUtil.getActiveLang();
+		if (ret.indexOf(act) == -1) {
+			ret.push(act);
+		}
+		return ret;
+	},
+
+	getAllLangs : function() {
+		var ret = EConstants.USED_WIKTIONARIES;
+		for (var id in Ed.content.sections) {
+			var code = Ed.content.sections[id]['code'];
+			if (code == undefined) {
+				continue;
+			}
+			code = code.replace(/-.*/, '');
+			if (code.length > 1 && code.length < 4 && code != 'pl' && ret.indexOf(code) == -1) {
+				ret.push(code);
+			}
+		}
+		return ret;
+	},
+
+	fillInterwiki : function() {
+		if ($('#ed_0000_').length == 0) {
+			return;
+		}
+		var langs = $.grep(EAutomator.getAllLangs(), function(val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) != -1 });
+		langs.push('pl');
+		var urls = $.map(langs, function(val) { return EApi.url(val) });
+		var query = { titles: mw.config.get('wgTitle'), prop: 'langlinks', lllimit: 200 };
+		EApi.askMore(query, 'EAutomator.fillInterwikiRe', urls);
+	},
+
+	fillInterwikiRe : function(results) {
+		var iwikis = [];
+		$.each(results, function(i, res) {
+			if (res.query == undefined || res.query.pages == undefined) {
+				return false;
+			}
+			$.each(res.query.pages, function(j, val) {
+				if (j == -1) {
+					return false;
+				}
+				if (iwikis.indexOf(res.query.general.lang) == -1 && res.query.general.lang != 'pl') {
+					iwikis.push(res.query.general.lang);
+				}
+				if (val.langlinks == undefined) {
+					return false;
+				}
+				$.each(val.langlinks, function(k, link) {
+					if (link['*'] == mw.config.get('wgTitle') && link.lang != 'pl' && iwikis.indexOf(link.lang) == -1) {
+						iwikis.push(link.lang);
+					}
+				});
+			});
+		});
+		iwikis.sort(function(a, b) { return EConstants.INTERWIKI_ORDER.indexOf(a) - EConstants.INTERWIKI_ORDER.indexOf(b) });
+		var iwikiString = $.map(iwikis, function(val) { return '[[' + val + ':' + mw.config.get('wgTitle') + ']]' }).join(' ');
+		var curIwiki = $('#ed_0000_').val();
+		if (curIwiki == '') {
+			$('#ed_0000_').val(iwikiString);
+		} else {
+			var re = new RegExp('(\\[\\[[a-z\\-]+' + ':' + mw.config.get('wgTitle') + '\\]\\]\\s*)+');
+			$('#ed_0000_').val(iwikiString + curIwiki.replace(re, '\n'));
+		}
 	}
 };
 
@@ -1577,13 +1755,22 @@ window.EAutomator = {
 		overlayOpacity: .2,                // transparency level of overlay
 		overlayColor: '#000',               // base color of overlay
 		draggable: false,                    // make the dialogs draggable (requires UI Draggables plugin)
-		okButton: '&nbsp;' + EStr.OK + '&nbsp;',         // text for the OK button
-		cancelButton: '&nbsp;' + EStr.CANCEL + '&nbsp;', // text for the Cancel button
+		okButton: '',         // text for the OK button
+		cancelButton: '', // text for the Cancel button
 		dialogClass: null,                  // if specified, this class will be applied to all dialogs
+		init: false,
+
+		initialize: function() {
+			if ($.alerts.init) return;
+			$.alerts.okButton = '&nbsp;' + EStr.OK + '&nbsp;';
+			$.alerts.cancelButton = '&nbsp;' + EStr.CANCEL + '&nbsp;';
+			$.alerts.init = true;
+		},
 
 		// Public methods
 
 		alert: function(message, title, callback) {
+			$.alerts.initialize();
 			if( title == null ) title = EStr.WARNING;
 			$.alerts._show(title, message, null, 'alert', function(result) {
 				if( callback ) callback(result);
@@ -1591,6 +1778,7 @@ window.EAutomator = {
 		},
 
 		confirm: function(message, title, callback) {
+			$.alerts.initialize();
 			if( title == null ) title = EStr.CONFIRMATION;
 			$.alerts._show(title, message, null, 'confirm', function(result) {
 				if( callback ) callback(result);
@@ -1598,6 +1786,7 @@ window.EAutomator = {
 		},
 
 		prompt: function(message, value, title, callback) {
+			$.alerts.initialize();
 			if( title == null ) title = EStr.QUESTION;
 			$.alerts._show(title, message, value, 'prompt', function(result) {
 				if( callback ) callback(result);

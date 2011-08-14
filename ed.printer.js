@@ -58,7 +58,7 @@ window.EPrinter = {
 		 * ...teksty w polach "znaczenia", "przykłady" oraz "tłumaczenia" nie mogą występować zaraz po szablonie, jeśli
 		 * występują muszą być przeniesione bez dodawania dwukropka.
 		 */
-		if ($.inArray(subsection.title, EConstants.SUBSECTIONS_WITH_NL) != -1) {
+		if (EConstants.SUBSECTIONS_WITH_NL.indexOf(subsection.title) != -1) {
 			return '\n';
 		}
 		/*
@@ -78,7 +78,7 @@ window.EPrinter = {
 		 * w polach pustych przed edycją: w sekcjach "wymowa", "transliteracja", "transkrypcja", "ortografie", "klucz",
 		 * "kreski", "czytania", "hanja-kreski" defaultem jest pisanie bezpośrednio po szablonie (po spacji)...
 		 */
-		if ($.inArray(subsection.title, EConstants.SUBSECTIONS_WITHOUT_NL) != -1) {
+		if (EConstants.SUBSECTIONS_WITHOUT_NL.indexOf(subsection.title) != -1) {
 			return ' ';
 		}
 		/*

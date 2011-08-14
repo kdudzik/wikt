@@ -70,6 +70,10 @@ window.EUtil = {
 
 	getSection : function() {
 		return self.document.location.hash.replace('#', '');
+	},
+
+	getActiveLang : function() {
+		return EUi.activeLang;
 	}
 };
 

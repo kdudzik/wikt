@@ -17,16 +17,52 @@ window.EApi = {
 		return EApi.url(lang, EConstants.WIKIPEDIA);
 	},
 
-	ask : function(query, callback, url) {
+	_ask : function(query, url) {
 		if (url == undefined) {
 			url = EApi.url();
 		}
 		query['action'] = 'query';
 		query['format'] = 'json';
-		query['callback'] = callback;
+		query['meta'] = 'siteinfo';
+		query['callback'] = 'EApi.callback';
 		url += $.param(query);
 		mw.loader.load(url);
-	}
+	},
+
+	ask : function(query, callback, url) {
+		if (EApi.waiting) {
+			alert(EStr.WAITING_FOR_API);
+			return -1;
+		}
+		EApi.waitingName = callback;
+		EApi.waiting = 1;
+		EApi._ask(query, url);
+	},
+
+	askMore : function(query, callback, urls) {
+		if (EApi.waiting) {
+			alert(EStr.WAITING_FOR_API);
+			return -1;
+		}
+		EApi.waitingName = callback;
+		EApi.waiting = urls.length;
+		$.each(urls, function(i, url) {
+			EApi._ask(query, url);
+		});
+	},
+
+	callback : function(res) {
+		EApi.waitingResults.push(res);
+		if (!--EApi.waiting) {
+			eval(EApi.waitingName + '(EApi.waitingResults)');
+			EApi.waitingName = '';
+			EApi.waitingResults = [];
+		}
+	},
+
+	waiting : 0,
+	waitingName : '',
+	waitingResults : [],
 };
 
 window.EFilesLoaded++;

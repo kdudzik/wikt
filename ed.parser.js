@@ -144,9 +144,9 @@ window.ESectionParser = {
 			mode = 'JAPANESE';
 		} else if (code == 'inter') {
 			mode = 'INTERNATIONAL';
-		} else if ($.inArray(code, EConstants.NON_LATIN_LANGS) != -1) {
+		} else if (EConstants.NON_LATIN_LANGS.indexOf(code) != -1) {
 			mode = 'NON_LATIN';
-		} else if ($.inArray(code, EConstants.DOUBLE_LANGS) != -1) {
+		} else if (EConstants.DOUBLE_LANGS.indexOf(code) != -1) {
 			mode = 'DOUBLE';
 		} else {
 			mode = 'LATIN';
@@ -252,7 +252,7 @@ window.ESectionParser = {
 						sub.initcontent = sub.content;
 						break;
 					}
-					else if ($.inArray(pos.title, targetSubsections) == -1) {
+					else if (targetSubsections.indexOf(pos.title) == -1) {
 						sub.active = false;
 					}
 				}

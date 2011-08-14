@@ -6,6 +6,7 @@ window.EUi = {
 	menu : $('<ul id="ed_menu"/>'),
 	content : $('<div id="ed_content"/>'),
 	usingNew : true,
+	activeLang : '',
 
 	prepareForm : function(oldform, instruction) {
 		this.oldform = oldform;
@@ -52,7 +53,7 @@ window.EUi = {
 		EUi.rebindFormActions();
 	},
 
-	clickSection : function() {
+	clickDefaultSection : function() {
 		if (!EUi.usingNew) {
 			return false;
 		}
@@ -87,7 +88,7 @@ window.EUi = {
 			$('li.menuitem:nth-child(' + Math.floor(size / 2) + ')').css('clear', 'left');
 		}
 
-		EUi.clickSection();
+		EUi.clickDefaultSection();
 		EUi.resizeTextareas();
 		$(window).resize(EUi.resizeTextareas);
 	},
@@ -107,17 +108,14 @@ window.EUi = {
 		var tip = id == EConstants.SECTION_ID_INTRO
 				? EStr.INTRO_SECTION
 				: EParser.insideTemplate(sec.title) + '\<br/><small>tytuł sekcji: <tt>' + sec.title + '</tt></small>';
-		item.data({
-				'section' : 'ed_section_' + id,
-				'code' : sec['code'],
-				'tip' : tip
-			})
+		item.data({ 'section' : 'ed_section_' + id, 'code' : sec['code'], 'tip' : tip })
 			.click(function() {
 				EKeyboard.hide();
 				EUi.content.find('.ed_section').removeClass('active');
 				EUi.content.find('#' + $(this).data('section')).addClass('active');
 				$(this).addClass('active').siblings().removeClass('active');
 				EUi.resizeTextareas();
+				EUi.activeLang = $(this).data('code');
 			});
 
 		// insert alphabetically
@@ -192,7 +190,7 @@ window.EUi = {
 			delete Ed.content.sections[id];
 			$('#ed_menuitem_' + id).remove();
 			$('#ed_section_' + id).remove();
-			EUi.clickSection();
+			EUi.clickDefaultSection();
 		};
 		if (force) {
 			del();
@@ -278,8 +276,29 @@ window.EUi = {
 		$('fieldset.active').find('textarea').reverse().autogrow();
 	},
 
-	prepareAutomatorForm : function() {
+	addIntroAdder : function() {
+		var addIntro = $('<li id="ed_menuitem_newintro" class="tip menuitem">' + EStr.ADD_INTRO + '</li>');
+		addIntro.appendTo(EUi.menu).click(function() {
+			var sec = {
+				'title' : '',
+				'content' : '',
+				'id' : EConstants.SECTION_ID_INTRO,
+				'initcontent' : ''
+			};
+			Ed.content.sections[EConstants.SECTION_ID_INTRO] = sec;
+			ESectionParser.parse(sec);
+			EUi.addSection(EConstants.SECTION_ID_INTRO);
+			EUi.prepareFormSubsections(EConstants.SECTION_ID_INTRO);
+			$('#ed_menuitem_newintro').hide();
+			$('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).click();
+			EAutomator.fillInterwiki();
+		}).data('tip', EStr.ADD_INTRO_SECTION);
+	},
 
+	prepareAutomatorForm : function() {
+		if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length == 0) {
+			EUi.addIntroAdder();
+		}
 	}
 };
 

@@ -36,13 +36,22 @@
 		overlayOpacity: .2,                // transparency level of overlay
 		overlayColor: '#000',               // base color of overlay
 		draggable: false,                    // make the dialogs draggable (requires UI Draggables plugin)
-		okButton: '&nbsp;' + EStr.OK + '&nbsp;',         // text for the OK button
-		cancelButton: '&nbsp;' + EStr.CANCEL + '&nbsp;', // text for the Cancel button
+		okButton: '',         // text for the OK button
+		cancelButton: '', // text for the Cancel button
 		dialogClass: null,                  // if specified, this class will be applied to all dialogs
+		init: false,
+
+		initialize: function() {
+			if ($.alerts.init) return;
+			$.alerts.okButton = '&nbsp;' + EStr.OK + '&nbsp;';
+			$.alerts.cancelButton = '&nbsp;' + EStr.CANCEL + '&nbsp;';
+			$.alerts.init = true;
+		},
 
 		// Public methods
 
 		alert: function(message, title, callback) {
+			$.alerts.initialize();
 			if( title == null ) title = EStr.WARNING;
 			$.alerts._show(title, message, null, 'alert', function(result) {
 				if( callback ) callback(result);
@@ -50,6 +59,7 @@
 		},
 
 		confirm: function(message, title, callback) {
+			$.alerts.initialize();
 			if( title == null ) title = EStr.CONFIRMATION;
 			$.alerts._show(title, message, null, 'confirm', function(result) {
 				if( callback ) callback(result);
@@ -57,6 +67,7 @@
 		},
 
 		prompt: function(message, value, title, callback) {
+			$.alerts.initialize();
 			if( title == null ) title = EStr.QUESTION;
 			$.alerts._show(title, message, value, 'prompt', function(result) {
 				if( callback ) callback(result);
