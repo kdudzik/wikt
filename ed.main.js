@@ -14,8 +14,10 @@ window.Ed = {
 	parseSectionsToSubsections : function () {
 		var id, sec;
 		for (id in Ed.content.sections) {
-			sec = Ed.content.sections[id];
-			ESectionParser.parse(sec);
+			if (Ed.content.sections.hasOwnProperty(id)) {
+				sec = Ed.content.sections[id];
+				ESectionParser.parse(sec);
+			}
 		}
 	},
 

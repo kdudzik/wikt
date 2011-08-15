@@ -262,11 +262,16 @@ window.EConstants = {
 		'am', 'ti', 'iu', 'chr', 'ko', 'ja', 'zh'
 		],
 	init : function () {
+		var name;
 		for (name in EConstants.LANG_CODES_SHORT) {
-			EConstants.CODE_TO_LANG[EConstants.LANG_CODES_SHORT[name]] = name;
+			if (EConstants.LANG_CODES_SHORT.hasOwnProperty(name)) {
+				EConstants.CODE_TO_LANG[EConstants.LANG_CODES_SHORT[name]] = name;
+			}
 		}
 		for (name in EConstants.LANG_CODES_LONG) {
-			EConstants.CODE_TO_LANG[EConstants.LANG_CODES_LONG[name]] = 'język ' + name;
+			if (EConstants.LANG_CODES_LONG.hasOwnProperty(name)) {
+				EConstants.CODE_TO_LANG[EConstants.LANG_CODES_LONG[name]] = 'język ' + name;
+			}
 		}
 	}
 };

@@ -30,8 +30,10 @@ window.ETryInit = function () {
 };
 
 if ((mw.config.get('wgAction') === 'edit' || mw.config.get('wgAction') === 'submit') && mw.config.get('wgNamespaceNumber') === 0) {
-	for (i in window.EFiles) {
-		mw.loader.load(window.EFiles[i]);
+	for (var i in window.EFiles) {
+		if (window.EFiles.hasOwnProperty(i)) {
+			mw.loader.load(window.EFiles[i]);
+		}
 	}
 
 	window.EFilesLoaded++;

@@ -282,8 +282,10 @@ window.Ed = {
 	parseSectionsToSubsections : function () {
 		var id, sec;
 		for (id in Ed.content.sections) {
-			sec = Ed.content.sections[id];
-			ESectionParser.parse(sec);
+			if (Ed.content.sections.hasOwnProperty(id)) {
+				sec = Ed.content.sections[id];
+				ESectionParser.parse(sec);
+			}
 		}
 	},
 
@@ -333,24 +335,26 @@ window.EParser = {
 		sections = code.split('<BE>');
 		reta = {};
 		for (s in sections) {
-			if (!sections[s].length) {
-				continue;
-			}
-			sec = sections[s].split('<EN>');
+			if (sections.hasOwnProperty(s)) {
+				if (!sections[s].length) {
+					continue;
+				}
+				sec = sections[s].split('<EN>');
 
-			if (sec.length === 1) {
-				// sekcja zerowa
-				reta[EConstants.SECTION_ID_INTRO] = {
-					content : $.trim(sec[0]),
-					title : '',
-					id : EConstants.SECTION_ID_INTRO,
-					initcontent: $.trim(sec[0])
-				};
-			} else {
-				section = this.getSectionFromTitle($.trim(sec[0]));
-				id = section.id;
-				reta[id] = section;
-				reta[id].content = $.trim(sec[1]);
+				if (sec.length === 1) {
+					// sekcja zerowa
+					reta[EConstants.SECTION_ID_INTRO] = {
+						content : $.trim(sec[0]),
+						title : '',
+						id : EConstants.SECTION_ID_INTRO,
+						initcontent: $.trim(sec[0])
+					};
+				} else {
+					section = this.getSectionFromTitle($.trim(sec[0]));
+					id = section.id;
+					reta[id] = section;
+					reta[id].content = $.trim(sec[1]);
+				}
 			}
 		}
 
@@ -479,14 +483,16 @@ window.ESectionParser = {
 		}
 		subsections.push({ title: '', content: '', shortened: false, active: true });
 		for (i in EConstants.SUBSECTIONS.ALL) {
-			subsections.push({
-				title: EConstants.SUBSECTIONS.ALL[i],
-				content: '',
-				shortened: true,
-				initcontent: '',
-				initmultiline: false,
-				active: true
-			});
+			if (EConstants.SUBSECTIONS.ALL.hasOwnProperty(i)) {
+				subsections.push({
+					title: EConstants.SUBSECTIONS.ALL[i],
+					content: '',
+					shortened: true,
+					initcontent: '',
+					initmultiline: false,
+					active: true
+				});
+			}
 		}
 
 		targetSubsections;
@@ -601,36 +607,40 @@ window.EPrinter = {
 		var sortableSections = [];
 		var id, sec, i, j, subs;
 		for (id in Ed.content.sections) {
-			sec = Ed.content.sections[id];
-			EForm.removeDefaultTexts(id, sec['code']);
-			sortableSections.push(sec);
+			if (Ed.content.sections.hasOwnProperty(id)) {
+				sec = Ed.content.sections[id];
+				EForm.removeDefaultTexts(id, sec['code']);
+				sortableSections.push(sec);
+			}
 		}
 		sortableSections.sort(function (a, b) { return a.id > b.id ? 1 : -1; });
 
 		for (i in sortableSections) {
-			sec = sortableSections[i];
-			if (sec.id === EConstants.SECTION_ID_INTRO) {
-				code = EForm.val(EConstants.SECTION_ID_INTRO, '') + '\n';
-			} else {
-				code += '== ' + sec.title + ' ==\n';
-				for (j = 0; j < sec.subsections.length; j++) {
-					subs = sec.subsections[j];
-					if (!subs.active) {
-						continue;
-					}
-					subs.content = EForm.val(sec.id, subs.title);
+			if (sortableSections.hasOwnProperty(i)) {
+				sec = sortableSections[i];
+				if (sec.id === EConstants.SECTION_ID_INTRO) {
+					code = EForm.val(EConstants.SECTION_ID_INTRO, '') + '\n';
+				} else {
+					code += '== ' + sec.title + ' ==\n';
+					for (j = 0; j < sec.subsections.length; j++) {
+						subs = sec.subsections[j];
+						if (!subs.active) {
+							continue;
+						}
+						subs.content = EForm.val(sec.id, subs.title);
 
-					if (subs.title === '' && subs.content !== '') {
-						code += subs.content + '\n';
-					} else if (subs.title !== '' && subs.content === '') {
-						code += '{{' + subs.title + '}}\n';
-					} else if (subs.shortened) {
-						code += '{{' + subs.title + '}}' + EPrinter.adequateWhitespace(subs) + subs.content + '\n';
-					} else if (subs.content !== '') {
-						code += subs.content + '\n';
+						if (subs.title === '' && subs.content !== '') {
+							code += subs.content + '\n';
+						} else if (subs.title !== '' && subs.content === '') {
+							code += '{{' + subs.title + '}}\n';
+						} else if (subs.shortened) {
+							code += '{{' + subs.title + '}}' + EPrinter.adequateWhitespace(subs) + subs.content + '\n';
+						} else if (subs.content !== '') {
+							code += subs.content + '\n';
+						}
 					}
+					code += '\n';
 				}
-				code += '\n';
 			}
 		}
 		code = $.trim(code);
@@ -947,11 +957,16 @@ window.EConstants = {
 		'am', 'ti', 'iu', 'chr', 'ko', 'ja', 'zh'
 		],
 	init : function () {
+		var name;
 		for (name in EConstants.LANG_CODES_SHORT) {
-			EConstants.CODE_TO_LANG[EConstants.LANG_CODES_SHORT[name]] = name;
+			if (EConstants.LANG_CODES_SHORT.hasOwnProperty(name)) {
+				EConstants.CODE_TO_LANG[EConstants.LANG_CODES_SHORT[name]] = name;
+			}
 		}
 		for (name in EConstants.LANG_CODES_LONG) {
-			EConstants.CODE_TO_LANG[EConstants.LANG_CODES_LONG[name]] = 'język ' + name;
+			if (EConstants.LANG_CODES_LONG.hasOwnProperty(name)) {
+				EConstants.CODE_TO_LANG[EConstants.LANG_CODES_LONG[name]] = 'język ' + name;
+			}
 		}
 	}
 };
@@ -1133,9 +1148,11 @@ window.EUi = {
 		var size = 0;
 		var id, addItem;
 		for (id in Ed.content.sections) {
-			EUi.addSection(id);
-			EUi.prepareFormSubsections(id);
-			size++;
+			if (Ed.content.sections.hasOwnProperty(id)) {
+				EUi.addSection(id);
+				EUi.prepareFormSubsections(id);
+				size++;
+			}
 		}
 
 		if (EUtil.getParameter('section') === '') {
@@ -1268,15 +1285,17 @@ window.EUi = {
 	deleteEmptySections : function () {
 		var id, sec, empty;
 		for (id in Ed.content.sections) {
-			sec = Ed.content.sections[id];
-			empty = true;
-			$('#ed_section_' + id).find('textarea').each(function () {
-				if ($(this).val()) {
-					empty = false;
+			if (Ed.content.sections.hasOwnProperty(id)) {
+				sec = Ed.content.sections[id];
+				empty = true;
+				$('#ed_section_' + id).find('textarea').each(function () {
+					if ($(this).val()) {
+						empty = false;
+					}
+				});
+				if (empty) {
+					EUi.deleteSection(id, sec, 1);
 				}
-			});
-			if (empty) {
-				EUi.deleteSection(id, sec, 1);
 			}
 		}
 	},
@@ -1399,8 +1418,10 @@ window.EForm = {
 		var arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
 		var subs, defaultText;
 		for (subs in arr) {
-			defaultText = arr[subs];
-			EForm.val(langid, subs, defaultText);
+			if (arr.hasOwnProperty(subs)) {
+				defaultText = arr[subs];
+				EForm.val(langid, subs, defaultText);
+			}
 		}
 	},
 
@@ -1408,9 +1429,11 @@ window.EForm = {
 		var arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
 		var subs, defaultText;
 		for (subs in arr) {
-			defaultText = arr[subs];
-			if (EForm.val(langid, subs) === defaultText) {
-				EForm.val(langid, subs, '');
+			if (arr.hasOwnProperty(subs)) {
+				defaultText = arr[subs];
+				if (EForm.val(langid, subs) === defaultText) {
+					EForm.val(langid, subs, '');
+				}
 			}
 		}
 	},
@@ -1761,13 +1784,15 @@ window.EAutomator = {
 		var ret = EConstants.USED_WIKTIONARIES.slice(0);
 		var id, code;
 		for (id in Ed.content.sections) {
-			code = Ed.content.sections[id]['code'];
-			if (code === undefined) {
-				continue;
-			}
-			code = code.replace(/-.*/, '');
-			if (code.length > 1 && code.length < 7 && code !== 'pl' && ret.indexOf(code) === -1) {
-				ret.push(code);
+			if (Ed.content.sections.hasOwnProperty(id)) {
+				code = Ed.content.sections[id]['code'];
+				if (code === undefined) {
+					continue;
+				}
+				code = code.replace(/-.*/, '');
+				if (code.length > 1 && code.length < 7 && code !== 'pl' && ret.indexOf(code) === -1) {
+					ret.push(code);
+				}
 			}
 		}
 		return $.grep(ret, function (val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) !== -1 });

@@ -73,9 +73,11 @@ window.EUi = {
 		var size = 0;
 		var id, addItem;
 		for (id in Ed.content.sections) {
-			EUi.addSection(id);
-			EUi.prepareFormSubsections(id);
-			size++;
+			if (Ed.content.sections.hasOwnProperty(id)) {
+				EUi.addSection(id);
+				EUi.prepareFormSubsections(id);
+				size++;
+			}
 		}
 
 		if (EUtil.getParameter('section') === '') {
@@ -208,15 +210,17 @@ window.EUi = {
 	deleteEmptySections : function () {
 		var id, sec, empty;
 		for (id in Ed.content.sections) {
-			sec = Ed.content.sections[id];
-			empty = true;
-			$('#ed_section_' + id).find('textarea').each(function () {
-				if ($(this).val()) {
-					empty = false;
+			if (Ed.content.sections.hasOwnProperty(id)) {
+				sec = Ed.content.sections[id];
+				empty = true;
+				$('#ed_section_' + id).find('textarea').each(function () {
+					if ($(this).val()) {
+						empty = false;
+					}
+				});
+				if (empty) {
+					EUi.deleteSection(id, sec, 1);
 				}
-			});
-			if (empty) {
-				EUi.deleteSection(id, sec, 1);
 			}
 		}
 	},
@@ -339,8 +343,10 @@ window.EForm = {
 		var arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
 		var subs, defaultText;
 		for (subs in arr) {
-			defaultText = arr[subs];
-			EForm.val(langid, subs, defaultText);
+			if (arr.hasOwnProperty(subs)) {
+				defaultText = arr[subs];
+				EForm.val(langid, subs, defaultText);
+			}
 		}
 	},
 
@@ -348,9 +354,11 @@ window.EForm = {
 		var arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
 		var subs, defaultText;
 		for (subs in arr) {
-			defaultText = arr[subs];
-			if (EForm.val(langid, subs) === defaultText) {
-				EForm.val(langid, subs, '');
+			if (arr.hasOwnProperty(subs)) {
+				defaultText = arr[subs];
+				if (EForm.val(langid, subs) === defaultText) {
+					EForm.val(langid, subs, '');
+				}
 			}
 		}
 	},

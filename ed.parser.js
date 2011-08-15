@@ -6,24 +6,26 @@ window.EParser = {
 		sections = code.split('<BE>');
 		reta = {};
 		for (s in sections) {
-			if (!sections[s].length) {
-				continue;
-			}
-			sec = sections[s].split('<EN>');
+			if (sections.hasOwnProperty(s)) {
+				if (!sections[s].length) {
+					continue;
+				}
+				sec = sections[s].split('<EN>');
 
-			if (sec.length === 1) {
-				// sekcja zerowa
-				reta[EConstants.SECTION_ID_INTRO] = {
-					content : $.trim(sec[0]),
-					title : '',
-					id : EConstants.SECTION_ID_INTRO,
-					initcontent: $.trim(sec[0])
-				};
-			} else {
-				section = this.getSectionFromTitle($.trim(sec[0]));
-				id = section.id;
-				reta[id] = section;
-				reta[id].content = $.trim(sec[1]);
+				if (sec.length === 1) {
+					// sekcja zerowa
+					reta[EConstants.SECTION_ID_INTRO] = {
+						content : $.trim(sec[0]),
+						title : '',
+						id : EConstants.SECTION_ID_INTRO,
+						initcontent: $.trim(sec[0])
+					};
+				} else {
+					section = this.getSectionFromTitle($.trim(sec[0]));
+					id = section.id;
+					reta[id] = section;
+					reta[id].content = $.trim(sec[1]);
+				}
 			}
 		}
 
@@ -152,14 +154,16 @@ window.ESectionParser = {
 		}
 		subsections.push({ title: '', content: '', shortened: false, active: true });
 		for (i in EConstants.SUBSECTIONS.ALL) {
-			subsections.push({
-				title: EConstants.SUBSECTIONS.ALL[i],
-				content: '',
-				shortened: true,
-				initcontent: '',
-				initmultiline: false,
-				active: true
-			});
+			if (EConstants.SUBSECTIONS.ALL.hasOwnProperty(i)) {
+				subsections.push({
+					title: EConstants.SUBSECTIONS.ALL[i],
+					content: '',
+					shortened: true,
+					initcontent: '',
+					initmultiline: false,
+					active: true
+				});
+			}
 		}
 
 		targetSubsections;

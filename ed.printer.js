@@ -4,36 +4,40 @@ window.EPrinter = {
 		var sortableSections = [];
 		var id, sec, i, j, subs;
 		for (id in Ed.content.sections) {
-			sec = Ed.content.sections[id];
-			EForm.removeDefaultTexts(id, sec['code']);
-			sortableSections.push(sec);
+			if (Ed.content.sections.hasOwnProperty(id)) {
+				sec = Ed.content.sections[id];
+				EForm.removeDefaultTexts(id, sec['code']);
+				sortableSections.push(sec);
+			}
 		}
 		sortableSections.sort(function (a, b) { return a.id > b.id ? 1 : -1; });
 
 		for (i in sortableSections) {
-			sec = sortableSections[i];
-			if (sec.id === EConstants.SECTION_ID_INTRO) {
-				code = EForm.val(EConstants.SECTION_ID_INTRO, '') + '\n';
-			} else {
-				code += '== ' + sec.title + ' ==\n';
-				for (j = 0; j < sec.subsections.length; j++) {
-					subs = sec.subsections[j];
-					if (!subs.active) {
-						continue;
-					}
-					subs.content = EForm.val(sec.id, subs.title);
+			if (sortableSections.hasOwnProperty(i)) {
+				sec = sortableSections[i];
+				if (sec.id === EConstants.SECTION_ID_INTRO) {
+					code = EForm.val(EConstants.SECTION_ID_INTRO, '') + '\n';
+				} else {
+					code += '== ' + sec.title + ' ==\n';
+					for (j = 0; j < sec.subsections.length; j++) {
+						subs = sec.subsections[j];
+						if (!subs.active) {
+							continue;
+						}
+						subs.content = EForm.val(sec.id, subs.title);
 
-					if (subs.title === '' && subs.content !== '') {
-						code += subs.content + '\n';
-					} else if (subs.title !== '' && subs.content === '') {
-						code += '{{' + subs.title + '}}\n';
-					} else if (subs.shortened) {
-						code += '{{' + subs.title + '}}' + EPrinter.adequateWhitespace(subs) + subs.content + '\n';
-					} else if (subs.content !== '') {
-						code += subs.content + '\n';
+						if (subs.title === '' && subs.content !== '') {
+							code += subs.content + '\n';
+						} else if (subs.title !== '' && subs.content === '') {
+							code += '{{' + subs.title + '}}\n';
+						} else if (subs.shortened) {
+							code += '{{' + subs.title + '}}' + EPrinter.adequateWhitespace(subs) + subs.content + '\n';
+						} else if (subs.content !== '') {
+							code += subs.content + '\n';
+						}
 					}
+					code += '\n';
 				}
-				code += '\n';
 			}
 		}
 		code = $.trim(code);

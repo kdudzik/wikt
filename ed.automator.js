@@ -19,13 +19,15 @@ window.EAutomator = {
 		var ret = EConstants.USED_WIKTIONARIES.slice(0);
 		var id, code;
 		for (id in Ed.content.sections) {
-			code = Ed.content.sections[id]['code'];
-			if (code === undefined) {
-				continue;
-			}
-			code = code.replace(/-.*/, '');
-			if (code.length > 1 && code.length < 7 && code !== 'pl' && ret.indexOf(code) === -1) {
-				ret.push(code);
+			if (Ed.content.sections.hasOwnProperty(id)) {
+				code = Ed.content.sections[id]['code'];
+				if (code === undefined) {
+					continue;
+				}
+				code = code.replace(/-.*/, '');
+				if (code.length > 1 && code.length < 7 && code !== 'pl' && ret.indexOf(code) === -1) {
+					ret.push(code);
+				}
 			}
 		}
 		return $.grep(ret, function (val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) !== -1 });
