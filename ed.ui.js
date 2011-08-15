@@ -326,7 +326,7 @@ window.EUi = {
 		if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length == 0) {
 			EUi.addIntroAdder();
 		}
-		EUi.addExtraButtons('wymowa', 'add_ipa', EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_INSERTED);
+		EUi.addExtraButtons('wymowa', 'add_ipa', EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_SHOWN);
 		EUi.addExtraButtons('', 'add_iw', EStr.ADD_INTERWIKI, EAutomator.fillInterwiki, EStr.GET_INTERWIKI, EConstants.SECTION_ID_INTRO);
 	}
 };

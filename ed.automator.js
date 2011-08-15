@@ -1,39 +1,49 @@
 window.EAutomator = {
 
+	/*
+	 * Zwraca kody wersji językowej z aktywnej sekcji + domyślnych
+	 */
 	getActiveLangs : function() {
-		var ret = EConstants.USED_WIKTIONARIES;
+		var ret = EConstants.USED_WIKTIONARIES.slice(0);
 		var act = EUtil.getActiveLangCode();
-		if (ret.indexOf(act) == -1) {
+		if (ret.indexOf(act) == -1 && EConstants.ALL_WIKTIONARIES.indexOf(act) != -1) {
 			ret.push(act);
 		}
 		return ret;
 	},
 
+	/*
+	 * Zwraca kody wszystkich wersji językowych z sekcji + domyślnych
+	 */
 	getAllLangs : function() {
-		var ret = EConstants.USED_WIKTIONARIES;
+		var ret = EConstants.USED_WIKTIONARIES.slice(0);
 		for (var id in Ed.content.sections) {
 			var code = Ed.content.sections[id]['code'];
 			if (code == undefined) {
 				continue;
 			}
 			code = code.replace(/-.*/, '');
-			if (code.length > 1 && code.length < 4 && code != 'pl' && ret.indexOf(code) == -1) {
+			if (code.length > 1 && code.length < 7 && code != 'pl' && ret.indexOf(code) == -1) {
 				ret.push(code);
 			}
 		}
-		return ret;
+		return $.grep(ret, function(val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) != -1 });
 	},
 
+	/*
+	 * Aktualizuje interwiki: do obecnych dodaje z wersji językowych z sekcji + domyślnych
+	 */
 	fillInterwiki : function() {
-		EAutomator.started('add_iw');
-		var langs = $.grep(EAutomator.getAllLangs(), function(val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) != -1 });
+		EApi.started('add_iw', '');
+		var langs = EAutomator.getAllLangs();
 		langs.push('pl');
 		var urls = $.map(langs, function(val) { return EApi.url(val) });
 		var query = { titles: mw.config.get('wgTitle'), prop: 'langlinks', lllimit: 200 };
 		EApi.askMore(query, 'EAutomator.fillInterwikiRe', urls);
-	},
 
-	fillInterwikiRe : function(results) {
+		// callback
+		}, fillInterwikiRe : function(results) {
+
 		var iwikis = [];
 		$.each(results, function(i, res) {
 			if (res.query == undefined || res.query.pages == undefined) {
@@ -65,21 +75,102 @@ window.EAutomator = {
 			var re = new RegExp('(\\[\\[[a-z\\-]+' + ':' + mw.config.get('wgTitle') + '\\]\\]\\s*)+');
 			$('#ed_0000_').val(iwikiString + curIwiki.replace(re, '\n'));
 		}
-		EAutomator.done('add_iw');
+		EApi.done('add_iw');
 	},
 
 	getIPA : function() {
-		alert('DUPA!');
-		EAutomator.done('add_ipa');
+		EApi.started('add_ipa', 'wymowa');
+		var urls = $.map(EAutomator.getActiveLangs(), function(val) { return EApi.url(val) });
+		var query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
+		EApi.askMore(query, 'EAutomator.getIPARe', urls);
+
+		// callback
+		}, getIPARe : function(results) {
+		var ipas = {};
+		var error = EStr.NO_IPA_FOUND;
+		$.each(results, function(i, res) {
+			if (res.query == undefined || res.query.pages == undefined) {
+				return false;
+			}
+			var lang = res.query.general.lang;
+			$.each(res.query.pages, function(j, val) {
+				if (j == -1) {
+					return false;
+				}
+				var content = val.revisions[0]['*'];
+				var ipa = EAutomator.extractIPA(content, lang);
+				if (ipa != undefined && ipa.length) {
+					ipas[lang] = ipa;
+					error = undefined;
+				}
+			});
+		});
+		console.log(ipas);
+
+		EApi.done('add_ipa', error);
 	},
 
-	done : function(idpart) {
-		$('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart).addClass('done');
+	extractIPA : function(str, lang) {
+		if (EAutomator['extractIPA_' + lang] == undefined) {
+			return undefined;
+		} else {
+			return EUtil.executeFn('extractIPA_' + lang, EAutomator, str);
+		}
 	},
 
-	started : function(idpart) {
-		$('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart).removeClass('done');
+	extractFirstArgsFromTemplates : function(str, template) {
+		var re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*\\/?\\s*([^\\}\\/\\|<]+)', 'g');
+		var arr, results = [];
+		while ((arr = re.exec(str)) != null) {
+			results.push($.trim(arr[1]));
+		}
+		return results;
 	},
+
+	extractSecondArgsFromTemplates : function(str, template) {
+		var re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\}\\|]*)\\|\\s*\\/?([^\\}\\/\\|<]+)', 'gi');
+		var arr, results = [];
+		while ((arr = re.exec(str)) != null) {
+			results.push($.trim(arr[2]));
+		}
+		return results;
+	},
+
+	extractIPA_de: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'Lautschrift'); },
+	extractIPA_es: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'pronunciación'); },
+	extractIPA_fr: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'pron'); },
+	extractIPA_en: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_cs: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_sk: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_it: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_af: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_ca: function(str) { return EAutomator.extractSecondArgsFromTemplates(str, 'pron'); },
+	extractIPA_ro: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'AFI'); },
+	extractIPA_et: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'hääldus'); },
+	extractIPA_ko: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_nl: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_vi: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_simple: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_ru: function(str) {
+		var arr;
+		var results = EAutomator.extractFirstArgsFromTemplates(str, 'transcription');
+		var re = /\{\{transcriptions\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)\s*\}\}/g;
+		while ((arr = re.exec(str)) != null) {
+			results.push($.trim(arr[1]));
+			results.push($.trim(arr[2]));
+		}
+		return results;
+	},
+	extractIPA_ja: function(str) {
+		var arr;
+		var results = [];
+		var re = /\{\{pron-en1\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)/g;
+		while ((arr = re.exec(str)) != null) {
+			results.push($.trim(arr[1]));
+			results.push($.trim(arr[2]));
+		}
+		return results;
+	}
 };
 
 window.EFilesLoaded++;

@@ -113,9 +113,19 @@ div.subsection_extra > span {\
 	padding: 5px;\
 }\
 \
-div.subsection_extra > span.done {\
+div.subsection_extra > span.apidone {\
 	padding-right: 25px;\
 	background: url(http://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Gtk-ok.svg/20px-Gtk-ok.svg.png) no-repeat right;\
+}\
+\
+div.subsection_extra > span.apistarted {\
+	padding-right: 32px;\
+	background: url(http://upload.wikimedia.org/wikipedia/commons/3/32/Loader3.gif) no-repeat right;\
+}\
+\
+div.subsection_extra > span.apierror {\
+	padding-right: 25px;\
+	background: url(http://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Crystal_128_error.svg/20px-Crystal_128_error.svg.png) no-repeat right;\
 }\
 \
 #popup_container {\
@@ -309,44 +319,6 @@ window.Ed = {
 	}
 
 };
-
-window.EUtil = {
-	getParameter : function(name)
-	{
-	  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-	  var regexS = "[\\?&]"+name+"=([^&#]*)";
-	  var regex = new RegExp( regexS );
-	  var results = regex.exec( window.location.href );
-	  if( results == null )
-	    return "";
-	  else
-	    return decodeURIComponent(results[1].replace(/\+/g, " "));
-	},
-
-	getSection : function() {
-		return self.document.location.hash.replace('#', '');
-	},
-
-	getActiveLangCode : function() {
-		return EUi.activeLangcode;
-	},
-
-	getActiveLangId : function() {
-		return EUi.activeLangId;
-	},
-
-	executeFn : function(functionName, context /*, args */) {
-		var args = Array.prototype.slice.call(arguments, 2);
-		var namespaces = functionName.split(".");
-		var func = namespaces.pop();
-		for (var i = 0; i < namespaces.length; i++) {
-			context = context[namespaces[i]];
-		}
-		return context[func].apply(context, args);
-	}
-};
-
-$.fn.reverse = [].reverse;
 
 
 window.EParser = {
@@ -787,7 +759,7 @@ window.EConstants = {
 		'pokrewne' : 'Wyrazy pokrewne',
 		'frazeologia' : 'Związki frazeologiczne',
 		'etymologia' : 'Etymologia',
-		'ortografie' : 'Zapisy w ortografiach alternatywnych',
+		'ortografie' : 'Zapisy w ortografiach alternatywnych',
 		'tłumaczenia' : 'Tłumaczenia',
 		'uwagi' : 'Uwagi',
 		'źródła' : 'Źródła',
@@ -930,7 +902,7 @@ window.EConstants = {
 	WIKIMEDIA :
 		'wikimedia',
 	USED_WIKTIONARIES :
-		['en', 'de', 'es', 'it', 'ru', 'fr'],
+		['en', 'de', 'es', 'ru', 'fr'],
 	INTERWIKI_ORDER: // http://meta.wikimedia.org/wiki/Interwiki_sorting_order
 		['ace', 'af', 'ak', 'als', 'am', 'ang', 'ab', 'ar', 'an', 'arc',
 		'roa-rup', 'frp', 'as', 'ast', 'gn', 'av', 'ay', 'az', 'bjn', 'id',
@@ -970,7 +942,7 @@ window.EConstants = {
 		'kw', 'rw', 'sw', 'la', 'lv', 'lb', 'lt', 'li', 'ln', 'jbo', 'hu', 'mg', 'mi',
 		'nah', 'fj', 'nl', 'no', 'nn', 'oc', 'om', 'uz', 'nds', 'pl', 'pt', 'ro', 'qu',
 		'sg', 'st', 'tn', 'scn', 'simple', 'sk', 'sl', 'sq', 'ss', 'so', 'sh', 'fi',
-		'sv', 'tl', 'tt', 'vi', 'tpi', 'tr', 'tk', 'vo', 'wa', 'wo', 'ts', 'el', 'tsd',
+		'sv', 'tl', 'tt', 'vi', 'tpi', 'tr', 'tk', 'vo', 'wa', 'wo', 'ts', 'el',
 		'be', 'bg', 'kk', 'ky', 'mk', 'mn', 'ru', 'sr', 'tg', 'uk', 'hy', 'ka', 'he',
 		'yi', 'ar', 'fa', 'ha', 'ps', 'sd', 'ug', 'ur', 'dv', 'bn', 'gu', 'hi', 'ks',
 		'ne', 'sa', 'mr', 'kn', 'ml', 'pa', 'ta', 'te', 'km', 'lo', 'my', 'si', 'th',
@@ -999,7 +971,7 @@ window.EStr = {
 		<small>Zobacz też: \
 		<a href="http://pl.wiktionary.org/wiki/Wikis%C5%82ownik:Zasady_tworzenia_hase%C5%82#Nag.C5.82.C3.B3wek" \
 		target="_blank">Zasady tworzenia haseł: Nagłówek</a>.<br/>\
-		Możesz też dodać niestandardowy nagłówek (np. akcenty, linki do poszczególnych wyrazów). W tym celu \
+		Możesz też dodać niestandardowy nagłówek (np. akcenty, linki do poszczególnych wyrazów). W tym celu \
 		wpisz cały kod nagłówka jak poniżej (bez znaków ==).</small>',
 	ADD_SECTION_MESSAGE_DEFAULT :
 		'Dodajesz nową sekcję językową.<br/>\
@@ -1007,7 +979,7 @@ window.EStr = {
 		<small>Zobacz też: \
 		<a href="http://pl.wiktionary.org/wiki/Wikis%C5%82ownik:Zasady_tworzenia_hase%C5%82#Nag.C5.82.C3.B3wek" \
 		target="_blank">Zasady tworzenia haseł: Nagłówek</a>.<br/>\
-		Możesz też dodać niestandardowy nagłówek (np. akcenty, linki do poszczególnych wyrazów). W tym celu \
+		Możesz też dodać niestandardowy nagłówek (np. akcenty, linki do poszczególnych wyrazów). W tym celu \
 		wpisz cały kod nagłówka (bez znaków ==).</small>',
 	ADD_SECTION_TEMPLATE :
 		' ({{język …}})',
@@ -1075,13 +1047,15 @@ window.EStr = {
 	ADD_IPA:
 		'Dodaj IPA',
 	GET_IPA:
-		'Spróbuj pobrać wymowę zapisaną w IPA z innych wersji językowych Wikisłownika',
+		'Spróbuj pobrać wymowę zapisaną w międzynarodowym alfabecie fonetycznym z innych wersji językowych Wikisłownika',
 	ADD_INTERWIKI:
 		'Dodaj (zaktualizuj) interwiki',
 	GET_INTERWIKI:
-		'Pobierz interwiki z innych wersji językowych Wikisłownika',
-	WILL_BE_INSERTED:
-		'<br/><small>Wynik zapytania zostanie wstawione w miejscu, w którym znajduje się teraz kursor</small>'
+		'Pobierz interwiki z innych wersji językowych Wikisłownika',
+	WILL_BE_SHOWN:
+		'<br/><small>Wyniki zapytania z poszczególnych wersji językowych zostaną pokazane w okienku, które umożliwi ich proste dodawanie do hasła.</small>',
+	NO_IPA_FOUND:
+		'Nie znaleziono IPA'
 };
 
 
@@ -1414,7 +1388,7 @@ window.EUi = {
 		if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length == 0) {
 			EUi.addIntroAdder();
 		}
-		EUi.addExtraButtons('wymowa', 'add_ipa', EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_INSERTED);
+		EUi.addExtraButtons('wymowa', 'add_ipa', EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_SHOWN);
 		EUi.addExtraButtons('', 'add_iw', EStr.ADD_INTERWIKI, EAutomator.fillInterwiki, EStr.GET_INTERWIKI, EConstants.SECTION_ID_INTRO);
 	}
 };
@@ -1449,6 +1423,58 @@ window.EForm = {
 
 };
 
+
+
+window.EUtil = {
+	getParameter : function(name)
+	{
+	  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+	  var regexS = "[\\?&]"+name+"=([^&#]*)";
+	  var regex = new RegExp( regexS );
+	  var results = regex.exec( window.location.href );
+	  if( results == null )
+	    return "";
+	  else
+	    return decodeURIComponent(results[1].replace(/\+/g, " "));
+	},
+
+	getSection : function() {
+		return self.document.location.hash.replace('#', '');
+	},
+
+	getActiveLangCode : function() {
+		return EUi.activeLangCode;
+	},
+
+	getActiveLangId : function() {
+		return EUi.activeLangId;
+	},
+
+	executeFn : function(functionName, context /*, args */) {
+		var args = Array.prototype.slice.call(arguments, 2);
+		var namespaces = functionName.split(".");
+		var func = namespaces.pop();
+		for (var i = 0; i < namespaces.length; i++) {
+			context = context[namespaces[i]];
+		}
+		return context[func].apply(context, args);
+	},
+
+	focusArea : function(subs) {
+		$('#ed_' + EUtil.getActiveLangId() + '_' + subs).focus();
+	},
+
+	isEmpty : function(obj) {
+		for (var prop in obj) {
+			if (obj.hasOwnProperty(prop)) {
+				return false;
+			}
+		}
+		return true;
+	}
+};
+
+$.fn.reverse = [].reverse;
 
 
 window.ESpecialChars = {
@@ -1686,9 +1712,25 @@ window.EApi = {
 	callback : function(res) {
 		EApi.waitingResults.push(res);
 		if (!--EApi.waiting) {
-			eval(EApi.waitingName + '(EApi.waitingResults)');
+			EUtil.executeFn(EApi.waitingName, window, EApi.waitingResults);
 			EApi.waitingName = '';
 			EApi.waitingResults = [];
+		}
+	},
+
+	done : function(idpart, error) {
+		var elem = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart);
+		if (error != undefined) {
+			elem.addClass('apierror').removeClass('apistarted apidone').html(error);
+		} else {
+			elem.addClass('apidone').removeClass('apistarted apierror');
+		}
+	},
+
+	started : function(idpart, subs) {
+		$('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart).removeClass('apidone apierror').addClass('apistarted');
+		if (subs != undefined) {
+			EUtil.focusArea(subs);
 		}
 	},
 
@@ -1700,40 +1742,50 @@ window.EApi = {
 
 window.EAutomator = {
 
+	/*
+	 * Zwraca kody wersji językowej z aktywnej sekcji + domyślnych
+	 */
 	getActiveLangs : function() {
-		var ret = EConstants.USED_WIKTIONARIES;
+		var ret = EConstants.USED_WIKTIONARIES.slice(0);
 		var act = EUtil.getActiveLangCode();
-		if (ret.indexOf(act) == -1) {
+		if (ret.indexOf(act) == -1 && EConstants.ALL_WIKTIONARIES.indexOf(act) != -1) {
 			ret.push(act);
 		}
 		return ret;
 	},
 
+	/*
+	 * Zwraca kody wszystkich wersji językowych z sekcji + domyślnych
+	 */
 	getAllLangs : function() {
-		var ret = EConstants.USED_WIKTIONARIES;
+		var ret = EConstants.USED_WIKTIONARIES.slice(0);
 		for (var id in Ed.content.sections) {
 			var code = Ed.content.sections[id]['code'];
 			if (code == undefined) {
 				continue;
 			}
 			code = code.replace(/-.*/, '');
-			if (code.length > 1 && code.length < 4 && code != 'pl' && ret.indexOf(code) == -1) {
+			if (code.length > 1 && code.length < 7 && code != 'pl' && ret.indexOf(code) == -1) {
 				ret.push(code);
 			}
 		}
-		return ret;
+		return $.grep(ret, function(val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) != -1 });
 	},
 
+	/*
+	 * Aktualizuje interwiki: do obecnych dodaje z wersji językowych z sekcji + domyślnych
+	 */
 	fillInterwiki : function() {
-		EAutomator.started('add_iw');
-		var langs = $.grep(EAutomator.getAllLangs(), function(val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) != -1 });
+		EApi.started('add_iw', '');
+		var langs = EAutomator.getAllLangs();
 		langs.push('pl');
 		var urls = $.map(langs, function(val) { return EApi.url(val) });
 		var query = { titles: mw.config.get('wgTitle'), prop: 'langlinks', lllimit: 200 };
 		EApi.askMore(query, 'EAutomator.fillInterwikiRe', urls);
-	},
 
-	fillInterwikiRe : function(results) {
+		// callback
+		}, fillInterwikiRe : function(results) {
+
 		var iwikis = [];
 		$.each(results, function(i, res) {
 			if (res.query == undefined || res.query.pages == undefined) {
@@ -1765,21 +1817,102 @@ window.EAutomator = {
 			var re = new RegExp('(\\[\\[[a-z\\-]+' + ':' + mw.config.get('wgTitle') + '\\]\\]\\s*)+');
 			$('#ed_0000_').val(iwikiString + curIwiki.replace(re, '\n'));
 		}
-		EAutomator.done('add_iw');
+		EApi.done('add_iw');
 	},
 
 	getIPA : function() {
-		alert('DUPA!');
-		EAutomator.done('add_ipa');
+		EApi.started('add_ipa', 'wymowa');
+		var urls = $.map(EAutomator.getActiveLangs(), function(val) { return EApi.url(val) });
+		var query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
+		EApi.askMore(query, 'EAutomator.getIPARe', urls);
+
+		// callback
+		}, getIPARe : function(results) {
+		var ipas = {};
+		var error = EStr.NO_IPA_FOUND;
+		$.each(results, function(i, res) {
+			if (res.query == undefined || res.query.pages == undefined) {
+				return false;
+			}
+			var lang = res.query.general.lang;
+			$.each(res.query.pages, function(j, val) {
+				if (j == -1) {
+					return false;
+				}
+				var content = val.revisions[0]['*'];
+				var ipa = EAutomator.extractIPA(content, lang);
+				if (ipa != undefined && ipa.length) {
+					ipas[lang] = ipa;
+					error = undefined;
+				}
+			});
+		});
+		console.log(ipas);
+
+		EApi.done('add_ipa', error);
 	},
 
-	done : function(idpart) {
-		$('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart).addClass('done');
+	extractIPA : function(str, lang) {
+		if (EAutomator['extractIPA_' + lang] == undefined) {
+			return undefined;
+		} else {
+			return EUtil.executeFn('extractIPA_' + lang, EAutomator, str);
+		}
 	},
 
-	started : function(idpart) {
-		$('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart).removeClass('done');
+	extractFirstArgsFromTemplates : function(str, template) {
+		var re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*\\/?\\s*([^\\}\\/\\|<]+)', 'g');
+		var arr, results = [];
+		while ((arr = re.exec(str)) != null) {
+			results.push($.trim(arr[1]));
+		}
+		return results;
 	},
+
+	extractSecondArgsFromTemplates : function(str, template) {
+		var re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\}\\|]*)\\|\\s*\\/?([^\\}\\/\\|<]+)', 'gi');
+		var arr, results = [];
+		while ((arr = re.exec(str)) != null) {
+			results.push($.trim(arr[2]));
+		}
+		return results;
+	},
+
+	extractIPA_de: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'Lautschrift'); },
+	extractIPA_es: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'pronunciación'); },
+	extractIPA_fr: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'pron'); },
+	extractIPA_en: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_cs: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_sk: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_it: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_af: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_ca: function(str) { return EAutomator.extractSecondArgsFromTemplates(str, 'pron'); },
+	extractIPA_ro: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'AFI'); },
+	extractIPA_et: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'hääldus'); },
+	extractIPA_ko: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_nl: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_vi: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_simple: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_ru: function(str) {
+		var arr;
+		var results = EAutomator.extractFirstArgsFromTemplates(str, 'transcription');
+		var re = /\{\{transcriptions\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)\s*\}\}/g;
+		while ((arr = re.exec(str)) != null) {
+			results.push($.trim(arr[1]));
+			results.push($.trim(arr[2]));
+		}
+		return results;
+	},
+	extractIPA_ja: function(str) {
+		var arr;
+		var results = [];
+		var re = /\{\{pron-en1\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)/g;
+		while ((arr = re.exec(str)) != null) {
+			results.push($.trim(arr[1]));
+			results.push($.trim(arr[2]));
+		}
+		return results;
+	}
 };
 
 

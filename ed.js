@@ -11,6 +11,7 @@ window.EFiles =
 	'http://localhost/wikt/ed.printer.js',
 	'http://localhost/wikt/ed.constants.js',
 	'http://localhost/wikt/ed.ui.js',
+	'http://localhost/wikt/ed.util.js',
 	'http://localhost/wikt/ed.keyboard.js',
 	'http://localhost/wikt/ed.api.js',
 	'http://localhost/wikt/ed.automator.js',

@@ -72,7 +72,7 @@ window.EConstants = {
 		'pokrewne' : 'Wyrazy pokrewne',
 		'frazeologia' : 'Związki frazeologiczne',
 		'etymologia' : 'Etymologia',
-		'ortografie' : 'Zapisy w ortografiach alternatywnych',
+		'ortografie' : 'Zapisy w ortografiach alternatywnych',
 		'tłumaczenia' : 'Tłumaczenia',
 		'uwagi' : 'Uwagi',
 		'źródła' : 'Źródła',
@@ -215,7 +215,7 @@ window.EConstants = {
 	WIKIMEDIA :
 		'wikimedia',
 	USED_WIKTIONARIES :
-		['en', 'de', 'es', 'it', 'ru', 'fr'],
+		['en', 'de', 'es', 'ru', 'fr'],
 	INTERWIKI_ORDER: // http://meta.wikimedia.org/wiki/Interwiki_sorting_order
 		['ace', 'af', 'ak', 'als', 'am', 'ang', 'ab', 'ar', 'an', 'arc',
 		'roa-rup', 'frp', 'as', 'ast', 'gn', 'av', 'ay', 'az', 'bjn', 'id',
@@ -255,7 +255,7 @@ window.EConstants = {
 		'kw', 'rw', 'sw', 'la', 'lv', 'lb', 'lt', 'li', 'ln', 'jbo', 'hu', 'mg', 'mi',
 		'nah', 'fj', 'nl', 'no', 'nn', 'oc', 'om', 'uz', 'nds', 'pl', 'pt', 'ro', 'qu',
 		'sg', 'st', 'tn', 'scn', 'simple', 'sk', 'sl', 'sq', 'ss', 'so', 'sh', 'fi',
-		'sv', 'tl', 'tt', 'vi', 'tpi', 'tr', 'tk', 'vo', 'wa', 'wo', 'ts', 'el', 'tsd',
+		'sv', 'tl', 'tt', 'vi', 'tpi', 'tr', 'tk', 'vo', 'wa', 'wo', 'ts', 'el',
 		'be', 'bg', 'kk', 'ky', 'mk', 'mn', 'ru', 'sr', 'tg', 'uk', 'hy', 'ka', 'he',
 		'yi', 'ar', 'fa', 'ha', 'ps', 'sd', 'ug', 'ur', 'dv', 'bn', 'gu', 'hi', 'ks',
 		'ne', 'sa', 'mr', 'kn', 'ml', 'pa', 'ta', 'te', 'km', 'lo', 'my', 'si', 'th',
@@ -284,7 +284,7 @@ window.EStr = {
 		<small>Zobacz też: \
 		<a href="http://pl.wiktionary.org/wiki/Wikis%C5%82ownik:Zasady_tworzenia_hase%C5%82#Nag.C5.82.C3.B3wek" \
 		target="_blank">Zasady tworzenia haseł: Nagłówek</a>.<br/>\
-		Możesz też dodać niestandardowy nagłówek (np. akcenty, linki do poszczególnych wyrazów). W tym celu \
+		Możesz też dodać niestandardowy nagłówek (np. akcenty, linki do poszczególnych wyrazów). W tym celu \
 		wpisz cały kod nagłówka jak poniżej (bez znaków ==).</small>',
 	ADD_SECTION_MESSAGE_DEFAULT :
 		'Dodajesz nową sekcję językową.<br/>\
@@ -292,7 +292,7 @@ window.EStr = {
 		<small>Zobacz też: \
 		<a href="http://pl.wiktionary.org/wiki/Wikis%C5%82ownik:Zasady_tworzenia_hase%C5%82#Nag.C5.82.C3.B3wek" \
 		target="_blank">Zasady tworzenia haseł: Nagłówek</a>.<br/>\
-		Możesz też dodać niestandardowy nagłówek (np. akcenty, linki do poszczególnych wyrazów). W tym celu \
+		Możesz też dodać niestandardowy nagłówek (np. akcenty, linki do poszczególnych wyrazów). W tym celu \
 		wpisz cały kod nagłówka (bez znaków ==).</small>',
 	ADD_SECTION_TEMPLATE :
 		' ({{język …}})',
@@ -360,13 +360,15 @@ window.EStr = {
 	ADD_IPA:
 		'Dodaj IPA',
 	GET_IPA:
-		'Spróbuj pobrać wymowę zapisaną w IPA z innych wersji językowych Wikisłownika',
+		'Spróbuj pobrać wymowę zapisaną w międzynarodowym alfabecie fonetycznym z innych wersji językowych Wikisłownika',
 	ADD_INTERWIKI:
 		'Dodaj (zaktualizuj) interwiki',
 	GET_INTERWIKI:
-		'Pobierz interwiki z innych wersji językowych Wikisłownika',
-	WILL_BE_INSERTED:
-		'<br/><small>Wynik zapytania zostanie wstawione w miejscu, w którym znajduje się teraz kursor</small>'
+		'Pobierz interwiki z innych wersji językowych Wikisłownika',
+	WILL_BE_SHOWN:
+		'<br/><small>Wyniki zapytania z poszczególnych wersji językowych zostaną pokazane w okienku, które umożliwi ich proste dodawanie do hasła.</small>',
+	NO_IPA_FOUND:
+		'Nie znaleziono IPA'
 };
 
 

@@ -112,9 +112,19 @@ div.subsection_extra > span {
 	padding: 5px;
 }
 
-div.subsection_extra > span.done {
+div.subsection_extra > span.apidone {
 	padding-right: 25px;
 	background: url(http://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Gtk-ok.svg/20px-Gtk-ok.svg.png) no-repeat right;
+}
+
+div.subsection_extra > span.apistarted {
+	padding-right: 32px;
+	background: url(http://upload.wikimedia.org/wikipedia/commons/3/32/Loader3.gif) no-repeat right;
+}
+
+div.subsection_extra > span.apierror {
+	padding-right: 25px;
+	background: url(http://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Crystal_128_error.svg/20px-Crystal_128_error.svg.png) no-repeat right;
 }
 
 #popup_container {

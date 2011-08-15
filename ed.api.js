@@ -54,9 +54,25 @@ window.EApi = {
 	callback : function(res) {
 		EApi.waitingResults.push(res);
 		if (!--EApi.waiting) {
-			eval(EApi.waitingName + '(EApi.waitingResults)');
+			EUtil.executeFn(EApi.waitingName, window, EApi.waitingResults);
 			EApi.waitingName = '';
 			EApi.waitingResults = [];
+		}
+	},
+
+	done : function(idpart, error) {
+		var elem = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart);
+		if (error != undefined) {
+			elem.addClass('apierror').removeClass('apistarted apidone').html(error);
+		} else {
+			elem.addClass('apidone').removeClass('apistarted apierror');
+		}
+	},
+
+	started : function(idpart, subs) {
+		$('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart).removeClass('apidone apierror').addClass('apistarted');
+		if (subs != undefined) {
+			EUtil.focusArea(subs);
 		}
 	},
 
