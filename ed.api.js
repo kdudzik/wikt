@@ -17,14 +17,14 @@ window.EApi = {
 		return EApi.url(lang, EConstants.WIKIPEDIA);
 	},
 
-	_ask : function (query, url) {
+	ask__prv : function (query, url) {
 		if (url === undefined) {
 			url = EApi.url();
 		}
-		query['action'] = 'query';
-		query['format'] = 'json';
-		query['meta'] = 'siteinfo';
-		query['callback'] = 'EApi.callback';
+		query.action = 'query';
+		query.format = 'json';
+		query.meta = 'siteinfo';
+		query.callback = 'EApi.callback';
 		url += $.param(query);
 		mw.loader.load(url);
 	},
@@ -36,7 +36,8 @@ window.EApi = {
 		}
 		EApi.waitingName = callback;
 		EApi.waiting = 1;
-		EApi._ask(query, url);
+		EApi.ask__prv(query, url);
+		return 0;
 	},
 
 	askMore : function (query, callback, urls) {
@@ -47,13 +48,15 @@ window.EApi = {
 		EApi.waitingName = callback;
 		EApi.waiting = urls.length;
 		$.each(urls, function (i, url) {
-			EApi._ask(query, url);
+			EApi.ask__prv(query, url);
 		});
+		return 0;
 	},
 
 	callback : function (res) {
 		EApi.waitingResults.push(res);
-		if (!--EApi.waiting) {
+		EApi.waiting -= 1;
+		if (!EApi.waiting) {
 			EUtil.executeFn(EApi.waitingName, window, EApi.waitingResults);
 			EApi.waitingName = '';
 			EApi.waitingResults = [];
@@ -78,7 +81,7 @@ window.EApi = {
 
 	waiting : 0,
 	waitingName : '',
-	waitingResults : [],
+	waitingResults : []
 };
 
 window.EFilesLoaded++;

@@ -77,13 +77,11 @@ window.EParser = {
 		} else if (langname === EStr.LATIN_FOREIGN) {
 			return EConstants.SECTION_ID_LATIN_FOREIGN;
 		}
-		return langname.replace(/język /, '')
-			.replace(/[ąáåã]/g, 'azz').replace(/ć/g, 'czz')
-			.replace(/[ęè]/g, 'ezz').replace(/ł/g, 'lzz')
-			.replace(/ń/g, 'nzz').replace(/[óõ]/g, 'ozz')
-			.replace(/ś/g, 'szz').replace(/ü/g, 'uzz')
-			.replace(/ź/g, 'zzy').replace(/ż/g, 'zzz')
-			.replace(/[ \|!\(\)]/g, '_');
+		langname = langname.replace(/język /, '').replace(/[ąáåã]/g, 'azz').replace(/ć/g, 'czz');
+		langname = langname.replace(/[ęè]/g, 'ezz').replace(/ł/g, 'lzz').replace(/ń/g, 'nzz').replace(/[óõ]/g, 'ozz');
+		langname = langname.replace(/ś/g, 'szz').replace(/ü/g, 'uzz').replace(/ź/g, 'zzy').replace(/ż/g, 'zzz');
+		langname = langname.replace(/[ \|!\(\)]/g, '_');
+		return langname;
 	},
 
 	getSectionFromInput : function (str) {
@@ -184,6 +182,8 @@ window.ESectionParser = {
 			targetSubsections = EConstants.SUBSECTIONS.DOUBLE; break;
 		case 'LATIN':
 			targetSubsections = EConstants.SUBSECTIONS.LATIN; break;
+		default:
+			targetSubsections = []; break;
 		}
 
 		section.subsections = subsections;

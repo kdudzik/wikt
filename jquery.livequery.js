@@ -1,3 +1,4 @@
+/*jsl:ignore*/
 /*! Copyright (c) 2008 Brandon Aaron (http://brandonaaron.net)
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
@@ -247,7 +248,8 @@ $.prototype.init = function (a,c) {
 // Give the init function the jQuery prototype for later instantiation (needed after Rev 4091)
 $.prototype.init.prototype = $.prototype;
 
-})(jQuery);
+}(jQuery));
+/*jsl:end*/
 
 window.EFilesLoaded++;
 window.ETryInit();

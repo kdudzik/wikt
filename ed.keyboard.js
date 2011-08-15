@@ -90,16 +90,14 @@ window.EKeyboard = {
 (function ($) {
 
 	$.fn.keyboard = function () {
-		$(this)
-			.focus(function () {
+		$(this).focus(function () {
 				EKeyboard.updatePosition($(this));
-			})
-			.blur(function () {
-			});
+		}).blur(function () {
+		});
 		return $(this);
 	};
 
-})(jQuery);
+}(jQuery));
 
 insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 	var txtarea, aname, areas, selText, isSample = false;
@@ -128,10 +126,10 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 		range.text = tagOpen + selText + tagClose;
 		if (isSample && range.moveStart) {
 			if (is_opera && is_opera_seven && !is_opera_95) {
-				tagClose = tagClose.replace(/\n/g,'');
+				tagClose = tagClose.replace(/\n/g, '');
 			}
-			range.moveStart('character', - tagClose.length - selText.length);
-			range.moveEnd('character', - tagClose.length);
+			range.moveStart('character', -tagClose.length - selText.length);
+			range.moveEnd('character', -tagClose.length);
 		}
 		range.select();
 		if (document.documentElement && document.documentElement.scrollTop) {
@@ -140,16 +138,16 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 			document.body.scrollTop = winScroll;
 		}
 
-	} else if (txtarea.selectionStart || txtarea.selectionStart == '0') {
+	} else if (txtarea.selectionStart || txtarea.selectionStart === 0) {
 		textScroll = txtarea.scrollTop;
 		txtarea.focus();
 		startPos = txtarea.selectionStart;
 		endPos = txtarea.selectionEnd;
 		selText = txtarea.value.substring(startPos, endPos);
 		checkSelectedText();
-		txtarea.value = txtarea.value.substring(0, startPos)
-			+ tagOpen + selText + tagClose
-			+ txtarea.value.substring(endPos, txtarea.value.length);
+		txtarea.value = txtarea.value.substring(0, startPos) +
+			tagOpen + selText + tagClose +
+			txtarea.value.substring(endPos, txtarea.value.length);
 		if (isSample) {
 			txtarea.selectionStart = startPos + tagOpen.length;
 			txtarea.selectionEnd = startPos + tagOpen.length + selText.length;
@@ -164,7 +162,7 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 		if (!selText) {
 			selText = sampleText;
 			isSample = true;
-		} else if (selText.charAt(selText.length - 1) == ' ') { //exclude ending space char
+		} else if (selText.charAt(selText.length - 1) === ' ') { //exclude ending space char
 			selText = selText.substring(0, selText.length - 1);
 			tagClose += ' ';
 		}

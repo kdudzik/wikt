@@ -16,7 +16,7 @@
                 position:   'absolute',
                 top:        -10000,
                 left:       -10000,
-                width:      $(this).width() - parseInt($this.css('paddingLeft')) - parseInt($this.css('paddingRight')),
+                width:      $(this).width() - parseInt($this.css('paddingLeft'), 10) - parseInt($this.css('paddingRight'), 10),
                 fontSize:   $this.css('fontSize'),
                 fontFamily: $this.css('fontFamily'),
                 lineHeight: $this.css('lineHeight'),
@@ -24,12 +24,7 @@
             }).appendTo(document.body);
 
             var update = function () {
-                var val = this.value.replace(/</g, '&lt;')
-                                    .replace(/>/g, '&gt;')
-                                    .replace(/&/g, '&amp;')
-                                    .replace(/\n$/, '<br/>&nbsp;')
-                                    .replace(/\n/g, '<br/>');
-
+                var val = this.value.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;').replace(/\n$/, '<br/>&nbsp;').replace(/\n/g, '<br/>');
                 shadow.html(val);
                 $(this).css('height', Math.min(Math.max(shadow.height(), minHeight), maxHeight));
                 EKeyboard.updatePosition($(this));
@@ -45,7 +40,7 @@
 
     };
 
-})(jQuery);
+}(jQuery));
 
 window.EFilesLoaded++;
 window.ETryInit();

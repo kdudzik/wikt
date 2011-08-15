@@ -406,13 +406,11 @@ window.EParser = {
 		} else if (langname === EStr.LATIN_FOREIGN) {
 			return EConstants.SECTION_ID_LATIN_FOREIGN;
 		}
-		return langname.replace(/język /, '')
-			.replace(/[ąáåã]/g, 'azz').replace(/ć/g, 'czz')
-			.replace(/[ęè]/g, 'ezz').replace(/ł/g, 'lzz')
-			.replace(/ń/g, 'nzz').replace(/[óõ]/g, 'ozz')
-			.replace(/ś/g, 'szz').replace(/ü/g, 'uzz')
-			.replace(/ź/g, 'zzy').replace(/ż/g, 'zzz')
-			.replace(/[ \|!\(\)]/g, '_');
+		langname = langname.replace(/język /, '').replace(/[ąáåã]/g, 'azz').replace(/ć/g, 'czz');
+		langname = langname.replace(/[ęè]/g, 'ezz').replace(/ł/g, 'lzz').replace(/ń/g, 'nzz').replace(/[óõ]/g, 'ozz');
+		langname = langname.replace(/ś/g, 'szz').replace(/ü/g, 'uzz').replace(/ź/g, 'zzy').replace(/ż/g, 'zzz');
+		langname = langname.replace(/[ \|!\(\)]/g, '_');
+		return langname;
 	},
 
 	getSectionFromInput : function (str) {
@@ -513,6 +511,8 @@ window.ESectionParser = {
 			targetSubsections = EConstants.SUBSECTIONS.DOUBLE; break;
 		case 'LATIN':
 			targetSubsections = EConstants.SUBSECTIONS.LATIN; break;
+		default:
+			targetSubsections = []; break;
 		}
 
 		section.subsections = subsections;
@@ -1358,6 +1358,7 @@ window.EUi = {
 		} else {
 			$('#ed_menuitem_new').click();
 		}
+		return true;
 	},
 
 	prepareFormSections : function () {
@@ -1400,11 +1401,10 @@ window.EUi = {
 		}
 
 		item = $('<li id="ed_menuitem_' + id + '" class="tip menuitem">' + sec.code + '</li>');
-		tip = id === EConstants.SECTION_ID_INTRO
-			? EStr.INTRO_SECTION
-			: EParser.insideTemplate(sec.title) + '<br/><small>tytuł sekcji: <tt>' + sec.title + '</tt></small>';
-		item.data({ 'section' : 'ed_section_' + id, 'code' : sec.code, 'tip' : tip })
-			.click(function () {
+		tip = id === EConstants.SECTION_ID_INTRO ?
+			EStr.INTRO_SECTION :
+			EParser.insideTemplate(sec.title) + '<br/><small>tytuł sekcji: <tt>' + sec.title + '</tt></small>';
+		item.data({ 'section' : 'ed_section_' + id, 'code' : sec.code, 'tip' : tip }).click(function () {
 				EKeyboard.hide();
 				EUi.content.find('.ed_section').removeClass('active');
 				EUi.content.find('#' + $(this).data('section')).addClass('active');
@@ -1413,7 +1413,7 @@ window.EUi = {
 				EUi.activeLangCode = $(this).data('code');
 				EUi.activeLangId = id;
 				setTimeout(function () { $('fieldset.active').find('textarea:first').focus(); }, 100); //FIXME why?
-			});
+		});
 
 		// insert alphabetically
 		EUi.menu.children("li").each(function () {
@@ -1434,16 +1434,16 @@ window.EUi = {
 		if (!defaultLang) {
 			defaultLang = $.cookie('lastAdded');
 		}
-		defaultText = defaultLang
-			? EParser.getTitleFromCode(defaultLang)
-			: mw.config.get('wgPageName') + EStr.ADD_SECTION_TEMPLATE;
+		defaultText = defaultLang ?
+			EParser.getTitleFromCode(defaultLang) :
+			mw.config.get('wgPageName') + EStr.ADD_SECTION_TEMPLATE;
 		message = defaultLang ? EStr.ADD_SECTION_MESSAGE_DEFAULT : EStr.ADD_SECTION_MESSAGE;
 
 		jPrompt(message, defaultText, EStr.ADD_SECTION_TITLE,
 			function (val) {
 				var sec, id;
 				if (!val) {
-					return false;
+					return;
 				}
 				sec = EParser.getSectionFromInput(val);
 
@@ -1547,7 +1547,7 @@ window.EUi = {
 		var caption = EConstants.SUBSECTION_TITLE[subsection.title];
 		var label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>');
 		var textarea = $('<textarea class="newform keyboardable" name="ed_' + name + '" id="ed_' + name + '"/>').text(subsection.content);
-		var extra = $('<div class="subsection_extra" id="ed_' + name + '_extra"/>')
+		var extra = $('<div class="subsection_extra" id="ed_' + name + '_extra"/>');
 
 		if (ESectionParser.obligatorySubsection(subsection, section)) {
 			label.addClass('oblig_subsection').append(EStr.OBLIGATORY_SUBSECTION);
@@ -1600,21 +1600,15 @@ window.EUi = {
 		if (section !== undefined) {
 			input = $('#ed_' + section + '_' + subsectionName);
 			extra = $('#ed_' + section + '_' + subsectionName + '_extra');
-			button = $('<span class="tip tipdown"/>')
-				.html(buttonContent)
-				.click(onclick)
-				.data('tip', tooltip)
-				.attr('id', 'ed_' + section + '_extra_' + idpart);
+			button = $('<span class="tip tipdown"/>').html(buttonContent).click(onclick);
+			button = button.data('tip', tooltip).attr('id', 'ed_' + section + '_extra_' + idpart);
 			extra.append(button).addClass('active');
 		} else {
 			$.each(Ed.content.sections, function (id, sec) {
 				input = $('#ed_' + id + '_' + subsectionName);
 				extra = $('#ed_' + id + '_' + subsectionName + '_extra');
-				button = $('<span class="tip tipdown"/>')
-					.html(buttonContent)
-					.click(onclick)
-					.data('tip', tooltip)
-					.attr('id', 'ed_' + id + '_extra_' + idpart);
+				button = $('<span class="tip tipdown"/>').html(buttonContent).click(onclick);
+				button = button.data('tip', tooltip).attr('id', 'ed_' + id + '_extra_' + idpart);
 				extra.append(button).addClass('active');
 			});
 		}
@@ -1660,6 +1654,7 @@ window.EForm = {
 			return $.trim($('#ed_' + langid + '_' + subsectionTitle.replace(' ', '_')).val());
 		} else {
 			$('#ed_' + langid + '_' + subsectionTitle).val(newValue);
+			return 0;
 		}
 	}
 
@@ -1670,7 +1665,7 @@ window.EForm = {
 window.EUtil = {
 	getParameter : function (name) {
 		var regexS, regex, results;
-		name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+		name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
 		regexS = "[\\?&]" + name + "=([^&#]*)";
 		regex = new RegExp(regexS);
 		results = regex.exec(window.location.href);
@@ -1693,7 +1688,7 @@ window.EUtil = {
 		return EUi.activeLangId;
 	},
 
-	executeFn : function (functionName, context /*, args */) {
+	executeFn : function (functionName, context) { /*, args */
 		var args = Array.prototype.slice.call(arguments, 2);
 		var namespaces = functionName.split(".");
 		var func = namespaces.pop();
@@ -1814,16 +1809,14 @@ window.EKeyboard = {
 (function ($) {
 
 	$.fn.keyboard = function () {
-		$(this)
-			.focus(function () {
+		$(this).focus(function () {
 				EKeyboard.updatePosition($(this));
-			})
-			.blur(function () {
-			});
+		}).blur(function () {
+		});
 		return $(this);
 	};
 
-})(jQuery);
+}(jQuery));
 
 insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 	var txtarea, aname, areas, selText, isSample = false;
@@ -1852,10 +1845,10 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 		range.text = tagOpen + selText + tagClose;
 		if (isSample && range.moveStart) {
 			if (is_opera && is_opera_seven && !is_opera_95) {
-				tagClose = tagClose.replace(/\n/g,'');
+				tagClose = tagClose.replace(/\n/g, '');
 			}
-			range.moveStart('character', - tagClose.length - selText.length);
-			range.moveEnd('character', - tagClose.length);
+			range.moveStart('character', -tagClose.length - selText.length);
+			range.moveEnd('character', -tagClose.length);
 		}
 		range.select();
 		if (document.documentElement && document.documentElement.scrollTop) {
@@ -1864,16 +1857,16 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 			document.body.scrollTop = winScroll;
 		}
 
-	} else if (txtarea.selectionStart || txtarea.selectionStart == '0') {
+	} else if (txtarea.selectionStart || txtarea.selectionStart === 0) {
 		textScroll = txtarea.scrollTop;
 		txtarea.focus();
 		startPos = txtarea.selectionStart;
 		endPos = txtarea.selectionEnd;
 		selText = txtarea.value.substring(startPos, endPos);
 		checkSelectedText();
-		txtarea.value = txtarea.value.substring(0, startPos)
-			+ tagOpen + selText + tagClose
-			+ txtarea.value.substring(endPos, txtarea.value.length);
+		txtarea.value = txtarea.value.substring(0, startPos) +
+			tagOpen + selText + tagClose +
+			txtarea.value.substring(endPos, txtarea.value.length);
 		if (isSample) {
 			txtarea.selectionStart = startPos + tagOpen.length;
 			txtarea.selectionEnd = startPos + tagOpen.length + selText.length;
@@ -1888,7 +1881,7 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 		if (!selText) {
 			selText = sampleText;
 			isSample = true;
-		} else if (selText.charAt(selText.length - 1) == ' ') { //exclude ending space char
+		} else if (selText.charAt(selText.length - 1) === ' ') { //exclude ending space char
 			selText = selText.substring(0, selText.length - 1);
 			tagClose += ' ';
 		}
@@ -1915,14 +1908,14 @@ window.EApi = {
 		return EApi.url(lang, EConstants.WIKIPEDIA);
 	},
 
-	_ask : function (query, url) {
+	ask__prv : function (query, url) {
 		if (url === undefined) {
 			url = EApi.url();
 		}
-		query['action'] = 'query';
-		query['format'] = 'json';
-		query['meta'] = 'siteinfo';
-		query['callback'] = 'EApi.callback';
+		query.action = 'query';
+		query.format = 'json';
+		query.meta = 'siteinfo';
+		query.callback = 'EApi.callback';
 		url += $.param(query);
 		mw.loader.load(url);
 	},
@@ -1934,7 +1927,8 @@ window.EApi = {
 		}
 		EApi.waitingName = callback;
 		EApi.waiting = 1;
-		EApi._ask(query, url);
+		EApi.ask__prv(query, url);
+		return 0;
 	},
 
 	askMore : function (query, callback, urls) {
@@ -1945,13 +1939,15 @@ window.EApi = {
 		EApi.waitingName = callback;
 		EApi.waiting = urls.length;
 		$.each(urls, function (i, url) {
-			EApi._ask(query, url);
+			EApi.ask__prv(query, url);
 		});
+		return 0;
 	},
 
 	callback : function (res) {
 		EApi.waitingResults.push(res);
-		if (!--EApi.waiting) {
+		EApi.waiting -= 1;
+		if (!EApi.waiting) {
 			EUtil.executeFn(EApi.waitingName, window, EApi.waitingResults);
 			EApi.waitingName = '';
 			EApi.waitingResults = [];
@@ -1976,7 +1972,7 @@ window.EApi = {
 
 	waiting : 0,
 	waitingName : '',
-	waitingResults : [],
+	waitingResults : []
 };
 
 
@@ -2002,7 +1998,7 @@ window.EAutomator = {
 		var id, code;
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
-				code = Ed.content.sections[id]['code'];
+				code = Ed.content.sections[id].code;
 				if (code !== undefined) {
 					code = code.replace(/-.*/, '');
 					if (code.length > 1 && code.length < 7 && code !== 'pl' && ret.indexOf(code) === -1) {
@@ -2011,7 +2007,7 @@ window.EAutomator = {
 				}
 			}
 		}
-		return $.grep(ret, function (val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) !== -1 });
+		return $.grep(ret, function (val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) !== -1; });
 	},
 
 	/*
@@ -2022,7 +2018,7 @@ window.EAutomator = {
 		EApi.started('add_iw', '');
 		langs = EAutomator.getAllLangs();
 		langs.push('pl');
-		urls = $.map(langs, function (val) { return EApi.url(val) });
+		urls = $.map(langs, function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'langlinks', lllimit: 200 };
 		EApi.askMore(query, 'EAutomator.fillInterwikiRe', urls);
 
@@ -2050,10 +2046,12 @@ window.EAutomator = {
 						iwikis.push(link.lang);
 					}
 				});
+				return true;
 			});
+			return true;
 		});
-		iwikis.sort(function (a, b) { return EConstants.INTERWIKI_ORDER.indexOf(a) - EConstants.INTERWIKI_ORDER.indexOf(b) });
-		iwikiString = $.map(iwikis, function (val) { return '[[' + val + ':' + mw.config.get('wgTitle') + ']]' }).join(' ');
+		iwikis.sort(function (a, b) { return EConstants.INTERWIKI_ORDER.indexOf(a) - EConstants.INTERWIKI_ORDER.indexOf(b); });
+		iwikiString = $.map(iwikis, function (val) { return '[[' + val + ':' + mw.config.get('wgTitle') + ']]'; }).join(' ');
 		curIwiki = $('#ed_0000_').val();
 		if (curIwiki === '') {
 			$('#ed_0000_').val(iwikiString);
@@ -2067,7 +2065,7 @@ window.EAutomator = {
 	getIPA : function () {
 		var urls, query;
 		EApi.started('add_ipa', 'wymowa');
-		urls = $.map(EAutomator.getActiveLangs(), function (val) { return EApi.url(val) });
+		urls = $.map(EAutomator.getActiveLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
 		EApi.askMore(query, 'EAutomator.getIPARe', urls);
 
@@ -2093,7 +2091,9 @@ window.EAutomator = {
 					ipas[lang] = ipa;
 					error = undefined;
 				}
+				return true;
 			});
+			return true;
 		});
 		console.log(ipas);
 
@@ -2199,7 +2199,7 @@ window.EAutomator = {
 		verticalOffset: -75,                // vertical offset of the dialog from center screen, in pixels
 		horizontalOffset: 0,                // horizontal offset of the dialog from center screen, in pixels/
 		repositionOnResize: true,           // re-centers the dialog on window resize
-		overlayOpacity: .2,                // transparency level of overlay
+		overlayOpacity: 0.2,                // transparency level of overlay
 		overlayColor: '#000',               // base color of overlay
 		draggable: false,                    // make the dialogs draggable (requires UI Draggables plugin)
 		okButton: '',         // text for the OK button
@@ -2223,7 +2223,7 @@ window.EAutomator = {
 			if (title === undefined) {
 				title = EStr.WARNING;
 			}
-			$.alerts._show(title, message, null, 'alert', function (result) {
+			$.alerts.show__prv(title, message, null, 'alert', function (result) {
 				if (callback) {
 					callback(result);
 				}
@@ -2235,7 +2235,7 @@ window.EAutomator = {
 			if (title === undefined) {
 				title = EStr.CONFIRMATION;
 			}
-			$.alerts._show(title, message, null, 'confirm', function (result) {
+			$.alerts.show__prv(title, message, null, 'confirm', function (result) {
 				if (callback) {
 					callback(result);
 				}
@@ -2244,10 +2244,10 @@ window.EAutomator = {
 
 		prompt: function (message, value, title, callback) {
 			$.alerts.initialize();
-			if (title == undefined) {
+			if (title === undefined) {
 				title = EStr.QUESTION;
 			}
-			$.alerts._show(title, message, value, 'prompt', function (result) {
+			$.alerts.show__prv(title, message, value, 'prompt', function (result) {
 				if (callback) {
 					callback(result);
 				}
@@ -2256,18 +2256,12 @@ window.EAutomator = {
 
 		// Private methods
 
-		_show: function (title, msg, value, type, callback) {
+		show__prv: function (title, msg, value, type, callback) {
 
-			$.alerts._hide();
-			$.alerts._overlay('show');
+			$.alerts.hide__prv();
+			$.alerts.overlay__prv('show');
 
-			$("BODY").append(
-			  '<div id="popup_container">' +
-			    '<h1 id="popup_title"></h1>' +
-			    '<div id="popup_content">' +
-			      '<div id="popup_message"></div>' +
-				'</div>' +
-			  '</div>');
+			$("BODY").append('<div id="popup_container"><h1 id="popup_title"></h1><div id="popup_content"><div id="popup_message"></div></div></div>');
 
 			if ($.alerts.dialogClass) {
 				$("#popup_container").addClass($.alerts.dialogClass);
@@ -2281,140 +2275,144 @@ window.EAutomator = {
 			$("#popup_title").text(title);
 			$("#popup_content").addClass(type);
 			$("#popup_message").text(msg);
-			$("#popup_message").html( $("#popup_message").text().replace(/\n/g, '<br />') );
+			$("#popup_message").html($("#popup_message").text().replace(/\n/g, '<br />'));
 
 			$("#popup_container").css({
 				minWidth: $("#popup_container").outerWidth(),
 				maxWidth: $("#popup_container").outerWidth()
 			});
 
-			$.alerts._reposition();
-			$.alerts._maintainPosition(true);
+			$.alerts.reposition__prv();
+			$.alerts.maintainPosition__prv(true);
 
 			switch (type) {
-				case 'alert':
-					$('#popup_container').addClass('alert').removeClass('confirm').removeClass('prompt');
-					$('#popup_overlay').addClass('alert').removeClass('confirm').removeClass('prompt');
-					$("#popup_message").after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /></div>');
-					$("#popup_ok").click( function () {
-						$.alerts._hide();
-						callback(true);
-					});
-					$("#popup_ok").focus().keypress( function (e) {
-						if( e.keyCode === 13 || e.keyCode === 27 ) {
-							$("#popup_ok").trigger('click');
-						}
-					});
-				break;
-				case 'confirm':
-					$('#popup_container').removeClass('alert').addClass('confirm').removeClass('prompt');
-					$('#popup_overlay').removeClass('alert').addClass('confirm').removeClass('prompt');
-					$("#popup_message").after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
-					$("#popup_ok").click( function () {
-						$.alerts._hide();
-						if( callback ) {
-							callback(true);
-						}
-					});
-					$("#popup_cancel").click( function () {
-						$.alerts._hide();
-						if( callback ) {
-							callback(false);
-						}
-					});
-					$("#popup_ok").focus();
-					$("#popup_ok, #popup_cancel").keypress( function (e) {
-						if( e.keyCode === 13 ) {
-							$("#popup_ok").trigger('click');
-						}
-						if( e.keyCode === 27 ) {
-							$("#popup_cancel").trigger('click');
-						}
-					});
-				break;
-				case 'prompt':
-					$('#popup_container').removeClass('alert').removeClass('confirm').addClass('prompt');
-					$('#popup_overlay').removeClass('alert').removeClass('confirm').addClass('prompt');
-					$("#popup_message").append('<br /><input type="text" size="30" id="popup_prompt" class="keyboardable" />').after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
-					$("#popup_prompt").width( $("#popup_message").width() );
-					$("#popup_ok").click( function () {
-						var val = $("#popup_prompt").val();
-						EKeyboard.hide();
-						$.alerts._hide();
-						if( callback ) {
-							callback( val );
-						}
-					});
-					$("#popup_cancel").click( function () {
-						EKeyboard.hide();
-						$.alerts._hide();
-						if( callback ) {
-							callback( null );
-						}
-					});
-					$("#popup_prompt, #popup_ok, #popup_cancel").keypress( function (e) {
-						if( e.keyCode === 13 ) {
-							$("#popup_ok").trigger('click');
-						}
-						if( e.keyCode === 27 ) {
-							$("#popup_cancel").trigger('click');
-						}
-					});
-					if( value ) {
-						$("#popup_prompt").val(value);
+			case 'alert':
+				$('#popup_container').addClass('alert').removeClass('confirm').removeClass('prompt');
+				$('#popup_overlay').addClass('alert').removeClass('confirm').removeClass('prompt');
+				$("#popup_message").after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /></div>');
+				$("#popup_ok").click(function () {
+					$.alerts.hide__prv();
+					callback(true);
+				});
+				$("#popup_ok").focus().keypress(function (e) {
+					if (e.keyCode === 13 || e.keyCode === 27) {
+						$("#popup_ok").trigger('click');
 					}
-					$("#popup_prompt").keyboard().focus().select();
+				});
+				break;
+			case 'confirm':
+				$('#popup_container').removeClass('alert').addClass('confirm').removeClass('prompt');
+				$('#popup_overlay').removeClass('alert').addClass('confirm').removeClass('prompt');
+				$("#popup_message").after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
+				$("#popup_ok").click(function () {
+					$.alerts.hide__prv();
+					if (callback) {
+						callback(true);
+					}
+				});
+				$("#popup_cancel").click(function () {
+					$.alerts.hide__prv();
+					if (callback) {
+						callback(false);
+					}
+				});
+				$("#popup_ok").focus();
+				$("#popup_ok, #popup_cancel").keypress(function (e) {
+					if (e.keyCode === 13) {
+						$("#popup_ok").trigger('click');
+					}
+					if (e.keyCode === 27) {
+						$("#popup_cancel").trigger('click');
+					}
+				});
+				break;
+			case 'prompt':
+				$('#popup_container').removeClass('alert').removeClass('confirm').addClass('prompt');
+				$('#popup_overlay').removeClass('alert').removeClass('confirm').addClass('prompt');
+				$("#popup_message").append('<br /><input type="text" size="30" id="popup_prompt" class="keyboardable" />').after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
+				$("#popup_prompt").width($("#popup_message").width());
+				$("#popup_ok").click(function () {
+					var val = $("#popup_prompt").val();
+					EKeyboard.hide();
+					$.alerts.hide__prv();
+					if (callback) {
+						callback(val);
+					}
+				});
+				$("#popup_cancel").click(function () {
+					EKeyboard.hide();
+					$.alerts.hide__prv();
+					if (callback) {
+						callback(null);
+					}
+				});
+				$("#popup_prompt, #popup_ok, #popup_cancel").keypress(function (e) {
+					if (e.keyCode === 13) {
+						$("#popup_ok").trigger('click');
+					}
+					if (e.keyCode === 27) {
+						$("#popup_cancel").trigger('click');
+					}
+				});
+				if (value) {
+					$("#popup_prompt").val(value);
+				}
+				$("#popup_prompt").keyboard().focus().select();
+				break;
+			default:
 				break;
 			}
 
 			// Make draggable
-			if( $.alerts.draggable ) {
+			if ($.alerts.draggable) {
 				try {
 					$("#popup_container").draggable({ handle: $("#popup_title") });
 					$("#popup_title").css({ cursor: 'move' });
-				} catch(e) { /* requires jQuery UI draggables */ }
+				} catch (e) { /* requires jQuery UI draggables */ }
 			}
 		},
 
-		_hide: function () {
+		hide__prv: function () {
 			$("#popup_container").remove();
-			$.alerts._overlay('hide');
-			$.alerts._maintainPosition(false);
+			$.alerts.overlay__prv('hide');
+			$.alerts.maintainPosition__prv(false);
 		},
 
-		_overlay: function (status) {
-			switch( status ) {
-				case 'show':
-					$.alerts._overlay('hide');
-					$("BODY").append('<div id="popup_overlay"></div>');
-					$("#popup_overlay").css({
-						position: 'absolute',
-						top: '0px',
-						left: '0px',
-						width: '100%',
-						height: $(document).height(),
-						background: $.alerts.overlayColor,
-						opacity: $.alerts.overlayOpacity
-					});
+		overlay__prv: function (status) {
+			switch (status) {
+			case 'show':
+				$.alerts.overlay__prv('hide');
+				$("BODY").append('<div id="popup_overlay"></div>');
+				$("#popup_overlay").css({
+					position: 'absolute',
+					top: '0px',
+					left: '0px',
+					width: '100%',
+					height: $(document).height(),
+					background: $.alerts.overlayColor,
+					opacity: $.alerts.overlayOpacity
+				});
 				break;
-				case 'hide':
-					$("#popup_overlay").remove();
+			case 'hide':
+				$("#popup_overlay").remove();
+				break;
+			default:
 				break;
 			}
 		},
 
-		_reposition: function () {
+		reposition__prv: function () {
 			var top = (($(window).height() / 2) - ($("#popup_container").outerHeight() / 2)) + $.alerts.verticalOffset;
 			var left = (($(window).width() / 2) - ($("#popup_container").outerWidth() / 2)) + $.alerts.horizontalOffset;
-			if( top < 0 ) {
+			if (top < 0) {
 				top = 0;
 			}
-			if( left < 0 ) {
+			if (left < 0) {
 				left = 0;
 			}
 
 			// IE6 fix
-			if( $.browser.msie && parseInt($.browser.version) <= 6 ) {
+			if ($.browser.msie && parseInt($.browser.version, 10) <= 6) {
 				top = top + $(window).scrollTop();
 			}
 
@@ -2422,18 +2420,20 @@ window.EAutomator = {
 				top: top + 'px',
 				left: left + 'px'
 			});
-			$("#popup_overlay").height( $(document).height() );
+			$("#popup_overlay").height($(document).height());
 			$("#popup_prompt").keyboard().focus().select();
 		},
 
-		_maintainPosition: function (status) {
-			if( $.alerts.repositionOnResize ) {
-				switch(status) {
-					case true:
-						$(window).bind('resize', $.alerts._reposition);
+		maintainPosition__prv: function (status) {
+			if ($.alerts.repositionOnResize) {
+				switch (status) {
+				case true:
+					$(window).bind('resize', $.alerts.reposition__prv);
 					break;
-					case false:
-						$(window).unbind('resize', $.alerts._reposition);
+				case false:
+					$(window).unbind('resize', $.alerts.reposition__prv);
+					break;
+				default:
 					break;
 				}
 			}
@@ -2454,75 +2454,75 @@ window.EAutomator = {
 		$.alerts.prompt(message, value, title, callback);
 	};
 
-})(jQuery);
+}(jQuery));
 
 
-/*                    tinyTips Plugin                			     	*/
-/*                      Version: 1.0                 			   		*/
-/*                      Mike Merritt                  					*/
-/*                 Updated: Feb 4th, 2010                  				*/
+/*                    tinyTips Plugin                                   */
+/*                      Version: 1.0                                    */
+/*                      Mike Merritt                                    */
+/*                 Updated: Feb 4th, 2010                               */
 /* Copyright (c) 2009 Mike Merritt
 
-	Permission is hereby granted, free of charge, to any person
-	obtaining a copy of this software and associated documentation
-	files (the "Software"), to deal in the Software without
-	restriction, including without limitation the rights to use,
-	copy, modify, merge, publish, distribute, sublicense, and/or sell
-	copies of the Software, and to permit persons to whom the
-	Software is furnished to do so, subject to the following
-	conditions:
+    Permission is hereby granted, free of charge, to any person
+    obtaining a copy of this software and associated documentation
+    files (the "Software"), to deal in the Software without
+    restriction, including without limitation the rights to use,
+    copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the
+    Software is furnished to do so, subject to the following
+    conditions:
 
-	The above copyright notice and this permission notice shall be
-	included in all copies or substantial portions of the Software.
+    The above copyright notice and this permission notice shall be
+    included in all copies or substantial portions of the Software.
 
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-	OTHER DEALINGS IN THE SOFTWARE.
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+    HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+    OTHER DEALINGS IN THE SOFTWARE.
 **************************************************************************/
 
-(function ($){
-	$.fn.tooltip = function () {
+(function ($) {
+    $.fn.tooltip = function () {
 
-		var tooltip = $('<div class="tooltip"/>');
-		tooltip.css('position', 'absolute').css('z-index', '1000').appendTo($('body'));
+        var tooltip = $('<div class="tooltip"/>');
+        tooltip.css('position', 'absolute').css('z-index', '1000').appendTo($('body'));
 
-		// When we hover over the element that we want the tooltip applied to
-		$(this).hover(function () {
-			var yOffset, xOffset, pos, nPos;
+        // When we hover over the element that we want the tooltip applied to
+        $(this).hover(function () {
+            var yOffset, xOffset, pos, nPos;
 
-			tooltip.html($(this).data('tip'));
+            tooltip.html($(this).data('tip'));
 
-			if ($(this).hasClass('tipdown')) {
-				yOffset = -$(this).outerHeight() - 3;
-			} else {
-				yOffset = tooltip.height() + 17;
-			}
+            if ($(this).hasClass('tipdown')) {
+                yOffset = -$(this).outerHeight() - 3;
+            } else {
+                yOffset = tooltip.height() + 17;
+            }
 
-			xOffset = (((tooltip.width() - 10) / 2)) - ($(this).width() / 2);
+            xOffset = (((tooltip.width() - 10) / 2)) - ($(this).width() / 2);
 
-			// Grab the coordinates for the element with the tooltip and make a new copy
-			// so that we can keep the original un-touched.
-			pos = $(this).offset();
-			nPos = pos;
+            // Grab the coordinates for the element with the tooltip and make a new copy
+            // so that we can keep the original un-touched.
+            pos = $(this).offset();
+            nPos = pos;
 
-			// Add the offsets to the tooltip position
-			nPos.top = pos.top - yOffset;
-			nPos.left = pos.left - xOffset;
+            // Add the offsets to the tooltip position
+            nPos.top = pos.top - yOffset;
+            nPos.left = pos.left - xOffset;
 
-			tooltip.css(nPos).show();
+            tooltip.css(nPos).show();
 
-		}, function () {
-			tooltip.hide();
-		});
+        }, function () {
+            tooltip.hide();
+        });
 
-	};
+    };
 
-})(jQuery);
+}(jQuery));
 
 
 // https://github.com/jaz303/jquery-grab-bag/raw/master/javascripts/jquery.autogrow-textarea.js
@@ -2543,7 +2543,7 @@ window.EAutomator = {
                 position:   'absolute',
                 top:        -10000,
                 left:       -10000,
-                width:      $(this).width() - parseInt($this.css('paddingLeft')) - parseInt($this.css('paddingRight')),
+                width:      $(this).width() - parseInt($this.css('paddingLeft'), 10) - parseInt($this.css('paddingRight'), 10),
                 fontSize:   $this.css('fontSize'),
                 fontFamily: $this.css('fontFamily'),
                 lineHeight: $this.css('lineHeight'),
@@ -2551,12 +2551,7 @@ window.EAutomator = {
             }).appendTo(document.body);
 
             var update = function () {
-                var val = this.value.replace(/</g, '&lt;')
-                                    .replace(/>/g, '&gt;')
-                                    .replace(/&/g, '&amp;')
-                                    .replace(/\n$/, '<br/>&nbsp;')
-                                    .replace(/\n/g, '<br/>');
-
+                var val = this.value.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;').replace(/\n$/, '<br/>&nbsp;').replace(/\n/g, '<br/>');
                 shadow.html(val);
                 $(this).css('height', Math.min(Math.max(shadow.height(), minHeight), maxHeight));
                 EKeyboard.updatePosition($(this));
@@ -2572,9 +2567,10 @@ window.EAutomator = {
 
     };
 
-})(jQuery);
+}(jQuery));
 
 
+/*jsl:ignore*/
 /*! Copyright (c) 2008 Brandon Aaron (http://brandonaaron.net)
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
@@ -2824,10 +2820,11 @@ $.prototype.init = function (a,c) {
 // Give the init function the jQuery prototype for later instantiation (needed after Rev 4091)
 $.prototype.init.prototype = $.prototype;
 
-})(jQuery);
+}(jQuery));
+/*jsl:end*/
 
 
-if ((mw.config.get('wgAction') === 'edit' || mw.config.get('wgAction') === 'submit')
-	&& mw.config.get('wgNamespaceNumber') === 0) {
+if ((mw.config.get('wgAction') === 'edit' || mw.config.get('wgAction') === 'submit') &&
+	mw.config.get('wgNamespaceNumber') === 0) {
 	$(document).ready(Ed.init);
 }

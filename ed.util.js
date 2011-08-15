@@ -1,7 +1,7 @@
 window.EUtil = {
 	getParameter : function (name) {
 		var regexS, regex, results;
-		name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+		name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
 		regexS = "[\\?&]" + name + "=([^&#]*)";
 		regex = new RegExp(regexS);
 		results = regex.exec(window.location.href);
@@ -24,7 +24,7 @@ window.EUtil = {
 		return EUi.activeLangId;
 	},
 
-	executeFn : function (functionName, context /*, args */) {
+	executeFn : function (functionName, context) { /*, args */
 		var args = Array.prototype.slice.call(arguments, 2);
 		var namespaces = functionName.split(".");
 		var func = namespaces.pop();

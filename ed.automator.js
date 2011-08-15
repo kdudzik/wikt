@@ -20,7 +20,7 @@ window.EAutomator = {
 		var id, code;
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
-				code = Ed.content.sections[id]['code'];
+				code = Ed.content.sections[id].code;
 				if (code !== undefined) {
 					code = code.replace(/-.*/, '');
 					if (code.length > 1 && code.length < 7 && code !== 'pl' && ret.indexOf(code) === -1) {
@@ -29,7 +29,7 @@ window.EAutomator = {
 				}
 			}
 		}
-		return $.grep(ret, function (val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) !== -1 });
+		return $.grep(ret, function (val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) !== -1; });
 	},
 
 	/*
@@ -40,7 +40,7 @@ window.EAutomator = {
 		EApi.started('add_iw', '');
 		langs = EAutomator.getAllLangs();
 		langs.push('pl');
-		urls = $.map(langs, function (val) { return EApi.url(val) });
+		urls = $.map(langs, function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'langlinks', lllimit: 200 };
 		EApi.askMore(query, 'EAutomator.fillInterwikiRe', urls);
 
@@ -68,10 +68,12 @@ window.EAutomator = {
 						iwikis.push(link.lang);
 					}
 				});
+				return true;
 			});
+			return true;
 		});
-		iwikis.sort(function (a, b) { return EConstants.INTERWIKI_ORDER.indexOf(a) - EConstants.INTERWIKI_ORDER.indexOf(b) });
-		iwikiString = $.map(iwikis, function (val) { return '[[' + val + ':' + mw.config.get('wgTitle') + ']]' }).join(' ');
+		iwikis.sort(function (a, b) { return EConstants.INTERWIKI_ORDER.indexOf(a) - EConstants.INTERWIKI_ORDER.indexOf(b); });
+		iwikiString = $.map(iwikis, function (val) { return '[[' + val + ':' + mw.config.get('wgTitle') + ']]'; }).join(' ');
 		curIwiki = $('#ed_0000_').val();
 		if (curIwiki === '') {
 			$('#ed_0000_').val(iwikiString);
@@ -85,7 +87,7 @@ window.EAutomator = {
 	getIPA : function () {
 		var urls, query;
 		EApi.started('add_ipa', 'wymowa');
-		urls = $.map(EAutomator.getActiveLangs(), function (val) { return EApi.url(val) });
+		urls = $.map(EAutomator.getActiveLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
 		EApi.askMore(query, 'EAutomator.getIPARe', urls);
 
@@ -111,7 +113,9 @@ window.EAutomator = {
 					ipas[lang] = ipa;
 					error = undefined;
 				}
+				return true;
 			});
+			return true;
 		});
 		console.log(ipas);
 

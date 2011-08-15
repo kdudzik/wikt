@@ -67,6 +67,7 @@ window.EUi = {
 		} else {
 			$('#ed_menuitem_new').click();
 		}
+		return true;
 	},
 
 	prepareFormSections : function () {
@@ -109,11 +110,10 @@ window.EUi = {
 		}
 
 		item = $('<li id="ed_menuitem_' + id + '" class="tip menuitem">' + sec.code + '</li>');
-		tip = id === EConstants.SECTION_ID_INTRO
-			? EStr.INTRO_SECTION
-			: EParser.insideTemplate(sec.title) + '<br/><small>tytuł sekcji: <tt>' + sec.title + '</tt></small>';
-		item.data({ 'section' : 'ed_section_' + id, 'code' : sec.code, 'tip' : tip })
-			.click(function () {
+		tip = id === EConstants.SECTION_ID_INTRO ?
+			EStr.INTRO_SECTION :
+			EParser.insideTemplate(sec.title) + '<br/><small>tytuł sekcji: <tt>' + sec.title + '</tt></small>';
+		item.data({ 'section' : 'ed_section_' + id, 'code' : sec.code, 'tip' : tip }).click(function () {
 				EKeyboard.hide();
 				EUi.content.find('.ed_section').removeClass('active');
 				EUi.content.find('#' + $(this).data('section')).addClass('active');
@@ -122,7 +122,7 @@ window.EUi = {
 				EUi.activeLangCode = $(this).data('code');
 				EUi.activeLangId = id;
 				setTimeout(function () { $('fieldset.active').find('textarea:first').focus(); }, 100); //FIXME why?
-			});
+		});
 
 		// insert alphabetically
 		EUi.menu.children("li").each(function () {
@@ -143,16 +143,16 @@ window.EUi = {
 		if (!defaultLang) {
 			defaultLang = $.cookie('lastAdded');
 		}
-		defaultText = defaultLang
-			? EParser.getTitleFromCode(defaultLang)
-			: mw.config.get('wgPageName') + EStr.ADD_SECTION_TEMPLATE;
+		defaultText = defaultLang ?
+			EParser.getTitleFromCode(defaultLang) :
+			mw.config.get('wgPageName') + EStr.ADD_SECTION_TEMPLATE;
 		message = defaultLang ? EStr.ADD_SECTION_MESSAGE_DEFAULT : EStr.ADD_SECTION_MESSAGE;
 
 		jPrompt(message, defaultText, EStr.ADD_SECTION_TITLE,
 			function (val) {
 				var sec, id;
 				if (!val) {
-					return false;
+					return;
 				}
 				sec = EParser.getSectionFromInput(val);
 
@@ -256,7 +256,7 @@ window.EUi = {
 		var caption = EConstants.SUBSECTION_TITLE[subsection.title];
 		var label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>');
 		var textarea = $('<textarea class="newform keyboardable" name="ed_' + name + '" id="ed_' + name + '"/>').text(subsection.content);
-		var extra = $('<div class="subsection_extra" id="ed_' + name + '_extra"/>')
+		var extra = $('<div class="subsection_extra" id="ed_' + name + '_extra"/>');
 
 		if (ESectionParser.obligatorySubsection(subsection, section)) {
 			label.addClass('oblig_subsection').append(EStr.OBLIGATORY_SUBSECTION);
@@ -309,21 +309,15 @@ window.EUi = {
 		if (section !== undefined) {
 			input = $('#ed_' + section + '_' + subsectionName);
 			extra = $('#ed_' + section + '_' + subsectionName + '_extra');
-			button = $('<span class="tip tipdown"/>')
-				.html(buttonContent)
-				.click(onclick)
-				.data('tip', tooltip)
-				.attr('id', 'ed_' + section + '_extra_' + idpart);
+			button = $('<span class="tip tipdown"/>').html(buttonContent).click(onclick);
+			button = button.data('tip', tooltip).attr('id', 'ed_' + section + '_extra_' + idpart);
 			extra.append(button).addClass('active');
 		} else {
 			$.each(Ed.content.sections, function (id, sec) {
 				input = $('#ed_' + id + '_' + subsectionName);
 				extra = $('#ed_' + id + '_' + subsectionName + '_extra');
-				button = $('<span class="tip tipdown"/>')
-					.html(buttonContent)
-					.click(onclick)
-					.data('tip', tooltip)
-					.attr('id', 'ed_' + id + '_extra_' + idpart);
+				button = $('<span class="tip tipdown"/>').html(buttonContent).click(onclick);
+				button = button.data('tip', tooltip).attr('id', 'ed_' + id + '_extra_' + idpart);
 				extra.append(button).addClass('active');
 			});
 		}
@@ -369,6 +363,7 @@ window.EForm = {
 			return $.trim($('#ed_' + langid + '_' + subsectionTitle.replace(' ', '_')).val());
 		} else {
 			$('#ed_' + langid + '_' + subsectionTitle).val(newValue);
+			return 0;
 		}
 	}
 
