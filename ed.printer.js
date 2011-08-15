@@ -1,23 +1,23 @@
 window.EPrinter = {
-	recalculateCode : function(form) {
+	recalculateCode : function (form) {
 		var code = '';
 		var sortableSections = [];
-		for (var id in Ed.content.sections) {
-			var sec = Ed.content.sections[id];
+		var id, sec, i, j, subs;
+		for (id in Ed.content.sections) {
+			sec = Ed.content.sections[id];
 			EForm.removeDefaultTexts(id, sec['code']);
 			sortableSections.push(sec);
 		}
-		sortableSections.sort(function(a, b) { return a.id > b.id ? 1 : -1; });
+		sortableSections.sort(function (a, b) { return a.id > b.id ? 1 : -1; });
 
-		for (var i in sortableSections) {
-			var sec = sortableSections[i];
+		for (i in sortableSections) {
+			sec = sortableSections[i];
 			if (sec.id === EConstants.SECTION_ID_INTRO) {
 				code = EForm.val(EConstants.SECTION_ID_INTRO, '') + '\n';
-			}
-			else {
+			} else {
 				code += '== ' + sec.title + ' ==\n';
-				for (var j = 0; j < sec.subsections.length; j++) {
-					var subs = sec.subsections[j];
+				for (j = 0; j < sec.subsections.length; j++) {
+					subs = sec.subsections[j];
 					if (!subs.active) {
 						continue;
 					}
@@ -25,15 +25,11 @@ window.EPrinter = {
 
 					if (subs.title === '' && subs.content !== '') {
 						code += subs.content + '\n';
-					}
-					else if (subs.title !== '' && subs.content === '') {
+					} else if (subs.title !== '' && subs.content === '') {
 						code += '{{' + subs.title + '}}\n';
-					}
-					else if (subs.shortened) {
-						var whitespace = EPrinter.adequateWhitespace(subs);
-						code += '{{' + subs.title + '}}' + whitespace + subs.content + '\n';
-					}
-					else if (subs.content !== '') {
+					} else if (subs.shortened) {
+						code += '{{' + subs.title + '}}' + EPrinter.adequateWhitespace(subs) + subs.content + '\n';
+					} else if (subs.content !== '') {
 						code += subs.content + '\n';
 					}
 				}
@@ -44,7 +40,7 @@ window.EPrinter = {
 		return code;
 	},
 
-	adequateWhitespace : function(subsection) {
+	adequateWhitespace : function (subsection) {
 		var str = subsection.content;
 		/*
 		 * Teksty zaczynające się od dwukropka, gwiazdki, zaczynające się od "<references", "{{litera|", "{{kolor|",

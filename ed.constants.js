@@ -261,7 +261,7 @@ window.EConstants = {
 		'ne', 'sa', 'mr', 'kn', 'ml', 'pa', 'ta', 'te', 'km', 'lo', 'my', 'si', 'th',
 		'am', 'ti', 'iu', 'chr', 'ko', 'ja', 'zh'
 		],
-	init : function() {
+	init : function () {
 		for (name in EConstants.LANG_CODES_SHORT) {
 			EConstants.CODE_TO_LANG[EConstants.LANG_CODES_SHORT[name]] = name;
 		}

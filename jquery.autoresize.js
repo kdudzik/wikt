@@ -1,11 +1,11 @@
 // https://github.com/jaz303/jquery-grab-bag/raw/master/javascripts/jquery.autogrow-textarea.js
-(function($) {
+(function ($) {
     /*
      * Auto-growing textareas; technique ripped from Facebook
      */
-    $.fn.autogrow = function(options) {
+    $.fn.autogrow = function (options) {
 
-        this.filter('textarea').each(function() {
+        this.filter('textarea').each(function () {
 
             var $this       = $(this),
                 minHeight   = 20,
@@ -23,7 +23,7 @@
                 resize:     'none'
             }).appendTo(document.body);
 
-            var update = function() {
+            var update = function () {
                 var val = this.value.replace(/</g, '&lt;')
                                     .replace(/>/g, '&gt;')
                                     .replace(/&/g, '&amp;')

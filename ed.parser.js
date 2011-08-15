@@ -1,8 +1,10 @@
 window.EParser = {
-	getSections : function(code) {
+	getSections : function (code) {
+		var sections, reta, s, section, id;
+
 		code = code.replace(/\s*==\s*([^=]+)\s*==\s*/g, '<BE>$1<EN>');
-		var sections = code.split('<BE>');
-		var reta = {};
+		sections = code.split('<BE>');
+		reta = {};
 		for (s in sections) {
 			if (!sections[s].length) {
 				continue;
@@ -17,10 +19,9 @@ window.EParser = {
 					id : EConstants.SECTION_ID_INTRO,
 					initcontent: $.trim(sec[0])
 				};
-			}
-			else {
-				var section = this.getSectionFromTitle($.trim(sec[0]));
-				var id = section.id;
+			} else {
+				section = this.getSectionFromTitle($.trim(sec[0]));
+				id = section.id;
 				reta[id] = section;
 				reta[id].content = $.trim(sec[1]);
 			}
@@ -29,7 +30,7 @@ window.EParser = {
 		return reta;
 	},
 
-	getSectionFromTitle : function(str) {
+	getSectionFromTitle : function (str) {
 		var template = this.insideTemplate(str);
 		return {
 			'title' : str,
@@ -41,19 +42,20 @@ window.EParser = {
 		};
 	},
 
-	getTitleFromCode : function(code) {
+	getTitleFromCode : function (code) {
 		var pagename = mw.config.get('wgPageName').replace('_', ' ');
+		var lang;
+
 		if (code === 'zh-char' || code === 'zh') {
 			pagename = '{{zh|' + pagename + '}}';
-		}
-		else if (code === 'ja' || code === 'ko') {
+		} else if (code === 'ja' || code === 'ko') {
 			pagename = '{{' + code + '|' + pagename + '}}';
 		}
-		var lang = EConstants.CODE_TO_LANG[code] ? EConstants.CODE_TO_LANG[code] : code;
+		lang = EConstants.CODE_TO_LANG[code] || code;
 		return pagename + ' ({{' + lang + '}})';
 	},
 
-	getSectionFromCodeAndLang : function(code, lang) {
+	getSectionFromCodeAndLang : function (code, lang) {
 		return {
 			'title' : EParser.getTitleFromCode(code),
 			'short' : lang.replace(/język /, ''),
@@ -64,20 +66,16 @@ window.EParser = {
 		};
 	},
 
-	langId : function(langname) {
+	langId : function (langname) {
 		if (langname === EStr.INTERNATIONAL_USAGE) {
 			return EConstants.SECTION_ID_INTERNATIONAL;
-		}
-		else if (langname === EStr.POLISH) {
+		} else if (langname === EStr.POLISH) {
 			return EConstants.SECTION_ID_POLISH;
-		}
-		else if (langname === EStr.POLISH_FOREIGN) {
+		} else if (langname === EStr.POLISH_FOREIGN) {
 			return EConstants.SECTION_ID_POLISH_FOREIGN;
-		}
-		else if (langname === EStr.CHINESE_SIGN) {
+		} else if (langname === EStr.CHINESE_SIGN) {
 			return EConstants.SECTION_ID_CHINESE_SIGN;
-		}
-		else if (langname === EStr.LATIN_FOREIGN) {
+		} else if (langname === EStr.LATIN_FOREIGN) {
 			return EConstants.SECTION_ID_LATIN_FOREIGN;
 		}
 		return langname.replace(/język /, '')
@@ -89,13 +87,14 @@ window.EParser = {
 			.replace(/[ \|!\(\)]/g, '_');
 	},
 
-	getSectionFromInput : function(str) {
+	getSectionFromInput : function (str) {
 		var langname = EConstants.CODE_TO_LANG[str];
+		var code;
 		if (langname !== undefined) {
 			return this.getSectionFromCodeAndLang(str, langname);
 		}
 
-		var code = EConstants.LANG_CODES_SHORT[str];
+		code = EConstants.LANG_CODES_SHORT[str];
 		if (code !== undefined) {
 			return this.getSectionFromCodeAndLang(code, str);
 		}
@@ -106,62 +105,53 @@ window.EParser = {
 		return this.getSectionFromTitle(str);
 	},
 
-	insideTemplate  : function(str) {
+	insideTemplate  : function (str) {
 		return str.replace(/.*\{\{(.*?)(\}\}|\|).*/g, '$1');
 	},
 
-	langCode : function(lang) {
+	langCode : function (lang) {
 		var code;
 		if (lang.indexOf('język ') !== -1) {
 			lang = lang.replace(/język /, '');
 			code = EConstants.LANG_CODES_LONG[lang];
-		}
-		else {
+		} else {
 			code = EConstants.LANG_CODES_SHORT[lang];
 		}
-		return code ? code : lang;
+		return code || lang;
 	}
 };
 
 window.ESectionParser = {
 
-	parse: function(section) {
+	parse: function (section) {
 		var subsections = [];
 		var mode = '';
 		var code = section.code;
+		var i, targetSubsections;
 
 		if (!section.title) {
 			mode = 'INTRO';
-		}
-		else if (code === 'pl') {
+		} else if (code === 'pl') {
 			mode = 'POLISH';
-		}
-		else if (code === 'zh-char') {
+		} else if (code === 'zh-char') {
 			mode = 'CHINESE';
-		}
-		else if (code === 'egy') {
+		} else if (code === 'egy') {
 			mode = 'EGYPTIAN';
-		}
-		else if (code === 'ko') {
+		} else if (code === 'ko') {
 			mode = 'KOREAN';
-		}
-		else if (code === 'ja') {
+		} else if (code === 'ja') {
 			mode = 'JAPANESE';
-		}
-		else if (code === 'inter') {
+		} else if (code === 'inter') {
 			mode = 'INTERNATIONAL';
-		}
-		else if (EConstants.NON_LATIN_LANGS.indexOf(code) !== -1) {
+		} else if (EConstants.NON_LATIN_LANGS.indexOf(code) !== -1) {
 			mode = 'NON_LATIN';
-		}
-		else if (EConstants.DOUBLE_LANGS.indexOf(code) !== -1) {
+		} else if (EConstants.DOUBLE_LANGS.indexOf(code) !== -1) {
 			mode = 'DOUBLE';
-		}
-		else {
+		} else {
 			mode = 'LATIN';
 		}
 		subsections.push({ title: '', content: '', shortened: false, active: true });
-		for (var i in EConstants.SUBSECTIONS.ALL) {
+		for (i in EConstants.SUBSECTIONS.ALL) {
 			subsections.push({
 				title: EConstants.SUBSECTIONS.ALL[i],
 				content: '',
@@ -172,7 +162,7 @@ window.ESectionParser = {
 			});
 		}
 
-		var targetSubsections;
+		targetSubsections;
 		switch (mode) {
 		case 'INTRO':
 			targetSubsections = []; break;
@@ -201,7 +191,7 @@ window.ESectionParser = {
 		ESectionParser.parsePreparedSubsections(section, targetSubsections);
 	},
 
-	alternateTitle : function(title) {
+	alternateTitle : function (title) {
 		switch (title) {
 		case 'transliteracja' : return '|trans';
 		case 'transkrypcja' : return '|transkr';
@@ -211,57 +201,56 @@ window.ESectionParser = {
 		}
 	},
 
-	parsePreparedSubsections : function(section, targetSubsections) {
+	parsePreparedSubsections : function (section, targetSubsections) {
 		var str = section.content;
 		var subsections = section.subsections;
 		var positions = [];
-		for (var i in subsections) {
-			var title = subsections[i].title;
-			var alt = ESectionParser.alternateTitle(title);
-			var regex = new RegExp('\\{\\{(' + title + alt + ')\\s*[\\|\\}]', 'g');
+		var i, j, title, alt, regex, sub, pos, repl, changed, firstbreak;
+
+		for (i in subsections) {
+			title = subsections[i].title;
+			alt = ESectionParser.alternateTitle(title);
+			regex = new RegExp('\\{\\{(' + title + alt + ')\\s*[\\|\\}]', 'g');
 			positions.push({
 				index: title === '' ? 0 : str.search(regex),
 				title: title
 			});
 		}
-		positions.sort(function(a, b) {
+		positions.sort(function (a, b) {
 			if (!a.index && !b.index) {
 				return a.title ? 1 : -1;
 			}
 			return a.index - b.index;
 		});
 
-		for (var i in subsections) {
-			var sub = subsections[i];
-			for (var j in positions) {
+		for (i in subsections) {
+			sub = subsections[i];
+			for (j in positions) {
 				j = parseInt(j);
-				var pos = positions[j];
+				pos = positions[j];
 				if (pos.title === sub.title) {
 					if (pos.index !== -1) {
 						if (j < positions.length - 1) {
 							sub.content = $.trim(str.substring(pos.index, positions[j + 1].index));
-						}
-						else {
+						} else {
 							sub.content = $.trim(str.substring(pos.index));
 						}
-						var alt = ESectionParser.alternateTitle(sub.title);
-						var repl = new RegExp('\\{\\{(' + sub.title + alt + ')\\}\\}');
-						var changed = sub.content.replace(repl, '');
+						alt = ESectionParser.alternateTitle(sub.title);
+						repl = new RegExp('\\{\\{(' + sub.title + alt + ')\\}\\}');
+						changed = sub.content.replace(repl, '');
 
 						if (changed !== sub.content) {
-							var firstbreak = changed.search(/\n/);
+							firstbreak = changed.search(/\n/);
 							if (firstbreak !== -1 && firstbreak < changed.search(/\S/)) {
 								sub.initmultiline = true;
 							}
 							sub.content = $.trim(changed);
-						}
-						else if (sub.content !== '' || sub.title === '') {
+						} else if (sub.content !== '' || sub.title === '') {
 							sub.shortened = false;
 						}
 						sub.initcontent = sub.content;
 						break;
-					}
-					else if (targetSubsections.indexOf(pos.title) === -1) {
+					} else if (targetSubsections.indexOf(pos.title) === -1) {
 						sub.active = false;
 					}
 				}
@@ -269,11 +258,11 @@ window.ESectionParser = {
 		}
 	},
 
-	obligatorySubsection : function(subsection, section) {
+	obligatorySubsection : function (subsection, section) {
 		return (subsection.title === 'znaczenia') && (section.mode !== 'CHINESE');
 	},
 
-	botSubsection : function(subsection, section) {
+	botSubsection : function (subsection, section) {
 		return (subsection.title === 'wymowa') && (section.mode === 'POLISH') && !subsection.content;
 	}
 };

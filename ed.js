@@ -23,7 +23,7 @@ window.EFiles =
 window.EFilesLoaded = 0;
 window.EFilesToLoad = window.EFiles.length + 1;
 
-window.ETryInit = function() {
+window.ETryInit = function () {
 	if (window.EFilesLoaded === window.EFilesToLoad) {
 		$(document).ready(Ed.init);
 	}

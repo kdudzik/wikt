@@ -8,7 +8,9 @@ MAINJS=ed.js
 CSS=ed.css
 
 echo -n "//<nowiki>
-var css=\"" > $JS
+/*global $: true, mw: true, window: true, console: true */
+var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParser, ESectionParser, ESpecialChars, EPrinter;
+var css = \"" > $JS
 sed 's/$/\\/g' $CSS | sed 's/\"/\\\"/g' >> $JS
 echo "\";
 mw.util.addCSS(css);" >> $JS
@@ -21,8 +23,8 @@ do
 	echo "" >> $JS
 done
 
-echo "if ((mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit')" >> $JS
-echo "	&& mw.config.get('wgNamespaceNumber') == 0) {" >> $JS
+echo "if ((mw.config.get('wgAction') === 'edit' || mw.config.get('wgAction') === 'submit')" >> $JS
+echo "	&& mw.config.get('wgNamespaceNumber') === 0) {" >> $JS
 echo "	\$(document).ready(Ed.init);" >> $JS
 echo "}" >> $JS
 

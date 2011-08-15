@@ -26,31 +26,30 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 **************************************************************************/
 
-(function($){
+(function ($){
 	$.fn.tooltip = function () {
 
 		var tooltip = $('<div class="tooltip"/>');
 		tooltip.css('position', 'absolute').css('z-index', '1000').appendTo($('body'));
 
 		// When we hover over the element that we want the tooltip applied to
-		$(this).hover(function() {
+		$(this).hover(function () {
+			var yOffset, xOffset, pos, nPos;
 
 			tooltip.html($(this).data('tip'));
 
-			var yOffset;
 			if ($(this).hasClass('tipdown')) {
 				yOffset = -$(this).outerHeight() - 3;
-			}
-			else {
+			} else {
 				yOffset = tooltip.height() + 17;
 			}
 
-			var xOffset = (((tooltip.width() - 10) / 2)) - ($(this).width() / 2);
+			xOffset = (((tooltip.width() - 10) / 2)) - ($(this).width() / 2);
 
 			// Grab the coordinates for the element with the tooltip and make a new copy
 			// so that we can keep the original un-touched.
-			var pos = $(this).offset();
-			var nPos = pos;
+			pos = $(this).offset();
+			nPos = pos;
 
 			// Add the offsets to the tooltip position
 			nPos.top = pos.top - yOffset;
@@ -58,7 +57,7 @@
 
 			tooltip.css(nPos).show();
 
-		}, function() {
+		}, function () {
 			tooltip.hide();
 		});
 

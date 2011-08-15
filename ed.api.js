@@ -1,5 +1,5 @@
 window.EApi = {
-	url : function(lang, project) {
+	url : function (lang, project) {
 		if (lang === undefined) {
 			lang = 'pl';
 		}
@@ -9,15 +9,15 @@ window.EApi = {
 		return "http://" + lang + "." + project + ".org/w/api.php?";
 	},
 
-	commonsUrl : function() {
+	commonsUrl : function () {
 		return EApi.url('commons', EConstants.WIKIMEDIA);
 	},
 
-	wikiUrl : function(lang) {
+	wikiUrl : function (lang) {
 		return EApi.url(lang, EConstants.WIKIPEDIA);
 	},
 
-	_ask : function(query, url) {
+	_ask : function (query, url) {
 		if (url === undefined) {
 			url = EApi.url();
 		}
@@ -29,7 +29,7 @@ window.EApi = {
 		mw.loader.load(url);
 	},
 
-	ask : function(query, callback, url) {
+	ask : function (query, callback, url) {
 		if (EApi.waiting) {
 			alert(EStr.WAITING_FOR_API);
 			return -1;
@@ -39,19 +39,19 @@ window.EApi = {
 		EApi._ask(query, url);
 	},
 
-	askMore : function(query, callback, urls) {
+	askMore : function (query, callback, urls) {
 		if (EApi.waiting) {
 			alert(EStr.WAITING_FOR_API);
 			return -1;
 		}
 		EApi.waitingName = callback;
 		EApi.waiting = urls.length;
-		$.each(urls, function(i, url) {
+		$.each(urls, function (i, url) {
 			EApi._ask(query, url);
 		});
 	},
 
-	callback : function(res) {
+	callback : function (res) {
 		EApi.waitingResults.push(res);
 		if (!--EApi.waiting) {
 			EUtil.executeFn(EApi.waitingName, window, EApi.waitingResults);
@@ -60,17 +60,16 @@ window.EApi = {
 		}
 	},
 
-	done : function(idpart, error) {
+	done : function (idpart, error) {
 		var elem = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart);
 		if (error === undefined) {
 			elem.addClass('apidone').removeClass('apistarted apierror');
-		}
-		else {
+		} else {
 			elem.addClass('apierror').removeClass('apistarted apidone').html(error);
 		}
 	},
 
-	started : function(idpart, subs) {
+	started : function (idpart, subs) {
 		$('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart).removeClass('apidone apierror').addClass('apistarted');
 		if (subs !== undefined) {
 			EUtil.focusArea(subs);

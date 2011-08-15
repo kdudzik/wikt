@@ -1,5 +1,7 @@
 //<nowiki>
-var css="#ed {\
+/*global $: true, mw: true, window: true, console: true */
+var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParser, ESectionParser, ESpecialChars, EPrinter;
+var css = "#ed {\
 	overflow : auto;\
 	background-color: white;\
 	padding: 0;\
@@ -273,26 +275,28 @@ window.Ed = {
 	code : '',
 	content : {},
 
-	parseContentToSections : function() {
+	parseContentToSections : function () {
 		Ed.content.sections = EParser.getSections(Ed.code);
 	},
 
-	parseSectionsToSubsections : function() {
-		for (var id in Ed.content.sections) {
-			var sec = Ed.content.sections[id];
+	parseSectionsToSubsections : function () {
+		var id, sec;
+		for (id in Ed.content.sections) {
+			sec = Ed.content.sections[id];
 			ESectionParser.parse(sec);
 		}
 	},
 
-	init : function() {
+	init : function () {
+		var tbox, oldform, instruction;
 		if (EUtil.getParameter('oldid') && EUtil.getParameter('oldid') !== '' + mw.config.get('wgCurRevisionId')) {
 			return;
 		}
 		EConstants.init();
 
-		var tbox = $('#wpTextbox1');
-		var oldform = $('.wikiEditor-ui');
-		var instruction = $('#nat-instrukcja');
+		tbox = $('#wpTextbox1');
+		oldform = $('.wikiEditor-ui');
+		instruction = $('#nat-instrukcja');
 		Ed.code = tbox.val();
 
 		Ed.parseContentToSections();
@@ -300,15 +304,15 @@ window.Ed = {
 
 		EUi.prepareForm(oldform, instruction);
 
-        $('.tip').livequery(function() {
+        $('.tip').livequery(function () {
 			$(this).tooltip('tip');
         });
-        $('.keyboardable').livequery(function() {
+        $('.keyboardable').livequery(function () {
 			$(this).keyboard();
 		});
 	},
 
-	resetNew : function() {
+	resetNew : function () {
 		var tbox = $('#wpTextbox1');
 		Ed.content = {};
 		Ed.code = tbox.val();
@@ -322,10 +326,12 @@ window.Ed = {
 
 
 window.EParser = {
-	getSections : function(code) {
+	getSections : function (code) {
+		var sections, reta, s, section, id;
+
 		code = code.replace(/\s*==\s*([^=]+)\s*==\s*/g, '<BE>$1<EN>');
-		var sections = code.split('<BE>');
-		var reta = {};
+		sections = code.split('<BE>');
+		reta = {};
 		for (s in sections) {
 			if (!sections[s].length) {
 				continue;
@@ -340,10 +346,9 @@ window.EParser = {
 					id : EConstants.SECTION_ID_INTRO,
 					initcontent: $.trim(sec[0])
 				};
-			}
-			else {
-				var section = this.getSectionFromTitle($.trim(sec[0]));
-				var id = section.id;
+			} else {
+				section = this.getSectionFromTitle($.trim(sec[0]));
+				id = section.id;
 				reta[id] = section;
 				reta[id].content = $.trim(sec[1]);
 			}
@@ -352,7 +357,7 @@ window.EParser = {
 		return reta;
 	},
 
-	getSectionFromTitle : function(str) {
+	getSectionFromTitle : function (str) {
 		var template = this.insideTemplate(str);
 		return {
 			'title' : str,
@@ -364,19 +369,20 @@ window.EParser = {
 		};
 	},
 
-	getTitleFromCode : function(code) {
+	getTitleFromCode : function (code) {
 		var pagename = mw.config.get('wgPageName').replace('_', ' ');
+		var lang;
+
 		if (code === 'zh-char' || code === 'zh') {
 			pagename = '{{zh|' + pagename + '}}';
-		}
-		else if (code === 'ja' || code === 'ko') {
+		} else if (code === 'ja' || code === 'ko') {
 			pagename = '{{' + code + '|' + pagename + '}}';
 		}
-		var lang = EConstants.CODE_TO_LANG[code] ? EConstants.CODE_TO_LANG[code] : code;
+		lang = EConstants.CODE_TO_LANG[code] || code;
 		return pagename + ' ({{' + lang + '}})';
 	},
 
-	getSectionFromCodeAndLang : function(code, lang) {
+	getSectionFromCodeAndLang : function (code, lang) {
 		return {
 			'title' : EParser.getTitleFromCode(code),
 			'short' : lang.replace(/język /, ''),
@@ -387,20 +393,16 @@ window.EParser = {
 		};
 	},
 
-	langId : function(langname) {
+	langId : function (langname) {
 		if (langname === EStr.INTERNATIONAL_USAGE) {
 			return EConstants.SECTION_ID_INTERNATIONAL;
-		}
-		else if (langname === EStr.POLISH) {
+		} else if (langname === EStr.POLISH) {
 			return EConstants.SECTION_ID_POLISH;
-		}
-		else if (langname === EStr.POLISH_FOREIGN) {
+		} else if (langname === EStr.POLISH_FOREIGN) {
 			return EConstants.SECTION_ID_POLISH_FOREIGN;
-		}
-		else if (langname === EStr.CHINESE_SIGN) {
+		} else if (langname === EStr.CHINESE_SIGN) {
 			return EConstants.SECTION_ID_CHINESE_SIGN;
-		}
-		else if (langname === EStr.LATIN_FOREIGN) {
+		} else if (langname === EStr.LATIN_FOREIGN) {
 			return EConstants.SECTION_ID_LATIN_FOREIGN;
 		}
 		return langname.replace(/język /, '')
@@ -412,13 +414,14 @@ window.EParser = {
 			.replace(/[ \|!\(\)]/g, '_');
 	},
 
-	getSectionFromInput : function(str) {
+	getSectionFromInput : function (str) {
 		var langname = EConstants.CODE_TO_LANG[str];
+		var code;
 		if (langname !== undefined) {
 			return this.getSectionFromCodeAndLang(str, langname);
 		}
 
-		var code = EConstants.LANG_CODES_SHORT[str];
+		code = EConstants.LANG_CODES_SHORT[str];
 		if (code !== undefined) {
 			return this.getSectionFromCodeAndLang(code, str);
 		}
@@ -429,62 +432,53 @@ window.EParser = {
 		return this.getSectionFromTitle(str);
 	},
 
-	insideTemplate  : function(str) {
+	insideTemplate  : function (str) {
 		return str.replace(/.*\{\{(.*?)(\}\}|\|).*/g, '$1');
 	},
 
-	langCode : function(lang) {
+	langCode : function (lang) {
 		var code;
 		if (lang.indexOf('język ') !== -1) {
 			lang = lang.replace(/język /, '');
 			code = EConstants.LANG_CODES_LONG[lang];
-		}
-		else {
+		} else {
 			code = EConstants.LANG_CODES_SHORT[lang];
 		}
-		return code ? code : lang;
+		return code || lang;
 	}
 };
 
 window.ESectionParser = {
 
-	parse: function(section) {
+	parse: function (section) {
 		var subsections = [];
 		var mode = '';
 		var code = section.code;
+		var i, targetSubsections;
 
 		if (!section.title) {
 			mode = 'INTRO';
-		}
-		else if (code === 'pl') {
+		} else if (code === 'pl') {
 			mode = 'POLISH';
-		}
-		else if (code === 'zh-char') {
+		} else if (code === 'zh-char') {
 			mode = 'CHINESE';
-		}
-		else if (code === 'egy') {
+		} else if (code === 'egy') {
 			mode = 'EGYPTIAN';
-		}
-		else if (code === 'ko') {
+		} else if (code === 'ko') {
 			mode = 'KOREAN';
-		}
-		else if (code === 'ja') {
+		} else if (code === 'ja') {
 			mode = 'JAPANESE';
-		}
-		else if (code === 'inter') {
+		} else if (code === 'inter') {
 			mode = 'INTERNATIONAL';
-		}
-		else if (EConstants.NON_LATIN_LANGS.indexOf(code) !== -1) {
+		} else if (EConstants.NON_LATIN_LANGS.indexOf(code) !== -1) {
 			mode = 'NON_LATIN';
-		}
-		else if (EConstants.DOUBLE_LANGS.indexOf(code) !== -1) {
+		} else if (EConstants.DOUBLE_LANGS.indexOf(code) !== -1) {
 			mode = 'DOUBLE';
-		}
-		else {
+		} else {
 			mode = 'LATIN';
 		}
 		subsections.push({ title: '', content: '', shortened: false, active: true });
-		for (var i in EConstants.SUBSECTIONS.ALL) {
+		for (i in EConstants.SUBSECTIONS.ALL) {
 			subsections.push({
 				title: EConstants.SUBSECTIONS.ALL[i],
 				content: '',
@@ -495,7 +489,7 @@ window.ESectionParser = {
 			});
 		}
 
-		var targetSubsections;
+		targetSubsections;
 		switch (mode) {
 		case 'INTRO':
 			targetSubsections = []; break;
@@ -524,7 +518,7 @@ window.ESectionParser = {
 		ESectionParser.parsePreparedSubsections(section, targetSubsections);
 	},
 
-	alternateTitle : function(title) {
+	alternateTitle : function (title) {
 		switch (title) {
 		case 'transliteracja' : return '|trans';
 		case 'transkrypcja' : return '|transkr';
@@ -534,57 +528,56 @@ window.ESectionParser = {
 		}
 	},
 
-	parsePreparedSubsections : function(section, targetSubsections) {
+	parsePreparedSubsections : function (section, targetSubsections) {
 		var str = section.content;
 		var subsections = section.subsections;
 		var positions = [];
-		for (var i in subsections) {
-			var title = subsections[i].title;
-			var alt = ESectionParser.alternateTitle(title);
-			var regex = new RegExp('\\{\\{(' + title + alt + ')\\s*[\\|\\}]', 'g');
+		var i, j, title, alt, regex, sub, pos, repl, changed, firstbreak;
+
+		for (i in subsections) {
+			title = subsections[i].title;
+			alt = ESectionParser.alternateTitle(title);
+			regex = new RegExp('\\{\\{(' + title + alt + ')\\s*[\\|\\}]', 'g');
 			positions.push({
 				index: title === '' ? 0 : str.search(regex),
 				title: title
 			});
 		}
-		positions.sort(function(a, b) {
+		positions.sort(function (a, b) {
 			if (!a.index && !b.index) {
 				return a.title ? 1 : -1;
 			}
 			return a.index - b.index;
 		});
 
-		for (var i in subsections) {
-			var sub = subsections[i];
-			for (var j in positions) {
+		for (i in subsections) {
+			sub = subsections[i];
+			for (j in positions) {
 				j = parseInt(j);
-				var pos = positions[j];
+				pos = positions[j];
 				if (pos.title === sub.title) {
 					if (pos.index !== -1) {
 						if (j < positions.length - 1) {
 							sub.content = $.trim(str.substring(pos.index, positions[j + 1].index));
-						}
-						else {
+						} else {
 							sub.content = $.trim(str.substring(pos.index));
 						}
-						var alt = ESectionParser.alternateTitle(sub.title);
-						var repl = new RegExp('\\{\\{(' + sub.title + alt + ')\\}\\}');
-						var changed = sub.content.replace(repl, '');
+						alt = ESectionParser.alternateTitle(sub.title);
+						repl = new RegExp('\\{\\{(' + sub.title + alt + ')\\}\\}');
+						changed = sub.content.replace(repl, '');
 
 						if (changed !== sub.content) {
-							var firstbreak = changed.search(/\n/);
+							firstbreak = changed.search(/\n/);
 							if (firstbreak !== -1 && firstbreak < changed.search(/\S/)) {
 								sub.initmultiline = true;
 							}
 							sub.content = $.trim(changed);
-						}
-						else if (sub.content !== '' || sub.title === '') {
+						} else if (sub.content !== '' || sub.title === '') {
 							sub.shortened = false;
 						}
 						sub.initcontent = sub.content;
 						break;
-					}
-					else if (targetSubsections.indexOf(pos.title) === -1) {
+					} else if (targetSubsections.indexOf(pos.title) === -1) {
 						sub.active = false;
 					}
 				}
@@ -592,36 +585,36 @@ window.ESectionParser = {
 		}
 	},
 
-	obligatorySubsection : function(subsection, section) {
+	obligatorySubsection : function (subsection, section) {
 		return (subsection.title === 'znaczenia') && (section.mode !== 'CHINESE');
 	},
 
-	botSubsection : function(subsection, section) {
+	botSubsection : function (subsection, section) {
 		return (subsection.title === 'wymowa') && (section.mode === 'POLISH') && !subsection.content;
 	}
 };
 
 
 window.EPrinter = {
-	recalculateCode : function(form) {
+	recalculateCode : function (form) {
 		var code = '';
 		var sortableSections = [];
-		for (var id in Ed.content.sections) {
-			var sec = Ed.content.sections[id];
+		var id, sec, i, j, subs;
+		for (id in Ed.content.sections) {
+			sec = Ed.content.sections[id];
 			EForm.removeDefaultTexts(id, sec['code']);
 			sortableSections.push(sec);
 		}
-		sortableSections.sort(function(a, b) { return a.id > b.id ? 1 : -1; });
+		sortableSections.sort(function (a, b) { return a.id > b.id ? 1 : -1; });
 
-		for (var i in sortableSections) {
-			var sec = sortableSections[i];
+		for (i in sortableSections) {
+			sec = sortableSections[i];
 			if (sec.id === EConstants.SECTION_ID_INTRO) {
 				code = EForm.val(EConstants.SECTION_ID_INTRO, '') + '\n';
-			}
-			else {
+			} else {
 				code += '== ' + sec.title + ' ==\n';
-				for (var j = 0; j < sec.subsections.length; j++) {
-					var subs = sec.subsections[j];
+				for (j = 0; j < sec.subsections.length; j++) {
+					subs = sec.subsections[j];
 					if (!subs.active) {
 						continue;
 					}
@@ -629,15 +622,11 @@ window.EPrinter = {
 
 					if (subs.title === '' && subs.content !== '') {
 						code += subs.content + '\n';
-					}
-					else if (subs.title !== '' && subs.content === '') {
+					} else if (subs.title !== '' && subs.content === '') {
 						code += '{{' + subs.title + '}}\n';
-					}
-					else if (subs.shortened) {
-						var whitespace = EPrinter.adequateWhitespace(subs);
-						code += '{{' + subs.title + '}}' + whitespace + subs.content + '\n';
-					}
-					else if (subs.content !== '') {
+					} else if (subs.shortened) {
+						code += '{{' + subs.title + '}}' + EPrinter.adequateWhitespace(subs) + subs.content + '\n';
+					} else if (subs.content !== '') {
 						code += subs.content + '\n';
 					}
 				}
@@ -648,7 +637,7 @@ window.EPrinter = {
 		return code;
 	},
 
-	adequateWhitespace : function(subsection) {
+	adequateWhitespace : function (subsection) {
 		var str = subsection.content;
 		/*
 		 * Teksty zaczynające się od dwukropka, gwiazdki, zaczynające się od "<references", "{{litera|", "{{kolor|",
@@ -957,7 +946,7 @@ window.EConstants = {
 		'ne', 'sa', 'mr', 'kn', 'ml', 'pa', 'ta', 'te', 'km', 'lo', 'my', 'si', 'th',
 		'am', 'ti', 'iu', 'chr', 'ko', 'ja', 'zh'
 		],
-	init : function() {
+	init : function () {
 		for (name in EConstants.LANG_CODES_SHORT) {
 			EConstants.CODE_TO_LANG[EConstants.LANG_CODES_SHORT[name]] = name;
 		}
@@ -1080,7 +1069,8 @@ window.EUi = {
 	activeLangCode : '',
 	activeLangId : '',
 
-	prepareForm : function(oldform, instruction) {
+	prepareForm : function (oldform, instruction) {
+		var toggleEditor;
 		this.oldform = oldform;
 		this.instruction = instruction;
 		EUi.form.append(EUi.menu).append(EUi.content);
@@ -1093,8 +1083,8 @@ window.EUi = {
 			EUi.form.show();
 		}
 
-		var toggleEditor = $('<a href="#" id="toggleEditor">' + EStr.TOGGLE_EDITOR + '</a>');
-		toggleEditor.insertAfter('h1:first').click(function() {
+		toggleEditor = $('<a href="#" id="toggleEditor">' + EStr.TOGGLE_EDITOR + '</a>');
+		toggleEditor.insertAfter('h1:first').click(function () {
 			oldform.toggle();
 			instruction.toggle();
 			EUi.form.toggle();
@@ -1103,8 +1093,7 @@ window.EUi = {
 			EUi.usingNew = !EUi.usingNew;
 			if (EUi.usingNew) {
 				Ed.resetNew();
-			}
-			else {
+			} else {
 				EUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
 			}
 			$.cookie('usenew', +EUi.usingNew);
@@ -1117,7 +1106,7 @@ window.EUi = {
 		EKeyboard.init();
 	},
 
-	reset : function() {
+	reset : function () {
 		EUi.menu.html('');
 		EUi.content.html('');
 
@@ -1125,33 +1114,33 @@ window.EUi = {
 		EUi.rebindFormActions();
 	},
 
-	clickDefaultSection : function() {
+	clickDefaultSection : function () {
+		var firstTab;
 		if (!EUi.usingNew) {
 			return false;
 		}
-		var firstTab = EUi.menu.children(":not(#ed_menuitem_" + EConstants.SECTION_ID_INTRO + ")").first();
+		firstTab = EUi.menu.children(":not(#ed_menuitem_" + EConstants.SECTION_ID_INTRO + ")").first();
 		if (firstTab.attr('id') !== 'ed_menuitem_new') {
 			firstTab.click();
-		}
-		else if (Ed.content.sections[EConstants.SECTION_ID_INTRO] !== undefined) {
+		} else if (Ed.content.sections[EConstants.SECTION_ID_INTRO] !== undefined) {
 			$('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).click();
-		}
-		else {
+		} else {
 			$('#ed_menuitem_new').click();
 		}
 	},
 
-	prepareFormSections : function() {
+	prepareFormSections : function () {
 		var size = 0;
-		for (var id in Ed.content.sections) {
+		var id, addItem;
+		for (id in Ed.content.sections) {
 			EUi.addSection(id);
 			EUi.prepareFormSubsections(id);
 			size++;
 		}
 
 		if (EUtil.getParameter('section') === '') {
-			var addItem = $('<li id="ed_menuitem_new" class="tip menuitem">' + EStr.ADD + '</li>');
-			addItem.appendTo(EUi.menu).click(function() {
+			addItem = $('<li id="ed_menuitem_new" class="tip menuitem">' + EStr.ADD + '</li>');
+			addItem.appendTo(EUi.menu).click(function () {
 				EUi.addNewSection();
 			}).data('tip', EStr.ADD_SECTION);
 		}
@@ -1165,9 +1154,10 @@ window.EUi = {
 		$(window).resize(EUi.resizeTextareas);
 	},
 
-	addSection : function(id) {
+	addSection : function (id) {
 		var sec = Ed.content.sections[id];
 		var fset = $('<fieldset class="ed_section" id="ed_section_' + id + '"/>');
+		var item, tip, added = false;
 
 		fset.appendTo(EUi.content);
 
@@ -1176,12 +1166,12 @@ window.EUi = {
 			sec.title = '';
 		}
 
-		var item = $('<li id="ed_menuitem_' + id + '" class="tip menuitem">' + sec.code + '</li>');
-		var tip = id === EConstants.SECTION_ID_INTRO
+		item = $('<li id="ed_menuitem_' + id + '" class="tip menuitem">' + sec.code + '</li>');
+		tip = id === EConstants.SECTION_ID_INTRO
 				? EStr.INTRO_SECTION
 				: EParser.insideTemplate(sec.title) + '\<br/><small>tytuł sekcji: <tt>' + sec.title + '</tt></small>';
 		item.data({ 'section' : 'ed_section_' + id, 'code' : sec['code'], 'tip' : tip })
-			.click(function() {
+			.click(function () {
 				EKeyboard.hide();
 				EUi.content.find('.ed_section').removeClass('active');
 				EUi.content.find('#' + $(this).data('section')).addClass('active');
@@ -1189,12 +1179,11 @@ window.EUi = {
 				EUi.resizeTextareas();
 				EUi.activeLangCode = $(this).data('code');
 				EUi.activeLangId = id;
-				setTimeout(function(){$('fieldset.active').find('textarea:first').focus()}, 100); //FIXME why?
+				setTimeout(function (){$('fieldset.active').find('textarea:first').focus()}, 100); //FIXME why?
 			});
 
 		// insert alphabetically
-		var added = false;
-		EUi.menu.children("li").each(function() {
+		EUi.menu.children("li").each(function () {
 			if ($(this).attr('id') > item.attr('id') || $(this).attr('id') === 'ed_menuitem_new') {
 				item.insertBefore($(this));
 				added = true;
@@ -1206,29 +1195,30 @@ window.EUi = {
 		}
 	},
 
-	addNewSection : function() {
+	addNewSection : function () {
 		var defaultLang = EUtil.getSection();
+		var defaultText, message;
 		if (!defaultLang) {
 			defaultLang = $.cookie('lastAdded');
 		}
-		var defaultText = defaultLang
+		defaultText = defaultLang
 				? EParser.getTitleFromCode(defaultLang)
 				: mw.config.get('wgPageName') + EStr.ADD_SECTION_TEMPLATE;
-		var message = defaultLang ? EStr.ADD_SECTION_MESSAGE_DEFAULT : EStr.ADD_SECTION_MESSAGE;
+		message = defaultLang ? EStr.ADD_SECTION_MESSAGE_DEFAULT : EStr.ADD_SECTION_MESSAGE;
 
 		jPrompt(message, defaultText, EStr.ADD_SECTION_TITLE,
-			function(val) {
+			function (val) {
+				var sec, id;
 				if (!val) {
 					return false;
 				}
-				var sec = EParser.getSectionFromInput(val);
+				sec = EParser.getSectionFromInput(val);
 
 				if (sec['code']) {
-					var id = sec['id'];
+					id = sec['id'];
 					if (Ed.content['sections'][id] !== undefined) {
 						jAlert(EStr.ADD_SECTION_ALREADY, EStr.ADD_SECTION_ALREADY_TITLE);
-					}
-					else {
+					} else {
 						Ed.content.sections[id] = sec;
 						ESectionParser.parse(sec);
 
@@ -1239,28 +1229,28 @@ window.EUi = {
 					}
 					$('#ed_menuitem_' + id).click();
 					$('#ed_section_' + id + ' textarea').reverse().autogrow();
-				}
-				else {
-					jAlert(EStr.ADD_SECTION_NONEXISTENT, EStr.ADD_SECTION_NONEXISTENT_TITLE, function() {
+				} else {
+					jAlert(EStr.ADD_SECTION_NONEXISTENT, EStr.ADD_SECTION_NONEXISTENT_TITLE, function () {
 						EUi.addNewSection();
 					});
 				}
 			});
 	},
 
-	editSectionTitle : function(id, section) {
-		jPrompt(EStr.EDIT_SECTION_TITLE_MESSAGE, section.title, EStr.EDIT_SECTION_TITLE, function(res) {
+	editSectionTitle : function (id, section) {
+		jPrompt(EStr.EDIT_SECTION_TITLE_MESSAGE, section.title, EStr.EDIT_SECTION_TITLE, function (res) {
+			var tip;
 			if (!res) {
 				return;
 			}
 			section.title = res;
-			var tip = EParser.insideTemplate(res) + '\<br/><small>tytuł sekcji: <tt>' + res + '</tt></small>';
+			tip = EParser.insideTemplate(res) + '\<br/><small>tytuł sekcji: <tt>' + res + '</tt></small>';
 			$('#ed_menuitem_' + id).data('tip', tip);
 		});
 	},
 
-	deleteSection : function(id, section, force) {
-		var del = function() {
+	deleteSection : function (id, section, force) {
+		var del = function () {
 			delete Ed.content.sections[id];
 			$('#ed_menuitem_' + id).remove();
 			$('#ed_section_' + id).remove();
@@ -1268,19 +1258,19 @@ window.EUi = {
 		};
 		if (force) {
 			del();
-		}
-		else {
-			jConfirm(EStr.DELETE_SECTION_MESSAGE, EStr.DELETE_SECTION_TITLE, function(res) {
+		} else {
+			jConfirm(EStr.DELETE_SECTION_MESSAGE, EStr.DELETE_SECTION_TITLE, function (res) {
 				if (res) { del(); }
 			});
 		}
 	},
 
-	deleteEmptySections : function() {
-		for (var id in Ed.content.sections) {
-			var sec = Ed.content.sections[id];
-			var empty = true;
-			$('#ed_section_' + id).find('textarea').each(function() {
+	deleteEmptySections : function () {
+		var id, sec, empty;
+		for (id in Ed.content.sections) {
+			sec = Ed.content.sections[id];
+			empty = true;
+			$('#ed_section_' + id).find('textarea').each(function () {
 				if ($(this).val()) {
 					empty = false;
 				}
@@ -1291,54 +1281,53 @@ window.EUi = {
 		}
 	},
 
-	prepareFormSubsections : function(id) {
+	prepareFormSubsections : function (id) {
 		var section = Ed.content['sections'][id];
 		var fset = $('#ed_section_' + id);
+		var editlink, deletelink, i;
 
 		if (id !== EConstants.SECTION_ID_INTRO) {
-			var editlink = $('<a/>').text(EStr.EDIT_SECTION_TITLE).click(function() {
+			editlink = $('<a/>').text(EStr.EDIT_SECTION_TITLE).click(function () {
 				EUi.editSectionTitle(id, section);
 				return false;
 			});
-			var deletelink = $('<a/>').text(EStr.DELETE_SECTION).click(function() {
+			deletelink = $('<a/>').text(EStr.DELETE_SECTION).click(function () {
 				EUi.deleteSection(id, section);
 				return false;
 			});
 			fset.append($('<p class="top"/>').append(editlink).append(deletelink));
 		}
 
-		for (var i = 0; i < section.subsections.length; i++) {
+		for (i = 0; i < section.subsections.length; i++) {
 			if (section.subsections[i].active) {
-				var obj = EUi.getSubsectionObj(id, section, section.subsections[i]);
-				fset.append(obj);
+				fset.append(EUi.getSubsectionObj(id, section, section.subsections[i]));
 			}
 		}
 	},
 
-	getSubsectionObj : function(langid, section, subsection) {
+	getSubsectionObj : function (langid, section, subsection) {
 		var name = langid + '_' + subsection.title.replace(' ', '_');
-
 		var p = $('<p id="ed_subsection_' + name + '"/>');
 		var caption = EConstants.SUBSECTION_TITLE[subsection.title];
 		var label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>');
 		var textarea = $('<textarea class="newform keyboardable" name="ed_' + name + '" id="ed_' + name + '"/>').text(subsection.content);
+		var extra = $('<div class="subsection_extra" id="ed_' + name + '_extra"/>')
+
 		if (ESectionParser.obligatorySubsection(subsection, section)) {
 			label.addClass('oblig_subsection').append(EStr.OBLIGATORY_SUBSECTION);
 			textarea.addClass('oblig_subsection');
-		}
-		else if (ESectionParser.botSubsection(subsection, section)) {
+		} else if (ESectionParser.botSubsection(subsection, section)) {
 			label.addClass('bot_subsection').append(EStr.BOT_SUBSECTION);
 			textarea.addClass('bot_subsection');
 		}
-		var extra = $('<div class="subsection_extra" id="ed_' + name + '_extra"/>')
 		p.append(label).append(textarea).append(extra);
 
 		return p;
 	},
 
-	rebindFormActions : function() {
+	rebindFormActions : function () {
 		this.form.find('textarea').removeAttr('name');
-		this.form.parent('form').submit(function() {
+		this.form.parent('form').submit(function () {
 			if (EUi.usingNew) {
 				EUi.deleteEmptySections();
 				EUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
@@ -1347,13 +1336,13 @@ window.EUi = {
 		});
 	},
 
-	resizeTextareas : function() {
+	resizeTextareas : function () {
 		$('fieldset.active').find('textarea').reverse().autogrow();
 	},
 
-	addIntroAdder : function() {
+	addIntroAdder : function () {
 		var addIntro = $('<li id="ed_menuitem_newintro" class="tip menuitem">' + EStr.ADD_INTRO + '</li>');
-		addIntro.appendTo(EUi.menu).click(function() {
+		addIntro.appendTo(EUi.menu).click(function () {
 			var sec = {
 				'title' : '',
 				'content' : '',
@@ -1370,22 +1359,22 @@ window.EUi = {
 		}).data('tip', EStr.ADD_INTRO_SECTION);
 	},
 
-	addExtraButtons : function(subsectionName, idpart, buttonContent, onclick, tooltip, section) {
+	addExtraButtons : function (subsectionName, idpart, buttonContent, onclick, tooltip, section) {
+		var input, extra, button;
 		if (section !== undefined) {
-			var input = $('#ed_' + section + '_' + subsectionName);
-			var extra = $('#ed_' + section + '_' + subsectionName + '_extra');
-			var button = $('<span class="tip tipdown"/>')
+			input = $('#ed_' + section + '_' + subsectionName);
+			extra = $('#ed_' + section + '_' + subsectionName + '_extra');
+			button = $('<span class="tip tipdown"/>')
 				.html(buttonContent)
 				.click(onclick)
 				.data('tip', tooltip)
 				.attr('id', 'ed_' + section + '_extra_' + idpart);
 			extra.append(button).addClass('active');
-		}
-		else {
-			$.each(Ed.content.sections, function(id, sec) {
-				var input = $('#ed_' + id + '_' + subsectionName);
-				var extra = $('#ed_' + id + '_' + subsectionName + '_extra');
-				var button = $('<span class="tip tipdown"/>')
+		} else {
+			$.each(Ed.content.sections, function (id, sec) {
+				input = $('#ed_' + id + '_' + subsectionName);
+				extra = $('#ed_' + id + '_' + subsectionName + '_extra');
+				button = $('<span class="tip tipdown"/>')
 					.html(buttonContent)
 					.click(onclick)
 					.data('tip', tooltip)
@@ -1395,7 +1384,7 @@ window.EUi = {
 		}
 	},
 
-	prepareAutomatorForm : function() {
+	prepareAutomatorForm : function () {
 		if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length === 0) {
 			EUi.addIntroAdder();
 		}
@@ -1406,29 +1395,30 @@ window.EUi = {
 
 window.EForm = {
 
-	addDefaultTexts : function(langid, code) {
+	addDefaultTexts : function (langid, code) {
 		var arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
+		var subs, defaultText;
 		for (subs in arr) {
-			var defaultText = arr[subs];
+			defaultText = arr[subs];
 			EForm.val(langid, subs, defaultText);
 		}
 	},
 
-	removeDefaultTexts : function(langid, code) {
+	removeDefaultTexts : function (langid, code) {
 		var arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
+		var subs, defaultText;
 		for (subs in arr) {
-			var defaultText = arr[subs];
+			defaultText = arr[subs];
 			if (EForm.val(langid, subs) === defaultText) {
 				EForm.val(langid, subs, '');
 			}
 		}
 	},
 
-	val : function(langid, subsectionTitle, newValue) {
+	val : function (langid, subsectionTitle, newValue) {
 		if (newValue === undefined) {
 			return $.trim($('#ed_' + langid + '_' + subsectionTitle.replace(' ', '_')).val());
-		}
-		else {
+		} else {
 			$('#ed_' + langid + '_' + subsectionTitle).val(newValue);
 		}
 	}
@@ -1438,47 +1428,49 @@ window.EForm = {
 
 
 window.EUtil = {
-	getParameter : function(name) {
+	getParameter : function (name) {
+		var regexS, regex, results;
 		name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-		var regexS = "[\\?&]" + name + "=([^&#]*)";
-		var regex = new RegExp(regexS);
-		var results = regex.exec(window.location.href);
+		regexS = "[\\?&]" + name + "=([^&#]*)";
+		regex = new RegExp(regexS);
+		results = regex.exec(window.location.href);
 		if (results === null) {
 			return "";
-		}
-		else {
+		} else {
 			return decodeURIComponent(results[1].replace(/\+/g, " "));
 		}
 	},
 
-	getSection : function() {
+	getSection : function () {
 		return self.document.location.hash.replace('#', '');
 	},
 
-	getActiveLangCode : function() {
+	getActiveLangCode : function () {
 		return EUi.activeLangCode;
 	},
 
-	getActiveLangId : function() {
+	getActiveLangId : function () {
 		return EUi.activeLangId;
 	},
 
-	executeFn : function(functionName, context /*, args */) {
+	executeFn : function (functionName, context /*, args */) {
 		var args = Array.prototype.slice.call(arguments, 2);
 		var namespaces = functionName.split(".");
 		var func = namespaces.pop();
-		for (var i = 0; i < namespaces.length; i++) {
+		var i;
+		for (i = 0; i < namespaces.length; i++) {
 			context = context[namespaces[i]];
 		}
 		return context[func].apply(context, args);
 	},
 
-	focusArea : function(subs) {
+	focusArea : function (subs) {
 		$('#ed_' + EUtil.getActiveLangId() + '_' + subs).focus();
 	},
 
-	isEmpty : function(obj) {
-		for (var prop in obj) {
+	isEmpty : function (obj) {
+		var prop;
+		for (prop in obj) {
 			if (obj.hasOwnProperty(prop)) {
 				return false;
 			}
@@ -1496,11 +1488,12 @@ window.ESpecialChars = {
 	formerParent : undefined,
 	detached : 0,
 
-	detach : function() {
+	detach : function () {
+		var container;
 		if (ESpecialChars.detached) {
 			return;
 		}
-		var container = $('#keyboard_keys');
+		container = $('#keyboard_keys');
 		ESpecialChars.obj = $('#editpage-specialchars');
 		ESpecialChars.formerParent = ESpecialChars.obj.parent();
 		ESpecialChars.obj.detach();
@@ -1509,7 +1502,7 @@ window.ESpecialChars = {
 		ESpecialChars.detached = 1;
 	},
 
-	attach : function() {
+	attach : function () {
 		if (!ESpecialChars.detached) {
 			return;
 		}
@@ -1519,11 +1512,10 @@ window.ESpecialChars = {
 		ESpecialChars.detached = 0;
 	},
 
-	toggle : function() {
+	toggle : function () {
 		if (ESpecialChars.detached) {
 			ESpecialChars.attach();
-		}
-		else {
+		} else {
 			ESpecialChars.detach();
 		}
 	}
@@ -1531,7 +1523,7 @@ window.ESpecialChars = {
 
 window.EKeyboard = {
 
-	init : function() {
+	init : function () {
 		var keyboard = $('<div id="keyboard"/>');
 		var keys = $('<div id="keyboard_keys" />');
 
@@ -1543,11 +1535,11 @@ window.EKeyboard = {
 			ESpecialChars.detach();
 		}
 
-		keyboard.click(function() {
+		keyboard.click(function () {
 			keys.toggle();
 		});
 
-		$(window).resize(function() {
+		$(window).resize(function () {
 			if (document.activeElement) {
 				$(document.activeElement).focus();
 			}
@@ -1555,17 +1547,18 @@ window.EKeyboard = {
 
 	},
 
-	hide : function() {
+	hide : function () {
 		$('#keyboard').hide();
 		$('#keyboard_keys').hide();
 	},
 
-	updatePosition : function(origin) {
+	updatePosition : function (origin) {
+		var nPos;
 		if (!origin.is(':visible')) {
 			EKeyboard.hide();
 			return;
 		}
-		var nPos = origin.offset();
+		nPos = origin.offset();
 
 		nPos.top += (origin.height() + 7);
 		nPos.left += 20;
@@ -1578,14 +1571,14 @@ window.EKeyboard = {
 
 };
 
-(function($) {
+(function ($) {
 
 	$.fn.keyboard = function () {
 		$(this)
-			.focus(function() {
+			.focus(function () {
 				EKeyboard.updatePosition($(this));
 			})
-			.blur(function() {
+			.blur(function () {
 			});
 		return $(this);
 	};
@@ -1593,83 +1586,69 @@ window.EKeyboard = {
 })(jQuery);
 
 insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
-	var txtarea;
+	var txtarea, aname, areas, selText, isSample = false;
+	var winScroll, range, textScroll, startPos, endPos;
+
 	if (document.editform && !EUi.usingNew) {
 		txtarea = document.editform.wpTextbox1;
-	}
-	else if (EUi.usingNew) {
-		var aname = $('#keyboard_keys').data('active_area');
+	} else if (EUi.usingNew) {
+		aname = $('#keyboard_keys').data('active_area');
 		txtarea = aname ? document.getElementById(aname) : undefined;
 	}
 	if (!txtarea) {
-		// some alternate form? take the first one we can find
-		var areas = document.getElementsByTagName('textarea');
+		areas = document.getElementsByTagName('textarea');
 		txtarea = areas[0];
 	}
-	var selText, isSample = false;
-
-	if (document.selection  && document.selection.createRange) { // IE/Opera
-
-		//save window scroll position
-		if (document.documentElement && document.documentElement.scrollTop)
-			var winScroll = document.documentElement.scrollTop;
-		else if (document.body)
-			var winScroll = document.body.scrollTop;
-		//get current selection
+	if (document.selection  && document.selection.createRange) {
+		if (document.documentElement && document.documentElement.scrollTop) {
+			winScroll = document.documentElement.scrollTop;
+		} else if (document.body) {
+			winScroll = document.body.scrollTop;
+		}
 		txtarea.focus();
-		var range = document.selection.createRange();
+		range = document.selection.createRange();
 		selText = range.text;
-		//insert tags
 		checkSelectedText();
 		range.text = tagOpen + selText + tagClose;
-		//mark sample text as selected
 		if (isSample && range.moveStart) {
-			if (is_opera && is_opera_seven && !is_opera_95)
+			if (is_opera && is_opera_seven && !is_opera_95) {
 				tagClose = tagClose.replace(/\n/g,'');
+			}
 			range.moveStart('character', - tagClose.length - selText.length);
 			range.moveEnd('character', - tagClose.length);
 		}
 		range.select();
-		//restore window scroll position
-		if (document.documentElement && document.documentElement.scrollTop)
+		if (document.documentElement && document.documentElement.scrollTop) {
 			document.documentElement.scrollTop = winScroll;
-		else if (document.body)
+		} else if (document.body) {
 			document.body.scrollTop = winScroll;
+		}
 
-	}
-	else if (txtarea.selectionStart || txtarea.selectionStart == '0') { // Mozilla
-
-		//save textarea scroll position
-		var textScroll = txtarea.scrollTop;
-		//get current selection
+	} else if (txtarea.selectionStart || txtarea.selectionStart == '0') {
+		textScroll = txtarea.scrollTop;
 		txtarea.focus();
-		var startPos = txtarea.selectionStart;
-		var endPos = txtarea.selectionEnd;
+		startPos = txtarea.selectionStart;
+		endPos = txtarea.selectionEnd;
 		selText = txtarea.value.substring(startPos, endPos);
-		//insert tags
 		checkSelectedText();
 		txtarea.value = txtarea.value.substring(0, startPos)
 			+ tagOpen + selText + tagClose
 			+ txtarea.value.substring(endPos, txtarea.value.length);
-		//set new selection
 		if (isSample) {
 			txtarea.selectionStart = startPos + tagOpen.length;
 			txtarea.selectionEnd = startPos + tagOpen.length + selText.length;
-		}
-		else {
+		} else {
 			txtarea.selectionStart = startPos + tagOpen.length + selText.length + tagClose.length;
 			txtarea.selectionEnd = txtarea.selectionStart;
 		}
-		//restore textarea scroll position
 		txtarea.scrollTop = textScroll;
 	}
 
-	function checkSelectedText(){
+	function checkSelectedText() {
 		if (!selText) {
 			selText = sampleText;
 			isSample = true;
-		}
-		else if (selText.charAt(selText.length - 1) == ' ') { //exclude ending space char
+		} else if (selText.charAt(selText.length - 1) == ' ') { //exclude ending space char
 			selText = selText.substring(0, selText.length - 1);
 			tagClose += ' ';
 		}
@@ -1678,7 +1657,7 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 
 
 window.EApi = {
-	url : function(lang, project) {
+	url : function (lang, project) {
 		if (lang === undefined) {
 			lang = 'pl';
 		}
@@ -1688,15 +1667,15 @@ window.EApi = {
 		return "http://" + lang + "." + project + ".org/w/api.php?";
 	},
 
-	commonsUrl : function() {
+	commonsUrl : function () {
 		return EApi.url('commons', EConstants.WIKIMEDIA);
 	},
 
-	wikiUrl : function(lang) {
+	wikiUrl : function (lang) {
 		return EApi.url(lang, EConstants.WIKIPEDIA);
 	},
 
-	_ask : function(query, url) {
+	_ask : function (query, url) {
 		if (url === undefined) {
 			url = EApi.url();
 		}
@@ -1708,7 +1687,7 @@ window.EApi = {
 		mw.loader.load(url);
 	},
 
-	ask : function(query, callback, url) {
+	ask : function (query, callback, url) {
 		if (EApi.waiting) {
 			alert(EStr.WAITING_FOR_API);
 			return -1;
@@ -1718,19 +1697,19 @@ window.EApi = {
 		EApi._ask(query, url);
 	},
 
-	askMore : function(query, callback, urls) {
+	askMore : function (query, callback, urls) {
 		if (EApi.waiting) {
 			alert(EStr.WAITING_FOR_API);
 			return -1;
 		}
 		EApi.waitingName = callback;
 		EApi.waiting = urls.length;
-		$.each(urls, function(i, url) {
+		$.each(urls, function (i, url) {
 			EApi._ask(query, url);
 		});
 	},
 
-	callback : function(res) {
+	callback : function (res) {
 		EApi.waitingResults.push(res);
 		if (!--EApi.waiting) {
 			EUtil.executeFn(EApi.waitingName, window, EApi.waitingResults);
@@ -1739,17 +1718,16 @@ window.EApi = {
 		}
 	},
 
-	done : function(idpart, error) {
+	done : function (idpart, error) {
 		var elem = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart);
 		if (error === undefined) {
 			elem.addClass('apidone').removeClass('apistarted apierror');
-		}
-		else {
+		} else {
 			elem.addClass('apierror').removeClass('apistarted apidone').html(error);
 		}
 	},
 
-	started : function(idpart, subs) {
+	started : function (idpart, subs) {
 		$('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart).removeClass('apidone apierror').addClass('apistarted');
 		if (subs !== undefined) {
 			EUtil.focusArea(subs);
@@ -1767,7 +1745,7 @@ window.EAutomator = {
 	/*
 	 * Zwraca kody wersji językowej z aktywnej sekcji + domyślnych
 	 */
-	getActiveLangs : function() {
+	getActiveLangs : function () {
 		var ret = EConstants.USED_WIKTIONARIES.slice(0);
 		var act = EUtil.getActiveLangCode();
 		if (ret.indexOf(act) === -1 && EConstants.ALL_WIKTIONARIES.indexOf(act) !== -1) {
@@ -1779,10 +1757,11 @@ window.EAutomator = {
 	/*
 	 * Zwraca kody wszystkich wersji językowych z sekcji + domyślnych
 	 */
-	getAllLangs : function() {
+	getAllLangs : function () {
 		var ret = EConstants.USED_WIKTIONARIES.slice(0);
-		for (var id in Ed.content.sections) {
-			var code = Ed.content.sections[id]['code'];
+		var id, code;
+		for (id in Ed.content.sections) {
+			code = Ed.content.sections[id]['code'];
 			if (code === undefined) {
 				continue;
 			}
@@ -1791,29 +1770,31 @@ window.EAutomator = {
 				ret.push(code);
 			}
 		}
-		return $.grep(ret, function(val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) !== -1 });
+		return $.grep(ret, function (val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) !== -1 });
 	},
 
 	/*
 	 * Aktualizuje interwiki: do obecnych dodaje z wersji językowych z sekcji + domyślnych
 	 */
-	fillInterwiki : function() {
+	fillInterwiki : function () {
+		var langs, urls, query;
 		EApi.started('add_iw', '');
-		var langs = EAutomator.getAllLangs();
+		langs = EAutomator.getAllLangs();
 		langs.push('pl');
-		var urls = $.map(langs, function(val) { return EApi.url(val) });
-		var query = { titles: mw.config.get('wgTitle'), prop: 'langlinks', lllimit: 200 };
+		urls = $.map(langs, function (val) { return EApi.url(val) });
+		query = { titles: mw.config.get('wgTitle'), prop: 'langlinks', lllimit: 200 };
 		EApi.askMore(query, 'EAutomator.fillInterwikiRe', urls);
 
 		// callback
-		}, fillInterwikiRe : function(results) {
-
+	},
+	fillInterwikiRe : function (results) {
 		var iwikis = [];
-		$.each(results, function(i, res) {
+		var iwikiString, curIwiki, re;
+		$.each(results, function (i, res) {
 			if (res.query === undefined || res.query.pages === undefined) {
 				return false;
 			}
-			$.each(res.query.pages, function(j, val) {
+			$.each(res.query.pages, function (j, val) {
 				if (j === -1) {
 					return false;
 				}
@@ -1823,47 +1804,50 @@ window.EAutomator = {
 				if (val.langlinks === undefined) {
 					return false;
 				}
-				$.each(val.langlinks, function(k, link) {
+				$.each(val.langlinks, function (k, link) {
 					if (link['*'] === mw.config.get('wgTitle') && iwikis.indexOf(link.lang) === -1 && link.lang !== 'pl') {
 						iwikis.push(link.lang);
 					}
 				});
 			});
 		});
-		iwikis.sort(function(a, b) { return EConstants.INTERWIKI_ORDER.indexOf(a) - EConstants.INTERWIKI_ORDER.indexOf(b) });
-		var iwikiString = $.map(iwikis, function(val) { return '[[' + val + ':' + mw.config.get('wgTitle') + ']]' }).join(' ');
-		var curIwiki = $('#ed_0000_').val();
+		iwikis.sort(function (a, b) { return EConstants.INTERWIKI_ORDER.indexOf(a) - EConstants.INTERWIKI_ORDER.indexOf(b) });
+		iwikiString = $.map(iwikis, function (val) { return '[[' + val + ':' + mw.config.get('wgTitle') + ']]' }).join(' ');
+		curIwiki = $('#ed_0000_').val();
 		if (curIwiki === '') {
 			$('#ed_0000_').val(iwikiString);
-		}
-		else {
-			var re = new RegExp('(\\[\\[[a-z\\-]+' + ':' + mw.config.get('wgTitle') + '\\]\\]\\s*)+');
+		} else {
+			re = new RegExp('(\\[\\[[a-z\\-]+' + ':' + mw.config.get('wgTitle') + '\\]\\]\\s*)+');
 			$('#ed_0000_').val(iwikiString + curIwiki.replace(re, '\n'));
 		}
 		EApi.done('add_iw');
 	},
 
-	getIPA : function() {
+	getIPA : function () {
+		var urls, query;
 		EApi.started('add_ipa', 'wymowa');
-		var urls = $.map(EAutomator.getActiveLangs(), function(val) { return EApi.url(val) });
-		var query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
+		urls = $.map(EAutomator.getActiveLangs(), function (val) { return EApi.url(val) });
+		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
 		EApi.askMore(query, 'EAutomator.getIPARe', urls);
 
 		// callback
-		}, getIPARe : function(results) {
+	},
+	getIPARe : function (results) {
 		var ipas = {};
 		var error = EStr.NO_IPA_FOUND;
-		$.each(results, function(i, res) {
+		$.each(results, function (i, res) {
+			var lang;
 			if (res.query === undefined || res.query.pages === undefined) {
 				return false;
 			}
-			var lang = res.query.general.lang;
-			$.each(res.query.pages, function(j, val) {
+			lang = res.query.general.lang;
+			$.each(res.query.pages, function (j, val) {
+				var content, ipa;
 				if (j === -1) {
 					return false;
 				}
-				var content = val.revisions[0]['*'];
-				var ipa = EAutomator.extractIPA(content, lang);
+				content = val.revisions[0]['*'];
+				ipa = EAutomator.extractIPA(content, lang);
 				if (ipa !== undefined && ipa.length) {
 					ipas[lang] = ipa;
 					error = undefined;
@@ -1875,16 +1859,15 @@ window.EAutomator = {
 		EApi.done('add_ipa', error);
 	},
 
-	extractIPA : function(str, lang) {
+	extractIPA : function (str, lang) {
 		if (EAutomator['extractIPA_' + lang] === undefined) {
 			return undefined;
-		}
-		else {
+		} else {
 			return EUtil.executeFn('extractIPA_' + lang, EAutomator, str);
 		}
 	},
 
-	extractFirstArgsFromTemplates : function(str, template) {
+	extractFirstArgsFromTemplates : function (str, template) {
 		var re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*\\/?\\s*([^\\}\\/\\|<]+)', 'g');
 		var arr, results = [];
 		while ((arr = re.exec(str)) !== null) {
@@ -1893,7 +1876,7 @@ window.EAutomator = {
 		return results;
 	},
 
-	extractSecondArgsFromTemplates : function(str, template) {
+	extractSecondArgsFromTemplates : function (str, template) {
 		var re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\}\\|]*)\\|\\s*\\/?([^\\}\\/\\|<]+)', 'gi');
 		var arr, results = [];
 		while ((arr = re.exec(str)) !== null) {
@@ -1902,22 +1885,22 @@ window.EAutomator = {
 		return results;
 	},
 
-	extractIPA_de: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'Lautschrift'); },
-	extractIPA_es: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'pronunciación'); },
-	extractIPA_fr: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'pron'); },
-	extractIPA_en: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-	extractIPA_cs: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-	extractIPA_sk: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-	extractIPA_it: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-	extractIPA_af: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-	extractIPA_ca: function(str) { return EAutomator.extractSecondArgsFromTemplates(str, 'pron'); },
-	extractIPA_ro: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'AFI'); },
-	extractIPA_et: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'hääldus'); },
-	extractIPA_ko: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-	extractIPA_nl: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-	extractIPA_vi: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-	extractIPA_simple: function(str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-	extractIPA_ru: function(str) {
+	extractIPA_de: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'Lautschrift'); },
+	extractIPA_es: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'pronunciación'); },
+	extractIPA_fr: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'pron'); },
+	extractIPA_en: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_cs: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_sk: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_it: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_af: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_ca: function (str) { return EAutomator.extractSecondArgsFromTemplates(str, 'pron'); },
+	extractIPA_ro: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'AFI'); },
+	extractIPA_et: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'hääldus'); },
+	extractIPA_ko: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_nl: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_vi: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_simple: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_ru: function (str) {
 		var arr;
 		var results = EAutomator.extractFirstArgsFromTemplates(str, 'transcription');
 		var re = /\{\{transcriptions\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)\s*\}\}/g;
@@ -1927,7 +1910,7 @@ window.EAutomator = {
 		}
 		return results;
 	},
-	extractIPA_ja: function(str) {
+	extractIPA_ja: function (str) {
 		var arr;
 		var results = [];
 		var re = /\{\{pron-en1\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)/g;
@@ -1966,7 +1949,7 @@ window.EAutomator = {
 // This plugin is dual-licensed under the GNU General Public License and the MIT License and
 // is copyright 2008 A Beautiful Site, LLC.
 //
-(function($) {
+(function ($) {
 
 	$.alerts = {
 
@@ -1983,8 +1966,10 @@ window.EAutomator = {
 		dialogClass: null,                  // if specified, this class will be applied to all dialogs
 		init: false,
 
-		initialize: function() {
-			if ($.alerts.init) return;
+		initialize: function () {
+			if ($.alerts.init) {
+				return;
+			}
 			$.alerts.okButton = '&nbsp;' + EStr.OK + '&nbsp;';
 			$.alerts.cancelButton = '&nbsp;' + EStr.CANCEL + '&nbsp;';
 			$.alerts.init = true;
@@ -1992,33 +1977,45 @@ window.EAutomator = {
 
 		// Public methods
 
-		alert: function(message, title, callback) {
+		alert: function (message, title, callback) {
 			$.alerts.initialize();
-			if( title == null ) title = EStr.WARNING;
-			$.alerts._show(title, message, null, 'alert', function(result) {
-				if( callback ) callback(result);
+			if (title === undefined) {
+				title = EStr.WARNING;
+			}
+			$.alerts._show(title, message, null, 'alert', function (result) {
+				if (callback) {
+					callback(result);
+				}
 			});
 		},
 
-		confirm: function(message, title, callback) {
+		confirm: function (message, title, callback) {
 			$.alerts.initialize();
-			if( title == null ) title = EStr.CONFIRMATION;
-			$.alerts._show(title, message, null, 'confirm', function(result) {
-				if( callback ) callback(result);
+			if (title === undefined) {
+				title = EStr.CONFIRMATION;
+			}
+			$.alerts._show(title, message, null, 'confirm', function (result) {
+				if (callback) {
+					callback(result);
+				}
 			});
 		},
 
-		prompt: function(message, value, title, callback) {
+		prompt: function (message, value, title, callback) {
 			$.alerts.initialize();
-			if( title == null ) title = EStr.QUESTION;
-			$.alerts._show(title, message, value, 'prompt', function(result) {
-				if( callback ) callback(result);
+			if (title == undefined) {
+				title = EStr.QUESTION;
+			}
+			$.alerts._show(title, message, value, 'prompt', function (result) {
+				if (callback) {
+					callback(result);
+				}
 			});
 		},
 
 		// Private methods
 
-		_show: function(title, msg, value, type, callback) {
+		_show: function (title, msg, value, type, callback) {
 
 			$.alerts._hide();
 			$.alerts._overlay('show');
@@ -2031,7 +2028,9 @@ window.EAutomator = {
 				'</div>' +
 			  '</div>');
 
-			if( $.alerts.dialogClass ) $("#popup_container").addClass($.alerts.dialogClass);
+			if ($.alerts.dialogClass) {
+				$("#popup_container").addClass($.alerts.dialogClass);
+			}
 
 			$("#popup_container").css({
 				padding: 0,
@@ -2051,35 +2050,45 @@ window.EAutomator = {
 			$.alerts._reposition();
 			$.alerts._maintainPosition(true);
 
-			switch( type ) {
+			switch (type) {
 				case 'alert':
 					$('#popup_container').addClass('alert').removeClass('confirm').removeClass('prompt');
 					$('#popup_overlay').addClass('alert').removeClass('confirm').removeClass('prompt');
 					$("#popup_message").after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /></div>');
-					$("#popup_ok").click( function() {
+					$("#popup_ok").click( function () {
 						$.alerts._hide();
 						callback(true);
 					});
-					$("#popup_ok").focus().keypress( function(e) {
-						if( e.keyCode == 13 || e.keyCode == 27 ) $("#popup_ok").trigger('click');
+					$("#popup_ok").focus().keypress( function (e) {
+						if( e.keyCode === 13 || e.keyCode === 27 ) {
+							$("#popup_ok").trigger('click');
+						}
 					});
 				break;
 				case 'confirm':
 					$('#popup_container').removeClass('alert').addClass('confirm').removeClass('prompt');
 					$('#popup_overlay').removeClass('alert').addClass('confirm').removeClass('prompt');
 					$("#popup_message").after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
-					$("#popup_ok").click( function() {
+					$("#popup_ok").click( function () {
 						$.alerts._hide();
-						if( callback ) callback(true);
+						if( callback ) {
+							callback(true);
+						}
 					});
-					$("#popup_cancel").click( function() {
+					$("#popup_cancel").click( function () {
 						$.alerts._hide();
-						if( callback ) callback(false);
+						if( callback ) {
+							callback(false);
+						}
 					});
 					$("#popup_ok").focus();
-					$("#popup_ok, #popup_cancel").keypress( function(e) {
-						if( e.keyCode == 13 ) $("#popup_ok").trigger('click');
-						if( e.keyCode == 27 ) $("#popup_cancel").trigger('click');
+					$("#popup_ok, #popup_cancel").keypress( function (e) {
+						if( e.keyCode === 13 ) {
+							$("#popup_ok").trigger('click');
+						}
+						if( e.keyCode === 27 ) {
+							$("#popup_cancel").trigger('click');
+						}
 					});
 				break;
 				case 'prompt':
@@ -2087,22 +2096,32 @@ window.EAutomator = {
 					$('#popup_overlay').removeClass('alert').removeClass('confirm').addClass('prompt');
 					$("#popup_message").append('<br /><input type="text" size="30" id="popup_prompt" class="keyboardable" />').after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
 					$("#popup_prompt").width( $("#popup_message").width() );
-					$("#popup_ok").click( function() {
-						EKeyboard.hide();
+					$("#popup_ok").click( function () {
 						var val = $("#popup_prompt").val();
-						$.alerts._hide();
-						if( callback ) callback( val );
-					});
-					$("#popup_cancel").click( function() {
 						EKeyboard.hide();
 						$.alerts._hide();
-						if( callback ) callback( null );
+						if( callback ) {
+							callback( val );
+						}
 					});
-					$("#popup_prompt, #popup_ok, #popup_cancel").keypress( function(e) {
-						if( e.keyCode == 13 ) $("#popup_ok").trigger('click');
-						if( e.keyCode == 27 ) $("#popup_cancel").trigger('click');
+					$("#popup_cancel").click( function () {
+						EKeyboard.hide();
+						$.alerts._hide();
+						if( callback ) {
+							callback( null );
+						}
 					});
-					if( value ) $("#popup_prompt").val(value);
+					$("#popup_prompt, #popup_ok, #popup_cancel").keypress( function (e) {
+						if( e.keyCode === 13 ) {
+							$("#popup_ok").trigger('click');
+						}
+						if( e.keyCode === 27 ) {
+							$("#popup_cancel").trigger('click');
+						}
+					});
+					if( value ) {
+						$("#popup_prompt").val(value);
+					}
 					$("#popup_prompt").keyboard().focus().select();
 				break;
 			}
@@ -2116,13 +2135,13 @@ window.EAutomator = {
 			}
 		},
 
-		_hide: function() {
+		_hide: function () {
 			$("#popup_container").remove();
 			$.alerts._overlay('hide');
 			$.alerts._maintainPosition(false);
 		},
 
-		_overlay: function(status) {
+		_overlay: function (status) {
 			switch( status ) {
 				case 'show':
 					$.alerts._overlay('hide');
@@ -2143,14 +2162,20 @@ window.EAutomator = {
 			}
 		},
 
-		_reposition: function() {
+		_reposition: function () {
 			var top = (($(window).height() / 2) - ($("#popup_container").outerHeight() / 2)) + $.alerts.verticalOffset;
 			var left = (($(window).width() / 2) - ($("#popup_container").outerWidth() / 2)) + $.alerts.horizontalOffset;
-			if( top < 0 ) top = 0;
-			if( left < 0 ) left = 0;
+			if( top < 0 ) {
+				top = 0;
+			}
+			if( left < 0 ) {
+				left = 0;
+			}
 
 			// IE6 fix
-			if( $.browser.msie && parseInt($.browser.version) <= 6 ) top = top + $(window).scrollTop();
+			if( $.browser.msie && parseInt($.browser.version) <= 6 ) {
+				top = top + $(window).scrollTop();
+			}
 
 			$("#popup_container").css({
 				top: top + 'px',
@@ -2160,7 +2185,7 @@ window.EAutomator = {
 			$("#popup_prompt").keyboard().focus().select();
 		},
 
-		_maintainPosition: function(status) {
+		_maintainPosition: function (status) {
 			if( $.alerts.repositionOnResize ) {
 				switch(status) {
 					case true:
@@ -2176,15 +2201,15 @@ window.EAutomator = {
 	};
 
 	// Shortcut functions
-	jAlert = function(message, title, callback) {
+	jAlert = function (message, title, callback) {
 		$.alerts.alert(message, title, callback);
 	};
 
-	jConfirm = function(message, title, callback) {
+	jConfirm = function (message, title, callback) {
 		$.alerts.confirm(message, title, callback);
 	};
 
-	jPrompt = function(message, value, title, callback) {
+	jPrompt = function (message, value, title, callback) {
 		$.alerts.prompt(message, value, title, callback);
 	};
 
@@ -2219,31 +2244,30 @@ window.EAutomator = {
 	OTHER DEALINGS IN THE SOFTWARE.
 **************************************************************************/
 
-(function($){
+(function ($){
 	$.fn.tooltip = function () {
 
 		var tooltip = $('<div class="tooltip"/>');
 		tooltip.css('position', 'absolute').css('z-index', '1000').appendTo($('body'));
 
 		// When we hover over the element that we want the tooltip applied to
-		$(this).hover(function() {
+		$(this).hover(function () {
+			var yOffset, xOffset, pos, nPos;
 
 			tooltip.html($(this).data('tip'));
 
-			var yOffset;
 			if ($(this).hasClass('tipdown')) {
 				yOffset = -$(this).outerHeight() - 3;
-			}
-			else {
+			} else {
 				yOffset = tooltip.height() + 17;
 			}
 
-			var xOffset = (((tooltip.width() - 10) / 2)) - ($(this).width() / 2);
+			xOffset = (((tooltip.width() - 10) / 2)) - ($(this).width() / 2);
 
 			// Grab the coordinates for the element with the tooltip and make a new copy
 			// so that we can keep the original un-touched.
-			var pos = $(this).offset();
-			var nPos = pos;
+			pos = $(this).offset();
+			nPos = pos;
 
 			// Add the offsets to the tooltip position
 			nPos.top = pos.top - yOffset;
@@ -2251,7 +2275,7 @@ window.EAutomator = {
 
 			tooltip.css(nPos).show();
 
-		}, function() {
+		}, function () {
 			tooltip.hide();
 		});
 
@@ -2261,13 +2285,13 @@ window.EAutomator = {
 
 
 // https://github.com/jaz303/jquery-grab-bag/raw/master/javascripts/jquery.autogrow-textarea.js
-(function($) {
+(function ($) {
     /*
      * Auto-growing textareas; technique ripped from Facebook
      */
-    $.fn.autogrow = function(options) {
+    $.fn.autogrow = function (options) {
 
-        this.filter('textarea').each(function() {
+        this.filter('textarea').each(function () {
 
             var $this       = $(this),
                 minHeight   = 20,
@@ -2285,7 +2309,7 @@ window.EAutomator = {
                 resize:     'none'
             }).appendTo(document.body);
 
-            var update = function() {
+            var update = function () {
                 var val = this.value.replace(/</g, '&lt;')
                                     .replace(/>/g, '&gt;')
                                     .replace(/&/g, '&amp;')
@@ -2319,18 +2343,18 @@ window.EAutomator = {
  * Docs: http://docs.jquery.com/Plugins/livequery
  */
 
-(function($) {
+(function ($) {
 
 $.extend($.fn, {
-	livequery: function(type, fn, fn2) {
+	livequery: function (type, fn, fn2) {
 		var self = this, q;
 
 		// Handle different call patterns
-		if ($.isFunction(type))
+		if ($.isFunction (type))
 			fn2 = fn, fn = type, type = undefined;
 
 		// See if Live Query already exists
-		$.each( $.livequery.queries, function(i, query) {
+		$.each( $.livequery.queries, function (i, query) {
 			if ( self.selector == query.selector && self.context == query.context &&
 				type == query.type && (!fn || fn.$lqguid == query.fn.$lqguid) && (!fn2 || fn2.$lqguid == query.fn2.$lqguid) )
 					// Found the query, exit the each loop
@@ -2350,15 +2374,15 @@ $.extend($.fn, {
 		return this;
 	},
 
-	expire: function(type, fn, fn2) {
+	expire: function (type, fn, fn2) {
 		var self = this;
 
 		// Handle different call patterns
-		if ($.isFunction(type))
+		if ($.isFunction (type))
 			fn2 = fn, fn = type, type = undefined;
 
 		// Find the Live Query based on arguments and stop it
-		$.each( $.livequery.queries, function(i, query) {
+		$.each( $.livequery.queries, function (i, query) {
 			if ( self.selector == query.selector && self.context == query.context &&
 				(!type || type == query.type) && (!fn || fn.$lqguid == query.fn.$lqguid) && (!fn2 || fn2.$lqguid == query.fn2.$lqguid) && !this.stopped )
 					$.livequery.stop(query.id);
@@ -2369,7 +2393,7 @@ $.extend($.fn, {
 	}
 });
 
-$.livequery = function(selector, context, type, fn, fn2) {
+$.livequery = function (selector, context, type, fn, fn2) {
 	this.selector = selector;
 	this.context  = context || document;
 	this.type     = type;
@@ -2390,7 +2414,7 @@ $.livequery = function(selector, context, type, fn, fn2) {
 };
 
 $.livequery.prototype = {
-	stop: function() {
+	stop: function () {
 		var query = this;
 
 		if ( this.type )
@@ -2398,7 +2422,7 @@ $.livequery.prototype = {
 			this.elements.unbind(this.type, this.fn);
 		else if (this.fn2)
 			// Call the second function for all matched elements
-			this.elements.each(function(i, el) {
+			this.elements.each(function (i, el) {
 				query.fn2.apply(el);
 			});
 
@@ -2409,7 +2433,7 @@ $.livequery.prototype = {
 		this.stopped = true;
 	},
 
-	run: function() {
+	run: function () {
 		// Short-circuit if stopped
 		if ( this.stopped ) return;
 		var query = this;
@@ -2427,20 +2451,20 @@ $.livequery.prototype = {
 
 			// Unbind events to elements no longer matched
 			if (oEls.length > 0)
-				$.each(oEls, function(i, el) {
+				$.each(oEls, function (i, el) {
 					if ( $.inArray(el, els) < 0 )
 						$.event.remove(el, query.type, query.fn);
 				});
 		}
 		else {
 			// Call the first function for newly matched elements
-			nEls.each(function() {
+			nEls.each(function () {
 				query.fn.apply(this);
 			});
 
 			// Call the second function for elements no longer matched
 			if ( this.fn2 && oEls.length > 0 )
-				$.each(oEls, function(i, el) {
+				$.each(oEls, function (i, el) {
 					if ( $.inArray(el, els) < 0 )
 						query.fn2.apply(el);
 				});
@@ -2455,7 +2479,7 @@ $.extend($.livequery, {
 	running: false,
 	timeout: null,
 
-	checkQueue: function() {
+	checkQueue: function () {
 		if ( $.livequery.running && $.livequery.queue.length ) {
 			var length = $.livequery.queue.length;
 			// Run each Live Query currently in the queue
@@ -2464,20 +2488,20 @@ $.extend($.livequery, {
 		}
 	},
 
-	pause: function() {
+	pause: function () {
 		// Don't run anymore Live Queries until restarted
 		$.livequery.running = false;
 	},
 
-	play: function() {
+	play: function () {
 		// Restart Live Queries
 		$.livequery.running = true;
 		// Request a run of the Live Queries
 		$.livequery.run();
 	},
 
-	registerPlugin: function() {
-		$.each( arguments, function(i,n) {
+	registerPlugin: function () {
+		$.each( arguments, function (i,n) {
 			// Short-circuit if the method doesn't exist
 			if (!$.fn[n]) return;
 
@@ -2485,7 +2509,7 @@ $.extend($.livequery, {
 			var old = $.fn[n];
 
 			// Create a new method
-			$.fn[n] = function() {
+			$.fn[n] = function () {
 				// Call the original method
 				var r = old.apply(this, arguments);
 
@@ -2498,7 +2522,7 @@ $.extend($.livequery, {
 		});
 	},
 
-	run: function(id) {
+	run: function (id) {
 		if (id != undefined) {
 			// Put the particular Live Query in the queue if it doesn't already exist
 			if ( $.inArray(id, $.livequery.queue) < 0 )
@@ -2506,7 +2530,7 @@ $.extend($.livequery, {
 		}
 		else
 			// Put each Live Query in the queue if it doesn't already exist
-			$.each( $.livequery.queries, function(id) {
+			$.each( $.livequery.queries, function (id) {
 				if ( $.inArray(id, $.livequery.queue) < 0 )
 					$.livequery.queue.push( id );
 			});
@@ -2517,13 +2541,13 @@ $.extend($.livequery, {
 		$.livequery.timeout = setTimeout($.livequery.checkQueue, 20);
 	},
 
-	stop: function(id) {
+	stop: function (id) {
 		if (id != undefined)
 			// Stop are particular Live Query
 			$.livequery.queries[ id ].stop();
 		else
 			// Stop all Live Queries
-			$.each( $.livequery.queries, function(id) {
+			$.each( $.livequery.queries, function (id) {
 				$.livequery.queries[ id ].stop();
 			});
 	}
@@ -2533,14 +2557,14 @@ $.extend($.livequery, {
 $.livequery.registerPlugin('append', 'prepend', 'after', 'before', 'wrap', 'attr', 'removeAttr', 'addClass', 'removeClass', 'toggleClass', 'empty', 'remove');
 
 // Run Live Queries when the Document is ready
-$(function() { $.livequery.play(); });
+$(function () { $.livequery.play(); });
 
 
 // Save a reference to the original init method
 var init = $.prototype.init;
 
 // Create a new init method that exposes two new properties: selector and context
-$.prototype.init = function(a,c) {
+$.prototype.init = function (a,c) {
 	// Call the original init and save the result
 	var r = init.apply(this, arguments);
 
@@ -2562,7 +2586,7 @@ $.prototype.init.prototype = $.prototype;
 })(jQuery);
 
 
-if ((mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit')
-	&& mw.config.get('wgNamespaceNumber') == 0) {
+if ((mw.config.get('wgAction') === 'edit' || mw.config.get('wgAction') === 'submit')
+	&& mw.config.get('wgNamespaceNumber') === 0) {
 	$(document).ready(Ed.init);
 }
