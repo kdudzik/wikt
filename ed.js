@@ -24,12 +24,12 @@ window.EFilesLoaded = 0;
 window.EFilesToLoad = window.EFiles.length + 1;
 
 window.ETryInit = function() {
-	if (window.EFilesLoaded == window.EFilesToLoad) {
+	if (window.EFilesLoaded === window.EFilesToLoad) {
 		$(document).ready(Ed.init);
 	}
 };
 
-if ((mw.config.get('wgAction') == 'edit' || mw.config.get('wgAction') == 'submit') && mw.config.get('wgNamespaceNumber') == 0) {
+if ((mw.config.get('wgAction') === 'edit' || mw.config.get('wgAction') === 'submit') && mw.config.get('wgNamespaceNumber') === 0) {
 	for (i in window.EFiles) {
 		mw.loader.load(window.EFiles[i]);
 	}

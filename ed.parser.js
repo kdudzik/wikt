@@ -9,7 +9,7 @@ window.EParser = {
 			}
 			sec = sections[s].split('<EN>');
 
-			if (sec.length == 1) {
+			if (sec.length === 1) {
 				// sekcja zerowa
 				reta[EConstants.SECTION_ID_INTRO] = {
 					content : $.trim(sec[0]),
@@ -43,10 +43,10 @@ window.EParser = {
 
 	getTitleFromCode : function(code) {
 		var pagename = mw.config.get('wgPageName').replace('_', ' ');
-		if (code == 'zh-char' || code == 'zh') {
+		if (code === 'zh-char' || code === 'zh') {
 			pagename = '{{zh|' + pagename + '}}';
 		}
-		else if (code == 'ja' || code == 'ko') {
+		else if (code === 'ja' || code === 'ko') {
 			pagename = '{{' + code + '|' + pagename + '}}';
 		}
 		var lang = EConstants.CODE_TO_LANG[code] ? EConstants.CODE_TO_LANG[code] : code;
@@ -65,19 +65,19 @@ window.EParser = {
 	},
 
 	langId : function(langname) {
-		if (langname == EStr.INTERNATIONAL_USAGE) {
+		if (langname === EStr.INTERNATIONAL_USAGE) {
 			return EConstants.SECTION_ID_INTERNATIONAL;
 		}
-		else if (langname == EStr.POLISH) {
+		else if (langname === EStr.POLISH) {
 			return EConstants.SECTION_ID_POLISH;
 		}
-		else if (langname == EStr.POLISH_FOREIGN) {
+		else if (langname === EStr.POLISH_FOREIGN) {
 			return EConstants.SECTION_ID_POLISH_FOREIGN;
 		}
-		else if (langname == EStr.CHINESE_SIGN) {
+		else if (langname === EStr.CHINESE_SIGN) {
 			return EConstants.SECTION_ID_CHINESE_SIGN;
 		}
-		else if (langname == EStr.LATIN_FOREIGN) {
+		else if (langname === EStr.LATIN_FOREIGN) {
 			return EConstants.SECTION_ID_LATIN_FOREIGN;
 		}
 		return langname.replace(/język /, '')
@@ -112,7 +112,7 @@ window.EParser = {
 
 	langCode : function(lang) {
 		var code;
-		if (lang.indexOf('język ') != -1) {
+		if (lang.indexOf('język ') !== -1) {
 			lang = lang.replace(/język /, '');
 			code = EConstants.LANG_CODES_LONG[lang];
 		}
@@ -132,27 +132,36 @@ window.ESectionParser = {
 
 		if (!section.title) {
 			mode = 'INTRO';
-		} else if (code == 'pl') {
+		}
+		else if (code === 'pl') {
 			mode = 'POLISH';
-		} else if (code == 'zh-char') {
+		}
+		else if (code === 'zh-char') {
 			mode = 'CHINESE';
-		} else if (code == 'egy') {
+		}
+		else if (code === 'egy') {
 			mode = 'EGYPTIAN';
-		} else if (code == 'ko') {
+		}
+		else if (code === 'ko') {
 			mode = 'KOREAN';
-		} else if (code == 'ja') {
+		}
+		else if (code === 'ja') {
 			mode = 'JAPANESE';
-		} else if (code == 'inter') {
+		}
+		else if (code === 'inter') {
 			mode = 'INTERNATIONAL';
-		} else if (EConstants.NON_LATIN_LANGS.indexOf(code) != -1) {
+		}
+		else if (EConstants.NON_LATIN_LANGS.indexOf(code) !== -1) {
 			mode = 'NON_LATIN';
-		} else if (EConstants.DOUBLE_LANGS.indexOf(code) != -1) {
+		}
+		else if (EConstants.DOUBLE_LANGS.indexOf(code) !== -1) {
 			mode = 'DOUBLE';
-		} else {
+		}
+		else {
 			mode = 'LATIN';
 		}
 		subsections.push({ title: '', content: '', shortened: false, active: true });
-		for (i in EConstants.SUBSECTIONS.ALL) {
+		for (var i in EConstants.SUBSECTIONS.ALL) {
 			subsections.push({
 				title: EConstants.SUBSECTIONS.ALL[i],
 				content: '',
@@ -206,12 +215,12 @@ window.ESectionParser = {
 		var str = section.content;
 		var subsections = section.subsections;
 		var positions = [];
-		for (i in subsections) {
+		for (var i in subsections) {
 			var title = subsections[i].title;
 			var alt = ESectionParser.alternateTitle(title);
 			var regex = new RegExp('\\{\\{(' + title + alt + ')\\s*[\\|\\}]', 'g');
 			positions.push({
-				index: title == '' ? 0 : str.search(regex),
+				index: title === '' ? 0 : str.search(regex),
 				title: title
 			});
 		}
@@ -222,13 +231,13 @@ window.ESectionParser = {
 			return a.index - b.index;
 		});
 
-		for (i in subsections) {
+		for (var i in subsections) {
 			var sub = subsections[i];
-			for (j in positions) {
+			for (var j in positions) {
 				j = parseInt(j);
 				var pos = positions[j];
-				if (pos.title == sub.title) {
-					if (pos.index != -1) {
+				if (pos.title === sub.title) {
+					if (pos.index !== -1) {
 						if (j < positions.length - 1) {
 							sub.content = $.trim(str.substring(pos.index, positions[j + 1].index));
 						}
@@ -239,20 +248,20 @@ window.ESectionParser = {
 						var repl = new RegExp('\\{\\{(' + sub.title + alt + ')\\}\\}');
 						var changed = sub.content.replace(repl, '');
 
-						if (changed != sub.content) {
+						if (changed !== sub.content) {
 							var firstbreak = changed.search(/\n/);
-							if (firstbreak != -1 && firstbreak < changed.search(/\S/)) {
+							if (firstbreak !== -1 && firstbreak < changed.search(/\S/)) {
 								sub.initmultiline = true;
 							}
 							sub.content = $.trim(changed);
 						}
-						else if (sub.content != '' || sub.title == '') {
+						else if (sub.content !== '' || sub.title === '') {
 							sub.shortened = false;
 						}
 						sub.initcontent = sub.content;
 						break;
 					}
-					else if (targetSubsections.indexOf(pos.title) == -1) {
+					else if (targetSubsections.indexOf(pos.title) === -1) {
 						sub.active = false;
 					}
 				}
@@ -261,11 +270,11 @@ window.ESectionParser = {
 	},
 
 	obligatorySubsection : function(subsection, section) {
-		return (subsection.title == 'znaczenia') && (section.mode != 'CHINESE');
+		return (subsection.title === 'znaczenia') && (section.mode !== 'CHINESE');
 	},
 
 	botSubsection : function(subsection, section) {
-		return (subsection.title == 'wymowa') && (section.mode == 'POLISH') && !subsection.content;
+		return (subsection.title === 'wymowa') && (section.mode === 'POLISH') && !subsection.content;
 	}
 };
 

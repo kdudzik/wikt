@@ -6,7 +6,7 @@ window.EAutomator = {
 	getActiveLangs : function() {
 		var ret = EConstants.USED_WIKTIONARIES.slice(0);
 		var act = EUtil.getActiveLangCode();
-		if (ret.indexOf(act) == -1 && EConstants.ALL_WIKTIONARIES.indexOf(act) != -1) {
+		if (ret.indexOf(act) === -1 && EConstants.ALL_WIKTIONARIES.indexOf(act) !== -1) {
 			ret.push(act);
 		}
 		return ret;
@@ -19,15 +19,15 @@ window.EAutomator = {
 		var ret = EConstants.USED_WIKTIONARIES.slice(0);
 		for (var id in Ed.content.sections) {
 			var code = Ed.content.sections[id]['code'];
-			if (code == undefined) {
+			if (code === undefined) {
 				continue;
 			}
 			code = code.replace(/-.*/, '');
-			if (code.length > 1 && code.length < 7 && code != 'pl' && ret.indexOf(code) == -1) {
+			if (code.length > 1 && code.length < 7 && code !== 'pl' && ret.indexOf(code) === -1) {
 				ret.push(code);
 			}
 		}
-		return $.grep(ret, function(val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) != -1 });
+		return $.grep(ret, function(val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) !== -1 });
 	},
 
 	/*
@@ -46,21 +46,21 @@ window.EAutomator = {
 
 		var iwikis = [];
 		$.each(results, function(i, res) {
-			if (res.query == undefined || res.query.pages == undefined) {
+			if (res.query === undefined || res.query.pages === undefined) {
 				return false;
 			}
 			$.each(res.query.pages, function(j, val) {
-				if (j == -1) {
+				if (j === -1) {
 					return false;
 				}
-				if (iwikis.indexOf(res.query.general.lang) == -1 && res.query.general.lang != 'pl') {
+				if (iwikis.indexOf(res.query.general.lang) === -1 && res.query.general.lang !== 'pl') {
 					iwikis.push(res.query.general.lang);
 				}
-				if (val.langlinks == undefined) {
+				if (val.langlinks === undefined) {
 					return false;
 				}
 				$.each(val.langlinks, function(k, link) {
-					if (link['*'] == mw.config.get('wgTitle') && iwikis.indexOf(link.lang) == -1 && link.lang != 'pl') {
+					if (link['*'] === mw.config.get('wgTitle') && iwikis.indexOf(link.lang) === -1 && link.lang !== 'pl') {
 						iwikis.push(link.lang);
 					}
 				});
@@ -69,9 +69,10 @@ window.EAutomator = {
 		iwikis.sort(function(a, b) { return EConstants.INTERWIKI_ORDER.indexOf(a) - EConstants.INTERWIKI_ORDER.indexOf(b) });
 		var iwikiString = $.map(iwikis, function(val) { return '[[' + val + ':' + mw.config.get('wgTitle') + ']]' }).join(' ');
 		var curIwiki = $('#ed_0000_').val();
-		if (curIwiki == '') {
+		if (curIwiki === '') {
 			$('#ed_0000_').val(iwikiString);
-		} else {
+		}
+		else {
 			var re = new RegExp('(\\[\\[[a-z\\-]+' + ':' + mw.config.get('wgTitle') + '\\]\\]\\s*)+');
 			$('#ed_0000_').val(iwikiString + curIwiki.replace(re, '\n'));
 		}
@@ -89,17 +90,17 @@ window.EAutomator = {
 		var ipas = {};
 		var error = EStr.NO_IPA_FOUND;
 		$.each(results, function(i, res) {
-			if (res.query == undefined || res.query.pages == undefined) {
+			if (res.query === undefined || res.query.pages === undefined) {
 				return false;
 			}
 			var lang = res.query.general.lang;
 			$.each(res.query.pages, function(j, val) {
-				if (j == -1) {
+				if (j === -1) {
 					return false;
 				}
 				var content = val.revisions[0]['*'];
 				var ipa = EAutomator.extractIPA(content, lang);
-				if (ipa != undefined && ipa.length) {
+				if (ipa !== undefined && ipa.length) {
 					ipas[lang] = ipa;
 					error = undefined;
 				}
@@ -111,9 +112,10 @@ window.EAutomator = {
 	},
 
 	extractIPA : function(str, lang) {
-		if (EAutomator['extractIPA_' + lang] == undefined) {
+		if (EAutomator['extractIPA_' + lang] === undefined) {
 			return undefined;
-		} else {
+		}
+		else {
 			return EUtil.executeFn('extractIPA_' + lang, EAutomator, str);
 		}
 	},
@@ -121,7 +123,7 @@ window.EAutomator = {
 	extractFirstArgsFromTemplates : function(str, template) {
 		var re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*\\/?\\s*([^\\}\\/\\|<]+)', 'g');
 		var arr, results = [];
-		while ((arr = re.exec(str)) != null) {
+		while ((arr = re.exec(str)) !== null) {
 			results.push($.trim(arr[1]));
 		}
 		return results;
@@ -130,7 +132,7 @@ window.EAutomator = {
 	extractSecondArgsFromTemplates : function(str, template) {
 		var re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\}\\|]*)\\|\\s*\\/?([^\\}\\/\\|<]+)', 'gi');
 		var arr, results = [];
-		while ((arr = re.exec(str)) != null) {
+		while ((arr = re.exec(str)) !== null) {
 			results.push($.trim(arr[2]));
 		}
 		return results;
@@ -155,7 +157,7 @@ window.EAutomator = {
 		var arr;
 		var results = EAutomator.extractFirstArgsFromTemplates(str, 'transcription');
 		var re = /\{\{transcriptions\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)\s*\}\}/g;
-		while ((arr = re.exec(str)) != null) {
+		while ((arr = re.exec(str)) !== null) {
 			results.push($.trim(arr[1]));
 			results.push($.trim(arr[2]));
 		}
@@ -165,7 +167,7 @@ window.EAutomator = {
 		var arr;
 		var results = [];
 		var re = /\{\{pron-en1\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)/g;
-		while ((arr = re.exec(str)) != null) {
+		while ((arr = re.exec(str)) !== null) {
 			results.push($.trim(arr[1]));
 			results.push($.trim(arr[2]));
 		}

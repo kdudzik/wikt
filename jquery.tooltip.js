@@ -40,7 +40,8 @@
 			var yOffset;
 			if ($(this).hasClass('tipdown')) {
 				yOffset = -$(this).outerHeight() - 3;
-			} else {
+			}
+			else {
 				yOffset = tooltip.height() + 17;
 			}
 

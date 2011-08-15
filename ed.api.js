@@ -1,9 +1,9 @@
 window.EApi = {
 	url : function(lang, project) {
-		if (lang == undefined) {
+		if (lang === undefined) {
 			lang = 'pl';
 		}
-		if (project == undefined) {
+		if (project === undefined) {
 			project = EConstants.WIKTIONARY;
 		}
 		return "http://" + lang + "." + project + ".org/w/api.php?";
@@ -18,7 +18,7 @@ window.EApi = {
 	},
 
 	_ask : function(query, url) {
-		if (url == undefined) {
+		if (url === undefined) {
 			url = EApi.url();
 		}
 		query['action'] = 'query';
@@ -62,16 +62,17 @@ window.EApi = {
 
 	done : function(idpart, error) {
 		var elem = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart);
-		if (error != undefined) {
-			elem.addClass('apierror').removeClass('apistarted apidone').html(error);
-		} else {
+		if (error === undefined) {
 			elem.addClass('apidone').removeClass('apistarted apierror');
+		}
+		else {
+			elem.addClass('apierror').removeClass('apistarted apidone').html(error);
 		}
 	},
 
 	started : function(idpart, subs) {
 		$('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart).removeClass('apidone apierror').addClass('apistarted');
-		if (subs != undefined) {
+		if (subs !== undefined) {
 			EUtil.focusArea(subs);
 		}
 	},

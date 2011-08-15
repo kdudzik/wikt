@@ -19,14 +19,14 @@ window.Ed = {
 	},
 
 	init : function() {
-		if (EUtil.getParameter('oldid') && EUtil.getParameter('oldid') != mw.config.get('wgCurRevisionId')) {
+		if (EUtil.getParameter('oldid') && EUtil.getParameter('oldid') !== '' + mw.config.get('wgCurRevisionId')) {
 			return;
 		}
 		EConstants.init();
 
-		var tbox = $('#wpTextbox1'),
-			oldform = $('.wikiEditor-ui'),
-			instruction = $('#nat-instrukcja');
+		var tbox = $('#wpTextbox1');
+		var oldform = $('.wikiEditor-ui');
+		var instruction = $('#nat-instrukcja');
 		Ed.code = tbox.val();
 
 		Ed.parseContentToSections();

@@ -14,7 +14,7 @@ window.EUi = {
 		this.instruction = instruction;
 		EUi.form.append(EUi.menu).append(EUi.content);
 		oldform.before(EUi.form);
-		EUi.usingNew = $.cookie('usenew') == null || $.cookie('usenew') == 1;
+		EUi.usingNew = $.cookie('usenew') === null || $.cookie('usenew') === 1;
 
 		if (EUi.usingNew) {
 			oldform.hide();
@@ -59,10 +59,10 @@ window.EUi = {
 			return false;
 		}
 		var firstTab = EUi.menu.children(":not(#ed_menuitem_" + EConstants.SECTION_ID_INTRO + ")").first();
-		if (firstTab.attr('id') != 'ed_menuitem_new') {
+		if (firstTab.attr('id') !== 'ed_menuitem_new') {
 			firstTab.click();
 		}
-		else if (Ed.content.sections[EConstants.SECTION_ID_INTRO] != undefined) {
+		else if (Ed.content.sections[EConstants.SECTION_ID_INTRO] !== undefined) {
 			$('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).click();
 		}
 		else {
@@ -78,7 +78,7 @@ window.EUi = {
 			size++;
 		}
 
-		if (EUtil.getParameter('section') == '') {
+		if (EUtil.getParameter('section') === '') {
 			var addItem = $('<li id="ed_menuitem_new" class="tip menuitem">' + EStr.ADD + '</li>');
 			addItem.appendTo(EUi.menu).click(function() {
 				EUi.addNewSection();
@@ -100,13 +100,13 @@ window.EUi = {
 
 		fset.appendTo(EUi.content);
 
-		if (id == EConstants.SECTION_ID_INTRO) {
+		if (id === EConstants.SECTION_ID_INTRO) {
 			sec.code = EConstants.INTRO;
 			sec.title = '';
 		}
 
 		var item = $('<li id="ed_menuitem_' + id + '" class="tip menuitem">' + sec.code + '</li>');
-		var tip = id == EConstants.SECTION_ID_INTRO
+		var tip = id === EConstants.SECTION_ID_INTRO
 				? EStr.INTRO_SECTION
 				: EParser.insideTemplate(sec.title) + '\<br/><small>tytuł sekcji: <tt>' + sec.title + '</tt></small>';
 		item.data({ 'section' : 'ed_section_' + id, 'code' : sec['code'], 'tip' : tip })
@@ -118,12 +118,13 @@ window.EUi = {
 				EUi.resizeTextareas();
 				EUi.activeLangCode = $(this).data('code');
 				EUi.activeLangId = id;
+				setTimeout(function(){$('fieldset.active').find('textarea:first').focus()}, 100); //FIXME why?
 			});
 
 		// insert alphabetically
 		var added = false;
 		EUi.menu.children("li").each(function() {
-			if ($(this).attr('id') > item.attr('id') || $(this).attr('id') == 'ed_menuitem_new') {
+			if ($(this).attr('id') > item.attr('id') || $(this).attr('id') === 'ed_menuitem_new') {
 				item.insertBefore($(this));
 				added = true;
 				return false;
@@ -223,7 +224,7 @@ window.EUi = {
 		var section = Ed.content['sections'][id];
 		var fset = $('#ed_section_' + id);
 
-		if (id != EConstants.SECTION_ID_INTRO) {
+		if (id !== EConstants.SECTION_ID_INTRO) {
 			var editlink = $('<a/>').text(EStr.EDIT_SECTION_TITLE).click(function() {
 				EUi.editSectionTitle(id, section);
 				return false;
@@ -235,7 +236,7 @@ window.EUi = {
 			fset.append($('<p class="top"/>').append(editlink).append(deletelink));
 		}
 
-		for (i = 0; i < section.subsections.length; i++) {
+		for (var i = 0; i < section.subsections.length; i++) {
 			if (section.subsections[i].active) {
 				var obj = EUi.getSubsectionObj(id, section, section.subsections[i]);
 				fset.append(obj);
@@ -299,7 +300,7 @@ window.EUi = {
 	},
 
 	addExtraButtons : function(subsectionName, idpart, buttonContent, onclick, tooltip, section) {
-		if (section != undefined) {
+		if (section !== undefined) {
 			var input = $('#ed_' + section + '_' + subsectionName);
 			var extra = $('#ed_' + section + '_' + subsectionName + '_extra');
 			var button = $('<span class="tip tipdown"/>')
@@ -308,7 +309,8 @@ window.EUi = {
 				.data('tip', tooltip)
 				.attr('id', 'ed_' + section + '_extra_' + idpart);
 			extra.append(button).addClass('active');
-		} else {
+		}
+		else {
 			$.each(Ed.content.sections, function(id, sec) {
 				var input = $('#ed_' + id + '_' + subsectionName);
 				var extra = $('#ed_' + id + '_' + subsectionName + '_extra');
@@ -323,7 +325,7 @@ window.EUi = {
 	},
 
 	prepareAutomatorForm : function() {
-		if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length == 0) {
+		if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length === 0) {
 			EUi.addIntroAdder();
 		}
 		EUi.addExtraButtons('wymowa', 'add_ipa', EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_SHOWN);
@@ -334,7 +336,7 @@ window.EUi = {
 window.EForm = {
 
 	addDefaultTexts : function(langid, code) {
-		var arr = code == 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
+		var arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
 		for (subs in arr) {
 			var defaultText = arr[subs];
 			EForm.val(langid, subs, defaultText);
@@ -342,19 +344,20 @@ window.EForm = {
 	},
 
 	removeDefaultTexts : function(langid, code) {
-		var arr = code == 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
+		var arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
 		for (subs in arr) {
 			var defaultText = arr[subs];
-			if (EForm.val(langid, subs) == defaultText) {
+			if (EForm.val(langid, subs) === defaultText) {
 				EForm.val(langid, subs, '');
 			}
 		}
 	},
 
 	val : function(langid, subsectionTitle, newValue) {
-		if (newValue == undefined) {
+		if (newValue === undefined) {
 			return $.trim($('#ed_' + langid + '_' + subsectionTitle.replace(' ', '_')).val());
-		} else {
+		}
+		else {
 			$('#ed_' + langid + '_' + subsectionTitle).val(newValue);
 		}
 	}

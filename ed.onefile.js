@@ -285,14 +285,14 @@ window.Ed = {
 	},
 
 	init : function() {
-		if (EUtil.getParameter('oldid') && EUtil.getParameter('oldid') != mw.config.get('wgCurRevisionId')) {
+		if (EUtil.getParameter('oldid') && EUtil.getParameter('oldid') !== '' + mw.config.get('wgCurRevisionId')) {
 			return;
 		}
 		EConstants.init();
 
-		var tbox = $('#wpTextbox1'),
-			oldform = $('.wikiEditor-ui'),
-			instruction = $('#nat-instrukcja');
+		var tbox = $('#wpTextbox1');
+		var oldform = $('.wikiEditor-ui');
+		var instruction = $('#nat-instrukcja');
 		Ed.code = tbox.val();
 
 		Ed.parseContentToSections();
@@ -332,7 +332,7 @@ window.EParser = {
 			}
 			sec = sections[s].split('<EN>');
 
-			if (sec.length == 1) {
+			if (sec.length === 1) {
 				// sekcja zerowa
 				reta[EConstants.SECTION_ID_INTRO] = {
 					content : $.trim(sec[0]),
@@ -366,10 +366,10 @@ window.EParser = {
 
 	getTitleFromCode : function(code) {
 		var pagename = mw.config.get('wgPageName').replace('_', ' ');
-		if (code == 'zh-char' || code == 'zh') {
+		if (code === 'zh-char' || code === 'zh') {
 			pagename = '{{zh|' + pagename + '}}';
 		}
-		else if (code == 'ja' || code == 'ko') {
+		else if (code === 'ja' || code === 'ko') {
 			pagename = '{{' + code + '|' + pagename + '}}';
 		}
 		var lang = EConstants.CODE_TO_LANG[code] ? EConstants.CODE_TO_LANG[code] : code;
@@ -388,19 +388,19 @@ window.EParser = {
 	},
 
 	langId : function(langname) {
-		if (langname == EStr.INTERNATIONAL_USAGE) {
+		if (langname === EStr.INTERNATIONAL_USAGE) {
 			return EConstants.SECTION_ID_INTERNATIONAL;
 		}
-		else if (langname == EStr.POLISH) {
+		else if (langname === EStr.POLISH) {
 			return EConstants.SECTION_ID_POLISH;
 		}
-		else if (langname == EStr.POLISH_FOREIGN) {
+		else if (langname === EStr.POLISH_FOREIGN) {
 			return EConstants.SECTION_ID_POLISH_FOREIGN;
 		}
-		else if (langname == EStr.CHINESE_SIGN) {
+		else if (langname === EStr.CHINESE_SIGN) {
 			return EConstants.SECTION_ID_CHINESE_SIGN;
 		}
-		else if (langname == EStr.LATIN_FOREIGN) {
+		else if (langname === EStr.LATIN_FOREIGN) {
 			return EConstants.SECTION_ID_LATIN_FOREIGN;
 		}
 		return langname.replace(/język /, '')
@@ -435,7 +435,7 @@ window.EParser = {
 
 	langCode : function(lang) {
 		var code;
-		if (lang.indexOf('język ') != -1) {
+		if (lang.indexOf('język ') !== -1) {
 			lang = lang.replace(/język /, '');
 			code = EConstants.LANG_CODES_LONG[lang];
 		}
@@ -455,27 +455,36 @@ window.ESectionParser = {
 
 		if (!section.title) {
 			mode = 'INTRO';
-		} else if (code == 'pl') {
+		}
+		else if (code === 'pl') {
 			mode = 'POLISH';
-		} else if (code == 'zh-char') {
+		}
+		else if (code === 'zh-char') {
 			mode = 'CHINESE';
-		} else if (code == 'egy') {
+		}
+		else if (code === 'egy') {
 			mode = 'EGYPTIAN';
-		} else if (code == 'ko') {
+		}
+		else if (code === 'ko') {
 			mode = 'KOREAN';
-		} else if (code == 'ja') {
+		}
+		else if (code === 'ja') {
 			mode = 'JAPANESE';
-		} else if (code == 'inter') {
+		}
+		else if (code === 'inter') {
 			mode = 'INTERNATIONAL';
-		} else if (EConstants.NON_LATIN_LANGS.indexOf(code) != -1) {
+		}
+		else if (EConstants.NON_LATIN_LANGS.indexOf(code) !== -1) {
 			mode = 'NON_LATIN';
-		} else if (EConstants.DOUBLE_LANGS.indexOf(code) != -1) {
+		}
+		else if (EConstants.DOUBLE_LANGS.indexOf(code) !== -1) {
 			mode = 'DOUBLE';
-		} else {
+		}
+		else {
 			mode = 'LATIN';
 		}
 		subsections.push({ title: '', content: '', shortened: false, active: true });
-		for (i in EConstants.SUBSECTIONS.ALL) {
+		for (var i in EConstants.SUBSECTIONS.ALL) {
 			subsections.push({
 				title: EConstants.SUBSECTIONS.ALL[i],
 				content: '',
@@ -529,12 +538,12 @@ window.ESectionParser = {
 		var str = section.content;
 		var subsections = section.subsections;
 		var positions = [];
-		for (i in subsections) {
+		for (var i in subsections) {
 			var title = subsections[i].title;
 			var alt = ESectionParser.alternateTitle(title);
 			var regex = new RegExp('\\{\\{(' + title + alt + ')\\s*[\\|\\}]', 'g');
 			positions.push({
-				index: title == '' ? 0 : str.search(regex),
+				index: title === '' ? 0 : str.search(regex),
 				title: title
 			});
 		}
@@ -545,13 +554,13 @@ window.ESectionParser = {
 			return a.index - b.index;
 		});
 
-		for (i in subsections) {
+		for (var i in subsections) {
 			var sub = subsections[i];
-			for (j in positions) {
+			for (var j in positions) {
 				j = parseInt(j);
 				var pos = positions[j];
-				if (pos.title == sub.title) {
-					if (pos.index != -1) {
+				if (pos.title === sub.title) {
+					if (pos.index !== -1) {
 						if (j < positions.length - 1) {
 							sub.content = $.trim(str.substring(pos.index, positions[j + 1].index));
 						}
@@ -562,20 +571,20 @@ window.ESectionParser = {
 						var repl = new RegExp('\\{\\{(' + sub.title + alt + ')\\}\\}');
 						var changed = sub.content.replace(repl, '');
 
-						if (changed != sub.content) {
+						if (changed !== sub.content) {
 							var firstbreak = changed.search(/\n/);
-							if (firstbreak != -1 && firstbreak < changed.search(/\S/)) {
+							if (firstbreak !== -1 && firstbreak < changed.search(/\S/)) {
 								sub.initmultiline = true;
 							}
 							sub.content = $.trim(changed);
 						}
-						else if (sub.content != '' || sub.title == '') {
+						else if (sub.content !== '' || sub.title === '') {
 							sub.shortened = false;
 						}
 						sub.initcontent = sub.content;
 						break;
 					}
-					else if (targetSubsections.indexOf(pos.title) == -1) {
+					else if (targetSubsections.indexOf(pos.title) === -1) {
 						sub.active = false;
 					}
 				}
@@ -584,11 +593,11 @@ window.ESectionParser = {
 	},
 
 	obligatorySubsection : function(subsection, section) {
-		return (subsection.title == 'znaczenia') && (section.mode != 'CHINESE');
+		return (subsection.title === 'znaczenia') && (section.mode !== 'CHINESE');
 	},
 
 	botSubsection : function(subsection, section) {
-		return (subsection.title == 'wymowa') && (section.mode == 'POLISH') && !subsection.content;
+		return (subsection.title === 'wymowa') && (section.mode === 'POLISH') && !subsection.content;
 	}
 };
 
@@ -597,38 +606,38 @@ window.EPrinter = {
 	recalculateCode : function(form) {
 		var code = '';
 		var sortableSections = [];
-		for (id in Ed.content.sections) {
+		for (var id in Ed.content.sections) {
 			var sec = Ed.content.sections[id];
 			EForm.removeDefaultTexts(id, sec['code']);
 			sortableSections.push(sec);
 		}
 		sortableSections.sort(function(a, b) { return a.id > b.id ? 1 : -1; });
 
-		for (i in sortableSections) {
+		for (var i in sortableSections) {
 			var sec = sortableSections[i];
-			if (sec.id == EConstants.SECTION_ID_INTRO) {
+			if (sec.id === EConstants.SECTION_ID_INTRO) {
 				code = EForm.val(EConstants.SECTION_ID_INTRO, '') + '\n';
 			}
 			else {
 				code += '== ' + sec.title + ' ==\n';
-				for (i = 0; i < sec.subsections.length; i++) {
-					var subs = sec.subsections[i];
+				for (var j = 0; j < sec.subsections.length; j++) {
+					var subs = sec.subsections[j];
 					if (!subs.active) {
 						continue;
 					}
 					subs.content = EForm.val(sec.id, subs.title);
 
-					if (subs.title == '' && subs.content != '') {
+					if (subs.title === '' && subs.content !== '') {
 						code += subs.content + '\n';
 					}
-					else if (subs.title != '' && subs.content == '') {
+					else if (subs.title !== '' && subs.content === '') {
 						code += '{{' + subs.title + '}}\n';
 					}
 					else if (subs.shortened) {
 						var whitespace = EPrinter.adequateWhitespace(subs);
 						code += '{{' + subs.title + '}}' + whitespace + subs.content + '\n';
 					}
-					else if (subs.content != '') {
+					else if (subs.content !== '') {
 						code += subs.content + '\n';
 					}
 				}
@@ -646,34 +655,34 @@ window.EPrinter = {
 		 * szablony zaczynające się na "{{zch-", linki do grafiki (file:, grafika: image: media: plik:, to samo dużą literą,
 		 * możliwe białe znaki między nawiasami kwadratowymi a tym słowem),...
 		 */
-		if (str.search(/[:\*#]|<references|\{\{(litera|kolor)\||\{\{zch-|\[\[(file|image|grafika|plik|media):/i) == 0) {
+		if (str.search(/[:\*#]|<references|\{\{(litera|kolor)\||\{\{zch-|\[\[(file|image|grafika|plik|media):/i) === 0) {
 			return '\n';
 		}
 		/*
 		 * ...teksty w polach "znaczenia", "przykłady" oraz "tłumaczenia" nie mogą występować zaraz po szablonie, jeśli
 		 * występują muszą być przeniesione bez dodawania dwukropka.
 		 */
-		if (EConstants.SUBSECTIONS_WITH_NL.indexOf(subsection.title) != -1) {
+		if (EConstants.SUBSECTIONS_WITH_NL.indexOf(subsection.title) !== -1) {
 			return '\n';
 		}
 		/*
 		 * Inne teksty składające się z więcej niż jednej linii, powinny być przeniesione z dodaniem dwukropka i spacji
 		 * na początku pierwszej linii
 		 */
-		if (str.indexOf('\n') != -1 && str.search(/[:\*#]/) != 0) {
+		if (str.indexOf('\n') !== -1 && str.search(/[:\*#]/) !== 0) {
 			return '\n: ';
 		}
 		/*
 		 * Wpp: dla wypełnionych przed edycją pól zachowujemy istniejące formatowanie o ile dane pole już było niepuste.
 		*/
-		if (subsection.initcontent != '') {
+		if (subsection.initcontent !== '') {
 			return subsection.initmultiline ? '\n: ' : ' ';
 		}
 		/*
 		 * w polach pustych przed edycją: w sekcjach "wymowa", "transliteracja", "transkrypcja", "ortografie", "klucz",
 		 * "kreski", "czytania", "hanja-kreski" defaultem jest pisanie bezpośrednio po szablonie (po spacji)...
 		 */
-		if (EConstants.SUBSECTIONS_WITHOUT_NL.indexOf(subsection.title) != -1) {
+		if (EConstants.SUBSECTIONS_WITHOUT_NL.indexOf(subsection.title) !== -1) {
 			return ' ';
 		}
 		/*
@@ -1076,7 +1085,7 @@ window.EUi = {
 		this.instruction = instruction;
 		EUi.form.append(EUi.menu).append(EUi.content);
 		oldform.before(EUi.form);
-		EUi.usingNew = $.cookie('usenew') == null || $.cookie('usenew') == 1;
+		EUi.usingNew = $.cookie('usenew') === null || $.cookie('usenew') === 1;
 
 		if (EUi.usingNew) {
 			oldform.hide();
@@ -1121,10 +1130,10 @@ window.EUi = {
 			return false;
 		}
 		var firstTab = EUi.menu.children(":not(#ed_menuitem_" + EConstants.SECTION_ID_INTRO + ")").first();
-		if (firstTab.attr('id') != 'ed_menuitem_new') {
+		if (firstTab.attr('id') !== 'ed_menuitem_new') {
 			firstTab.click();
 		}
-		else if (Ed.content.sections[EConstants.SECTION_ID_INTRO] != undefined) {
+		else if (Ed.content.sections[EConstants.SECTION_ID_INTRO] !== undefined) {
 			$('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).click();
 		}
 		else {
@@ -1140,7 +1149,7 @@ window.EUi = {
 			size++;
 		}
 
-		if (EUtil.getParameter('section') == '') {
+		if (EUtil.getParameter('section') === '') {
 			var addItem = $('<li id="ed_menuitem_new" class="tip menuitem">' + EStr.ADD + '</li>');
 			addItem.appendTo(EUi.menu).click(function() {
 				EUi.addNewSection();
@@ -1162,13 +1171,13 @@ window.EUi = {
 
 		fset.appendTo(EUi.content);
 
-		if (id == EConstants.SECTION_ID_INTRO) {
+		if (id === EConstants.SECTION_ID_INTRO) {
 			sec.code = EConstants.INTRO;
 			sec.title = '';
 		}
 
 		var item = $('<li id="ed_menuitem_' + id + '" class="tip menuitem">' + sec.code + '</li>');
-		var tip = id == EConstants.SECTION_ID_INTRO
+		var tip = id === EConstants.SECTION_ID_INTRO
 				? EStr.INTRO_SECTION
 				: EParser.insideTemplate(sec.title) + '\<br/><small>tytuł sekcji: <tt>' + sec.title + '</tt></small>';
 		item.data({ 'section' : 'ed_section_' + id, 'code' : sec['code'], 'tip' : tip })
@@ -1180,12 +1189,13 @@ window.EUi = {
 				EUi.resizeTextareas();
 				EUi.activeLangCode = $(this).data('code');
 				EUi.activeLangId = id;
+				setTimeout(function(){$('fieldset.active').find('textarea:first').focus()}, 100); //FIXME why?
 			});
 
 		// insert alphabetically
 		var added = false;
 		EUi.menu.children("li").each(function() {
-			if ($(this).attr('id') > item.attr('id') || $(this).attr('id') == 'ed_menuitem_new') {
+			if ($(this).attr('id') > item.attr('id') || $(this).attr('id') === 'ed_menuitem_new') {
 				item.insertBefore($(this));
 				added = true;
 				return false;
@@ -1285,7 +1295,7 @@ window.EUi = {
 		var section = Ed.content['sections'][id];
 		var fset = $('#ed_section_' + id);
 
-		if (id != EConstants.SECTION_ID_INTRO) {
+		if (id !== EConstants.SECTION_ID_INTRO) {
 			var editlink = $('<a/>').text(EStr.EDIT_SECTION_TITLE).click(function() {
 				EUi.editSectionTitle(id, section);
 				return false;
@@ -1297,7 +1307,7 @@ window.EUi = {
 			fset.append($('<p class="top"/>').append(editlink).append(deletelink));
 		}
 
-		for (i = 0; i < section.subsections.length; i++) {
+		for (var i = 0; i < section.subsections.length; i++) {
 			if (section.subsections[i].active) {
 				var obj = EUi.getSubsectionObj(id, section, section.subsections[i]);
 				fset.append(obj);
@@ -1361,7 +1371,7 @@ window.EUi = {
 	},
 
 	addExtraButtons : function(subsectionName, idpart, buttonContent, onclick, tooltip, section) {
-		if (section != undefined) {
+		if (section !== undefined) {
 			var input = $('#ed_' + section + '_' + subsectionName);
 			var extra = $('#ed_' + section + '_' + subsectionName + '_extra');
 			var button = $('<span class="tip tipdown"/>')
@@ -1370,7 +1380,8 @@ window.EUi = {
 				.data('tip', tooltip)
 				.attr('id', 'ed_' + section + '_extra_' + idpart);
 			extra.append(button).addClass('active');
-		} else {
+		}
+		else {
 			$.each(Ed.content.sections, function(id, sec) {
 				var input = $('#ed_' + id + '_' + subsectionName);
 				var extra = $('#ed_' + id + '_' + subsectionName + '_extra');
@@ -1385,7 +1396,7 @@ window.EUi = {
 	},
 
 	prepareAutomatorForm : function() {
-		if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length == 0) {
+		if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length === 0) {
 			EUi.addIntroAdder();
 		}
 		EUi.addExtraButtons('wymowa', 'add_ipa', EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_SHOWN);
@@ -1396,7 +1407,7 @@ window.EUi = {
 window.EForm = {
 
 	addDefaultTexts : function(langid, code) {
-		var arr = code == 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
+		var arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
 		for (subs in arr) {
 			var defaultText = arr[subs];
 			EForm.val(langid, subs, defaultText);
@@ -1404,19 +1415,20 @@ window.EForm = {
 	},
 
 	removeDefaultTexts : function(langid, code) {
-		var arr = code == 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
+		var arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
 		for (subs in arr) {
 			var defaultText = arr[subs];
-			if (EForm.val(langid, subs) == defaultText) {
+			if (EForm.val(langid, subs) === defaultText) {
 				EForm.val(langid, subs, '');
 			}
 		}
 	},
 
 	val : function(langid, subsectionTitle, newValue) {
-		if (newValue == undefined) {
+		if (newValue === undefined) {
 			return $.trim($('#ed_' + langid + '_' + subsectionTitle.replace(' ', '_')).val());
-		} else {
+		}
+		else {
 			$('#ed_' + langid + '_' + subsectionTitle).val(newValue);
 		}
 	}
@@ -1426,16 +1438,17 @@ window.EForm = {
 
 
 window.EUtil = {
-	getParameter : function(name)
-	{
-	  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-	  var regexS = "[\\?&]"+name+"=([^&#]*)";
-	  var regex = new RegExp( regexS );
-	  var results = regex.exec( window.location.href );
-	  if( results == null )
-	    return "";
-	  else
-	    return decodeURIComponent(results[1].replace(/\+/g, " "));
+	getParameter : function(name) {
+		name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+		var regexS = "[\\?&]" + name + "=([^&#]*)";
+		var regex = new RegExp(regexS);
+		var results = regex.exec(window.location.href);
+		if (results === null) {
+			return "";
+		}
+		else {
+			return decodeURIComponent(results[1].replace(/\+/g, " "));
+		}
 	},
 
 	getSection : function() {
@@ -1545,6 +1558,22 @@ window.EKeyboard = {
 	hide : function() {
 		$('#keyboard').hide();
 		$('#keyboard_keys').hide();
+	},
+
+	updatePosition : function(origin) {
+		if (!origin.is(':visible')) {
+			EKeyboard.hide();
+			return;
+		}
+		var nPos = origin.offset();
+
+		nPos.top += (origin.height() + 7);
+		nPos.left += 20;
+		$('#keyboard').show().css({ top: nPos.top, left: nPos.left });
+		$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 34 });
+		$('#keyboard_keys').data('active_area', origin.attr('id'));
+
+		insertTags = insertTags2;
 	}
 
 };
@@ -1552,25 +1581,13 @@ window.EKeyboard = {
 (function($) {
 
 	$.fn.keyboard = function () {
-
-		$(this).focus(function() {
-			if (!$(this).is(':visible')) {
-				EKeyboard.hide();
-				return;
-			}
-			var nPos = $(this).offset();
-
-			nPos.top += ($(this).height() + 7);
-			nPos.left += 20;
-			$('#keyboard').show().css({ top: nPos.top, left: nPos.left });
-			$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 34 });
-			$('#keyboard_keys').data('active_area', $(this).attr('id'));
-
-			insertTags = insertTags2;
-		}).blur(function() {
-		});
+		$(this)
+			.focus(function() {
+				EKeyboard.updatePosition($(this));
+			})
+			.blur(function() {
+			});
 		return $(this);
-
 	};
 
 })(jQuery);
@@ -1579,7 +1596,8 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 	var txtarea;
 	if (document.editform && !EUi.usingNew) {
 		txtarea = document.editform.wpTextbox1;
-	} else if (EUi.usingNew) {
+	}
+	else if (EUi.usingNew) {
 		var aname = $('#keyboard_keys').data('active_area');
 		txtarea = aname ? document.getElementById(aname) : undefined;
 	}
@@ -1618,7 +1636,8 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 		else if (document.body)
 			document.body.scrollTop = winScroll;
 
-	} else if (txtarea.selectionStart || txtarea.selectionStart == '0') { // Mozilla
+	}
+	else if (txtarea.selectionStart || txtarea.selectionStart == '0') { // Mozilla
 
 		//save textarea scroll position
 		var textScroll = txtarea.scrollTop;
@@ -1636,7 +1655,8 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 		if (isSample) {
 			txtarea.selectionStart = startPos + tagOpen.length;
 			txtarea.selectionEnd = startPos + tagOpen.length + selText.length;
-		} else {
+		}
+		else {
 			txtarea.selectionStart = startPos + tagOpen.length + selText.length + tagClose.length;
 			txtarea.selectionEnd = txtarea.selectionStart;
 		}
@@ -1648,7 +1668,8 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 		if (!selText) {
 			selText = sampleText;
 			isSample = true;
-		} else if (selText.charAt(selText.length - 1) == ' ') { //exclude ending space char
+		}
+		else if (selText.charAt(selText.length - 1) == ' ') { //exclude ending space char
 			selText = selText.substring(0, selText.length - 1);
 			tagClose += ' ';
 		}
@@ -1658,10 +1679,10 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 
 window.EApi = {
 	url : function(lang, project) {
-		if (lang == undefined) {
+		if (lang === undefined) {
 			lang = 'pl';
 		}
-		if (project == undefined) {
+		if (project === undefined) {
 			project = EConstants.WIKTIONARY;
 		}
 		return "http://" + lang + "." + project + ".org/w/api.php?";
@@ -1676,7 +1697,7 @@ window.EApi = {
 	},
 
 	_ask : function(query, url) {
-		if (url == undefined) {
+		if (url === undefined) {
 			url = EApi.url();
 		}
 		query['action'] = 'query';
@@ -1720,16 +1741,17 @@ window.EApi = {
 
 	done : function(idpart, error) {
 		var elem = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart);
-		if (error != undefined) {
-			elem.addClass('apierror').removeClass('apistarted apidone').html(error);
-		} else {
+		if (error === undefined) {
 			elem.addClass('apidone').removeClass('apistarted apierror');
+		}
+		else {
+			elem.addClass('apierror').removeClass('apistarted apidone').html(error);
 		}
 	},
 
 	started : function(idpart, subs) {
 		$('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart).removeClass('apidone apierror').addClass('apistarted');
-		if (subs != undefined) {
+		if (subs !== undefined) {
 			EUtil.focusArea(subs);
 		}
 	},
@@ -1748,7 +1770,7 @@ window.EAutomator = {
 	getActiveLangs : function() {
 		var ret = EConstants.USED_WIKTIONARIES.slice(0);
 		var act = EUtil.getActiveLangCode();
-		if (ret.indexOf(act) == -1 && EConstants.ALL_WIKTIONARIES.indexOf(act) != -1) {
+		if (ret.indexOf(act) === -1 && EConstants.ALL_WIKTIONARIES.indexOf(act) !== -1) {
 			ret.push(act);
 		}
 		return ret;
@@ -1761,15 +1783,15 @@ window.EAutomator = {
 		var ret = EConstants.USED_WIKTIONARIES.slice(0);
 		for (var id in Ed.content.sections) {
 			var code = Ed.content.sections[id]['code'];
-			if (code == undefined) {
+			if (code === undefined) {
 				continue;
 			}
 			code = code.replace(/-.*/, '');
-			if (code.length > 1 && code.length < 7 && code != 'pl' && ret.indexOf(code) == -1) {
+			if (code.length > 1 && code.length < 7 && code !== 'pl' && ret.indexOf(code) === -1) {
 				ret.push(code);
 			}
 		}
-		return $.grep(ret, function(val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) != -1 });
+		return $.grep(ret, function(val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) !== -1 });
 	},
 
 	/*
@@ -1788,21 +1810,21 @@ window.EAutomator = {
 
 		var iwikis = [];
 		$.each(results, function(i, res) {
-			if (res.query == undefined || res.query.pages == undefined) {
+			if (res.query === undefined || res.query.pages === undefined) {
 				return false;
 			}
 			$.each(res.query.pages, function(j, val) {
-				if (j == -1) {
+				if (j === -1) {
 					return false;
 				}
-				if (iwikis.indexOf(res.query.general.lang) == -1 && res.query.general.lang != 'pl') {
+				if (iwikis.indexOf(res.query.general.lang) === -1 && res.query.general.lang !== 'pl') {
 					iwikis.push(res.query.general.lang);
 				}
-				if (val.langlinks == undefined) {
+				if (val.langlinks === undefined) {
 					return false;
 				}
 				$.each(val.langlinks, function(k, link) {
-					if (link['*'] == mw.config.get('wgTitle') && iwikis.indexOf(link.lang) == -1 && link.lang != 'pl') {
+					if (link['*'] === mw.config.get('wgTitle') && iwikis.indexOf(link.lang) === -1 && link.lang !== 'pl') {
 						iwikis.push(link.lang);
 					}
 				});
@@ -1811,9 +1833,10 @@ window.EAutomator = {
 		iwikis.sort(function(a, b) { return EConstants.INTERWIKI_ORDER.indexOf(a) - EConstants.INTERWIKI_ORDER.indexOf(b) });
 		var iwikiString = $.map(iwikis, function(val) { return '[[' + val + ':' + mw.config.get('wgTitle') + ']]' }).join(' ');
 		var curIwiki = $('#ed_0000_').val();
-		if (curIwiki == '') {
+		if (curIwiki === '') {
 			$('#ed_0000_').val(iwikiString);
-		} else {
+		}
+		else {
 			var re = new RegExp('(\\[\\[[a-z\\-]+' + ':' + mw.config.get('wgTitle') + '\\]\\]\\s*)+');
 			$('#ed_0000_').val(iwikiString + curIwiki.replace(re, '\n'));
 		}
@@ -1831,17 +1854,17 @@ window.EAutomator = {
 		var ipas = {};
 		var error = EStr.NO_IPA_FOUND;
 		$.each(results, function(i, res) {
-			if (res.query == undefined || res.query.pages == undefined) {
+			if (res.query === undefined || res.query.pages === undefined) {
 				return false;
 			}
 			var lang = res.query.general.lang;
 			$.each(res.query.pages, function(j, val) {
-				if (j == -1) {
+				if (j === -1) {
 					return false;
 				}
 				var content = val.revisions[0]['*'];
 				var ipa = EAutomator.extractIPA(content, lang);
-				if (ipa != undefined && ipa.length) {
+				if (ipa !== undefined && ipa.length) {
 					ipas[lang] = ipa;
 					error = undefined;
 				}
@@ -1853,9 +1876,10 @@ window.EAutomator = {
 	},
 
 	extractIPA : function(str, lang) {
-		if (EAutomator['extractIPA_' + lang] == undefined) {
+		if (EAutomator['extractIPA_' + lang] === undefined) {
 			return undefined;
-		} else {
+		}
+		else {
 			return EUtil.executeFn('extractIPA_' + lang, EAutomator, str);
 		}
 	},
@@ -1863,7 +1887,7 @@ window.EAutomator = {
 	extractFirstArgsFromTemplates : function(str, template) {
 		var re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*\\/?\\s*([^\\}\\/\\|<]+)', 'g');
 		var arr, results = [];
-		while ((arr = re.exec(str)) != null) {
+		while ((arr = re.exec(str)) !== null) {
 			results.push($.trim(arr[1]));
 		}
 		return results;
@@ -1872,7 +1896,7 @@ window.EAutomator = {
 	extractSecondArgsFromTemplates : function(str, template) {
 		var re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\}\\|]*)\\|\\s*\\/?([^\\}\\/\\|<]+)', 'gi');
 		var arr, results = [];
-		while ((arr = re.exec(str)) != null) {
+		while ((arr = re.exec(str)) !== null) {
 			results.push($.trim(arr[2]));
 		}
 		return results;
@@ -1897,7 +1921,7 @@ window.EAutomator = {
 		var arr;
 		var results = EAutomator.extractFirstArgsFromTemplates(str, 'transcription');
 		var re = /\{\{transcriptions\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)\s*\}\}/g;
-		while ((arr = re.exec(str)) != null) {
+		while ((arr = re.exec(str)) !== null) {
 			results.push($.trim(arr[1]));
 			results.push($.trim(arr[2]));
 		}
@@ -1907,7 +1931,7 @@ window.EAutomator = {
 		var arr;
 		var results = [];
 		var re = /\{\{pron-en1\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)/g;
-		while ((arr = re.exec(str)) != null) {
+		while ((arr = re.exec(str)) !== null) {
 			results.push($.trim(arr[1]));
 			results.push($.trim(arr[2]));
 		}
@@ -2209,7 +2233,8 @@ window.EAutomator = {
 			var yOffset;
 			if ($(this).hasClass('tipdown')) {
 				yOffset = -$(this).outerHeight() - 3;
-			} else {
+			}
+			else {
 				yOffset = tooltip.height() + 17;
 			}
 
@@ -2268,8 +2293,8 @@ window.EAutomator = {
                                     .replace(/\n/g, '<br/>');
 
                 shadow.html(val);
-                $(this).css('height', Math.min(Math.max(shadow.height(), minHeight), maxHeight)).focus();
-
+                $(this).css('height', Math.min(Math.max(shadow.height(), minHeight), maxHeight));
+                EKeyboard.updatePosition($(this));
             };
 
             $(this).change(update).keyup(update).keydown(update);

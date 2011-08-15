@@ -31,8 +31,8 @@
                                     .replace(/\n/g, '<br/>');
 
                 shadow.html(val);
-                $(this).css('height', Math.min(Math.max(shadow.height(), minHeight), maxHeight)).focus();
-
+                $(this).css('height', Math.min(Math.max(shadow.height(), minHeight), maxHeight));
+                EKeyboard.updatePosition($(this));
             };
 
             $(this).change(update).keyup(update).keydown(update);

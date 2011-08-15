@@ -66,6 +66,22 @@ window.EKeyboard = {
 	hide : function() {
 		$('#keyboard').hide();
 		$('#keyboard_keys').hide();
+	},
+
+	updatePosition : function(origin) {
+		if (!origin.is(':visible')) {
+			EKeyboard.hide();
+			return;
+		}
+		var nPos = origin.offset();
+
+		nPos.top += (origin.height() + 7);
+		nPos.left += 20;
+		$('#keyboard').show().css({ top: nPos.top, left: nPos.left });
+		$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 34 });
+		$('#keyboard_keys').data('active_area', origin.attr('id'));
+
+		insertTags = insertTags2;
 	}
 
 };
@@ -73,25 +89,13 @@ window.EKeyboard = {
 (function($) {
 
 	$.fn.keyboard = function () {
-
-		$(this).focus(function() {
-			if (!$(this).is(':visible')) {
-				EKeyboard.hide();
-				return;
-			}
-			var nPos = $(this).offset();
-
-			nPos.top += ($(this).height() + 7);
-			nPos.left += 20;
-			$('#keyboard').show().css({ top: nPos.top, left: nPos.left });
-			$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 34 });
-			$('#keyboard_keys').data('active_area', $(this).attr('id'));
-
-			insertTags = insertTags2;
-		}).blur(function() {
-		});
+		$(this)
+			.focus(function() {
+				EKeyboard.updatePosition($(this));
+			})
+			.blur(function() {
+			});
 		return $(this);
-
 	};
 
 })(jQuery);
@@ -100,7 +104,8 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 	var txtarea;
 	if (document.editform && !EUi.usingNew) {
 		txtarea = document.editform.wpTextbox1;
-	} else if (EUi.usingNew) {
+	}
+	else if (EUi.usingNew) {
 		var aname = $('#keyboard_keys').data('active_area');
 		txtarea = aname ? document.getElementById(aname) : undefined;
 	}
@@ -139,7 +144,8 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 		else if (document.body)
 			document.body.scrollTop = winScroll;
 
-	} else if (txtarea.selectionStart || txtarea.selectionStart == '0') { // Mozilla
+	}
+	else if (txtarea.selectionStart || txtarea.selectionStart == '0') { // Mozilla
 
 		//save textarea scroll position
 		var textScroll = txtarea.scrollTop;
@@ -157,7 +163,8 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 		if (isSample) {
 			txtarea.selectionStart = startPos + tagOpen.length;
 			txtarea.selectionEnd = startPos + tagOpen.length + selText.length;
-		} else {
+		}
+		else {
 			txtarea.selectionStart = startPos + tagOpen.length + selText.length + tagClose.length;
 			txtarea.selectionEnd = txtarea.selectionStart;
 		}
@@ -169,7 +176,8 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 		if (!selText) {
 			selText = sampleText;
 			isSample = true;
-		} else if (selText.charAt(selText.length - 1) == ' ') { //exclude ending space char
+		}
+		else if (selText.charAt(selText.length - 1) == ' ') { //exclude ending space char
 			selText = selText.substring(0, selText.length - 1);
 			tagClose += ' ';
 		}
