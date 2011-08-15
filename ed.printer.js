@@ -6,7 +6,7 @@ window.EPrinter = {
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
 				sec = Ed.content.sections[id];
-				EForm.removeDefaultTexts(id, sec['code']);
+				EForm.removeDefaultTexts(id, sec.code);
 				sortableSections.push(sec);
 			}
 		}
@@ -19,21 +19,20 @@ window.EPrinter = {
 					code = EForm.val(EConstants.SECTION_ID_INTRO, '') + '\n';
 				} else {
 					code += '== ' + sec.title + ' ==\n';
-					for (j = 0; j < sec.subsections.length; j++) {
+					for (j = 0; j < sec.subsections.length; j += 1) {
 						subs = sec.subsections[j];
-						if (!subs.active) {
-							continue;
-						}
-						subs.content = EForm.val(sec.id, subs.title);
+						if (subs.active) {
+							subs.content = EForm.val(sec.id, subs.title);
 
-						if (subs.title === '' && subs.content !== '') {
-							code += subs.content + '\n';
-						} else if (subs.title !== '' && subs.content === '') {
-							code += '{{' + subs.title + '}}\n';
-						} else if (subs.shortened) {
-							code += '{{' + subs.title + '}}' + EPrinter.adequateWhitespace(subs) + subs.content + '\n';
-						} else if (subs.content !== '') {
-							code += subs.content + '\n';
+							if (subs.title === '' && subs.content !== '') {
+								code += subs.content + '\n';
+							} else if (subs.title !== '' && subs.content === '') {
+								code += '{{' + subs.title + '}}\n';
+							} else if (subs.shortened) {
+								code += '{{' + subs.title + '}}' + EPrinter.adequateWhitespace(subs) + subs.content + '\n';
+							} else if (subs.content !== '') {
+								code += subs.content + '\n';
+							}
 						}
 					}
 					code += '\n';

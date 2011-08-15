@@ -291,7 +291,7 @@ window.Ed = {
 
 	init : function () {
 		var tbox, oldform, instruction;
-		if (EUtil.getParameter('oldid') && EUtil.getParameter('oldid') !== '' + mw.config.get('wgCurRevisionId')) {
+		if (EUtil.getParameter('oldid') && EUtil.getParameter('oldid') !== mw.config.get('wgCurRevisionId').toString()) {
 			return;
 		}
 		EConstants.init();
@@ -335,10 +335,7 @@ window.EParser = {
 		sections = code.split('<BE>');
 		reta = {};
 		for (s in sections) {
-			if (sections.hasOwnProperty(s)) {
-				if (!sections[s].length) {
-					continue;
-				}
+			if (sections.hasOwnProperty(s) && sections[s].length) {
 				sec = sections[s].split('<EN>');
 
 				if (sec.length === 1) {
@@ -495,7 +492,6 @@ window.ESectionParser = {
 			}
 		}
 
-		targetSubsections;
 		switch (mode) {
 		case 'INTRO':
 			targetSubsections = []; break;
@@ -526,10 +522,10 @@ window.ESectionParser = {
 
 	alternateTitle : function (title) {
 		switch (title) {
-		case 'transliteracja' : return '|trans';
-		case 'transkrypcja' : return '|transkr';
-		case 'kreski' : return '|hanja-kreski';
-		case 'przykłady' : return '|użycie';
+		case 'transliteracja': return '|trans';
+		case 'transkrypcja': return '|transkr';
+		case 'kreski': return '|hanja-kreski';
+		case 'przykłady': return '|użycie';
 		default: return '';
 		}
 	},
@@ -541,13 +537,15 @@ window.ESectionParser = {
 		var i, j, title, alt, regex, sub, pos, repl, changed, firstbreak;
 
 		for (i in subsections) {
-			title = subsections[i].title;
-			alt = ESectionParser.alternateTitle(title);
-			regex = new RegExp('\\{\\{(' + title + alt + ')\\s*[\\|\\}]', 'g');
-			positions.push({
-				index: title === '' ? 0 : str.search(regex),
-				title: title
-			});
+			if (subsections.hasOwnProperty(i)) {
+				title = subsections[i].title;
+				alt = ESectionParser.alternateTitle(title);
+				regex = new RegExp('\\{\\{(' + title + alt + ')\\s*[\\|\\}]', 'g');
+				positions.push({
+					index: title === '' ? 0 : str.search(regex),
+					title: title
+				});
+			}
 		}
 		positions.sort(function (a, b) {
 			if (!a.index && !b.index) {
@@ -557,34 +555,38 @@ window.ESectionParser = {
 		});
 
 		for (i in subsections) {
-			sub = subsections[i];
-			for (j in positions) {
-				j = parseInt(j);
-				pos = positions[j];
-				if (pos.title === sub.title) {
-					if (pos.index !== -1) {
-						if (j < positions.length - 1) {
-							sub.content = $.trim(str.substring(pos.index, positions[j + 1].index));
-						} else {
-							sub.content = $.trim(str.substring(pos.index));
-						}
-						alt = ESectionParser.alternateTitle(sub.title);
-						repl = new RegExp('\\{\\{(' + sub.title + alt + ')\\}\\}');
-						changed = sub.content.replace(repl, '');
+			if (subsections.hasOwnProperty(i)) {
+				sub = subsections[i];
+				for (j in positions) {
+					if (positions.hasOwnProperty(j)) {
+						j = parseInt(j, 10);
+						pos = positions[j];
+						if (pos.title === sub.title) {
+							if (pos.index !== -1) {
+								if (j < positions.length - 1) {
+									sub.content = $.trim(str.substring(pos.index, positions[j + 1].index));
+								} else {
+									sub.content = $.trim(str.substring(pos.index));
+								}
+								alt = ESectionParser.alternateTitle(sub.title);
+								repl = new RegExp('\\{\\{(' + sub.title + alt + ')\\}\\}');
+								changed = sub.content.replace(repl, '');
 
-						if (changed !== sub.content) {
-							firstbreak = changed.search(/\n/);
-							if (firstbreak !== -1 && firstbreak < changed.search(/\S/)) {
-								sub.initmultiline = true;
+								if (changed !== sub.content) {
+									firstbreak = changed.search(/\n/);
+									if (firstbreak !== -1 && firstbreak < changed.search(/\S/)) {
+										sub.initmultiline = true;
+									}
+									sub.content = $.trim(changed);
+								} else if (sub.content !== '' || sub.title === '') {
+									sub.shortened = false;
+								}
+								sub.initcontent = sub.content;
+								break;
+							} else if (targetSubsections.indexOf(pos.title) === -1) {
+								sub.active = false;
 							}
-							sub.content = $.trim(changed);
-						} else if (sub.content !== '' || sub.title === '') {
-							sub.shortened = false;
 						}
-						sub.initcontent = sub.content;
-						break;
-					} else if (targetSubsections.indexOf(pos.title) === -1) {
-						sub.active = false;
 					}
 				}
 			}
@@ -609,7 +611,7 @@ window.EPrinter = {
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
 				sec = Ed.content.sections[id];
-				EForm.removeDefaultTexts(id, sec['code']);
+				EForm.removeDefaultTexts(id, sec.code);
 				sortableSections.push(sec);
 			}
 		}
@@ -622,21 +624,20 @@ window.EPrinter = {
 					code = EForm.val(EConstants.SECTION_ID_INTRO, '') + '\n';
 				} else {
 					code += '== ' + sec.title + ' ==\n';
-					for (j = 0; j < sec.subsections.length; j++) {
+					for (j = 0; j < sec.subsections.length; j += 1) {
 						subs = sec.subsections[j];
-						if (!subs.active) {
-							continue;
-						}
-						subs.content = EForm.val(sec.id, subs.title);
+						if (subs.active) {
+							subs.content = EForm.val(sec.id, subs.title);
 
-						if (subs.title === '' && subs.content !== '') {
-							code += subs.content + '\n';
-						} else if (subs.title !== '' && subs.content === '') {
-							code += '{{' + subs.title + '}}\n';
-						} else if (subs.shortened) {
-							code += '{{' + subs.title + '}}' + EPrinter.adequateWhitespace(subs) + subs.content + '\n';
-						} else if (subs.content !== '') {
-							code += subs.content + '\n';
+							if (subs.title === '' && subs.content !== '') {
+								code += subs.content + '\n';
+							} else if (subs.title !== '' && subs.content === '') {
+								code += '{{' + subs.title + '}}\n';
+							} else if (subs.shortened) {
+								code += '{{' + subs.title + '}}' + EPrinter.adequateWhitespace(subs) + subs.content + '\n';
+							} else if (subs.content !== '') {
+								code += subs.content + '\n';
+							}
 						}
 					}
 					code += '\n';
@@ -701,195 +702,406 @@ window.EConstants = {
 	INTRO : '«',
 	SUBSECTIONS :
 		{
-		POLISH :
-			[
-			 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne',
-			 'frazeologia', 'etymologia', 'uwagi', 'tłumaczenia', 'źródła'
-			],
-		LATIN :
-			[
-		 	 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne',
-		 	 'frazeologia', 'etymologia', 'uwagi', 'źródła'
-		 	],
-		NON_LATIN :
-			[
-			 'transliteracja', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy',
-			 'pokrewne', 'frazeologia', 'etymologia', 'uwagi', 'źródła'
-			],
-		DOUBLE :
-			[
-			 'ortografie', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy',
-			 'pokrewne', 'frazeologia', 'etymologia', 'uwagi', 'źródła'
-			],
-		CHINESE :
-			[// zh-char
-			 'klucz', 'kreski', 'warianty', 'kolejność', 'znaczenia', 'etymologia', 'kody', 'słowniki', 'uwagi', 'źródła'
-			],
-		KOREAN:
-			[// ko
-			 'kreski', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'złożenia', 'składnia', 'kolokacje', 'synonimy', 'antonimy',
-			 'pokrewne', 'frazeologia', 'etymologia', 'hanja', 'uwagi', 'źródła'
-			],
-		JAPANESE:
-			[// ja
-			 'transliteracja', 'czytania', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy',
-			 'antonimy', 'złożenia', 'pokrewne', 'frazeologia', 'etymologia', 'uwagi', 'źródła'
-			],
-		INTERNATIONAL :
-			[// inter
-			 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne', 'frazeologia',
-			 'etymologia', 'uwagi', 'źródła'
-			],
-		EGYPTIAN :
-			[// egy
-		 	 'zapis hieroglificzny', 'transliteracja', 'transkrypcja', 'znaczenia', 'determinatywy', 'odmiana', 'przykłady',
-		 	 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia', 'uwagi', 'źródła'
-		 	],
-		ALL :
-			[
-			 'zapis hieroglificzny', 'ortografie', 'transliteracja', 'transkrypcja', 'czytania', 'klucz', 'kreski', 'warianty',
-			 'kolejność', 'wymowa', 'znaczenia', 'determinatywy', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy',
-			 'antonimy', 'złożenia', 'pokrewne', 'pochodne', 'frazeologia', 'etymologia', 'kody', 'hanja', 'słowniki', 'uwagi',
-			 'tłumaczenia', 'źródła'
-			]
+			POLISH :
+				[
+					'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne',
+					'frazeologia', 'etymologia', 'uwagi', 'tłumaczenia', 'źródła'
+				],
+			LATIN :
+				[
+					'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne',
+					'frazeologia', 'etymologia', 'uwagi', 'źródła'
+				],
+			NON_LATIN :
+				[
+					'transliteracja', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy',
+					'pokrewne', 'frazeologia', 'etymologia', 'uwagi', 'źródła'
+				],
+			DOUBLE :
+				[
+					'ortografie', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy',
+					'pokrewne', 'frazeologia', 'etymologia', 'uwagi', 'źródła'
+				],
+			CHINESE :
+				[// zh-char
+					'klucz', 'kreski', 'warianty', 'kolejność', 'znaczenia', 'etymologia', 'kody', 'słowniki', 'uwagi', 'źródła'
+				],
+			KOREAN:
+				[// ko
+					'kreski', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'złożenia', 'składnia', 'kolokacje', 'synonimy', 'antonimy',
+					'pokrewne', 'frazeologia', 'etymologia', 'hanja', 'uwagi', 'źródła'
+				],
+			JAPANESE:
+				[// ja
+					'transliteracja', 'czytania', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy',
+					'antonimy', 'złożenia', 'pokrewne', 'frazeologia', 'etymologia', 'uwagi', 'źródła'
+				],
+			INTERNATIONAL :
+				[// inter
+					'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne', 'frazeologia',
+					'etymologia', 'uwagi', 'źródła'
+				],
+			EGYPTIAN :
+				[// egy
+					'zapis hieroglificzny', 'transliteracja', 'transkrypcja', 'znaczenia', 'determinatywy', 'odmiana', 'przykłady',
+					'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne', 'frazeologia', 'etymologia', 'uwagi', 'źródła'
+				],
+			ALL :
+				[
+					'zapis hieroglificzny', 'ortografie', 'transliteracja', 'transkrypcja', 'czytania', 'klucz', 'kreski', 'warianty',
+					'kolejność', 'wymowa', 'znaczenia', 'determinatywy', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy',
+					'antonimy', 'złożenia', 'pokrewne', 'pochodne', 'frazeologia', 'etymologia', 'kody', 'hanja', 'słowniki', 'uwagi',
+					'tłumaczenia', 'źródła'
+				]
 		},
 	SUBSECTION_TITLE :
 		{
-		'transliteracja' : 'Transliteracja',
-		'wymowa' : 'Wymowa',
-		'znaczenia' : 'Znaczenia',
-		'odmiana' : 'Odmiana',
-		'przykłady' : 'Przykłady użycia',
-		'składnia' : 'Składnia',
-		'kolokacje' : 'Kolokacje',
-		'synonimy' : 'Synonimy',
-		'antonimy' : 'Antonimy',
-		'pokrewne' : 'Wyrazy pokrewne',
-		'frazeologia' : 'Związki frazeologiczne',
-		'etymologia' : 'Etymologia',
-		'ortografie' : 'Zapisy w ortografiach alternatywnych',
-		'tłumaczenia' : 'Tłumaczenia',
-		'uwagi' : 'Uwagi',
-		'źródła' : 'Źródła',
-		'klucz' : 'Klucz',
-		'kreski' : 'Liczba kresek',
-		'warianty' : 'Warianty',
-		'kolejność' : 'Kolejność kresek',
-		'kody' : 'Kodowanie',
-		'słowniki' : 'Słowniki',
-		'zapis hieroglificzny' : 'Zapis hieroglificzny',
-		'transkrypcja' : 'Transkrypcja',
-		'determinatywy' : 'Determinatywy',
-		'czytania' : 'Czytania',
-		'złożenia' : 'Złożenia',
-		'hanja' : 'Hanja',
-		'pochodne' : 'Wyrazy pochodne',
-		'' : 'Sekcja wstępna'
+			'transliteracja' : 'Transliteracja',
+			'wymowa' : 'Wymowa',
+			'znaczenia' : 'Znaczenia',
+			'odmiana' : 'Odmiana',
+			'przykłady' : 'Przykłady użycia',
+			'składnia' : 'Składnia',
+			'kolokacje' : 'Kolokacje',
+			'synonimy' : 'Synonimy',
+			'antonimy' : 'Antonimy',
+			'pokrewne' : 'Wyrazy pokrewne',
+			'frazeologia' : 'Związki frazeologiczne',
+			'etymologia' : 'Etymologia',
+			'ortografie' : 'Zapisy w ortografiach alternatywnych',
+			'tłumaczenia' : 'Tłumaczenia',
+			'uwagi' : 'Uwagi',
+			'źródła' : 'Źródła',
+			'klucz' : 'Klucz',
+			'kreski' : 'Liczba kresek',
+			'warianty' : 'Warianty',
+			'kolejność' : 'Kolejność kresek',
+			'kody' : 'Kodowanie',
+			'słowniki' : 'Słowniki',
+			'zapis hieroglificzny' : 'Zapis hieroglificzny',
+			'transkrypcja' : 'Transkrypcja',
+			'determinatywy' : 'Determinatywy',
+			'czytania' : 'Czytania',
+			'złożenia' : 'Złożenia',
+			'hanja' : 'Hanja',
+			'pochodne' : 'Wyrazy pochodne',
+			'' : 'Sekcja wstępna'
 		},
 	NON_LATIN_LANGS :
-		['ab', 'ady', 'akk', 'am', 'ar', 'arc', 'as', 'av', 'ba', 'bal', 'be',
-		'bg', 'bn', 'bo', 'bs', 'cau', 'ce', 'chm', 'ckb', 'cr', 'cu', 'cv',
-		'dv', 'dz', 'el', 'fa', 'gez', 'got', 'gr', 'gu', 'he', 'hi', 'hy',
-		'inh', 'iu', 'ka', 'kjh', 'kk', 'km', 'kn', 'kok', 'ks', 'ku', 'kv',
-		'ky', 'lez', 'lo', 'mk', 'ml', 'mn', 'mr', 'my', 'myv', 'ne', 'new',
-		'or', 'os', 'pa', 'ps', 'rom', 'ru', 'sa', 'sd', 'si', 'sux', 'ta',
-		'tab', 'te', 'tg', 'th', 'tzm', 'uk', 'ur', 'xcl', 'yi', 'zrp'],
+		[
+			'ab', 'ady', 'akk', 'am', 'ar', 'arc', 'as', 'av', 'ba', 'bal', 'be',
+			'bg', 'bn', 'bo', 'bs', 'cau', 'ce', 'chm', 'ckb', 'cr', 'cu', 'cv',
+			'dv', 'dz', 'el', 'fa', 'gez', 'got', 'gr', 'gu', 'he', 'hi', 'hy',
+			'inh', 'iu', 'ka', 'kjh', 'kk', 'km', 'kn', 'kok', 'ks', 'ku', 'kv',
+			'ky', 'lez', 'lo', 'mk', 'ml', 'mn', 'mr', 'my', 'myv', 'ne', 'new',
+			'or', 'os', 'pa', 'ps', 'rom', 'ru', 'sa', 'sd', 'si', 'sux', 'ta',
+			'tab', 'te', 'tg', 'th', 'tzm', 'uk', 'ur', 'xcl', 'yi', 'zrp'
+		],
 	DOUBLE_LANGS :
-		['az', 'be', 'crh', 'jdt', 'lad', 'slovio', 'sr', 'tk', 'tt', 'tut', 'ug'],
+		[
+			'az', 'be', 'crh', 'jdt', 'lad', 'slovio', 'sr', 'tk', 'tt', 'tut', 'ug'
+		],
 	LANG_CODES_SHORT :
 		{
-		'dżuhuri' : 'jdt', 'esperanto' : 'eo', 'ewe' : 'ee', 'hindi' : 'hi',
-		'ido' : 'io', 'interlingua' : 'ia', 'inuktitut' : 'iu', 'jèrriais' : 'roa',
-		'jidysz' : 'yi', 'ladino' : 'lad', 'lingala' : 'ln', 'novial' : 'nov',
-		'papiamento' : 'pap', 'pitjantjatjara' : 'pjt', 'sanskryt' : 'sa',
-		'slovio' : 'slovio', 'sranan tongo' : 'srn',
-		'termin obcy w języku łacińskim' : 'termin obcy w języku łacińskim',
-		'termin obcy w języku polskim' : 'termin obcy w języku polskim',
-		'tetum' : 'tet', 'tok pisin' : 'tpi', 'tupinambá' : 'tpn', 'użycie międzynarodowe' : 'inter',
-		'volapük' : 'vo', 'znak chiński' : 'zh-char'
+			'dżuhuri' : 'jdt',
+			'esperanto' : 'eo',
+			'ewe' : 'ee',
+			'hindi' : 'hi',
+			'ido' : 'io',
+			'interlingua' : 'ia',
+			'inuktitut' : 'iu',
+			'jèrriais' : 'roa',
+			'jidysz' : 'yi',
+			'ladino' : 'lad',
+			'lingala' : 'ln',
+			'novial' : 'nov',
+			'papiamento' : 'pap',
+			'pitjantjatjara' : 'pjt',
+			'sanskryt' : 'sa',
+			'slovio' : 'slovio',
+			'sranan tongo' : 'srn',
+			'termin obcy w języku łacińskim' : 'termin obcy w języku łacińskim',
+			'termin obcy w języku polskim' : 'termin obcy w języku polskim',
+			'tetum' : 'tet',
+			'tok pisin' : 'tpi',
+			'tupinambá' : 'tpn',
+			'użycie międzynarodowe' : 'inter',
+			'volapük' : 'vo',
+			'znak chiński' : 'zh-char'
 		},
 	LANG_CODES_LONG :
 		{
-		'!Xóõ' : 'khi', 'abazyński' : 'cau', 'abchaski' : 'ab', 'abenaki' : 'abe',
-		'adygejski' : 'ady', 'afrykanerski' : 'af', 'ajmara' : 'ay', 'akadyjski' : 'akk',
-		'aklanon' : 'akl', 'alabama' : 'akz', 'albański' : 'sq', 'alemański' : 'als',
-		'aleucki' : 'ale', 'amharski' : 'am', 'angielski' : 'en', 'arabski' : 'ar',
-		'aragoński' : 'an', 'aramejski' : 'arc', 'arapaho' : 'arp', 'arumuński' : 'roa',
-		'assamski' : 'as', 'asturyjski' : 'ast', 'awarski' : 'av', 'azerski' : 'az',
-		'bambara' : 'bm', 'banjumasański' : 'map', 'baskijski' : 'eu', 'baszkirski' : 'ba',
-		'bawarski' : 'gem', 'beludżi' : 'bal', 'bengalski' : 'bn', 'białoruski (taraszkiewica)' : 'be',
-		'białoruski' : 'be', 'birmański' : 'my', 'boloński' : 'egl', 'bośniacki' : 'bs',
-		'bretoński' : 'br', 'bułgarski' : 'bg', 'cebuano' : 'ceb', 'chakaski' : 'kjh',
-		'chickasaw' : 'nai', 'chiński standardowy' : 'zh', 'chorwacki' : 'hr', 'czagatajski' : 'chg',
-		'czamorro' : 'ch', 'czarnogórski' : 'ch', 'czeczeński' : 'ce', 'czeski' : 'cs', 'czirokeski' : 'chr',
-		'czuwaski' : 'cv', 'dalmatyński' : 'dlm', 'dolnołużycki' : 'dsb', 'dolnoniemiecki' : 'nds',
-		'duński' : 'da', 'dzongkha' : 'dz', 'erzja' : 'myv', 'estoński' : 'et',
-		'etruski' : 'ett', 'farerski' : 'fo', 'fidżyjski' : 'fj', 'filipino' : 'fil',
-		'fiński' : 'fi', 'francuski' : 'fr', 'friulski' : 'fur', 'fryzyjski' : 'fy',
-		'ful' : 'ff', 'ga' : 'gaa', 'gagauski' : 'tut', 'galicyjski' : 'gl',
-		'gaskoński' : 'oc', 'gocki' : 'got', 'górnołużycki' : 'hsb', 'grenlandzki' : 'kl',
-		'gruziński' : 'ka', 'guarani' : 'gn', 'gudźarati' : 'gu', 'gyyz' : 'gez',
-		'haitański' : 'ht', 'hausa' : 'ha', 'hawajski' : 'haw', 'hebrajski' : 'he',
-		'hiszpański' : 'es', 'holenderski' : 'nl', 'hupa' : 'hup', 'ilokano' : 'ilo',
-		'indonezyjski' : 'id', 'inguski' : 'inh', 'irlandzki' : 'ga', 'islandzki' : 'is',
-		'istriocki' : 'ist', 'japoński' : 'ja', 'joruba' : 'yor', 'kabylski' : 'kab',
-		'kakczikel' : 'myn', 'kannada' : 'kn', 'karakałpacki' : 'kaa', 'kaszmirski' : 'ks',
-		'kaszubski' : 'csb', 'kataloński' : 'ca', 'kazachski' : 'kk', 'keczua' : 'qu',
-		'khmerski' : 'km', 'kirgiski' : 'ky', 'klingoński' : 'tlh', 'komi-jaźwiński' : 'kom',
-		'komi-permiacki' : 'koi', 'komi-zyriański' : 'kpv', 'komi' : 'kv', 'konkani' : 'kok',
-		'koreański' : 'ko', 'kornijski' : 'kw', 'korsykański' : 'co', 'kri' : 'cr',
-		'krymskotatarski' : 'crh', 'kurdyjski' : 'ku', 'ladyński' : 'lld', 'langwedocki' : 'oci',
-		'laotański' : 'lo', 'lezgiński' : 'lez', 'liguryjski' : 'lij', 'limburski' : 'lim',
-		'litewski' : 'lt', 'lombardzki' : 'lmo', 'luksemburski' : 'lb', 'luo' : 'luo',
-		'łaciński' : 'la', 'łatgalski' : 'ltg', 'łotewski' : 'lv', 'macedoński' : 'mk', 'malajalam' : 'ml',
-		'malajski' : 'ms', 'malediwski' : 'dv', 'malgaski' : 'mg', 'maltański' : 'mt',
-		'maoryski' : 'mi', 'marathi' : 'mr', 'maryjski' : 'chm', 'mikmak' : 'mic', 'minnan' : 'zh',
-		'mołdawski' : 'mo', 'mongolski' : 'mn', 'nahuatl' : 'nah', 'nauruański' : 'na',
-		'nawaho' : 'nv', 'neapolitański' : 'nap', 'nepalski' : 'ne', 'newarski' : 'new',
-		'niemiecki' : 'de', 'norweski (bokmål)' : 'nb', 'norweski (nynorsk)' : 'nn', 'nowogrecki' : 'el',
-		'orija' : 'or', 'ormiański' : 'hy', 'oromo' : 'om', 'osetyjski' : 'os',
-		'pali' : 'pi', 'paszto' : 'ps', 'pendżabski' : 'pa', 'perski' : 'fa',
-		'piemoncki' : 'pms', 'pikardyjski' : 'pcd', 'pirahã' : 'myp', 'polski' : 'pl',
-		'połabski' : 'pox', 'portugalski' : 'pt', 'północnolapoński' : 'sme', 'pragermański' : 'gem',
-		'prowansalski' : 'oci', 'pruski' : 'prg', 'rarotonga' : 'rar', 'romansz' : 'roh',
-		'romski' : 'rom', 'rosyjski' : 'ru', 'rumuński' : 'ro', 'rundi' : 'rn',
-		'russenorsk' : 'crp', 'sardyński' : 'sc', 'serbski' : 'sr', 'sindhi' : 'sd',
-		'sko' : 'sko', 'skolt' : 'sms', 'słowacki' : 'sk', 'słoweński' : 'sl',
-		'słowiński' : 'slov', 'somalijski' : 'so', 'sorani' : 'ckb', 'staro-cerkiewno-słowiański' : 'cu',
-		'staro-wysoko-niemiecki' : 'goh', 'staroangielski' : 'ang', 'staroegipski' : 'egy', 'starofrancuski' : 'fro',
-		'starogrecki' : 'gr', 'staroirlandzki' : 'sga', 'staronordyjski' : 'non', 'staroormiański' : 'xcl',
-		'suahili' : 'sw', 'sumeryjski' : 'sux', 'sundajski' : 'su', 'susu' : 'sus',
-		'sycylijski' : 'scn', 'syngaleski' : 'si', 'szkocki gaelicki' : 'gla', 'szkocki' : 'sco',
-		'szwabski' : 'gsw', 'szwedzki' : 'sv', 'średnio-dolno-niemiecki' : 'średnio-dolno-niemiecki', 'średnio-wysoko-niemiecki' : 'gmh',
-		'średnioangielski' : 'enm', 'tabasarański' : 'tab', 'tadżycki' : 'tg', 'tagalski' : 'tl',
-		'tahitański' : 'ty', 'tajski' : 'th', 'tamazight' : 'tzm', 'tamilski' : 'ta',
-		'tatarski' : 'tt', 'telugu' : 'te', 'tigrinia' : 'ti', 'tonga' : 'to',
-		'turecki' : 'tr', 'turkmeński' : 'tk', 'tuvalu' : 'tvl', 'twi' : 'tw',
-		'tybetański' : 'bo', 'ujgurski' : 'ug', 'ukraiński' : 'uk', 'urdu' : 'ur',
-		'uwea' : 'wls', 'uzbecki' : 'uz', 'võro' : 'fiu', 'walijski' : 'cy',
-		'waloński' : 'wa', 'wczesny nowoangielski' : 'emen', 'wenecki' : 'vec', 'wepski' : 'fiu',
-		'węgierski' : 'hu', 'wietnamski' : 'vi', 'wilamowski' : 'wym', 'włoski' : 'it',
-		'wolof' : 'wo', 'wysokoislandzki' : 'art', 'yupik środkowy' : 'ypk', 'zachoflamandzki' : 'vls',
-		'zarfatit' : 'zrp', 'zazaki' : 'zza', 'zelandzki' : 'zea', 'zulu' : 'zu',
-		'żmudzki' : 'bat' },
+			'!Xóõ' : 'khi',
+			'abazyński' : 'cau',
+			'abchaski' : 'ab',
+			'abenaki' : 'abe',
+			'adygejski' : 'ady',
+			'afrykanerski' : 'af',
+			'ajmara' : 'ay',
+			'akadyjski' : 'akk',
+			'aklanon' : 'akl',
+			'alabama' : 'akz',
+			'albański' : 'sq',
+			'alemański' : 'als',
+			'aleucki' : 'ale',
+			'amharski' : 'am',
+			'angielski' : 'en',
+			'arabski' : 'ar',
+			'aragoński' : 'an',
+			'aramejski' : 'arc',
+			'arapaho' : 'arp',
+			'arumuński' : 'roa',
+			'assamski' : 'as',
+			'asturyjski' : 'ast',
+			'awarski' : 'av',
+			'azerski' : 'az',
+			'bambara' : 'bm',
+			'banjumasański' : 'map',
+			'baskijski' : 'eu',
+			'baszkirski' : 'ba',
+			'bawarski' : 'gem',
+			'beludżi' : 'bal',
+			'bengalski' : 'bn',
+			'białoruski (taraszkiewica)' : 'be',
+			'białoruski' : 'be',
+			'birmański' : 'my',
+			'boloński' : 'egl',
+			'bośniacki' : 'bs',
+			'bretoński' : 'br',
+			'bułgarski' : 'bg',
+			'cebuano' : 'ceb',
+			'chakaski' : 'kjh',
+			'chickasaw' : 'nai',
+			'chiński standardowy' : 'zh',
+			'chorwacki' : 'hr',
+			'czagatajski' : 'chg',
+			'czamorro' : 'ch',
+			'czarnogórski' : 'ch',
+			'czeczeński' : 'ce',
+			'czeski' : 'cs',
+			'czirokeski' : 'chr',
+			'czuwaski' : 'cv',
+			'dalmatyński' : 'dlm',
+			'dolnołużycki' : 'dsb',
+			'dolnoniemiecki' : 'nds',
+			'duński' : 'da',
+			'dzongkha' : 'dz',
+			'erzja' : 'myv',
+			'estoński' : 'et',
+			'etruski' : 'ett',
+			'farerski' : 'fo',
+			'fidżyjski' : 'fj',
+			'filipino' : 'fil',
+			'fiński' : 'fi',
+			'francuski' : 'fr',
+			'friulski' : 'fur',
+			'fryzyjski' : 'fy',
+			'ful' : 'ff',
+			'ga' : 'gaa',
+			'gagauski' : 'tut',
+			'galicyjski' : 'gl',
+			'gaskoński' : 'oc',
+			'gocki' : 'got',
+			'górnołużycki' : 'hsb',
+			'grenlandzki' : 'kl',
+			'gruziński' : 'ka',
+			'guarani' : 'gn',
+			'gudźarati' : 'gu',
+			'gyyz' : 'gez',
+			'haitański' : 'ht',
+			'hausa' : 'ha',
+			'hawajski' : 'haw',
+			'hebrajski' : 'he',
+			'hiszpański' : 'es',
+			'holenderski' : 'nl',
+			'hupa' : 'hup',
+			'ilokano' : 'ilo',
+			'indonezyjski' : 'id',
+			'inguski' : 'inh',
+			'irlandzki' : 'ga',
+			'islandzki' : 'is',
+			'istriocki' : 'ist',
+			'japoński' : 'ja',
+			'joruba' : 'yor',
+			'kabylski' : 'kab',
+			'kakczikel' : 'myn',
+			'kannada' : 'kn',
+			'karakałpacki' : 'kaa',
+			'kaszmirski' : 'ks',
+			'kaszubski' : 'csb',
+			'kataloński' : 'ca',
+			'kazachski' : 'kk',
+			'keczua' : 'qu',
+			'khmerski' : 'km',
+			'kirgiski' : 'ky',
+			'klingoński' : 'tlh',
+			'komi-jaźwiński' : 'kom',
+			'komi-permiacki' : 'koi',
+			'komi-zyriański' : 'kpv',
+			'komi' : 'kv',
+			'konkani' : 'kok',
+			'koreański' : 'ko',
+			'kornijski' : 'kw',
+			'korsykański' : 'co',
+			'kri' : 'cr',
+			'krymskotatarski' : 'crh',
+			'kurdyjski' : 'ku',
+			'ladyński' : 'lld',
+			'langwedocki' : 'oci',
+			'laotański' : 'lo',
+			'lezgiński' : 'lez',
+			'liguryjski' : 'lij',
+			'limburski' : 'lim',
+			'litewski' : 'lt',
+			'lombardzki' : 'lmo',
+			'luksemburski' : 'lb',
+			'luo' : 'luo',
+			'łaciński' : 'la',
+			'łatgalski' : 'ltg',
+			'łotewski' : 'lv',
+			'macedoński' : 'mk',
+			'malajalam' : 'ml',
+			'malajski' : 'ms',
+			'malediwski' : 'dv',
+			'malgaski' : 'mg',
+			'maltański' : 'mt',
+			'maoryski' : 'mi',
+			'marathi' : 'mr',
+			'maryjski' : 'chm',
+			'mikmak' : 'mic',
+			'minnan' : 'zh',
+			'mołdawski' : 'mo',
+			'mongolski' : 'mn',
+			'nahuatl' : 'nah',
+			'nauruański' : 'na',
+			'nawaho' : 'nv',
+			'neapolitański' : 'nap',
+			'nepalski' : 'ne',
+			'newarski' : 'new',
+			'niemiecki' : 'de',
+			'norweski (bokmål)' : 'nb',
+			'norweski (nynorsk)' : 'nn',
+			'nowogrecki' : 'el',
+			'orija' : 'or',
+			'ormiański' : 'hy',
+			'oromo' : 'om',
+			'osetyjski' : 'os',
+			'pali' : 'pi',
+			'paszto' : 'ps',
+			'pendżabski' : 'pa',
+			'perski' : 'fa',
+			'piemoncki' : 'pms',
+			'pikardyjski' : 'pcd',
+			'pirahã' : 'myp',
+			'polski' : 'pl',
+			'połabski' : 'pox',
+			'portugalski' : 'pt',
+			'północnolapoński' : 'sme',
+			'pragermański' : 'gem',
+			'prowansalski' : 'oci',
+			'pruski' : 'prg',
+			'rarotonga' : 'rar',
+			'romansz' : 'roh',
+			'romski' : 'rom',
+			'rosyjski' : 'ru',
+			'rumuński' : 'ro',
+			'rundi' : 'rn',
+			'russenorsk' : 'crp',
+			'sardyński' : 'sc',
+			'serbski' : 'sr',
+			'sindhi' : 'sd',
+			'sko' : 'sko',
+			'skolt' : 'sms',
+			'słowacki' : 'sk',
+			'słoweński' : 'sl',
+			'słowiński' : 'slov',
+			'somalijski' : 'so',
+			'sorani' : 'ckb',
+			'staro-cerkiewno-słowiański' : 'cu',
+			'staro-wysoko-niemiecki' : 'goh',
+			'staroangielski' : 'ang',
+			'staroegipski' : 'egy',
+			'starofrancuski' : 'fro',
+			'starogrecki' : 'gr',
+			'staroirlandzki' : 'sga',
+			'staronordyjski' : 'non',
+			'staroormiański' : 'xcl',
+			'suahili' : 'sw',
+			'sumeryjski' : 'sux',
+			'sundajski' : 'su',
+			'susu' : 'sus',
+			'sycylijski' : 'scn',
+			'syngaleski' : 'si',
+			'szkocki gaelicki' : 'gla',
+			'szkocki' : 'sco',
+			'szwabski' : 'gsw',
+			'szwedzki' : 'sv',
+			'średnio-dolno-niemiecki' : 'średnio-dolno-niemiecki',
+			'średnio-wysoko-niemiecki' : 'gmh',
+			'średnioangielski' : 'enm',
+			'tabasarański' : 'tab',
+			'tadżycki' : 'tg',
+			'tagalski' : 'tl',
+			'tahitański' : 'ty',
+			'tajski' : 'th',
+			'tamazight' : 'tzm',
+			'tamilski' : 'ta',
+			'tatarski' : 'tt',
+			'telugu' : 'te',
+			'tigrinia' : 'ti',
+			'tonga' : 'to',
+			'turecki' : 'tr',
+			'turkmeński' : 'tk',
+			'tuvalu' : 'tvl',
+			'twi' : 'tw',
+			'tybetański' : 'bo',
+			'ujgurski' : 'ug',
+			'ukraiński' : 'uk',
+			'urdu' : 'ur',
+			'uwea' : 'wls',
+			'uzbecki' : 'uz',
+			'võro' : 'fiu',
+			'walijski' : 'cy',
+			'waloński' : 'wa',
+			'wczesny nowoangielski' : 'emen',
+			'wenecki' : 'vec',
+			'wepski' : 'fiu',
+			'węgierski' : 'hu',
+			'wietnamski' : 'vi',
+			'wilamowski' : 'wym',
+			'włoski' : 'it',
+			'wolof' : 'wo',
+			'wysokoislandzki' : 'art',
+			'yupik środkowy' : 'ypk',
+			'zachoflamandzki' : 'vls',
+			'zarfatit' : 'zrp',
+			'zazaki' : 'zza',
+			'zelandzki' : 'zea',
+			'zulu' : 'zu',
+			'żmudzki' : 'bat'
+		},
 	CODE_TO_LANG :
 		{},
 	ONELINE_SECTIONS :
 		20,
 	SUBSECTIONS_WITHOUT_NL :
-		[ 'wymowa', 'transliteracja', 'transkrypcja', 'ortografie', 'klucz', 'kreski', 'czytania' ],
+		[
+			'wymowa', 'transliteracja', 'transkrypcja', 'ortografie', 'klucz', 'kreski', 'czytania'
+		],
 	SUBSECTIONS_WITH_NL :
-		[ 'znaczenia', 'przykłady', 'tłumaczenia' ],
+		[
+			'znaczenia', 'przykłady', 'tłumaczenia'
+		],
 	SAMPLE_SUBSECTION_CONTENTS_POLISH :
 		{
-		'znaczenia' : "''rzeczownik, rodzaj żeński, męski''\n: (1.1) [[krótki|krótka]] [[definicja]]",
-		'przykłady' : ": (1.1) ''[[przykład|Przykład]] [[zdanie|zdania]].''",
-		'tłumaczenia' : "* angielski: (1.1) [[ ]]"
+			'znaczenia' : "''rzeczownik, rodzaj żeński, męski''\n: (1.1) [[krótki|krótka]] [[definicja]]",
+			'przykłady' : ": (1.1) ''[[przykład|Przykład]] [[zdanie|zdania]].''",
+			'tłumaczenia' : "* angielski: (1.1) [[ ]]"
 		},
 	SAMPLE_SUBSECTION_CONTENTS_FOREIGN :
 		{
-		'znaczenia' : "''rzeczownik, rodzaj żeński, męski''\n: (1.1) [[krótki|krótka]] [[definicja]]",
-		'przykłady' : ": (1.1) ''[[przykład|Przykład]] [[zdanie|zdania]].'' → [[tłumaczenie|Tłumaczenie]] [[zdanie|zdania]]."
+			'znaczenia' : "''rzeczownik, rodzaj żeński, męski''\n: (1.1) [[krótki|krótka]] [[definicja]]",
+			'przykłady' : ": (1.1) ''[[przykład|Przykład]] [[zdanie|zdania]].'' → [[tłumaczenie|Tłumaczenie]] [[zdanie|zdania]]."
 		},
 	SECTION_ID_INTRO :
 		'0000',
@@ -910,51 +1122,55 @@ window.EConstants = {
 	WIKIMEDIA :
 		'wikimedia',
 	USED_WIKTIONARIES :
-		['en', 'de', 'es', 'ru', 'fr'],
+		[
+			'en', 'de', 'es', 'ru', 'fr'
+		],
 	INTERWIKI_ORDER: // http://meta.wikimedia.org/wiki/Interwiki_sorting_order
-		['ace', 'af', 'ak', 'als', 'am', 'ang', 'ab', 'ar', 'an', 'arc',
-		'roa-rup', 'frp', 'as', 'ast', 'gn', 'av', 'ay', 'az', 'bjn', 'id',
-		'ms', 'bm', 'bn', 'zh-min-nan', 'nan', 'map-bms', 'jv', 'su', 'ba',
-		'be', 'be-x-old', 'bh', 'bcl', 'bi', 'bar', 'bo', 'bs', 'br', 'bug',
-		'bg', 'bxr', 'ca', 'ceb', 'cv', 'cs', 'ch', 'cbk-zam', 'ny', 'sn',
-		'tum', 'cho', 'co', 'cy', 'da', 'dk', 'pdc', 'de', 'dv', 'nv',
-		'dsb', 'na', 'dz', 'mh', 'et', 'el', 'eml', 'en', 'myv', 'es', 'eo',
-		'ext', 'eu', 'ee', 'fa', 'hif', 'fo', 'fr', 'fy', 'ff', 'fur', 'ga',
-		'gv', 'sm', 'gag', 'gd', 'gl', 'gan', 'ki', 'glk', 'gu', 'got',
-		'hak', 'xal', 'ko', 'ha', 'haw', 'hy', 'hi', 'ho', 'hsb', 'hr',
-		'io', 'ig', 'ilo', 'bpy', 'ia', 'ie', 'iu', 'ik', 'os', 'xh', 'zu',
-		'is', 'it', 'he', 'kl', 'kn', 'kr', 'pam', 'ka', 'ks', 'csb', 'kk',
-		'kw', 'rw', 'ky', 'rn', 'mrj', 'sw', 'kv', 'kg', 'ht', 'ku', 'kj',
-		'lad', 'lbe', 'lo', 'la', 'ltg', 'lv', 'to', 'lb', 'lt', 'lij',
-		'li', 'ln', 'jbo', 'lg', 'lmo', 'hu', 'mk', 'mg', 'ml', 'krc', 'mt',
-		'mi', 'mr', 'xmf', 'arz', 'mzn', 'cdo', 'mwl', 'koi', 'mdf', 'mo',
-		'mn', 'mus', 'my', 'nah', 'fj', 'nl', 'nds-nl', 'cr', 'ne', 'new',
-		'ja', 'nap', 'ce', 'frr', 'pih', 'no', 'nb', 'nn', 'nrm', 'nov',
-		'ii', 'oc', 'mhr', 'or', 'om', 'ng', 'hz', 'uz', 'pa', 'pi', 'pfl',
-		'pag', 'pnb', 'pap', 'ps', 'km', 'pcd', 'pms', 'nds', 'pl', 'pnt',
-		'pt', 'aa', 'kbd', 'kaa', 'crh', 'ty', 'ksh', 'ro', 'rmy', 'rm',
-		'qu', 'ru', 'rue', 'sah', 'se', 'sa', 'sg', 'sc', 'sco', 'stq',
-		'st', 'tn', 'sq', 'scn', 'si', 'simple', 'sd', 'ss', 'sk', 'sl',
-		'cu', 'szl', 'so', 'ckb', 'srn', 'sr', 'sh', 'fi', 'sv', 'tl', 'ta',
-		'kab',  'roa-tara', 'tt', 'te', 'tet', 'th', 'vi', 'ti', 'tg',
-		'tpi', 'tokipona', 'tp', 'chr', 'chy', 've', 'tr', 'tk', 'tw',
-		'udm', 'uk', 'ur', 'ug', 'za', 'vec', 'vo', 'fiu-vro', 'wa',
-		'zh-classical', 'vls', 'war', 'wo', 'wuu', 'ts', 'yi', 'yo',
-		'zh-yue', 'diq', 'zea', 'bat-smg', 'zh', 'zh-tw', 'zh-cn',
+		[
+			'ace', 'af', 'ak', 'als', 'am', 'ang', 'ab', 'ar', 'an', 'arc',
+			'roa-rup', 'frp', 'as', 'ast', 'gn', 'av', 'ay', 'az', 'bjn', 'id',
+			'ms', 'bm', 'bn', 'zh-min-nan', 'nan', 'map-bms', 'jv', 'su', 'ba',
+			'be', 'be-x-old', 'bh', 'bcl', 'bi', 'bar', 'bo', 'bs', 'br', 'bug',
+			'bg', 'bxr', 'ca', 'ceb', 'cv', 'cs', 'ch', 'cbk-zam', 'ny', 'sn',
+			'tum', 'cho', 'co', 'cy', 'da', 'dk', 'pdc', 'de', 'dv', 'nv',
+			'dsb', 'na', 'dz', 'mh', 'et', 'el', 'eml', 'en', 'myv', 'es', 'eo',
+			'ext', 'eu', 'ee', 'fa', 'hif', 'fo', 'fr', 'fy', 'ff', 'fur', 'ga',
+			'gv', 'sm', 'gag', 'gd', 'gl', 'gan', 'ki', 'glk', 'gu', 'got',
+			'hak', 'xal', 'ko', 'ha', 'haw', 'hy', 'hi', 'ho', 'hsb', 'hr',
+			'io', 'ig', 'ilo', 'bpy', 'ia', 'ie', 'iu', 'ik', 'os', 'xh', 'zu',
+			'is', 'it', 'he', 'kl', 'kn', 'kr', 'pam', 'ka', 'ks', 'csb', 'kk',
+			'kw', 'rw', 'ky', 'rn', 'mrj', 'sw', 'kv', 'kg', 'ht', 'ku', 'kj',
+			'lad', 'lbe', 'lo', 'la', 'ltg', 'lv', 'to', 'lb', 'lt', 'lij',
+			'li', 'ln', 'jbo', 'lg', 'lmo', 'hu', 'mk', 'mg', 'ml', 'krc', 'mt',
+			'mi', 'mr', 'xmf', 'arz', 'mzn', 'cdo', 'mwl', 'koi', 'mdf', 'mo',
+			'mn', 'mus', 'my', 'nah', 'fj', 'nl', 'nds-nl', 'cr', 'ne', 'new',
+			'ja', 'nap', 'ce', 'frr', 'pih', 'no', 'nb', 'nn', 'nrm', 'nov',
+			'ii', 'oc', 'mhr', 'or', 'om', 'ng', 'hz', 'uz', 'pa', 'pi', 'pfl',
+			'pag', 'pnb', 'pap', 'ps', 'km', 'pcd', 'pms', 'nds', 'pl', 'pnt',
+			'pt', 'aa', 'kbd', 'kaa', 'crh', 'ty', 'ksh', 'ro', 'rmy', 'rm',
+			'qu', 'ru', 'rue', 'sah', 'se', 'sa', 'sg', 'sc', 'sco', 'stq',
+			'st', 'tn', 'sq', 'scn', 'si', 'simple', 'sd', 'ss', 'sk', 'sl',
+			'cu', 'szl', 'so', 'ckb', 'srn', 'sr', 'sh', 'fi', 'sv', 'tl', 'ta',
+			'kab',  'roa-tara', 'tt', 'te', 'tet', 'th', 'vi', 'ti', 'tg',
+			'tpi', 'tokipona', 'tp', 'chr', 'chy', 've', 'tr', 'tk', 'tw',
+			'udm', 'uk', 'ur', 'ug', 'za', 'vec', 'vo', 'fiu-vro', 'wa',
+			'zh-classical', 'vls', 'war', 'wo', 'wuu', 'ts', 'yi', 'yo',
+			'zh-yue', 'diq', 'zea', 'bat-smg', 'zh', 'zh-tw', 'zh-cn'
         ],
 	ALL_WIKTIONARIES:
-		['af', 'als', 'an', 'roa-rup', 'ast', 'gn', 'ay', 'az', 'id', 'ms', 'zh-min-nan',
-		'jv', 'su', 'mt', 'bs', 'br', 'ca', 'cs', 'co', 'za', 'cy', 'da', 'de', 'na',
-		'et', 'ang', 'en', 'bo', 'es', 'eo', 'eu', 'fo', 'fr', 'fy', 'gd', 'ga', 'gv',
-		'sm', 'gl', 'hr', 'io', 'ia', 'ie', 'ik', 'zu', 'is', 'it', 'kl', 'csb', 'ku',
-		'kw', 'rw', 'sw', 'la', 'lv', 'lb', 'lt', 'li', 'ln', 'jbo', 'hu', 'mg', 'mi',
-		'nah', 'fj', 'nl', 'no', 'nn', 'oc', 'om', 'uz', 'nds', 'pl', 'pt', 'ro', 'qu',
-		'sg', 'st', 'tn', 'scn', 'simple', 'sk', 'sl', 'sq', 'ss', 'so', 'sh', 'fi',
-		'sv', 'tl', 'tt', 'vi', 'tpi', 'tr', 'tk', 'vo', 'wa', 'wo', 'ts', 'el',
-		'be', 'bg', 'kk', 'ky', 'mk', 'mn', 'ru', 'sr', 'tg', 'uk', 'hy', 'ka', 'he',
-		'yi', 'ar', 'fa', 'ha', 'ps', 'sd', 'ug', 'ur', 'dv', 'bn', 'gu', 'hi', 'ks',
-		'ne', 'sa', 'mr', 'kn', 'ml', 'pa', 'ta', 'te', 'km', 'lo', 'my', 'si', 'th',
-		'am', 'ti', 'iu', 'chr', 'ko', 'ja', 'zh'
+		[
+			'af', 'als', 'an', 'roa-rup', 'ast', 'gn', 'ay', 'az', 'id', 'ms', 'zh-min-nan',
+			'jv', 'su', 'mt', 'bs', 'br', 'ca', 'cs', 'co', 'za', 'cy', 'da', 'de', 'na',
+			'et', 'ang', 'en', 'bo', 'es', 'eo', 'eu', 'fo', 'fr', 'fy', 'gd', 'ga', 'gv',
+			'sm', 'gl', 'hr', 'io', 'ia', 'ie', 'ik', 'zu', 'is', 'it', 'kl', 'csb', 'ku',
+			'kw', 'rw', 'sw', 'la', 'lv', 'lb', 'lt', 'li', 'ln', 'jbo', 'hu', 'mg', 'mi',
+			'nah', 'fj', 'nl', 'no', 'nn', 'oc', 'om', 'uz', 'nds', 'pl', 'pt', 'ro', 'qu',
+			'sg', 'st', 'tn', 'scn', 'simple', 'sk', 'sl', 'sq', 'ss', 'so', 'sh', 'fi',
+			'sv', 'tl', 'tt', 'vi', 'tpi', 'tr', 'tk', 'vo', 'wa', 'wo', 'ts', 'el',
+			'be', 'bg', 'kk', 'ky', 'mk', 'mn', 'ru', 'sr', 'tg', 'uk', 'hy', 'ka', 'he',
+			'yi', 'ar', 'fa', 'ha', 'ps', 'sd', 'ug', 'ur', 'dv', 'bn', 'gu', 'hi', 'ks',
+			'ne', 'sa', 'mr', 'kn', 'ml', 'pa', 'ta', 'te', 'km', 'lo', 'my', 'si', 'th',
+			'am', 'ti', 'iu', 'chr', 'ko', 'ja', 'zh'
 		],
 	init : function () {
 		var name;
@@ -1151,7 +1367,7 @@ window.EUi = {
 			if (Ed.content.sections.hasOwnProperty(id)) {
 				EUi.addSection(id);
 				EUi.prepareFormSubsections(id);
-				size++;
+				size += 1;
 			}
 		}
 
@@ -1185,9 +1401,9 @@ window.EUi = {
 
 		item = $('<li id="ed_menuitem_' + id + '" class="tip menuitem">' + sec.code + '</li>');
 		tip = id === EConstants.SECTION_ID_INTRO
-				? EStr.INTRO_SECTION
-				: EParser.insideTemplate(sec.title) + '\<br/><small>tytuł sekcji: <tt>' + sec.title + '</tt></small>';
-		item.data({ 'section' : 'ed_section_' + id, 'code' : sec['code'], 'tip' : tip })
+			? EStr.INTRO_SECTION
+			: EParser.insideTemplate(sec.title) + '<br/><small>tytuł sekcji: <tt>' + sec.title + '</tt></small>';
+		item.data({ 'section' : 'ed_section_' + id, 'code' : sec.code, 'tip' : tip })
 			.click(function () {
 				EKeyboard.hide();
 				EUi.content.find('.ed_section').removeClass('active');
@@ -1196,7 +1412,7 @@ window.EUi = {
 				EUi.resizeTextareas();
 				EUi.activeLangCode = $(this).data('code');
 				EUi.activeLangId = id;
-				setTimeout(function (){$('fieldset.active').find('textarea:first').focus()}, 100); //FIXME why?
+				setTimeout(function () { $('fieldset.active').find('textarea:first').focus(); }, 100); //FIXME why?
 			});
 
 		// insert alphabetically
@@ -1219,8 +1435,8 @@ window.EUi = {
 			defaultLang = $.cookie('lastAdded');
 		}
 		defaultText = defaultLang
-				? EParser.getTitleFromCode(defaultLang)
-				: mw.config.get('wgPageName') + EStr.ADD_SECTION_TEMPLATE;
+			? EParser.getTitleFromCode(defaultLang)
+			: mw.config.get('wgPageName') + EStr.ADD_SECTION_TEMPLATE;
 		message = defaultLang ? EStr.ADD_SECTION_MESSAGE_DEFAULT : EStr.ADD_SECTION_MESSAGE;
 
 		jPrompt(message, defaultText, EStr.ADD_SECTION_TITLE,
@@ -1231,9 +1447,9 @@ window.EUi = {
 				}
 				sec = EParser.getSectionFromInput(val);
 
-				if (sec['code']) {
-					id = sec['id'];
-					if (Ed.content['sections'][id] !== undefined) {
+				if (sec.code) {
+					id = sec.id;
+					if (Ed.content.sections[id] !== undefined) {
 						jAlert(EStr.ADD_SECTION_ALREADY, EStr.ADD_SECTION_ALREADY_TITLE);
 					} else {
 						Ed.content.sections[id] = sec;
@@ -1241,8 +1457,8 @@ window.EUi = {
 
 						EUi.addSection(id);
 						EUi.prepareFormSubsections(id);
-						EForm.addDefaultTexts(id, sec['code']);
-						$.cookie('lastAdded', sec['code']);
+						EForm.addDefaultTexts(id, sec.code);
+						$.cookie('lastAdded', sec.code);
 					}
 					$('#ed_menuitem_' + id).click();
 					$('#ed_section_' + id + ' textarea').reverse().autogrow();
@@ -1261,7 +1477,7 @@ window.EUi = {
 				return;
 			}
 			section.title = res;
-			tip = EParser.insideTemplate(res) + '\<br/><small>tytuł sekcji: <tt>' + res + '</tt></small>';
+			tip = EParser.insideTemplate(res) + '<br/><small>tytuł sekcji: <tt>' + res + '</tt></small>';
 			$('#ed_menuitem_' + id).data('tip', tip);
 		});
 	},
@@ -1284,15 +1500,16 @@ window.EUi = {
 
 	deleteEmptySections : function () {
 		var id, sec, empty;
+		var setNotEmpty = function () {
+			if ($(this).val()) {
+				empty = false;
+			}
+		};
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
 				sec = Ed.content.sections[id];
 				empty = true;
-				$('#ed_section_' + id).find('textarea').each(function () {
-					if ($(this).val()) {
-						empty = false;
-					}
-				});
+				$('#ed_section_' + id).find('textarea').each(setNotEmpty);
 				if (empty) {
 					EUi.deleteSection(id, sec, 1);
 				}
@@ -1301,7 +1518,7 @@ window.EUi = {
 	},
 
 	prepareFormSubsections : function (id) {
-		var section = Ed.content['sections'][id];
+		var section = Ed.content.sections[id];
 		var fset = $('#ed_section_' + id);
 		var editlink, deletelink, i;
 
@@ -1317,7 +1534,7 @@ window.EUi = {
 			fset.append($('<p class="top"/>').append(editlink).append(deletelink));
 		}
 
-		for (i = 0; i < section.subsections.length; i++) {
+		for (i = 0; i < section.subsections.length; i += 1) {
 			if (section.subsections[i].active) {
 				fset.append(EUi.getSubsectionObj(id, section, section.subsections[i]));
 			}
@@ -1481,7 +1698,7 @@ window.EUtil = {
 		var namespaces = functionName.split(".");
 		var func = namespaces.pop();
 		var i;
-		for (i = 0; i < namespaces.length; i++) {
+		for (i = 0; i < namespaces.length; i += 1) {
 			context = context[namespaces[i]];
 		}
 		return context[func].apply(context, args);
@@ -1786,12 +2003,11 @@ window.EAutomator = {
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
 				code = Ed.content.sections[id]['code'];
-				if (code === undefined) {
-					continue;
-				}
-				code = code.replace(/-.*/, '');
-				if (code.length > 1 && code.length < 7 && code !== 'pl' && ret.indexOf(code) === -1) {
-					ret.push(code);
+				if (code !== undefined) {
+					code = code.replace(/-.*/, '');
+					if (code.length > 1 && code.length < 7 && code !== 'pl' && ret.indexOf(code) === -1) {
+						ret.push(code);
+					}
 				}
 			}
 		}

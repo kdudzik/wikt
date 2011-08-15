@@ -23,7 +23,7 @@ window.Ed = {
 
 	init : function () {
 		var tbox, oldform, instruction;
-		if (EUtil.getParameter('oldid') && EUtil.getParameter('oldid') !== '' + mw.config.get('wgCurRevisionId')) {
+		if (EUtil.getParameter('oldid') && EUtil.getParameter('oldid') !== mw.config.get('wgCurRevisionId').toString()) {
 			return;
 		}
 		EConstants.init();

@@ -6,10 +6,7 @@ window.EParser = {
 		sections = code.split('<BE>');
 		reta = {};
 		for (s in sections) {
-			if (sections.hasOwnProperty(s)) {
-				if (!sections[s].length) {
-					continue;
-				}
+			if (sections.hasOwnProperty(s) && sections[s].length) {
 				sec = sections[s].split('<EN>');
 
 				if (sec.length === 1) {
@@ -166,7 +163,6 @@ window.ESectionParser = {
 			}
 		}
 
-		targetSubsections;
 		switch (mode) {
 		case 'INTRO':
 			targetSubsections = []; break;
@@ -197,10 +193,10 @@ window.ESectionParser = {
 
 	alternateTitle : function (title) {
 		switch (title) {
-		case 'transliteracja' : return '|trans';
-		case 'transkrypcja' : return '|transkr';
-		case 'kreski' : return '|hanja-kreski';
-		case 'przykłady' : return '|użycie';
+		case 'transliteracja': return '|trans';
+		case 'transkrypcja': return '|transkr';
+		case 'kreski': return '|hanja-kreski';
+		case 'przykłady': return '|użycie';
 		default: return '';
 		}
 	},
@@ -212,13 +208,15 @@ window.ESectionParser = {
 		var i, j, title, alt, regex, sub, pos, repl, changed, firstbreak;
 
 		for (i in subsections) {
-			title = subsections[i].title;
-			alt = ESectionParser.alternateTitle(title);
-			regex = new RegExp('\\{\\{(' + title + alt + ')\\s*[\\|\\}]', 'g');
-			positions.push({
-				index: title === '' ? 0 : str.search(regex),
-				title: title
-			});
+			if (subsections.hasOwnProperty(i)) {
+				title = subsections[i].title;
+				alt = ESectionParser.alternateTitle(title);
+				regex = new RegExp('\\{\\{(' + title + alt + ')\\s*[\\|\\}]', 'g');
+				positions.push({
+					index: title === '' ? 0 : str.search(regex),
+					title: title
+				});
+			}
 		}
 		positions.sort(function (a, b) {
 			if (!a.index && !b.index) {
@@ -228,34 +226,38 @@ window.ESectionParser = {
 		});
 
 		for (i in subsections) {
-			sub = subsections[i];
-			for (j in positions) {
-				j = parseInt(j);
-				pos = positions[j];
-				if (pos.title === sub.title) {
-					if (pos.index !== -1) {
-						if (j < positions.length - 1) {
-							sub.content = $.trim(str.substring(pos.index, positions[j + 1].index));
-						} else {
-							sub.content = $.trim(str.substring(pos.index));
-						}
-						alt = ESectionParser.alternateTitle(sub.title);
-						repl = new RegExp('\\{\\{(' + sub.title + alt + ')\\}\\}');
-						changed = sub.content.replace(repl, '');
+			if (subsections.hasOwnProperty(i)) {
+				sub = subsections[i];
+				for (j in positions) {
+					if (positions.hasOwnProperty(j)) {
+						j = parseInt(j, 10);
+						pos = positions[j];
+						if (pos.title === sub.title) {
+							if (pos.index !== -1) {
+								if (j < positions.length - 1) {
+									sub.content = $.trim(str.substring(pos.index, positions[j + 1].index));
+								} else {
+									sub.content = $.trim(str.substring(pos.index));
+								}
+								alt = ESectionParser.alternateTitle(sub.title);
+								repl = new RegExp('\\{\\{(' + sub.title + alt + ')\\}\\}');
+								changed = sub.content.replace(repl, '');
 
-						if (changed !== sub.content) {
-							firstbreak = changed.search(/\n/);
-							if (firstbreak !== -1 && firstbreak < changed.search(/\S/)) {
-								sub.initmultiline = true;
+								if (changed !== sub.content) {
+									firstbreak = changed.search(/\n/);
+									if (firstbreak !== -1 && firstbreak < changed.search(/\S/)) {
+										sub.initmultiline = true;
+									}
+									sub.content = $.trim(changed);
+								} else if (sub.content !== '' || sub.title === '') {
+									sub.shortened = false;
+								}
+								sub.initcontent = sub.content;
+								break;
+							} else if (targetSubsections.indexOf(pos.title) === -1) {
+								sub.active = false;
 							}
-							sub.content = $.trim(changed);
-						} else if (sub.content !== '' || sub.title === '') {
-							sub.shortened = false;
 						}
-						sub.initcontent = sub.content;
-						break;
-					} else if (targetSubsections.indexOf(pos.title) === -1) {
-						sub.active = false;
 					}
 				}
 			}

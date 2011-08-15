@@ -21,12 +21,11 @@ window.EAutomator = {
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
 				code = Ed.content.sections[id]['code'];
-				if (code === undefined) {
-					continue;
-				}
-				code = code.replace(/-.*/, '');
-				if (code.length > 1 && code.length < 7 && code !== 'pl' && ret.indexOf(code) === -1) {
-					ret.push(code);
+				if (code !== undefined) {
+					code = code.replace(/-.*/, '');
+					if (code.length > 1 && code.length < 7 && code !== 'pl' && ret.indexOf(code) === -1) {
+						ret.push(code);
+					}
 				}
 			}
 		}

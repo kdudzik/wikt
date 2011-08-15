@@ -29,7 +29,7 @@ window.EUtil = {
 		var namespaces = functionName.split(".");
 		var func = namespaces.pop();
 		var i;
-		for (i = 0; i < namespaces.length; i++) {
+		for (i = 0; i < namespaces.length; i += 1) {
 			context = context[namespaces[i]];
 		}
 		return context[func].apply(context, args);
