@@ -114,14 +114,14 @@ window.EUi = {
 			EStr.INTRO_SECTION :
 			EParser.insideTemplate(sec.title) + '<br/><small>tytuł sekcji: <tt>' + sec.title + '</tt></small>';
 		item.data({ 'section' : 'ed_section_' + id, 'code' : sec.code, 'tip' : tip }).click(function () {
-				EKeyboard.hide();
-				EUi.content.find('.ed_section').removeClass('active');
-				EUi.content.find('#' + $(this).data('section')).addClass('active');
-				$(this).addClass('active').siblings().removeClass('active');
-				EUi.resizeTextareas();
-				EUi.activeLangCode = $(this).data('code');
-				EUi.activeLangId = id;
-				setTimeout(function () { $('fieldset.active').find('textarea:first').focus(); }, 100); //FIXME why?
+			EKeyboard.hide();
+			EUi.content.find('.ed_section').removeClass('active');
+			EUi.content.find('#' + $(this).data('section')).addClass('active');
+			$(this).addClass('active').siblings().removeClass('active');
+			EUi.resizeTextareas();
+			EUi.activeLangCode = $(this).data('code');
+			EUi.activeLangId = id;
+			setTimeout(function () { $('fieldset.active').find('textarea:first').focus(); }, 100); //FIXME why?
 		});
 
 		// insert alphabetically

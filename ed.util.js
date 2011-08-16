@@ -13,7 +13,7 @@ window.EUtil = {
 	},
 
 	getSection : function () {
-		return self.document.location.hash.replace('#', '');
+		return document.location.hash.replace('#', '');
 	},
 
 	getActiveLangCode : function () {

@@ -1,6 +1,13 @@
 //<nowiki>
-/*global $: true, mw: true, window: true, console: true */
+/*global $: true, mw: true, window: true, console: true, setTimeout: true, clearTimeout: true */
+/*global document: true, insertTags: true, jQuery: true, alert: true */
+/*global checkSelectedText: true, is_opera: true, is_opera_seven: true, is_opera_95: true */
+
+/*jslint es5: true, indent: 4, sloppy: true */
+
 var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParser, ESectionParser, ESpecialChars, EPrinter;
+var jPrompt, jAlert, jConfirm, insertTags2;
+
 var css = "#ed {\
 	overflow : auto;\
 	background-color: white;\
@@ -329,7 +336,7 @@ window.Ed = {
 
 window.EParser = {
 	getSections : function (code) {
-		var sections, reta, s, section, id;
+		var sections, reta, s, sec, section, id;
 
 		code = code.replace(/\s*==\s*([^=]+)\s*==\s*/g, '<BE>$1<EN>');
 		sections = code.split('<BE>');
@@ -1405,14 +1412,14 @@ window.EUi = {
 			EStr.INTRO_SECTION :
 			EParser.insideTemplate(sec.title) + '<br/><small>tytuł sekcji: <tt>' + sec.title + '</tt></small>';
 		item.data({ 'section' : 'ed_section_' + id, 'code' : sec.code, 'tip' : tip }).click(function () {
-				EKeyboard.hide();
-				EUi.content.find('.ed_section').removeClass('active');
-				EUi.content.find('#' + $(this).data('section')).addClass('active');
-				$(this).addClass('active').siblings().removeClass('active');
-				EUi.resizeTextareas();
-				EUi.activeLangCode = $(this).data('code');
-				EUi.activeLangId = id;
-				setTimeout(function () { $('fieldset.active').find('textarea:first').focus(); }, 100); //FIXME why?
+			EKeyboard.hide();
+			EUi.content.find('.ed_section').removeClass('active');
+			EUi.content.find('#' + $(this).data('section')).addClass('active');
+			$(this).addClass('active').siblings().removeClass('active');
+			EUi.resizeTextareas();
+			EUi.activeLangCode = $(this).data('code');
+			EUi.activeLangId = id;
+			setTimeout(function () { $('fieldset.active').find('textarea:first').focus(); }, 100); //FIXME why?
 		});
 
 		// insert alphabetically
@@ -1677,7 +1684,7 @@ window.EUtil = {
 	},
 
 	getSection : function () {
-		return self.document.location.hash.replace('#', '');
+		return document.location.hash.replace('#', '');
 	},
 
 	getActiveLangCode : function () {
@@ -1810,7 +1817,7 @@ window.EKeyboard = {
 
 	$.fn.keyboard = function () {
 		$(this).focus(function () {
-				EKeyboard.updatePosition($(this));
+			EKeyboard.updatePosition($(this));
 		}).blur(function () {
 		});
 		return $(this);
@@ -1818,9 +1825,19 @@ window.EKeyboard = {
 
 }(jQuery));
 
-insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
+window.insertTags2 = function (tagOpen, tagClose, sampleText) {
 	var txtarea, aname, areas, selText, isSample = false;
 	var winScroll, range, textScroll, startPos, endPos;
+
+	function checkSelectedText() {
+		if (!selText) {
+			selText = sampleText;
+			isSample = true;
+		} else if (selText.charAt(selText.length - 1) === ' ') { //exclude ending space char
+			selText = selText.substring(0, selText.length - 1);
+			tagClose += ' ';
+		}
+	}
 
 	if (document.editform && !EUi.usingNew) {
 		txtarea = document.editform.wpTextbox1;
@@ -1875,16 +1892,6 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 			txtarea.selectionEnd = txtarea.selectionStart;
 		}
 		txtarea.scrollTop = textScroll;
-	}
-
-	function checkSelectedText() {
-		if (!selText) {
-			selText = sampleText;
-			isSample = true;
-		} else if (selText.charAt(selText.length - 1) === ' ') { //exclude ending space char
-			selText = selText.substring(0, selText.length - 1);
-			tagClose += ' ';
-		}
 	}
 };
 
@@ -2582,249 +2589,284 @@ window.EAutomator = {
 
 (function ($) {
 
-$.extend($.fn, {
-	livequery: function (type, fn, fn2) {
-		var self = this, q;
+	$.extend($.fn, {
+		livequery: function (type, fn, fn2) {
+			var self = this, q;
 
-		// Handle different call patterns
-		if ($.isFunction (type))
-			fn2 = fn, fn = type, type = undefined;
+			// Handle different call patterns
+			if ($.isFunction(type)) {
+				fn2 = fn;
+				fn = type;
+				type = undefined;
+			}
 
-		// See if Live Query already exists
-		$.each( $.livequery.queries, function (i, query) {
-			if ( self.selector == query.selector && self.context == query.context &&
-				type == query.type && (!fn || fn.$lqguid == query.fn.$lqguid) && (!fn2 || fn2.$lqguid == query.fn2.$lqguid) )
+			// See if Live Query already exists
+			$.each($.livequery.queries, function (i, query) {
+				if (self.selector === query.selector && self.context === query.context &&
+						type === query.type && (!fn || fn.$lqguid === query.fn.$lqguid) && (!fn2 || fn2.$lqguid === query.fn2.$lqguid)) {
 					// Found the query, exit the each loop
-					return (q = query) && false;
-		});
+					q = query;
+					return false;
+				}
+			});
 
-		// Create new Live Query if it wasn't found
-		q = q || new $.livequery(this.selector, this.context, type, fn, fn2);
+			// Create new Live Query if it wasn't found
+			q = q || new $.livequery(this.selector, this.context, type, fn, fn2);
 
-		// Make sure it is running
-		q.stopped = false;
+			// Make sure it is running
+			q.stopped = false;
 
-		// Run it immediately for the first time
-		q.run();
+			// Run it immediately for the first time
+			q.run();
 
-		// Contnue the chain
-		return this;
-	},
+			// Contnue the chain
+			return this;
+		},
 
-	expire: function (type, fn, fn2) {
-		var self = this;
+		expire: function (type, fn, fn2) {
+			var self = this;
 
-		// Handle different call patterns
-		if ($.isFunction (type))
-			fn2 = fn, fn = type, type = undefined;
+			// Handle different call patterns
+			if ($.isFunction(type)) {
+				fn2 = fn;
+				fn = type;
+				type = undefined;
+			}
 
-		// Find the Live Query based on arguments and stop it
-		$.each( $.livequery.queries, function (i, query) {
-			if ( self.selector == query.selector && self.context == query.context &&
-				(!type || type == query.type) && (!fn || fn.$lqguid == query.fn.$lqguid) && (!fn2 || fn2.$lqguid == query.fn2.$lqguid) && !this.stopped )
+			// Find the Live Query based on arguments and stop it
+			$.each($.livequery.queries, function (i, query) {
+				if (self.selector === query.selector && self.context === query.context &&
+						(!type || type === query.type) && (!fn || fn.$lqguid === query.fn.$lqguid) && (!fn2 || fn2.$lqguid === query.fn2.$lqguid) && !this.stopped) {
 					$.livequery.stop(query.id);
-		});
-
-		// Continue the chain
-		return this;
-	}
-});
-
-$.livequery = function (selector, context, type, fn, fn2) {
-	this.selector = selector;
-	this.context  = context || document;
-	this.type     = type;
-	this.fn       = fn;
-	this.fn2      = fn2;
-	this.elements = [];
-	this.stopped  = false;
-
-	// The id is the index of the Live Query in $.livequery.queries
-	this.id = $.livequery.queries.push(this)-1;
-
-	// Mark the functions for matching later on
-	fn.$lqguid = fn.$lqguid || $.livequery.guid++;
-	if (fn2) fn2.$lqguid = fn2.$lqguid || $.livequery.guid++;
-
-	// Return the Live Query
-	return this;
-};
-
-$.livequery.prototype = {
-	stop: function () {
-		var query = this;
-
-		if ( this.type )
-			// Unbind all bound events
-			this.elements.unbind(this.type, this.fn);
-		else if (this.fn2)
-			// Call the second function for all matched elements
-			this.elements.each(function (i, el) {
-				query.fn2.apply(el);
+				}
 			});
 
-		// Clear out matched elements
+			// Continue the chain
+			return this;
+		}
+	});
+
+	$.livequery = function (selector, context, type, fn, fn2) {
+		this.selector = selector;
+		this.context  = context || document;
+		this.type     = type;
+		this.fn       = fn;
+		this.fn2      = fn2;
 		this.elements = [];
+		this.stopped  = false;
 
-		// Stop the Live Query from running until restarted
-		this.stopped = true;
-	},
+		// The id is the index of the Live Query in $.livequery.queries
+		this.id = $.livequery.queries.push(this) - 1;
 
-	run: function () {
-		// Short-circuit if stopped
-		if ( this.stopped ) return;
-		var query = this;
+		// Mark the functions for matching later on
+		if (!fn.$lqguid) {
+			fn.$lqguid = $.livequery.guid;
+			$.livequery.guid += 1;
+		}
+		if (fn2) {
+			if (!fn2.$lqguid) {
+				fn2.$lqguid = $.livequery.guid;
+				$.livequery.guid += 1;
+			}
+		}
 
-		var oEls = this.elements,
-			els  = $(this.selector, this.context),
-			nEls = els.not(oEls);
+		// Return the Live Query
+		return this;
+	};
 
-		// Set elements to the latest set of matched elements
-		this.elements = els;
+	$.livequery.prototype = {
+		stop: function () {
+			var query = this;
 
-		if (this.type) {
-			// Bind events to newly matched elements
-			nEls.bind(this.type, this.fn);
-
-			// Unbind events to elements no longer matched
-			if (oEls.length > 0)
-				$.each(oEls, function (i, el) {
-					if ( $.inArray(el, els) < 0 )
-						$.event.remove(el, query.type, query.fn);
+			if (this.type) {
+				// Unbind all bound events
+				this.elements.unbind(this.type, this.fn);
+			} else if (this.fn2) {
+				// Call the second function for all matched elements
+				this.elements.each(function (i, el) {
+					query.fn2.apply(el);
 				});
-		}
-		else {
-			// Call the first function for newly matched elements
-			nEls.each(function () {
-				query.fn.apply(this);
-			});
+			}
 
-			// Call the second function for elements no longer matched
-			if ( this.fn2 && oEls.length > 0 )
-				$.each(oEls, function (i, el) {
-					if ( $.inArray(el, els) < 0 )
-						query.fn2.apply(el);
+			// Clear out matched elements
+			this.elements = [];
+
+			// Stop the Live Query from running until restarted
+			this.stopped = true;
+		},
+
+		run: function () {
+			// Short-circuit if stopped
+			if (this.stopped) {
+				return;
+			}
+			var query = this,
+				oEls = this.elements,
+				els  = $(this.selector, this.context),
+				nEls = els.not(oEls);
+
+			// Set elements to the latest set of matched elements
+			this.elements = els;
+
+			if (this.type) {
+				// Bind events to newly matched elements
+				nEls.bind(this.type, this.fn);
+
+				// Unbind events to elements no longer matched
+				if (oEls.length > 0) {
+					$.each(oEls, function (i, el) {
+						if ($.inArray(el, els) < 0) {
+							$.event.remove(el, query.type, query.fn);
+						}
+					});
+				}
+			} else {
+				// Call the first function for newly matched elements
+				nEls.each(function () {
+					query.fn.apply(this);
 				});
+
+				// Call the second function for elements no longer matched
+				if (this.fn2 && oEls.length > 0) {
+					$.each(oEls, function (i, el) {
+						if ($.inArray(el, els) < 0) {
+							query.fn2.apply(el);
+						}
+					});
+				}
+			}
 		}
-	}
-};
+	};
 
-$.extend($.livequery, {
-	guid: 0,
-	queries: [],
-	queue: [],
-	running: false,
-	timeout: null,
+	$.extend($.livequery, {
+		guid: 0,
+		queries: [],
+		queue: [],
+		running: false,
+		timeout: null,
 
-	checkQueue: function () {
-		if ( $.livequery.running && $.livequery.queue.length ) {
-			var length = $.livequery.queue.length;
-			// Run each Live Query currently in the queue
-			while ( length-- )
-				$.livequery.queries[ $.livequery.queue.shift() ].run();
-		}
-	},
+		checkQueue: function () {
+			if ($.livequery.running && $.livequery.queue.length) {
+				var length = $.livequery.queue.length;
+				// Run each Live Query currently in the queue
+				while (length) {
+					$.livequery.queries[$.livequery.queue.shift()].run();
+					length -= 1;
+				}
+			}
+		},
 
-	pause: function () {
-		// Don't run anymore Live Queries until restarted
-		$.livequery.running = false;
-	},
+		pause: function () {
+			// Don't run anymore Live Queries until restarted
+			$.livequery.running = false;
+		},
 
-	play: function () {
-		// Restart Live Queries
-		$.livequery.running = true;
-		// Request a run of the Live Queries
-		$.livequery.run();
-	},
+		play: function () {
+			// Restart Live Queries
+			$.livequery.running = true;
+			// Request a run of the Live Queries
+			$.livequery.run();
+		},
 
-	registerPlugin: function () {
-		$.each( arguments, function (i,n) {
-			// Short-circuit if the method doesn't exist
-			if (!$.fn[n]) return;
+		registerPlugin: function () {
+			$.each(arguments, function (i, n) {
+				// Short-circuit if the method doesn't exist
+				if (!$.fn[n]) {
+					return;
+				}
 
-			// Save a reference to the original method
-			var old = $.fn[n];
+				// Save a reference to the original method
+				var old = $.fn[n];
 
-			// Create a new method
-			$.fn[n] = function () {
-				// Call the original method
-				var r = old.apply(this, arguments);
+				// Create a new method
+				$.fn[n] = function () {
+					// Call the original method
+					var r = old.apply(this, arguments);
 
-				// Request a run of the Live Queries
-				$.livequery.run();
+					// Request a run of the Live Queries
+					$.livequery.run();
 
-				// Return the original methods result
-				return r;
-			};
-		});
-	},
-
-	run: function (id) {
-		if (id != undefined) {
-			// Put the particular Live Query in the queue if it doesn't already exist
-			if ( $.inArray(id, $.livequery.queue) < 0 )
-				$.livequery.queue.push( id );
-		}
-		else
-			// Put each Live Query in the queue if it doesn't already exist
-			$.each( $.livequery.queries, function (id) {
-				if ( $.inArray(id, $.livequery.queue) < 0 )
-					$.livequery.queue.push( id );
+					// Return the original methods result
+					return r;
+				};
 			});
+		},
 
-		// Clear timeout if it already exists
-		if ($.livequery.timeout) clearTimeout($.livequery.timeout);
-		// Create a timeout to check the queue and actually run the Live Queries
-		$.livequery.timeout = setTimeout($.livequery.checkQueue, 20);
-	},
+		run: function (id) {
+			if (id !== undefined) {
+				// Put the particular Live Query in the queue if it doesn't already exist
+				if ($.inArray(id, $.livequery.queue) < 0) {
+					$.livequery.queue.push(id);
+				}
+			} else {
+				// Put each Live Query in the queue if it doesn't already exist
+				$.each($.livequery.queries, function (id) {
+					if ($.inArray(id, $.livequery.queue) < 0) {
+						$.livequery.queue.push(id);
+					}
+				});
+			}
 
-	stop: function (id) {
-		if (id != undefined)
-			// Stop are particular Live Query
-			$.livequery.queries[ id ].stop();
-		else
-			// Stop all Live Queries
-			$.each( $.livequery.queries, function (id) {
-				$.livequery.queries[ id ].stop();
-			});
-	}
-});
+			// Clear timeout if it already exists
+			if ($.livequery.timeout) {
+				clearTimeout($.livequery.timeout);
+			}
+			// Create a timeout to check the queue and actually run the Live Queries
+			$.livequery.timeout = setTimeout($.livequery.checkQueue, 20);
+		},
 
-// Register core DOM manipulation methods
-$.livequery.registerPlugin('append', 'prepend', 'after', 'before', 'wrap', 'attr', 'removeAttr', 'addClass', 'removeClass', 'toggleClass', 'empty', 'remove');
+		stop: function (id) {
+			if (id !== undefined) {
+				// Stop are particular Live Query
+				$.livequery.queries[id].stop();
+			} else {
+				// Stop all Live Queries
+				$.each($.livequery.queries, function (id) {
+					$.livequery.queries[id].stop();
+				});
+			}
+		}
+	});
 
-// Run Live Queries when the Document is ready
-$(function () { $.livequery.play(); });
+	// Register core DOM manipulation methods
+	$.livequery.registerPlugin('append', 'prepend', 'after', 'before', 'wrap', 'attr', 'removeAttr', 'addClass', 'removeClass', 'toggleClass', 'empty', 'remove');
+
+	// Run Live Queries when the Document is ready
+	$(function () { $.livequery.play(); });
 
 
-// Save a reference to the original init method
-var init = $.prototype.init;
+	// Save a reference to the original init method
+	var init = $.prototype.init;
 
-// Create a new init method that exposes two new properties: selector and context
-$.prototype.init = function (a,c) {
-	// Call the original init and save the result
-	var r = init.apply(this, arguments);
+	// Create a new init method that exposes two new properties: selector and context
+	$.prototype.init = function (a, c) {
+		// Call the original init and save the result
+		var r = init.apply(this, arguments);
 
-	// Copy over properties if they exist already
-	if (a && a.selector)
-		r.context = a.context, r.selector = a.selector;
+		// Copy over properties if they exist already
+		if (a && a.selector) {
+			r.context = a.context;
+			r.selector = a.selector;
+		}
 
-	// Set properties
-	if ( typeof a == 'string' )
-		r.context = c || document, r.selector = a;
+		// Set properties
+		if (typeof a === 'string') {
+			r.context = c || document;
+			r.selector = a;
+		}
 
-	// Return the result
-	return r;
-};
+		// Return the result
+		return r;
+	};
 
-// Give the init function the jQuery prototype for later instantiation (needed after Rev 4091)
-$.prototype.init.prototype = $.prototype;
+	// Give the init function the jQuery prototype for later instantiation (needed after Rev 4091)
+	$.prototype.init.prototype = $.prototype;
 
 }(jQuery));
 /*jsl:end*/
 
 
 if ((mw.config.get('wgAction') === 'edit' || mw.config.get('wgAction') === 'submit') &&
-	mw.config.get('wgNamespaceNumber') === 0) {
+		mw.config.get('wgNamespaceNumber') === 0) {
 	$(document).ready(Ed.init);
 }

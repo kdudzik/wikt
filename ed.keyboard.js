@@ -91,7 +91,7 @@ window.EKeyboard = {
 
 	$.fn.keyboard = function () {
 		$(this).focus(function () {
-				EKeyboard.updatePosition($(this));
+			EKeyboard.updatePosition($(this));
 		}).blur(function () {
 		});
 		return $(this);
@@ -99,9 +99,19 @@ window.EKeyboard = {
 
 }(jQuery));
 
-insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
+window.insertTags2 = function (tagOpen, tagClose, sampleText) {
 	var txtarea, aname, areas, selText, isSample = false;
 	var winScroll, range, textScroll, startPos, endPos;
+
+	function checkSelectedText() {
+		if (!selText) {
+			selText = sampleText;
+			isSample = true;
+		} else if (selText.charAt(selText.length - 1) === ' ') { //exclude ending space char
+			selText = selText.substring(0, selText.length - 1);
+			tagClose += ' ';
+		}
+	}
 
 	if (document.editform && !EUi.usingNew) {
 		txtarea = document.editform.wpTextbox1;
@@ -156,16 +166,6 @@ insertTags2 = function insertTags2(tagOpen, tagClose, sampleText) {
 			txtarea.selectionEnd = txtarea.selectionStart;
 		}
 		txtarea.scrollTop = textScroll;
-	}
-
-	function checkSelectedText() {
-		if (!selText) {
-			selText = sampleText;
-			isSample = true;
-		} else if (selText.charAt(selText.length - 1) === ' ') { //exclude ending space char
-			selText = selText.substring(0, selText.length - 1);
-			tagClose += ' ';
-		}
 	}
 };
 

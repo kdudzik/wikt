@@ -1,6 +1,6 @@
 window.EParser = {
 	getSections : function (code) {
-		var sections, reta, s, section, id;
+		var sections, reta, s, sec, section, id;
 
 		code = code.replace(/\s*==\s*([^=]+)\s*==\s*/g, '<BE>$1<EN>');
 		sections = code.split('<BE>');
