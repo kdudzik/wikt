@@ -11,6 +11,7 @@ window.EUi = {
 
 	prepareForm : function (oldform, instruction) {
 		var toggleEditor;
+
 		this.oldform = oldform;
 		this.instruction = instruction;
 		EUi.form.append(EUi.menu).append(EUi.content);
@@ -34,7 +35,7 @@ window.EUi = {
 			if (EUi.usingNew) {
 				Ed.resetNew();
 			} else {
-				EUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
+				EUi.oldform.find('textarea').val(EPrinter.recalculateCode());
 			}
 			$.cookie('usenew', +EUi.usingNew);
 			return false;
@@ -56,6 +57,7 @@ window.EUi = {
 
 	clickDefaultSection : function () {
 		var firstTab;
+
 		if (!EUi.usingNew) {
 			return false;
 		}
@@ -71,8 +73,9 @@ window.EUi = {
 	},
 
 	prepareFormSections : function () {
-		var size = 0;
-		var id, addItem;
+		var id, addItem,
+			size = 0;
+
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
 				EUi.addSection(id);
@@ -98,9 +101,9 @@ window.EUi = {
 	},
 
 	addSection : function (id) {
-		var sec = Ed.content.sections[id];
-		var fset = $('<fieldset class="ed_section" id="ed_section_' + id + '"/>');
-		var item, tip, added = false;
+		var item, tip, added = false,
+			sec = Ed.content.sections[id],
+			fset = $('<fieldset class="ed_section" id="ed_section_' + id + '"/>');
 
 		fset.appendTo(EUi.content);
 
@@ -138,8 +141,9 @@ window.EUi = {
 	},
 
 	addNewSection : function () {
-		var defaultLang = EUtil.getSection();
-		var defaultText, message;
+		var defaultText, message,
+			defaultLang = EUtil.getSection();
+
 		if (!defaultLang) {
 			defaultLang = $.cookie('lastAdded');
 		}
@@ -151,6 +155,7 @@ window.EUi = {
 		jPrompt(message, defaultText, EStr.ADD_SECTION_TITLE,
 			function (val) {
 				var sec, id;
+
 				if (!val) {
 					return;
 				}
@@ -170,7 +175,7 @@ window.EUi = {
 						$.cookie('lastAdded', sec.code);
 					}
 					$('#ed_menuitem_' + id).click();
-					$('#ed_section_' + id + ' textarea').reverse().autogrow();
+					$('#ed_section_' + id + ' textarea').reverse().autoresize();
 				} else {
 					jAlert(EStr.ADD_SECTION_NONEXISTENT, EStr.ADD_SECTION_NONEXISTENT_TITLE, function () {
 						EUi.addNewSection();
@@ -182,6 +187,7 @@ window.EUi = {
 	editSectionTitle : function (id, section) {
 		jPrompt(EStr.EDIT_SECTION_TITLE_MESSAGE, section.title, EStr.EDIT_SECTION_TITLE, function (res) {
 			var tip;
+
 			if (!res) {
 				return;
 			}
@@ -191,13 +197,14 @@ window.EUi = {
 		});
 	},
 
-	deleteSection : function (id, section, force) {
+	deleteSection : function (id, force) {
 		var del = function () {
 			delete Ed.content.sections[id];
 			$('#ed_menuitem_' + id).remove();
 			$('#ed_section_' + id).remove();
 			EUi.clickDefaultSection();
 		};
+
 		if (force) {
 			del();
 		} else {
@@ -208,28 +215,29 @@ window.EUi = {
 	},
 
 	deleteEmptySections : function () {
-		var id, sec, empty;
-		var setNotEmpty = function () {
-			if ($(this).val()) {
-				empty = false;
-			}
-		};
+		var id, sec, empty,
+			setNotEmpty = function () {
+				if ($(this).val()) {
+					empty = false;
+				}
+			};
+
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
 				sec = Ed.content.sections[id];
 				empty = true;
 				$('#ed_section_' + id).find('textarea').each(setNotEmpty);
 				if (empty) {
-					EUi.deleteSection(id, sec, 1);
+					EUi.deleteSection(id, 1);
 				}
 			}
 		}
 	},
 
 	prepareFormSubsections : function (id) {
-		var section = Ed.content.sections[id];
-		var fset = $('#ed_section_' + id);
-		var editlink, deletelink, i;
+		var editlink, deletelink, i,
+			section = Ed.content.sections[id],
+			fset = $('#ed_section_' + id);
 
 		if (id !== EConstants.SECTION_ID_INTRO) {
 			editlink = $('<a/>').text(EStr.EDIT_SECTION_TITLE).click(function () {
@@ -237,7 +245,7 @@ window.EUi = {
 				return false;
 			});
 			deletelink = $('<a/>').text(EStr.DELETE_SECTION).click(function () {
-				EUi.deleteSection(id, section);
+				EUi.deleteSection(id);
 				return false;
 			});
 			fset.append($('<p class="top"/>').append(editlink).append(deletelink));
@@ -251,12 +259,12 @@ window.EUi = {
 	},
 
 	getSubsectionObj : function (langid, section, subsection) {
-		var name = langid + '_' + subsection.title.replace(' ', '_');
-		var p = $('<p id="ed_subsection_' + name + '"/>');
-		var caption = EConstants.SUBSECTION_TITLE[subsection.title];
-		var label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>');
-		var textarea = $('<textarea class="newform keyboardable" name="ed_' + name + '" id="ed_' + name + '"/>').text(subsection.content);
-		var extra = $('<div class="subsection_extra" id="ed_' + name + '_extra"/>');
+		var name = langid + '_' + subsection.title.replace(' ', '_'),
+			p = $('<p id="ed_subsection_' + name + '"/>'),
+			caption = EConstants.SUBSECTION_TITLE[subsection.title],
+			label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>'),
+			textarea = $('<textarea class="newform keyboardable" name="ed_' + name + '" id="ed_' + name + '"/>').text(subsection.content),
+			extra = $('<div class="subsection_extra" id="ed_' + name + '_extra"/>');
 
 		if (ESectionParser.obligatorySubsection(subsection, section)) {
 			label.addClass('oblig_subsection').append(EStr.OBLIGATORY_SUBSECTION);
@@ -275,18 +283,19 @@ window.EUi = {
 		this.form.parent('form').submit(function () {
 			if (EUi.usingNew) {
 				EUi.deleteEmptySections();
-				EUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
+				EUi.oldform.find('textarea').val(EPrinter.recalculateCode());
 			}
 			return true;
 		});
 	},
 
 	resizeTextareas : function () {
-		$('fieldset.active').find('textarea').reverse().autogrow();
+		$('fieldset.active').find('textarea').reverse().autoresize();
 	},
 
 	addIntroAdder : function () {
 		var addIntro = $('<li id="ed_menuitem_newintro" class="tip menuitem">' + EStr.ADD_INTRO + '</li>');
+
 		addIntro.appendTo(EUi.menu).click(function () {
 			var sec = {
 				'title' : '',
@@ -294,6 +303,7 @@ window.EUi = {
 				'id' : EConstants.SECTION_ID_INTRO,
 				'initcontent' : ''
 			};
+
 			Ed.content.sections[EConstants.SECTION_ID_INTRO] = sec;
 			ESectionParser.parse(sec);
 			EUi.addSection(EConstants.SECTION_ID_INTRO);
@@ -306,6 +316,7 @@ window.EUi = {
 
 	addExtraButtons : function (subsectionName, idpart, buttonContent, onclick, tooltip, section) {
 		var input, extra, button;
+
 		if (section !== undefined) {
 			input = $('#ed_' + section + '_' + subsectionName);
 			extra = $('#ed_' + section + '_' + subsectionName + '_extra');
@@ -313,7 +324,7 @@ window.EUi = {
 			button = button.data('tip', tooltip).attr('id', 'ed_' + section + '_extra_' + idpart);
 			extra.append(button).addClass('active');
 		} else {
-			$.each(Ed.content.sections, function (id, sec) {
+			$.each(Ed.content.sections, function (id) {
 				input = $('#ed_' + id + '_' + subsectionName);
 				extra = $('#ed_' + id + '_' + subsectionName + '_extra');
 				button = $('<span class="tip tipdown"/>').html(buttonContent).click(onclick);
@@ -335,8 +346,9 @@ window.EUi = {
 window.EForm = {
 
 	addDefaultTexts : function (langid, code) {
-		var arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
-		var subs, defaultText;
+		var subs, defaultText,
+			arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
+
 		for (subs in arr) {
 			if (arr.hasOwnProperty(subs)) {
 				defaultText = arr[subs];
@@ -346,8 +358,9 @@ window.EForm = {
 	},
 
 	removeDefaultTexts : function (langid, code) {
-		var arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
-		var subs, defaultText;
+		var subs, defaultText,
+			arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
+
 		for (subs in arr) {
 			if (arr.hasOwnProperty(subs)) {
 				defaultText = arr[subs];

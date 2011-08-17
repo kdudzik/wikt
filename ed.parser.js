@@ -31,6 +31,7 @@ window.EParser = {
 
 	getSectionFromTitle : function (str) {
 		var template = this.insideTemplate(str);
+
 		return {
 			'title' : str,
 			'short' : template.replace(/język /, ''),
@@ -42,8 +43,8 @@ window.EParser = {
 	},
 
 	getTitleFromCode : function (code) {
-		var pagename = mw.config.get('wgPageName').replace('_', ' ');
-		var lang;
+		var lang,
+			pagename = mw.config.get('wgPageName').replace('_', ' ');
 
 		if (code === 'zh-char' || code === 'zh') {
 			pagename = '{{zh|' + pagename + '}}';
@@ -85,8 +86,9 @@ window.EParser = {
 	},
 
 	getSectionFromInput : function (str) {
-		var langname = EConstants.CODE_TO_LANG[str];
-		var code;
+		var code,
+			langname = EConstants.CODE_TO_LANG[str];
+
 		if (langname !== undefined) {
 			return this.getSectionFromCodeAndLang(str, langname);
 		}
@@ -108,6 +110,7 @@ window.EParser = {
 
 	langCode : function (lang) {
 		var code;
+
 		if (lang.indexOf('język ') !== -1) {
 			lang = lang.replace(/język /, '');
 			code = EConstants.LANG_CODES_LONG[lang];
@@ -121,10 +124,10 @@ window.EParser = {
 window.ESectionParser = {
 
 	parse: function (section) {
-		var subsections = [];
-		var mode = '';
-		var code = section.code;
-		var i, targetSubsections;
+		var i, targetSubsections,
+			subsections = [],
+			mode = '',
+			code = section.code;
 
 		if (!section.title) {
 			mode = 'INTRO';
@@ -202,10 +205,10 @@ window.ESectionParser = {
 	},
 
 	parsePreparedSubsections : function (section, targetSubsections) {
-		var str = section.content;
-		var subsections = section.subsections;
-		var positions = [];
-		var i, j, title, alt, regex, sub, pos, repl, changed, firstbreak;
+		var i, j, title, alt, regex, sub, pos, repl, changed, firstbreak,
+			str = section.content,
+			subsections = section.subsections,
+			positions = [];
 
 		for (i in subsections) {
 			if (subsections.hasOwnProperty(i)) {

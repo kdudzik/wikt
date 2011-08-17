@@ -1,6 +1,7 @@
 window.EUtil = {
 	getParameter : function (name) {
 		var regexS, regex, results;
+
 		name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
 		regexS = "[\\?&]" + name + "=([^&#]*)";
 		regex = new RegExp(regexS);
@@ -25,10 +26,11 @@ window.EUtil = {
 	},
 
 	executeFn : function (functionName, context) { /*, args */
-		var args = Array.prototype.slice.call(arguments, 2);
-		var namespaces = functionName.split(".");
-		var func = namespaces.pop();
-		var i;
+		var args = Array.prototype.slice.call(arguments, 2),
+			namespaces = functionName.split("."),
+			func = namespaces.pop(),
+			i;
+
 		for (i = 0; i < namespaces.length; i += 1) {
 			context = context[namespaces[i]];
 		}
@@ -41,6 +43,7 @@ window.EUtil = {
 
 	isEmpty : function (obj) {
 		var prop;
+
 		for (prop in obj) {
 			if (obj.hasOwnProperty(prop)) {
 				return false;

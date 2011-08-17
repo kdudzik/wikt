@@ -1,8 +1,9 @@
 window.EPrinter = {
-	recalculateCode : function (form) {
-		var code = '';
-		var sortableSections = [];
-		var id, sec, i, j, subs;
+	recalculateCode : function () {
+		var id, sec, i, j, subs,
+			code = '',
+			sortableSections = [];
+
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
 				sec = Ed.content.sections[id];
@@ -24,13 +25,13 @@ window.EPrinter = {
 						if (subs.active) {
 							subs.content = EForm.val(sec.id, subs.title);
 
-							if (subs.title === '' && subs.content !== '') {
+							if (!subs.title && subs.content) {
 								code += subs.content + '\n';
-							} else if (subs.title !== '' && subs.content === '') {
+							} else if (subs.title && !subs.content) {
 								code += '{{' + subs.title + '}}\n';
 							} else if (subs.shortened) {
 								code += '{{' + subs.title + '}}' + EPrinter.adequateWhitespace(subs) + subs.content + '\n';
-							} else if (subs.content !== '') {
+							} else if (subs.content) {
 								code += subs.content + '\n';
 							}
 						}
@@ -70,7 +71,7 @@ window.EPrinter = {
 		/*
 		 * Wpp: dla wypełnionych przed edycją pól zachowujemy istniejące formatowanie o ile dane pole już było niepuste.
 		*/
-		if (subsection.initcontent !== '') {
+		if (subsection.initcontent) {
 			return subsection.initmultiline ? '\n: ' : ' ';
 		}
 		/*

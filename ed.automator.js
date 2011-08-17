@@ -4,8 +4,9 @@ window.EAutomator = {
 	 * Zwraca kody wersji językowej z aktywnej sekcji + domyślnych
 	 */
 	getActiveLangs : function () {
-		var ret = EConstants.USED_WIKTIONARIES.slice(0);
-		var act = EUtil.getActiveLangCode();
+		var ret = EConstants.USED_WIKTIONARIES.slice(0),
+			act = EUtil.getActiveLangCode();
+
 		if (ret.indexOf(act) === -1 && EConstants.ALL_WIKTIONARIES.indexOf(act) !== -1) {
 			ret.push(act);
 		}
@@ -16,8 +17,9 @@ window.EAutomator = {
 	 * Zwraca kody wszystkich wersji językowych z sekcji + domyślnych
 	 */
 	getAllLangs : function () {
-		var ret = EConstants.USED_WIKTIONARIES.slice(0);
-		var id, code;
+		var id, code,
+			ret = EConstants.USED_WIKTIONARIES.slice(0);
+
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
 				code = Ed.content.sections[id].code;
@@ -37,6 +39,7 @@ window.EAutomator = {
 	 */
 	fillInterwiki : function () {
 		var langs, urls, query;
+
 		EApi.started('add_iw', '');
 		langs = EAutomator.getAllLangs();
 		langs.push('pl');
@@ -47,9 +50,10 @@ window.EAutomator = {
 		// callback
 	},
 	fillInterwikiRe : function (results) {
-		var iwikis = [];
-		var iwikiString, curIwiki, re;
-		$.each(results, function (i, res) {
+		var iwikiString, curIwiki, re,
+			iwikis = [];
+
+		$.each(results, function (ignored, res) {
 			if (res.query === undefined || res.query.pages === undefined) {
 				return false;
 			}
@@ -63,7 +67,7 @@ window.EAutomator = {
 				if (val.langlinks === undefined) {
 					return false;
 				}
-				$.each(val.langlinks, function (k, link) {
+				$.each(val.langlinks, function (ignored, link) {
 					if (link['*'] === mw.config.get('wgTitle') && iwikis.indexOf(link.lang) === -1 && link.lang !== 'pl') {
 						iwikis.push(link.lang);
 					}
@@ -86,6 +90,7 @@ window.EAutomator = {
 
 	getIPA : function () {
 		var urls, query;
+
 		EApi.started('add_ipa', 'wymowa');
 		urls = $.map(EAutomator.getActiveLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
@@ -94,17 +99,20 @@ window.EAutomator = {
 		// callback
 	},
 	getIPARe : function (results) {
-		var ipas = {};
-		var error = EStr.NO_IPA_FOUND;
-		$.each(results, function (i, res) {
+		var ipas = {},
+			error = EStr.NO_IPA_FOUND;
+
+		$.each(results, function (ignored, res) {
 			var lang;
+
 			if (res.query === undefined || res.query.pages === undefined) {
 				return false;
 			}
 			lang = res.query.general.lang;
 			$.each(res.query.pages, function (j, val) {
 				var content, ipa;
-				if (j === -1) {
+
+				if (j === -1 || !val.revisions || !val.revisions[0]) {
 					return false;
 				}
 				content = val.revisions[0]['*'];
@@ -131,19 +139,27 @@ window.EAutomator = {
 	},
 
 	extractFirstArgsFromTemplates : function (str, template) {
-		var re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*\\/?\\s*([^\\}\\/\\|<]+)', 'g');
-		var arr, results = [];
+		var arr, el, results = [],
+			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*\\/?\\s*([^\\}\\/\\|<]+)', 'g');
+
 		while ((arr = re.exec(str)) !== null) {
-			results.push($.trim(arr[1]));
+			el = $.trim(arr[1]);
+			if (el) {
+				results.push(el);
+			}
 		}
 		return results;
 	},
 
 	extractSecondArgsFromTemplates : function (str, template) {
-		var re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\}\\|]*)\\|\\s*\\/?([^\\}\\/\\|<]+)', 'gi');
-		var arr, results = [];
+		var arr, el, results = [],
+			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\}\\|]*)\\|\\s*\\/?([^\\}\\/\\|<]+)', 'gi');
+
 		while ((arr = re.exec(str)) !== null) {
-			results.push($.trim(arr[2]));
+			el = $.trim(arr[2]);
+			if (el) {
+				results.push(el);
+			}
 		}
 		return results;
 	},
@@ -164,22 +180,36 @@ window.EAutomator = {
 	extractIPA_vi: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
 	extractIPA_simple: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
 	extractIPA_ru: function (str) {
-		var arr;
-		var results = EAutomator.extractFirstArgsFromTemplates(str, 'transcription');
-		var re = /\{\{transcriptions\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)\s*\}\}/g;
+		var arr, el,
+			results = EAutomator.extractFirstArgsFromTemplates(str, 'transcription'),
+			re = /\{\{transcriptions\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)\s*\}\}/g;
+
 		while ((arr = re.exec(str)) !== null) {
-			results.push($.trim(arr[1]));
-			results.push($.trim(arr[2]));
+			el = $.trim(arr[1]);
+			if (el) {
+				results.push(el);
+			}
+			el = $.trim(arr[2]);
+			if (el) {
+				results.push(el);
+			}
 		}
 		return results;
 	},
 	extractIPA_ja: function (str) {
-		var arr;
-		var results = [];
-		var re = /\{\{pron-en1\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)/g;
+		var arr, el,
+			results = [],
+			re = /\{\{pron-en1\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)/g;
+
 		while ((arr = re.exec(str)) !== null) {
-			results.push($.trim(arr[1]));
-			results.push($.trim(arr[2]));
+			el = $.trim(arr[1]);
+			if (el) {
+				results.push(el);
+			}
+			el = $.trim(arr[2]);
+			if (el) {
+				results.push(el);
+			}
 		}
 		return results;
 	}

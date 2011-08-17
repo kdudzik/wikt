@@ -1,13 +1,9 @@
 //<nowiki>
-/*global $: true, mw: true, window: true, console: true, setTimeout: true, clearTimeout: true */
-/*global document: true, insertTags: true, jQuery: true, alert: true */
-/*global checkSelectedText: true, is_opera: true, is_opera_seven: true, is_opera_95: true */
-
-/*jslint es5: true, indent: 4, sloppy: true */
+/*global $, jQuery, mw, insertTags: true, jQuery: false, checkSelectedText, is_opera, is_opera_seven, is_opera_95 */
+/*jslint devel: true, browser: true, sloppy: true, es5: true, vars: true, indent: 4, regexp: true */
 
 var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParser, ESectionParser, ESpecialChars, EPrinter;
 var jPrompt, jAlert, jConfirm, insertTags2;
-
 var css = "#ed {\
 	overflow : auto;\
 	background-color: white;\
@@ -288,6 +284,7 @@ window.Ed = {
 
 	parseSectionsToSubsections : function () {
 		var id, sec;
+
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
 				sec = Ed.content.sections[id];
@@ -298,6 +295,7 @@ window.Ed = {
 
 	init : function () {
 		var tbox, oldform, instruction;
+
 		if (EUtil.getParameter('oldid') && EUtil.getParameter('oldid') !== mw.config.get('wgCurRevisionId').toString()) {
 			return;
 		}
@@ -323,6 +321,7 @@ window.Ed = {
 
 	resetNew : function () {
 		var tbox = $('#wpTextbox1');
+
 		Ed.content = {};
 		Ed.code = tbox.val();
 		Ed.parseContentToSections();
@@ -367,6 +366,7 @@ window.EParser = {
 
 	getSectionFromTitle : function (str) {
 		var template = this.insideTemplate(str);
+
 		return {
 			'title' : str,
 			'short' : template.replace(/język /, ''),
@@ -378,8 +378,8 @@ window.EParser = {
 	},
 
 	getTitleFromCode : function (code) {
-		var pagename = mw.config.get('wgPageName').replace('_', ' ');
-		var lang;
+		var lang,
+			pagename = mw.config.get('wgPageName').replace('_', ' ');
 
 		if (code === 'zh-char' || code === 'zh') {
 			pagename = '{{zh|' + pagename + '}}';
@@ -421,8 +421,9 @@ window.EParser = {
 	},
 
 	getSectionFromInput : function (str) {
-		var langname = EConstants.CODE_TO_LANG[str];
-		var code;
+		var code,
+			langname = EConstants.CODE_TO_LANG[str];
+
 		if (langname !== undefined) {
 			return this.getSectionFromCodeAndLang(str, langname);
 		}
@@ -444,6 +445,7 @@ window.EParser = {
 
 	langCode : function (lang) {
 		var code;
+
 		if (lang.indexOf('język ') !== -1) {
 			lang = lang.replace(/język /, '');
 			code = EConstants.LANG_CODES_LONG[lang];
@@ -457,10 +459,10 @@ window.EParser = {
 window.ESectionParser = {
 
 	parse: function (section) {
-		var subsections = [];
-		var mode = '';
-		var code = section.code;
-		var i, targetSubsections;
+		var i, targetSubsections,
+			subsections = [],
+			mode = '',
+			code = section.code;
 
 		if (!section.title) {
 			mode = 'INTRO';
@@ -538,10 +540,10 @@ window.ESectionParser = {
 	},
 
 	parsePreparedSubsections : function (section, targetSubsections) {
-		var str = section.content;
-		var subsections = section.subsections;
-		var positions = [];
-		var i, j, title, alt, regex, sub, pos, repl, changed, firstbreak;
+		var i, j, title, alt, regex, sub, pos, repl, changed, firstbreak,
+			str = section.content,
+			subsections = section.subsections,
+			positions = [];
 
 		for (i in subsections) {
 			if (subsections.hasOwnProperty(i)) {
@@ -611,10 +613,11 @@ window.ESectionParser = {
 
 
 window.EPrinter = {
-	recalculateCode : function (form) {
-		var code = '';
-		var sortableSections = [];
-		var id, sec, i, j, subs;
+	recalculateCode : function () {
+		var id, sec, i, j, subs,
+			code = '',
+			sortableSections = [];
+
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
 				sec = Ed.content.sections[id];
@@ -636,13 +639,13 @@ window.EPrinter = {
 						if (subs.active) {
 							subs.content = EForm.val(sec.id, subs.title);
 
-							if (subs.title === '' && subs.content !== '') {
+							if (!subs.title && subs.content) {
 								code += subs.content + '\n';
-							} else if (subs.title !== '' && subs.content === '') {
+							} else if (subs.title && !subs.content) {
 								code += '{{' + subs.title + '}}\n';
 							} else if (subs.shortened) {
 								code += '{{' + subs.title + '}}' + EPrinter.adequateWhitespace(subs) + subs.content + '\n';
-							} else if (subs.content !== '') {
+							} else if (subs.content) {
 								code += subs.content + '\n';
 							}
 						}
@@ -682,7 +685,7 @@ window.EPrinter = {
 		/*
 		 * Wpp: dla wypełnionych przed edycją pól zachowujemy istniejące formatowanie o ile dane pole już było niepuste.
 		*/
-		if (subsection.initcontent !== '') {
+		if (subsection.initcontent) {
 			return subsection.initmultiline ? '\n: ' : ' ';
 		}
 		/*
@@ -1309,6 +1312,7 @@ window.EUi = {
 
 	prepareForm : function (oldform, instruction) {
 		var toggleEditor;
+
 		this.oldform = oldform;
 		this.instruction = instruction;
 		EUi.form.append(EUi.menu).append(EUi.content);
@@ -1332,7 +1336,7 @@ window.EUi = {
 			if (EUi.usingNew) {
 				Ed.resetNew();
 			} else {
-				EUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
+				EUi.oldform.find('textarea').val(EPrinter.recalculateCode());
 			}
 			$.cookie('usenew', +EUi.usingNew);
 			return false;
@@ -1354,6 +1358,7 @@ window.EUi = {
 
 	clickDefaultSection : function () {
 		var firstTab;
+
 		if (!EUi.usingNew) {
 			return false;
 		}
@@ -1369,8 +1374,9 @@ window.EUi = {
 	},
 
 	prepareFormSections : function () {
-		var size = 0;
-		var id, addItem;
+		var id, addItem,
+			size = 0;
+
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
 				EUi.addSection(id);
@@ -1396,9 +1402,9 @@ window.EUi = {
 	},
 
 	addSection : function (id) {
-		var sec = Ed.content.sections[id];
-		var fset = $('<fieldset class="ed_section" id="ed_section_' + id + '"/>');
-		var item, tip, added = false;
+		var item, tip, added = false,
+			sec = Ed.content.sections[id],
+			fset = $('<fieldset class="ed_section" id="ed_section_' + id + '"/>');
 
 		fset.appendTo(EUi.content);
 
@@ -1436,8 +1442,9 @@ window.EUi = {
 	},
 
 	addNewSection : function () {
-		var defaultLang = EUtil.getSection();
-		var defaultText, message;
+		var defaultText, message,
+			defaultLang = EUtil.getSection();
+
 		if (!defaultLang) {
 			defaultLang = $.cookie('lastAdded');
 		}
@@ -1449,6 +1456,7 @@ window.EUi = {
 		jPrompt(message, defaultText, EStr.ADD_SECTION_TITLE,
 			function (val) {
 				var sec, id;
+
 				if (!val) {
 					return;
 				}
@@ -1468,7 +1476,7 @@ window.EUi = {
 						$.cookie('lastAdded', sec.code);
 					}
 					$('#ed_menuitem_' + id).click();
-					$('#ed_section_' + id + ' textarea').reverse().autogrow();
+					$('#ed_section_' + id + ' textarea').reverse().autoresize();
 				} else {
 					jAlert(EStr.ADD_SECTION_NONEXISTENT, EStr.ADD_SECTION_NONEXISTENT_TITLE, function () {
 						EUi.addNewSection();
@@ -1480,6 +1488,7 @@ window.EUi = {
 	editSectionTitle : function (id, section) {
 		jPrompt(EStr.EDIT_SECTION_TITLE_MESSAGE, section.title, EStr.EDIT_SECTION_TITLE, function (res) {
 			var tip;
+
 			if (!res) {
 				return;
 			}
@@ -1489,13 +1498,14 @@ window.EUi = {
 		});
 	},
 
-	deleteSection : function (id, section, force) {
+	deleteSection : function (id, force) {
 		var del = function () {
 			delete Ed.content.sections[id];
 			$('#ed_menuitem_' + id).remove();
 			$('#ed_section_' + id).remove();
 			EUi.clickDefaultSection();
 		};
+
 		if (force) {
 			del();
 		} else {
@@ -1506,28 +1516,29 @@ window.EUi = {
 	},
 
 	deleteEmptySections : function () {
-		var id, sec, empty;
-		var setNotEmpty = function () {
-			if ($(this).val()) {
-				empty = false;
-			}
-		};
+		var id, sec, empty,
+			setNotEmpty = function () {
+				if ($(this).val()) {
+					empty = false;
+				}
+			};
+
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
 				sec = Ed.content.sections[id];
 				empty = true;
 				$('#ed_section_' + id).find('textarea').each(setNotEmpty);
 				if (empty) {
-					EUi.deleteSection(id, sec, 1);
+					EUi.deleteSection(id, 1);
 				}
 			}
 		}
 	},
 
 	prepareFormSubsections : function (id) {
-		var section = Ed.content.sections[id];
-		var fset = $('#ed_section_' + id);
-		var editlink, deletelink, i;
+		var editlink, deletelink, i,
+			section = Ed.content.sections[id],
+			fset = $('#ed_section_' + id);
 
 		if (id !== EConstants.SECTION_ID_INTRO) {
 			editlink = $('<a/>').text(EStr.EDIT_SECTION_TITLE).click(function () {
@@ -1535,7 +1546,7 @@ window.EUi = {
 				return false;
 			});
 			deletelink = $('<a/>').text(EStr.DELETE_SECTION).click(function () {
-				EUi.deleteSection(id, section);
+				EUi.deleteSection(id);
 				return false;
 			});
 			fset.append($('<p class="top"/>').append(editlink).append(deletelink));
@@ -1549,12 +1560,12 @@ window.EUi = {
 	},
 
 	getSubsectionObj : function (langid, section, subsection) {
-		var name = langid + '_' + subsection.title.replace(' ', '_');
-		var p = $('<p id="ed_subsection_' + name + '"/>');
-		var caption = EConstants.SUBSECTION_TITLE[subsection.title];
-		var label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>');
-		var textarea = $('<textarea class="newform keyboardable" name="ed_' + name + '" id="ed_' + name + '"/>').text(subsection.content);
-		var extra = $('<div class="subsection_extra" id="ed_' + name + '_extra"/>');
+		var name = langid + '_' + subsection.title.replace(' ', '_'),
+			p = $('<p id="ed_subsection_' + name + '"/>'),
+			caption = EConstants.SUBSECTION_TITLE[subsection.title],
+			label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>'),
+			textarea = $('<textarea class="newform keyboardable" name="ed_' + name + '" id="ed_' + name + '"/>').text(subsection.content),
+			extra = $('<div class="subsection_extra" id="ed_' + name + '_extra"/>');
 
 		if (ESectionParser.obligatorySubsection(subsection, section)) {
 			label.addClass('oblig_subsection').append(EStr.OBLIGATORY_SUBSECTION);
@@ -1573,18 +1584,19 @@ window.EUi = {
 		this.form.parent('form').submit(function () {
 			if (EUi.usingNew) {
 				EUi.deleteEmptySections();
-				EUi.oldform.find('textarea').val(EPrinter.recalculateCode(this.form));
+				EUi.oldform.find('textarea').val(EPrinter.recalculateCode());
 			}
 			return true;
 		});
 	},
 
 	resizeTextareas : function () {
-		$('fieldset.active').find('textarea').reverse().autogrow();
+		$('fieldset.active').find('textarea').reverse().autoresize();
 	},
 
 	addIntroAdder : function () {
 		var addIntro = $('<li id="ed_menuitem_newintro" class="tip menuitem">' + EStr.ADD_INTRO + '</li>');
+
 		addIntro.appendTo(EUi.menu).click(function () {
 			var sec = {
 				'title' : '',
@@ -1592,6 +1604,7 @@ window.EUi = {
 				'id' : EConstants.SECTION_ID_INTRO,
 				'initcontent' : ''
 			};
+
 			Ed.content.sections[EConstants.SECTION_ID_INTRO] = sec;
 			ESectionParser.parse(sec);
 			EUi.addSection(EConstants.SECTION_ID_INTRO);
@@ -1604,6 +1617,7 @@ window.EUi = {
 
 	addExtraButtons : function (subsectionName, idpart, buttonContent, onclick, tooltip, section) {
 		var input, extra, button;
+
 		if (section !== undefined) {
 			input = $('#ed_' + section + '_' + subsectionName);
 			extra = $('#ed_' + section + '_' + subsectionName + '_extra');
@@ -1611,7 +1625,7 @@ window.EUi = {
 			button = button.data('tip', tooltip).attr('id', 'ed_' + section + '_extra_' + idpart);
 			extra.append(button).addClass('active');
 		} else {
-			$.each(Ed.content.sections, function (id, sec) {
+			$.each(Ed.content.sections, function (id) {
 				input = $('#ed_' + id + '_' + subsectionName);
 				extra = $('#ed_' + id + '_' + subsectionName + '_extra');
 				button = $('<span class="tip tipdown"/>').html(buttonContent).click(onclick);
@@ -1633,8 +1647,9 @@ window.EUi = {
 window.EForm = {
 
 	addDefaultTexts : function (langid, code) {
-		var arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
-		var subs, defaultText;
+		var subs, defaultText,
+			arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
+
 		for (subs in arr) {
 			if (arr.hasOwnProperty(subs)) {
 				defaultText = arr[subs];
@@ -1644,8 +1659,9 @@ window.EForm = {
 	},
 
 	removeDefaultTexts : function (langid, code) {
-		var arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
-		var subs, defaultText;
+		var subs, defaultText,
+			arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
+
 		for (subs in arr) {
 			if (arr.hasOwnProperty(subs)) {
 				defaultText = arr[subs];
@@ -1672,6 +1688,7 @@ window.EForm = {
 window.EUtil = {
 	getParameter : function (name) {
 		var regexS, regex, results;
+
 		name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
 		regexS = "[\\?&]" + name + "=([^&#]*)";
 		regex = new RegExp(regexS);
@@ -1696,10 +1713,11 @@ window.EUtil = {
 	},
 
 	executeFn : function (functionName, context) { /*, args */
-		var args = Array.prototype.slice.call(arguments, 2);
-		var namespaces = functionName.split(".");
-		var func = namespaces.pop();
-		var i;
+		var args = Array.prototype.slice.call(arguments, 2),
+			namespaces = functionName.split("."),
+			func = namespaces.pop(),
+			i;
+
 		for (i = 0; i < namespaces.length; i += 1) {
 			context = context[namespaces[i]];
 		}
@@ -1712,6 +1730,7 @@ window.EUtil = {
 
 	isEmpty : function (obj) {
 		var prop;
+
 		for (prop in obj) {
 			if (obj.hasOwnProperty(prop)) {
 				return false;
@@ -1732,6 +1751,7 @@ window.ESpecialChars = {
 
 	detach : function () {
 		var container;
+
 		if (ESpecialChars.detached) {
 			return;
 		}
@@ -1763,71 +1783,9 @@ window.ESpecialChars = {
 	}
 };
 
-window.EKeyboard = {
-
-	init : function () {
-		var keyboard = $('<div id="keyboard"/>');
-		var keys = $('<div id="keyboard_keys" />');
-
-		keyboard.hide();
-		keys.hide().append(EStr.KEYBOARD_ALWAYS);
-		$('body').append(keyboard).append(keys);
-
-		if (EUi.usingNew) {
-			ESpecialChars.detach();
-		}
-
-		keyboard.click(function () {
-			keys.toggle();
-		});
-
-		$(window).resize(function () {
-			if (document.activeElement) {
-				$(document.activeElement).focus();
-			}
-		});
-
-	},
-
-	hide : function () {
-		$('#keyboard').hide();
-		$('#keyboard_keys').hide();
-	},
-
-	updatePosition : function (origin) {
-		var nPos;
-		if (!origin.is(':visible')) {
-			EKeyboard.hide();
-			return;
-		}
-		nPos = origin.offset();
-
-		nPos.top += (origin.height() + 7);
-		nPos.left += 20;
-		$('#keyboard').show().css({ top: nPos.top, left: nPos.left });
-		$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 34 });
-		$('#keyboard_keys').data('active_area', origin.attr('id'));
-
-		insertTags = insertTags2;
-	}
-
-};
-
-(function ($) {
-
-	$.fn.keyboard = function () {
-		$(this).focus(function () {
-			EKeyboard.updatePosition($(this));
-		}).blur(function () {
-		});
-		return $(this);
-	};
-
-}(jQuery));
-
 window.insertTags2 = function (tagOpen, tagClose, sampleText) {
-	var txtarea, aname, areas, selText, isSample = false;
-	var winScroll, range, textScroll, startPos, endPos;
+	var txtarea, aname, areas, selText, isSample = false,
+		winScroll, range, textScroll, startPos, endPos;
 
 	function checkSelectedText() {
 		if (!selText) {
@@ -1895,6 +1853,68 @@ window.insertTags2 = function (tagOpen, tagClose, sampleText) {
 	}
 };
 
+window.EKeyboard = {
+
+	init : function () {
+		var keyboard = $('<div id="keyboard"/>'),
+			keys = $('<div id="keyboard_keys" />');
+
+		keyboard.hide();
+		keys.hide().append(EStr.KEYBOARD_ALWAYS);
+		$('body').append(keyboard).append(keys);
+
+		if (EUi.usingNew) {
+			ESpecialChars.detach();
+		}
+
+		keyboard.click(function () {
+			keys.toggle();
+		});
+
+		$(window).resize(function () {
+			if (document.activeElement) {
+				$(document.activeElement).focus();
+			}
+		});
+
+	},
+
+	hide : function () {
+		$('#keyboard').hide();
+		$('#keyboard_keys').hide();
+	},
+
+	updatePosition : function (origin) {
+		var nPos;
+		if (!origin.is(':visible')) {
+			EKeyboard.hide();
+			return;
+		}
+		nPos = origin.offset();
+
+		nPos.top += (origin.height() + 7);
+		nPos.left += 20;
+		$('#keyboard').show().css({ top: nPos.top, left: nPos.left });
+		$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 34 });
+		$('#keyboard_keys').data('active_area', origin.attr('id'));
+
+		window.insertTags = insertTags2;
+	}
+
+};
+
+(function ($) {
+
+	$.fn.keyboard = function () {
+		$(this).focus(function () {
+			EKeyboard.updatePosition($(this));
+		}).blur(function () {
+		});
+		return $(this);
+	};
+
+}(jQuery));
+
 
 window.EApi = {
 	url : function (lang, project) {
@@ -1945,7 +1965,7 @@ window.EApi = {
 		}
 		EApi.waitingName = callback;
 		EApi.waiting = urls.length;
-		$.each(urls, function (i, url) {
+		$.each(urls, function (ignored, url) {
 			EApi.ask__prv(query, url);
 		});
 		return 0;
@@ -1989,8 +2009,9 @@ window.EAutomator = {
 	 * Zwraca kody wersji językowej z aktywnej sekcji + domyślnych
 	 */
 	getActiveLangs : function () {
-		var ret = EConstants.USED_WIKTIONARIES.slice(0);
-		var act = EUtil.getActiveLangCode();
+		var ret = EConstants.USED_WIKTIONARIES.slice(0),
+			act = EUtil.getActiveLangCode();
+
 		if (ret.indexOf(act) === -1 && EConstants.ALL_WIKTIONARIES.indexOf(act) !== -1) {
 			ret.push(act);
 		}
@@ -2001,8 +2022,9 @@ window.EAutomator = {
 	 * Zwraca kody wszystkich wersji językowych z sekcji + domyślnych
 	 */
 	getAllLangs : function () {
-		var ret = EConstants.USED_WIKTIONARIES.slice(0);
-		var id, code;
+		var id, code,
+			ret = EConstants.USED_WIKTIONARIES.slice(0);
+
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
 				code = Ed.content.sections[id].code;
@@ -2022,6 +2044,7 @@ window.EAutomator = {
 	 */
 	fillInterwiki : function () {
 		var langs, urls, query;
+
 		EApi.started('add_iw', '');
 		langs = EAutomator.getAllLangs();
 		langs.push('pl');
@@ -2032,9 +2055,10 @@ window.EAutomator = {
 		// callback
 	},
 	fillInterwikiRe : function (results) {
-		var iwikis = [];
-		var iwikiString, curIwiki, re;
-		$.each(results, function (i, res) {
+		var iwikiString, curIwiki, re,
+			iwikis = [];
+
+		$.each(results, function (ignored, res) {
 			if (res.query === undefined || res.query.pages === undefined) {
 				return false;
 			}
@@ -2048,7 +2072,7 @@ window.EAutomator = {
 				if (val.langlinks === undefined) {
 					return false;
 				}
-				$.each(val.langlinks, function (k, link) {
+				$.each(val.langlinks, function (ignored, link) {
 					if (link['*'] === mw.config.get('wgTitle') && iwikis.indexOf(link.lang) === -1 && link.lang !== 'pl') {
 						iwikis.push(link.lang);
 					}
@@ -2071,6 +2095,7 @@ window.EAutomator = {
 
 	getIPA : function () {
 		var urls, query;
+
 		EApi.started('add_ipa', 'wymowa');
 		urls = $.map(EAutomator.getActiveLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
@@ -2079,17 +2104,20 @@ window.EAutomator = {
 		// callback
 	},
 	getIPARe : function (results) {
-		var ipas = {};
-		var error = EStr.NO_IPA_FOUND;
-		$.each(results, function (i, res) {
+		var ipas = {},
+			error = EStr.NO_IPA_FOUND;
+
+		$.each(results, function (ignored, res) {
 			var lang;
+
 			if (res.query === undefined || res.query.pages === undefined) {
 				return false;
 			}
 			lang = res.query.general.lang;
 			$.each(res.query.pages, function (j, val) {
 				var content, ipa;
-				if (j === -1) {
+
+				if (j === -1 || !val.revisions || !val.revisions[0]) {
 					return false;
 				}
 				content = val.revisions[0]['*'];
@@ -2116,19 +2144,27 @@ window.EAutomator = {
 	},
 
 	extractFirstArgsFromTemplates : function (str, template) {
-		var re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*\\/?\\s*([^\\}\\/\\|<]+)', 'g');
-		var arr, results = [];
+		var arr, el, results = [],
+			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*\\/?\\s*([^\\}\\/\\|<]+)', 'g');
+
 		while ((arr = re.exec(str)) !== null) {
-			results.push($.trim(arr[1]));
+			el = $.trim(arr[1]);
+			if (el) {
+				results.push(el);
+			}
 		}
 		return results;
 	},
 
 	extractSecondArgsFromTemplates : function (str, template) {
-		var re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\}\\|]*)\\|\\s*\\/?([^\\}\\/\\|<]+)', 'gi');
-		var arr, results = [];
+		var arr, el, results = [],
+			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\}\\|]*)\\|\\s*\\/?([^\\}\\/\\|<]+)', 'gi');
+
 		while ((arr = re.exec(str)) !== null) {
-			results.push($.trim(arr[2]));
+			el = $.trim(arr[2]);
+			if (el) {
+				results.push(el);
+			}
 		}
 		return results;
 	},
@@ -2149,22 +2185,36 @@ window.EAutomator = {
 	extractIPA_vi: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
 	extractIPA_simple: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
 	extractIPA_ru: function (str) {
-		var arr;
-		var results = EAutomator.extractFirstArgsFromTemplates(str, 'transcription');
-		var re = /\{\{transcriptions\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)\s*\}\}/g;
+		var arr, el,
+			results = EAutomator.extractFirstArgsFromTemplates(str, 'transcription'),
+			re = /\{\{transcriptions\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)\s*\}\}/g;
+
 		while ((arr = re.exec(str)) !== null) {
-			results.push($.trim(arr[1]));
-			results.push($.trim(arr[2]));
+			el = $.trim(arr[1]);
+			if (el) {
+				results.push(el);
+			}
+			el = $.trim(arr[2]);
+			if (el) {
+				results.push(el);
+			}
 		}
 		return results;
 	},
 	extractIPA_ja: function (str) {
-		var arr;
-		var results = [];
-		var re = /\{\{pron-en1\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)/g;
+		var arr, el,
+			results = [],
+			re = /\{\{pron-en1\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)/g;
+
 		while ((arr = re.exec(str)) !== null) {
-			results.push($.trim(arr[1]));
-			results.push($.trim(arr[2]));
+			el = $.trim(arr[1]);
+			if (el) {
+				results.push(el);
+			}
+			el = $.trim(arr[2]);
+			if (el) {
+				results.push(el);
+			}
 		}
 		return results;
 	}
@@ -2409,8 +2459,8 @@ window.EAutomator = {
 		},
 
 		reposition__prv: function () {
-			var top = (($(window).height() / 2) - ($("#popup_container").outerHeight() / 2)) + $.alerts.verticalOffset;
-			var left = (($(window).width() / 2) - ($("#popup_container").outerWidth() / 2)) + $.alerts.horizontalOffset;
+			var top = (($(window).height() / 2) - ($("#popup_container").outerHeight() / 2)) + $.alerts.verticalOffset,
+				left = (($(window).width() / 2) - ($("#popup_container").outerWidth() / 2)) + $.alerts.horizontalOffset;
 			if (top < 0) {
 				top = 0;
 			}
@@ -2537,32 +2587,32 @@ window.EAutomator = {
     /*
      * Auto-growing textareas; technique ripped from Facebook
      */
-    $.fn.autogrow = function (options) {
+    $.fn.autoresize = function () {
 
         this.filter('textarea').each(function () {
 
             var $this       = $(this),
                 minHeight   = 20,
                 maxHeight   = 500,
-                lineHeight  = $this.css('lineHeight');
 
-            var shadow = $('<div></div>').css({
-                position:   'absolute',
-                top:        -10000,
-                left:       -10000,
-                width:      $(this).width() - parseInt($this.css('paddingLeft'), 10) - parseInt($this.css('paddingRight'), 10),
-                fontSize:   $this.css('fontSize'),
-                fontFamily: $this.css('fontFamily'),
-                lineHeight: $this.css('lineHeight'),
-                resize:     'none'
-            }).appendTo(document.body);
+                shadow = $('<div></div>').css({
+					position:   'absolute',
+					top:        -10000,
+					left:       -10000,
+					width:      $(this).width() - parseInt($this.css('paddingLeft'), 10) - parseInt($this.css('paddingRight'), 10),
+					fontSize:   $this.css('fontSize'),
+					fontFamily: $this.css('fontFamily'),
+					lineHeight: $this.css('lineHeight'),
+					resize:     'none'
+				}).appendTo(document.body),
 
-            var update = function () {
-                var val = this.value.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;').replace(/\n$/, '<br/>&nbsp;').replace(/\n/g, '<br/>');
-                shadow.html(val);
-                $(this).css('height', Math.min(Math.max(shadow.height(), minHeight), maxHeight));
-                EKeyboard.updatePosition($(this));
-            };
+				update = function () {
+					var val = this.value.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;').replace(/\n$/, '<br/>&nbsp;').replace(/\n/g, '<br/>');
+
+					shadow.html(val);
+					$(this).css('height', Math.min(Math.max(shadow.height(), minHeight), maxHeight));
+					EKeyboard.updatePosition($(this));
+				};
 
             $(this).change(update).keyup(update).keydown(update);
 
@@ -2577,7 +2627,6 @@ window.EAutomator = {
 }(jQuery));
 
 
-/*jsl:ignore*/
 /*! Copyright (c) 2008 Brandon Aaron (http://brandonaaron.net)
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
@@ -2588,6 +2637,8 @@ window.EAutomator = {
  */
 
 (function ($) {
+	// Save a reference to the original init method
+	var init = $.prototype.init;
 
 	$.extend($.fn, {
 		livequery: function (type, fn, fn2) {
@@ -2601,7 +2652,7 @@ window.EAutomator = {
 			}
 
 			// See if Live Query already exists
-			$.each($.livequery.queries, function (i, query) {
+			$.each($.livequery.queries, function (ignored, query) {
 				if (self.selector === query.selector && self.context === query.context &&
 						type === query.type && (!fn || fn.$lqguid === query.fn.$lqguid) && (!fn2 || fn2.$lqguid === query.fn2.$lqguid)) {
 					// Found the query, exit the each loop
@@ -2634,7 +2685,7 @@ window.EAutomator = {
 			}
 
 			// Find the Live Query based on arguments and stop it
-			$.each($.livequery.queries, function (i, query) {
+			$.each($.livequery.queries, function (ignored, query) {
 				if (self.selector === query.selector && self.context === query.context &&
 						(!type || type === query.type) && (!fn || fn.$lqguid === query.fn.$lqguid) && (!fn2 || fn2.$lqguid === query.fn2.$lqguid) && !this.stopped) {
 					$.livequery.stop(query.id);
@@ -2683,7 +2734,7 @@ window.EAutomator = {
 				this.elements.unbind(this.type, this.fn);
 			} else if (this.fn2) {
 				// Call the second function for all matched elements
-				this.elements.each(function (i, el) {
+				this.elements.each(function (ignored, el) {
 					query.fn2.apply(el);
 				});
 			}
@@ -2696,14 +2747,16 @@ window.EAutomator = {
 		},
 
 		run: function () {
+			var els, nEls,
+				query = this,
+				oEls = this.elements;
+
 			// Short-circuit if stopped
 			if (this.stopped) {
 				return;
 			}
-			var query = this,
-				oEls = this.elements,
-				els  = $(this.selector, this.context),
-				nEls = els.not(oEls);
+			els = $(this.selector, this.context);
+			nEls = els.not(oEls);
 
 			// Set elements to the latest set of matched elements
 			this.elements = els;
@@ -2714,7 +2767,7 @@ window.EAutomator = {
 
 				// Unbind events to elements no longer matched
 				if (oEls.length > 0) {
-					$.each(oEls, function (i, el) {
+					$.each(oEls, function (ignored, el) {
 						if ($.inArray(el, els) < 0) {
 							$.event.remove(el, query.type, query.fn);
 						}
@@ -2728,7 +2781,7 @@ window.EAutomator = {
 
 				// Call the second function for elements no longer matched
 				if (this.fn2 && oEls.length > 0) {
-					$.each(oEls, function (i, el) {
+					$.each(oEls, function (ignored, el) {
 						if ($.inArray(el, els) < 0) {
 							query.fn2.apply(el);
 						}
@@ -2769,14 +2822,15 @@ window.EAutomator = {
 		},
 
 		registerPlugin: function () {
-			$.each(arguments, function (i, n) {
+			$.each(arguments, function (ignored, n) {
+				var old;
 				// Short-circuit if the method doesn't exist
 				if (!$.fn[n]) {
 					return;
 				}
 
 				// Save a reference to the original method
-				var old = $.fn[n];
+				old = $.fn[n];
 
 				// Create a new method
 				$.fn[n] = function () {
@@ -2834,10 +2888,6 @@ window.EAutomator = {
 	// Run Live Queries when the Document is ready
 	$(function () { $.livequery.play(); });
 
-
-	// Save a reference to the original init method
-	var init = $.prototype.init;
-
 	// Create a new init method that exposes two new properties: selector and context
 	$.prototype.init = function (a, c) {
 		// Call the original init and save the result
@@ -2863,7 +2913,6 @@ window.EAutomator = {
 	$.prototype.init.prototype = $.prototype;
 
 }(jQuery));
-/*jsl:end*/
 
 
 if ((mw.config.get('wgAction') === 'edit' || mw.config.get('wgAction') === 'submit') &&

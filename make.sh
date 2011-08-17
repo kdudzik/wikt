@@ -8,15 +8,11 @@ MAINJS=ed.js
 CSS=ed.css
 
 echo -n "//<nowiki>
-/*global $: true, mw: true, window: true, console: true, setTimeout: true, clearTimeout: true */
-/*global document: true, insertTags: true, jQuery: true, alert: true */
-/*global checkSelectedText: true, is_opera: true, is_opera_seven: true, is_opera_95: true */
-
-/*jslint es5: true, indent: 4, sloppy: true */
+/*global $, jQuery, mw, insertTags: true, jQuery: false, checkSelectedText, is_opera, is_opera_seven, is_opera_95 */
+/*jslint devel: true, browser: true, sloppy: true, es5: true, vars: true, indent: 4, regexp: true */
 
 var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParser, ESectionParser, ESpecialChars, EPrinter;
 var jPrompt, jAlert, jConfirm, insertTags2;
-
 var css = \"" > $JS
 sed 's/$/\\/g' $CSS | sed 's/\"/\\\"/g' >> $JS
 echo "\";

@@ -13,6 +13,7 @@ window.Ed = {
 
 	parseSectionsToSubsections : function () {
 		var id, sec;
+
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
 				sec = Ed.content.sections[id];
@@ -23,6 +24,7 @@ window.Ed = {
 
 	init : function () {
 		var tbox, oldform, instruction;
+
 		if (EUtil.getParameter('oldid') && EUtil.getParameter('oldid') !== mw.config.get('wgCurRevisionId').toString()) {
 			return;
 		}
@@ -48,6 +50,7 @@ window.Ed = {
 
 	resetNew : function () {
 		var tbox = $('#wpTextbox1');
+
 		Ed.content = {};
 		Ed.code = tbox.val();
 		Ed.parseContentToSections();

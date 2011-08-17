@@ -6,6 +6,7 @@ window.ESpecialChars = {
 
 	detach : function () {
 		var container;
+
 		if (ESpecialChars.detached) {
 			return;
 		}
@@ -37,71 +38,9 @@ window.ESpecialChars = {
 	}
 };
 
-window.EKeyboard = {
-
-	init : function () {
-		var keyboard = $('<div id="keyboard"/>');
-		var keys = $('<div id="keyboard_keys" />');
-
-		keyboard.hide();
-		keys.hide().append(EStr.KEYBOARD_ALWAYS);
-		$('body').append(keyboard).append(keys);
-
-		if (EUi.usingNew) {
-			ESpecialChars.detach();
-		}
-
-		keyboard.click(function () {
-			keys.toggle();
-		});
-
-		$(window).resize(function () {
-			if (document.activeElement) {
-				$(document.activeElement).focus();
-			}
-		});
-
-	},
-
-	hide : function () {
-		$('#keyboard').hide();
-		$('#keyboard_keys').hide();
-	},
-
-	updatePosition : function (origin) {
-		var nPos;
-		if (!origin.is(':visible')) {
-			EKeyboard.hide();
-			return;
-		}
-		nPos = origin.offset();
-
-		nPos.top += (origin.height() + 7);
-		nPos.left += 20;
-		$('#keyboard').show().css({ top: nPos.top, left: nPos.left });
-		$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 34 });
-		$('#keyboard_keys').data('active_area', origin.attr('id'));
-
-		insertTags = insertTags2;
-	}
-
-};
-
-(function ($) {
-
-	$.fn.keyboard = function () {
-		$(this).focus(function () {
-			EKeyboard.updatePosition($(this));
-		}).blur(function () {
-		});
-		return $(this);
-	};
-
-}(jQuery));
-
 window.insertTags2 = function (tagOpen, tagClose, sampleText) {
-	var txtarea, aname, areas, selText, isSample = false;
-	var winScroll, range, textScroll, startPos, endPos;
+	var txtarea, aname, areas, selText, isSample = false,
+		winScroll, range, textScroll, startPos, endPos;
 
 	function checkSelectedText() {
 		if (!selText) {
@@ -168,6 +107,68 @@ window.insertTags2 = function (tagOpen, tagClose, sampleText) {
 		txtarea.scrollTop = textScroll;
 	}
 };
+
+window.EKeyboard = {
+
+	init : function () {
+		var keyboard = $('<div id="keyboard"/>'),
+			keys = $('<div id="keyboard_keys" />');
+
+		keyboard.hide();
+		keys.hide().append(EStr.KEYBOARD_ALWAYS);
+		$('body').append(keyboard).append(keys);
+
+		if (EUi.usingNew) {
+			ESpecialChars.detach();
+		}
+
+		keyboard.click(function () {
+			keys.toggle();
+		});
+
+		$(window).resize(function () {
+			if (document.activeElement) {
+				$(document.activeElement).focus();
+			}
+		});
+
+	},
+
+	hide : function () {
+		$('#keyboard').hide();
+		$('#keyboard_keys').hide();
+	},
+
+	updatePosition : function (origin) {
+		var nPos;
+		if (!origin.is(':visible')) {
+			EKeyboard.hide();
+			return;
+		}
+		nPos = origin.offset();
+
+		nPos.top += (origin.height() + 7);
+		nPos.left += 20;
+		$('#keyboard').show().css({ top: nPos.top, left: nPos.left });
+		$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 34 });
+		$('#keyboard_keys').data('active_area', origin.attr('id'));
+
+		window.insertTags = insertTags2;
+	}
+
+};
+
+(function ($) {
+
+	$.fn.keyboard = function () {
+		$(this).focus(function () {
+			EKeyboard.updatePosition($(this));
+		}).blur(function () {
+		});
+		return $(this);
+	};
+
+}(jQuery));
 
 window.EFilesLoaded++;
 window.ETryInit();

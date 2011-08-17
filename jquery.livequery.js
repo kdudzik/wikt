@@ -1,4 +1,3 @@
-/*jsl:ignore*/
 /*! Copyright (c) 2008 Brandon Aaron (http://brandonaaron.net)
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
@@ -9,6 +8,8 @@
  */
 
 (function ($) {
+	// Save a reference to the original init method
+	var init = $.prototype.init;
 
 	$.extend($.fn, {
 		livequery: function (type, fn, fn2) {
@@ -22,7 +23,7 @@
 			}
 
 			// See if Live Query already exists
-			$.each($.livequery.queries, function (i, query) {
+			$.each($.livequery.queries, function (ignored, query) {
 				if (self.selector === query.selector && self.context === query.context &&
 						type === query.type && (!fn || fn.$lqguid === query.fn.$lqguid) && (!fn2 || fn2.$lqguid === query.fn2.$lqguid)) {
 					// Found the query, exit the each loop
@@ -55,7 +56,7 @@
 			}
 
 			// Find the Live Query based on arguments and stop it
-			$.each($.livequery.queries, function (i, query) {
+			$.each($.livequery.queries, function (ignored, query) {
 				if (self.selector === query.selector && self.context === query.context &&
 						(!type || type === query.type) && (!fn || fn.$lqguid === query.fn.$lqguid) && (!fn2 || fn2.$lqguid === query.fn2.$lqguid) && !this.stopped) {
 					$.livequery.stop(query.id);
@@ -104,7 +105,7 @@
 				this.elements.unbind(this.type, this.fn);
 			} else if (this.fn2) {
 				// Call the second function for all matched elements
-				this.elements.each(function (i, el) {
+				this.elements.each(function (ignored, el) {
 					query.fn2.apply(el);
 				});
 			}
@@ -117,14 +118,16 @@
 		},
 
 		run: function () {
+			var els, nEls,
+				query = this,
+				oEls = this.elements;
+
 			// Short-circuit if stopped
 			if (this.stopped) {
 				return;
 			}
-			var query = this,
-				oEls = this.elements,
-				els  = $(this.selector, this.context),
-				nEls = els.not(oEls);
+			els = $(this.selector, this.context);
+			nEls = els.not(oEls);
 
 			// Set elements to the latest set of matched elements
 			this.elements = els;
@@ -135,7 +138,7 @@
 
 				// Unbind events to elements no longer matched
 				if (oEls.length > 0) {
-					$.each(oEls, function (i, el) {
+					$.each(oEls, function (ignored, el) {
 						if ($.inArray(el, els) < 0) {
 							$.event.remove(el, query.type, query.fn);
 						}
@@ -149,7 +152,7 @@
 
 				// Call the second function for elements no longer matched
 				if (this.fn2 && oEls.length > 0) {
-					$.each(oEls, function (i, el) {
+					$.each(oEls, function (ignored, el) {
 						if ($.inArray(el, els) < 0) {
 							query.fn2.apply(el);
 						}
@@ -190,14 +193,15 @@
 		},
 
 		registerPlugin: function () {
-			$.each(arguments, function (i, n) {
+			$.each(arguments, function (ignored, n) {
+				var old;
 				// Short-circuit if the method doesn't exist
 				if (!$.fn[n]) {
 					return;
 				}
 
 				// Save a reference to the original method
-				var old = $.fn[n];
+				old = $.fn[n];
 
 				// Create a new method
 				$.fn[n] = function () {
@@ -255,10 +259,6 @@
 	// Run Live Queries when the Document is ready
 	$(function () { $.livequery.play(); });
 
-
-	// Save a reference to the original init method
-	var init = $.prototype.init;
-
 	// Create a new init method that exposes two new properties: selector and context
 	$.prototype.init = function (a, c) {
 		// Call the original init and save the result
@@ -284,7 +284,6 @@
 	$.prototype.init.prototype = $.prototype;
 
 }(jQuery));
-/*jsl:end*/
 
 window.EFilesLoaded++;
 window.ETryInit();
