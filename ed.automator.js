@@ -58,7 +58,7 @@ window.EAutomator = {
 				return false;
 			}
 			$.each(res.query.pages, function (j, val) {
-				if (j === -1) {
+				if (j === '-1') {
 					return false;
 				}
 				if (iwikis.indexOf(res.query.general.lang) === -1 && res.query.general.lang !== 'pl') {
@@ -112,7 +112,7 @@ window.EAutomator = {
 			$.each(res.query.pages, function (j, val) {
 				var content, ipa;
 
-				if (j === -1 || !val.revisions || !val.revisions[0]) {
+				if (j === '-1' || !val.revisions || !val.revisions[0]) {
 					return false;
 				}
 				content = val.revisions[0]['*'];
