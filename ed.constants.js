@@ -94,7 +94,7 @@ window.EConstants = {
 	NON_LATIN_LANGS :
 		[
 			'ab', 'ady', 'akk', 'am', 'ar', 'arc', 'as', 'av', 'ba', 'bal', 'be',
-			'bg', 'bn', 'bo', 'bs', 'cau', 'ce', 'chm', 'ckb', 'cr', 'cu', 'cv',
+			'bg', 'bn', 'bo', 'cau', 'ce', 'chm', 'ckb', 'cr', 'cu', 'cv',
 			'dv', 'dz', 'el', 'fa', 'gez', 'got', 'gr', 'gu', 'he', 'hi', 'hy',
 			'inh', 'iu', 'ka', 'kjh', 'kk', 'km', 'kn', 'kok', 'ks', 'ku', 'kv',
 			'ky', 'lez', 'lo', 'mk', 'ml', 'mn', 'mr', 'my', 'myv', 'ne', 'new',
@@ -103,7 +103,7 @@ window.EConstants = {
 		],
 	DOUBLE_LANGS :
 		[
-			'az', 'be', 'crh', 'jdt', 'lad', 'slovio', 'sr', 'tk', 'tt', 'tut', 'ug'
+			'az', 'be', 'bs', 'crh', 'jdt', 'lad', 'slovio', 'sr', 'tk', 'tt', 'tut', 'ug'
 		],
 	LANG_CODES_SHORT :
 		{
