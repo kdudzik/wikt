@@ -274,7 +274,6 @@ div.subsection_extra > span.apierror {\
 	background-color: lemonchiffon;\
 	border: 2px solid palegoldenrod;\
 	padding: 5px;\
-	max-width: 400px;\
 	width: 350px;\
 	position: absolute;\
 	z-index: 699;\
@@ -294,6 +293,13 @@ div.subsection_extra > span.apierror {\
 	font-size: 1.7em;\
 	font-weight: bold;\
 	float: right;\
+}\
+#ajax_results dt {\
+	font-weight: normal;\
+	font-style: italic;\
+}\
+#ajax_result_disc {\
+	margin-bottom: 5px;\
 }\
 ";
 mw.util.addCSS(css);
@@ -743,7 +749,23 @@ window.EPrinter = {
 	},
 
 	ipaResultToHTML : function (res) {
-		return '';
+		var html = EStr.AJAX_IPA_RESULT_INSTRUCTION;
+
+		html += '<dl>'
+		$.each(res, function (lang, arr) {
+			var langlink = '<a href="' + EUtil.getUrl(lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>';
+			html += '<dt>' + EConstants.CODE_TO_LANG[lang] + ' ' + langlink + '</dt>';
+			html += '<dd>';
+			$.each(arr, function (ignored, elem) {
+				var elemHTML = EUtil.escapeHTML(elem),
+					elemJS = EUtil.escapeJS(elem);
+				html += '<a href="#" onclick="insertTags(\'' + elemJS + '\', \'\', \'\'); return false">' + elemHTML + '</a>';
+			});
+			html += '</dd>';
+		});
+		html += '</dl>'
+
+		return html;
 	}
 };
 
@@ -1347,7 +1369,15 @@ window.EStr = {
 	WILL_BE_SHOWN:
 		'<br/><small>Wyniki zapytania z poszczególnych wersji językowych zostaną pokazane w okienku, które umożliwi ich proste dodawanie do hasła.</small>',
 	NO_IPA_FOUND:
-		'Nie znaleziono IPA'
+		'Nie znaleziono IPA',
+	AJAX_IPA_RESULT_INSTRUCTION:
+		'<div id="ajax_result_disc"><small>\
+		Poniżej wyświetlono zapisy w międzynarodowym alfabecie fonetycznym, które udało się znaleźć \
+		w artykułach o tej samej nazwie w innych wersjach językowych Wikisłownika. Kliknij wybrany wynik, aby wstawić go w miejscu, \
+		w którym znajduje się teraz kursor.\
+		</small></div>',
+	VIEW_ARTICLE:
+		'zobacz hasło',
 };
 
 
@@ -1712,8 +1742,9 @@ window.EUi = {
 			textbox = button.parent().prev();
 
 		nPos.top = button.offset().top;
-		nPos.left = textbox.offset().left + (textbox.width() - ajr.outerWidth()) / 2;
+		nPos.left = textbox.offset().left + 60;
 		ajr.css(nPos);
+		ajr.width(textbox.outerWidth() - 120);
 	},
 
 	hideResult : function () {
@@ -1764,17 +1795,7 @@ window.EForm = {
 
 window.EUtil = {
 	getParameter : function (name) {
-		var regexS, regex, results;
-
-		name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-		regexS = "[\\?&]" + name + "=([^&#]*)";
-		regex = new RegExp(regexS);
-		results = regex.exec(window.location.href);
-		if (results === null) {
-			return "";
-		} else {
-			return decodeURIComponent(results[1].replace(/\+/g, " "));
-		}
+		return mw.util.getParamValue(name);
 	},
 
 	getSection : function () {
@@ -1814,6 +1835,18 @@ window.EUtil = {
 			}
 		}
 		return true;
+	},
+
+	escapeHTML : function (html) {
+		return html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+	},
+
+	escapeJS : function (js) {
+		return js.replace(/\'/g, "\\'");
+	},
+
+	getUrl : function (langcode, page) {
+		return 'http://' + langcode + '.wiktionary.org/wiki/' + mw.util.wikiUrlencode(page);
 	}
 };
 
@@ -2123,6 +2156,24 @@ window.EAutomator = {
 		return $.grep(ret, function (val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) !== -1; });
 	},
 
+	getInterwikiLangs : function () {
+		var arr, el, res = [],
+			str = $('#ed_0000_').val(),
+			re = new RegExp('\\[\\[(\\w+):.*?\\]\\]', 'g');
+
+		while ((arr = re.exec(str)) !== null) {
+			el = $.trim(arr[1]);
+			if (el) {
+				res.push(el);
+			}
+		}
+		return res;
+	},
+
+	getActiveAndInterwikiLangs : function () {
+		return $.merge(EAutomator.getActiveLangs(), EAutomator.getInterwikiLangs().slice(0, 10));
+	},
+
 	/*
 	 * Aktualizuje interwiki: do obecnych dodaje z wersji językowych z sekcji + domyślnych
 	 */
@@ -2181,7 +2232,7 @@ window.EAutomator = {
 		var urls, query;
 
 		EApi.started(EConstants.MODE_IPA, 'wymowa');
-		urls = $.map(EAutomator.getActiveLangs(), function (val) { return EApi.url(val); });
+		urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
 		EApi.askMore(query, 'EAutomator.getIPARe', urls);
 

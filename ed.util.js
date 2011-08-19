@@ -1,16 +1,6 @@
 window.EUtil = {
 	getParameter : function (name) {
-		var regexS, regex, results;
-
-		name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-		regexS = "[\\?&]" + name + "=([^&#]*)";
-		regex = new RegExp(regexS);
-		results = regex.exec(window.location.href);
-		if (results === null) {
-			return "";
-		} else {
-			return decodeURIComponent(results[1].replace(/\+/g, " "));
-		}
+		return mw.util.getParamValue(name);
 	},
 
 	getSection : function () {
@@ -50,6 +40,18 @@ window.EUtil = {
 			}
 		}
 		return true;
+	},
+
+	escapeHTML : function (html) {
+		return html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+	},
+
+	escapeJS : function (js) {
+		return js.replace(/\'/g, "\\'");
+	},
+
+	getUrl : function (langcode, page) {
+		return 'http://' + langcode + '.wiktionary.org/wiki/' + mw.util.wikiUrlencode(page);
 	}
 };
 

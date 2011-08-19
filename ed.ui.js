@@ -358,8 +358,9 @@ window.EUi = {
 			textbox = button.parent().prev();
 
 		nPos.top = button.offset().top;
-		nPos.left = textbox.offset().left + (textbox.width() - ajr.outerWidth()) / 2;
+		nPos.left = textbox.offset().left + 60;
 		ajr.css(nPos);
+		ajr.width(textbox.outerWidth() - 120);
 	},
 
 	hideResult : function () {

@@ -101,7 +101,23 @@ window.EPrinter = {
 	},
 
 	ipaResultToHTML : function (res) {
-		return '';
+		var html = EStr.AJAX_IPA_RESULT_INSTRUCTION;
+
+		html += '<dl>'
+		$.each(res, function (lang, arr) {
+			var langlink = '<a href="' + EUtil.getUrl(lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>';
+			html += '<dt>' + EConstants.CODE_TO_LANG[lang] + ' ' + langlink + '</dt>';
+			html += '<dd>';
+			$.each(arr, function (ignored, elem) {
+				var elemHTML = EUtil.escapeHTML(elem),
+					elemJS = EUtil.escapeJS(elem);
+				html += '<a href="#" onclick="insertTags(\'' + elemJS + '\', \'\', \'\'); return false">' + elemHTML + '</a>';
+			});
+			html += '</dd>';
+		});
+		html += '</dl>'
+
+		return html;
 	}
 };
 

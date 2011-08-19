@@ -268,7 +268,6 @@ div.subsection_extra > span.apierror {
 	background-color: lemonchiffon;
 	border: 2px solid palegoldenrod;
 	padding: 5px;
-	max-width: 400px;
 	width: 350px;
 	position: absolute;
 	z-index: 699;
@@ -288,4 +287,11 @@ div.subsection_extra > span.apierror {
 	font-size: 1.7em;
 	font-weight: bold;
 	float: right;
+}
+#ajax_results dt {
+	font-weight: normal;
+	font-style: italic;
+}
+#ajax_result_disc {
+	margin-bottom: 5px;
 }

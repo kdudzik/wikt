@@ -34,6 +34,24 @@ window.EAutomator = {
 		return $.grep(ret, function (val) { return EConstants.ALL_WIKTIONARIES.indexOf(val) !== -1; });
 	},
 
+	getInterwikiLangs : function () {
+		var arr, el, res = [],
+			str = $('#ed_0000_').val(),
+			re = new RegExp('\\[\\[(\\w+):.*?\\]\\]', 'g');
+
+		while ((arr = re.exec(str)) !== null) {
+			el = $.trim(arr[1]);
+			if (el) {
+				res.push(el);
+			}
+		}
+		return res;
+	},
+
+	getActiveAndInterwikiLangs : function () {
+		return $.merge(EAutomator.getActiveLangs(), EAutomator.getInterwikiLangs().slice(0, 10));
+	},
+
 	/*
 	 * Aktualizuje interwiki: do obecnych dodaje z wersji językowych z sekcji + domyślnych
 	 */
@@ -92,7 +110,7 @@ window.EAutomator = {
 		var urls, query;
 
 		EApi.started(EConstants.MODE_IPA, 'wymowa');
-		urls = $.map(EAutomator.getActiveLangs(), function (val) { return EApi.url(val); });
+		urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
 		EApi.askMore(query, 'EAutomator.getIPARe', urls);
 

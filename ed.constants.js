@@ -597,7 +597,15 @@ window.EStr = {
 	WILL_BE_SHOWN:
 		'<br/><small>Wyniki zapytania z poszczególnych wersji językowych zostaną pokazane w okienku, które umożliwi ich proste dodawanie do hasła.</small>',
 	NO_IPA_FOUND:
-		'Nie znaleziono IPA'
+		'Nie znaleziono IPA',
+	AJAX_IPA_RESULT_INSTRUCTION:
+		'<div id="ajax_result_disc"><small>\
+		Poniżej wyświetlono zapisy w międzynarodowym alfabecie fonetycznym, które udało się znaleźć \
+		w artykułach o tej samej nazwie w innych wersjach językowych Wikisłownika. Kliknij wybrany wynik, aby wstawić go w miejscu, \
+		w którym znajduje się teraz kursor.\
+		</small></div>',
+	VIEW_ARTICLE:
+		'zobacz hasło',
 };
 
 
