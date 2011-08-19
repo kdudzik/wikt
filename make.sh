@@ -12,7 +12,7 @@ echo -n "//<nowiki>
 /*jslint devel: true, browser: true, sloppy: true, es5: true, vars: true, indent: 4, regexp: true */
 
 var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParser, ESectionParser, ESpecialChars, EPrinter;
-var jPrompt, jAlert, jConfirm, insertTags2;
+var jPrompt, jAlert, jConfirm;
 var css = \"" > $JS
 sed 's/$/\\/g' $CSS | sed 's/\"/\\\"/g' >> $JS
 echo "\";

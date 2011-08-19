@@ -213,6 +213,7 @@ div.subsection_extra > span.apierror {
 	padding: 0;
 	position: absolute;
 	z-index: 700;
+	cursor: pointer;
 }
 
 #keyboard_keys {

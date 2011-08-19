@@ -16,7 +16,7 @@ window.EUi = {
 		this.instruction = instruction;
 		EUi.form.append(EUi.menu).append(EUi.content);
 		oldform.before(EUi.form);
-		EUi.usingNew = $.cookie('usenew') === null || $.cookie('usenew') === 1;
+		EUi.usingNew = $.cookie('usenew') === null || $.cookie('usenew') === '1';
 
 		if (EUi.usingNew) {
 			oldform.hide();
