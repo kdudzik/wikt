@@ -63,19 +63,26 @@ window.EApi = {
 		}
 	},
 
-	done : function (idpart, error) {
-		var elem = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart);
-		if (error === undefined) {
-			elem.addClass('apidone').removeClass('apistarted apierror');
-		} else {
-			elem.addClass('apierror').removeClass('apistarted apidone').html(error);
-		}
-	},
+	started : function (mode, subs) {
+		var idpart = EConstants.API_ID[mode];
 
-	started : function (idpart, subs) {
 		$('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart).removeClass('apidone apierror').addClass('apistarted');
 		if (subs !== undefined) {
 			EUtil.focusArea(subs);
+		}
+	},
+
+	done : function (mode, res, error) {
+		var idpart = EConstants.API_ID[mode],
+			elem = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart);
+
+		if (error === undefined) {
+			elem.addClass('apidone').removeClass('apistarted apierror');
+			if (res !== undefined) {
+				EUi.showResult(EPrinter.resultToHTML(EConstants.MODE_IPA, res), idpart);
+			}
+		} else {
+			elem.addClass('apierror').removeClass('apistarted apidone').html(error);
 		}
 	},
 

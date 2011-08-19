@@ -261,3 +261,30 @@ div.subsection_extra > span.apierror {
 	text-decoration: none;
 	border: 1px solid darkkhaki;
 }
+
+#ajax_results {
+	font-size: 0.8em;
+	background-color: lemonchiffon;
+	border: 2px solid palegoldenrod;
+	padding: 5px;
+	max-width: 400px;
+	width: 350px;
+	position: absolute;
+	z-index: 699;
+	word-wrap: break-word;
+}
+
+#ajax_results a {
+	padding: 1px 2px !important;
+	margin: 0 !important;
+	cursor: pointer;
+}
+#ajax_results a:hover {
+	text-decoration: none;
+	background-color: palegoldenrod !important;
+}
+#ajax_results a#closelink {
+	font-size: 1.7em;
+	font-weight: bold;
+	float: right;
+}

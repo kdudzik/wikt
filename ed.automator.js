@@ -40,7 +40,7 @@ window.EAutomator = {
 	fillInterwiki : function () {
 		var langs, urls, query;
 
-		EApi.started('add_iw', '');
+		EApi.started(EConstants.MODE_IW, '');
 		langs = EAutomator.getAllLangs();
 		langs.push('pl');
 		urls = $.map(langs, function (val) { return EApi.url(val); });
@@ -85,13 +85,13 @@ window.EAutomator = {
 			re = new RegExp('(\\[\\[[a-z\\-]+' + ':' + mw.config.get('wgTitle') + '\\]\\]\\s*)+');
 			$('#ed_0000_').val(iwikiString + curIwiki.replace(re, '\n'));
 		}
-		EApi.done('add_iw');
+		EApi.done(EConstants.MODE_IW);
 	},
 
 	getIPA : function () {
 		var urls, query;
 
-		EApi.started('add_ipa', 'wymowa');
+		EApi.started(EConstants.MODE_IPA, 'wymowa');
 		urls = $.map(EAutomator.getActiveLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
 		EApi.askMore(query, 'EAutomator.getIPARe', urls);
@@ -125,9 +125,7 @@ window.EAutomator = {
 			});
 			return true;
 		});
-		console.log(ipas);
-
-		EApi.done('add_ipa', error);
+		EApi.done(EConstants.MODE_IPA, ipas, error);
 	},
 
 	extractIPA : function (str, lang) {
@@ -144,7 +142,7 @@ window.EAutomator = {
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]);
-			if (el) {
+			if (el && el !== '…') {
 				results.push(el);
 			}
 		}

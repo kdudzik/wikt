@@ -172,6 +172,7 @@ window.EConstants = {
 			'boloński' : 'egl',
 			'bośniacki' : 'bs',
 			'bretoński' : 'br',
+			'brithenig' : 'bzt',
 			'bułgarski' : 'bg',
 			'cebuano' : 'ceb',
 			'chakaski' : 'kjh',
@@ -476,6 +477,14 @@ window.EConstants = {
 			'ne', 'sa', 'mr', 'kn', 'ml', 'pa', 'ta', 'te', 'km', 'lo', 'my', 'si', 'th',
 			'am', 'ti', 'iu', 'chr', 'ko', 'ja', 'zh'
 		],
+	MODE_IPA : 0,
+	MODE_IW : 1,
+	API_ID :
+		{
+			0 : 'add_ipa',
+			1 : 'add_iw'
+		},
+
 	init : function () {
 		var name;
 		for (name in EConstants.LANG_CODES_SHORT) {

@@ -86,6 +86,22 @@ window.EPrinter = {
 		 * ani "tłumaczenia" a tekst nie zaczyna się od dwukropka lub gwiazdki, to program powinien sam dodać dwukropek i spację)
 		 */
 		return '\n: ';
+	},
+
+	resultToHTML : function (mode, res) {
+		var html = '';
+		switch (mode) {
+		case EConstants.MODE_IPA:
+			html = EPrinter.ipaResultToHTML(res);
+			break;
+		default:
+			break;
+		}
+		return html;
+	},
+
+	ipaResultToHTML : function (res) {
+		return '';
 	}
 };
 

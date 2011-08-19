@@ -267,6 +267,33 @@ div.subsection_extra > span.apierror {\
 	text-decoration: none;\
 	border: 1px solid darkkhaki;\
 }\
+\
+#ajax_results {\
+	font-size: 0.8em;\
+	background-color: lemonchiffon;\
+	border: 2px solid palegoldenrod;\
+	padding: 5px;\
+	max-width: 400px;\
+	width: 350px;\
+	position: absolute;\
+	z-index: 699;\
+	word-wrap: break-word;\
+}\
+\
+#ajax_results a {\
+	padding: 1px 2px !important;\
+	margin: 0 !important;\
+	cursor: pointer;\
+}\
+#ajax_results a:hover {\
+	text-decoration: none;\
+	background-color: palegoldenrod !important;\
+}\
+#ajax_results a#closelink {\
+	font-size: 1.7em;\
+	font-weight: bold;\
+	float: right;\
+}\
 ";
 mw.util.addCSS(css);
 /**
@@ -700,6 +727,22 @@ window.EPrinter = {
 		 * ani "tłumaczenia" a tekst nie zaczyna się od dwukropka lub gwiazdki, to program powinien sam dodać dwukropek i spację)
 		 */
 		return '\n: ';
+	},
+
+	resultToHTML : function (mode, res) {
+		var html = '';
+		switch (mode) {
+		case EConstants.MODE_IPA:
+			html = EPrinter.ipaResultToHTML(res);
+			break;
+		default:
+			break;
+		}
+		return html;
+	},
+
+	ipaResultToHTML : function (res) {
+		return '';
 	}
 };
 
@@ -878,6 +921,7 @@ window.EConstants = {
 			'boloński' : 'egl',
 			'bośniacki' : 'bs',
 			'bretoński' : 'br',
+			'brithenig' : 'bzt',
 			'bułgarski' : 'bg',
 			'cebuano' : 'ceb',
 			'chakaski' : 'kjh',
@@ -1182,6 +1226,14 @@ window.EConstants = {
 			'ne', 'sa', 'mr', 'kn', 'ml', 'pa', 'ta', 'te', 'km', 'lo', 'my', 'si', 'th',
 			'am', 'ti', 'iu', 'chr', 'ko', 'ja', 'zh'
 		],
+	MODE_IPA : 0,
+	MODE_IW : 1,
+	API_ID :
+		{
+			0 : 'add_ipa',
+			1 : 'add_iw'
+		},
+
 	init : function () {
 		var name;
 		for (name in EConstants.LANG_CODES_SHORT) {
@@ -1344,7 +1396,6 @@ window.EUi = {
 
 		EUi.prepareFormSections();
 		EUi.rebindFormActions();
-		EUi.prepareAutomatorForm();
 		EKeyboard.init();
 	},
 
@@ -1398,6 +1449,9 @@ window.EUi = {
 
 		EUi.clickDefaultSection();
 		EUi.resizeTextareas();
+		if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length === 0) {
+			EUi.addIntroAdder();
+		}
 		$(window).resize(EUi.resizeTextareas);
 	},
 
@@ -1557,6 +1611,7 @@ window.EUi = {
 				fset.append(EUi.getSubsectionObj(id, section, section.subsections[i]));
 			}
 		}
+		EUi.prepareSectionAutomation(id);
 	},
 
 	getSubsectionObj : function (langid, section, subsection) {
@@ -1615,32 +1670,53 @@ window.EUi = {
 		}).data('tip', EStr.ADD_INTRO_SECTION);
 	},
 
-	addExtraButtons : function (subsectionName, idpart, buttonContent, onclick, tooltip, section) {
+	addExtraButtons : function (sectionName, subsectionName, idpart, buttonContent, onclick, tooltip) {
 		var input, extra, button;
 
-		if (section !== undefined) {
-			input = $('#ed_' + section + '_' + subsectionName);
-			extra = $('#ed_' + section + '_' + subsectionName + '_extra');
-			button = $('<span class="tip tipdown"/>').html(buttonContent).click(onclick);
-			button = button.data('tip', tooltip).attr('id', 'ed_' + section + '_extra_' + idpart);
-			extra.append(button).addClass('active');
-		} else {
-			$.each(Ed.content.sections, function (id) {
-				input = $('#ed_' + id + '_' + subsectionName);
-				extra = $('#ed_' + id + '_' + subsectionName + '_extra');
-				button = $('<span class="tip tipdown"/>').html(buttonContent).click(onclick);
-				button = button.data('tip', tooltip).attr('id', 'ed_' + id + '_extra_' + idpart);
-				extra.append(button).addClass('active');
-			});
+		input = $('#ed_' + sectionName + '_' + subsectionName);
+		extra = $('#ed_' + sectionName + '_' + subsectionName + '_extra');
+		button = $('<span class="tip tipdown"/>').html(buttonContent).click(onclick);
+		button = button.data('tip', tooltip).attr('id', 'ed_' + sectionName + '_extra_' + idpart);
+		extra.append(button).addClass('active');
+	},
+
+	prepareSectionAutomation : function (id) {
+		EUi.addExtraButtons(id, 'wymowa', 'add_ipa', EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_SHOWN);
+		if (id === EConstants.SECTION_ID_INTRO) {
+			EUi.addExtraButtons(id, '', 'add_iw', EStr.ADD_INTERWIKI, EAutomator.fillInterwiki, EStr.GET_INTERWIKI);
 		}
 	},
 
-	prepareAutomatorForm : function () {
-		if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length === 0) {
-			EUi.addIntroAdder();
+	showResult : function (ajaxResult, buttonIdPart) {
+		var ajr = $('#ajax_results'),
+			closelink = $('<a id="closelink">×</a>');
+
+		if (ajr.length === 0) {
+			ajr = $('<div id="ajax_results"/>').appendTo($('body'));
+			$(window).resize(EUi.relocateResult);
 		}
-		EUi.addExtraButtons('wymowa', 'add_ipa', EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_SHOWN);
-		EUi.addExtraButtons('', 'add_iw', EStr.ADD_INTERWIKI, EAutomator.fillInterwiki, EStr.GET_INTERWIKI, EConstants.SECTION_ID_INTRO);
+		ajr.html(ajaxResult).show().data('buttonIdPart', buttonIdPart);
+		EUi.relocateResult();
+
+		closelink.prependTo(ajr).click(function () {
+			EUi.hideResult();
+		});
+
+	},
+
+	relocateResult : function () {
+		var nPos = {},
+			ajr = $('#ajax_results'),
+			button = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + ajr.data('buttonIdPart')),
+			textbox = button.parent().prev();
+
+		nPos.top = button.offset().top;
+		nPos.left = textbox.offset().left + (textbox.width() - ajr.outerWidth()) / 2;
+		ajr.css(nPos);
+	},
+
+	hideResult : function () {
+		$('#ajax_results').hide();
 	}
 };
 
@@ -1981,19 +2057,26 @@ window.EApi = {
 		}
 	},
 
-	done : function (idpart, error) {
-		var elem = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart);
-		if (error === undefined) {
-			elem.addClass('apidone').removeClass('apistarted apierror');
-		} else {
-			elem.addClass('apierror').removeClass('apistarted apidone').html(error);
-		}
-	},
+	started : function (mode, subs) {
+		var idpart = EConstants.API_ID[mode];
 
-	started : function (idpart, subs) {
 		$('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart).removeClass('apidone apierror').addClass('apistarted');
 		if (subs !== undefined) {
 			EUtil.focusArea(subs);
+		}
+	},
+
+	done : function (mode, res, error) {
+		var idpart = EConstants.API_ID[mode],
+			elem = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart);
+
+		if (error === undefined) {
+			elem.addClass('apidone').removeClass('apistarted apierror');
+			if (res !== undefined) {
+				EUi.showResult(EPrinter.resultToHTML(EConstants.MODE_IPA, res), idpart);
+			}
+		} else {
+			elem.addClass('apierror').removeClass('apistarted apidone').html(error);
 		}
 	},
 
@@ -2045,7 +2128,7 @@ window.EAutomator = {
 	fillInterwiki : function () {
 		var langs, urls, query;
 
-		EApi.started('add_iw', '');
+		EApi.started(EConstants.MODE_IW, '');
 		langs = EAutomator.getAllLangs();
 		langs.push('pl');
 		urls = $.map(langs, function (val) { return EApi.url(val); });
@@ -2090,13 +2173,13 @@ window.EAutomator = {
 			re = new RegExp('(\\[\\[[a-z\\-]+' + ':' + mw.config.get('wgTitle') + '\\]\\]\\s*)+');
 			$('#ed_0000_').val(iwikiString + curIwiki.replace(re, '\n'));
 		}
-		EApi.done('add_iw');
+		EApi.done(EConstants.MODE_IW);
 	},
 
 	getIPA : function () {
 		var urls, query;
 
-		EApi.started('add_ipa', 'wymowa');
+		EApi.started(EConstants.MODE_IPA, 'wymowa');
 		urls = $.map(EAutomator.getActiveLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
 		EApi.askMore(query, 'EAutomator.getIPARe', urls);
@@ -2130,9 +2213,7 @@ window.EAutomator = {
 			});
 			return true;
 		});
-		console.log(ipas);
-
-		EApi.done('add_ipa', error);
+		EApi.done(EConstants.MODE_IPA, ipas, error);
 	},
 
 	extractIPA : function (str, lang) {
@@ -2149,7 +2230,7 @@ window.EAutomator = {
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]);
-			if (el) {
+			if (el && el !== '…') {
 				results.push(el);
 			}
 		}
