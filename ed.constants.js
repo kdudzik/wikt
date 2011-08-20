@@ -605,7 +605,7 @@ window.EStr = {
 		w którym znajduje się teraz kursor.\
 		</small></div>',
 	VIEW_ARTICLE:
-		'zobacz hasło',
+		'zobacz hasło'
 };
 
 

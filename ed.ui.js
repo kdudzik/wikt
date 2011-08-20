@@ -120,6 +120,7 @@ window.EUi = {
 			EParser.insideTemplate(sec.title) + '<br/><small>tytuł sekcji: <tt>' + sec.title + '</tt></small>';
 		item.data({ 'section' : 'ed_section_' + id, 'code' : sec.code, 'tip' : tip }).click(function () {
 			EKeyboard.hide();
+			EUi.hideResult();
 			EUi.content.find('.ed_section').removeClass('active');
 			EUi.content.find('#' + $(this).data('section')).addClass('active');
 			$(this).addClass('active').siblings().removeClass('active');

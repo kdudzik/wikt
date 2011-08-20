@@ -156,11 +156,11 @@ window.EAutomator = {
 
 	extractFirstArgsFromTemplates : function (str, template) {
 		var arr, el, results = [],
-			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*\\/?\\s*([^\\}\\/\\|<]+)', 'g');
+			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*[\\/\\[]?\\s*([^\\}\\/\\|<\\]=]+)', 'g');
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]);
-			if (el && el !== '…') {
+			if (el && el !== '…' && el !== 'lang' && results.indexOf(el) === -1) {
 				results.push(el);
 			}
 		}
@@ -169,11 +169,11 @@ window.EAutomator = {
 
 	extractSecondArgsFromTemplates : function (str, template) {
 		var arr, el, results = [],
-			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\}\\|]*)\\|\\s*\\/?([^\\}\\/\\|<]+)', 'gi');
+			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\}\\|]*)\\|\\s*[\\/\\]]?([^\\}\\/\\|<=]+)', 'gi');
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[2]);
-			if (el) {
+			if (el && el !== 'lang' && results.indexOf(el) === -1) {
 				results.push(el);
 			}
 		}
@@ -202,11 +202,11 @@ window.EAutomator = {
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]);
-			if (el) {
+			if (el && results.indexOf(el) === -1) {
 				results.push(el);
 			}
 			el = $.trim(arr[2]);
-			if (el) {
+			if (el && results.indexOf(el) === -1) {
 				results.push(el);
 			}
 		}
@@ -219,11 +219,11 @@ window.EAutomator = {
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]);
-			if (el) {
+			if (el && results.indexOf(el) === -1) {
 				results.push(el);
 			}
 			el = $.trim(arr[2]);
-			if (el) {
+			if (el && results.indexOf(el) === -1) {
 				results.push(el);
 			}
 		}

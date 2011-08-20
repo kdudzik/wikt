@@ -101,21 +101,28 @@ window.EPrinter = {
 	},
 
 	ipaResultToHTML : function (res) {
-		var html = EStr.AJAX_IPA_RESULT_INSTRUCTION;
+		var arr = [],
+			html = EStr.AJAX_IPA_RESULT_INSTRUCTION;
+		$.each(res, function (lang, langresult) {
+			arr.push({ lang: lang, arr: langresult });
+		});
+		arr.sort(function (a, b) {
+			return EConstants.CODE_TO_LANG[a.lang] > EConstants.CODE_TO_LANG[b.lang] ? 1 : -1;
+		});
 
-		html += '<dl>'
-		$.each(res, function (lang, arr) {
-			var langlink = '<a href="' + EUtil.getUrl(lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>';
-			html += '<dt>' + EConstants.CODE_TO_LANG[lang] + ' ' + langlink + '</dt>';
+		html += '<dl>';
+		$.each(arr, function (ignored, arrelem) {
+			var langlink = '<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>';
+			html += '<dt>' + EConstants.CODE_TO_LANG[arrelem.lang] + ' ' + langlink + '</dt>';
 			html += '<dd>';
-			$.each(arr, function (ignored, elem) {
+			$.each(arrelem.arr, function (ignored, elem) {
 				var elemHTML = EUtil.escapeHTML(elem),
 					elemJS = EUtil.escapeJS(elem);
 				html += '<a href="#" onclick="insertTags(\'' + elemJS + '\', \'\', \'\'); return false">' + elemHTML + '</a>';
 			});
 			html += '</dd>';
 		});
-		html += '</dl>'
+		html += '</dl>';
 
 		return html;
 	}
