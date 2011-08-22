@@ -298,8 +298,11 @@ div.subsection_extra > span.apierror {
 	font-size: 0.85em;
 	font-style: normal;
 }
+#ajax_results dd {
+	line-height: 1.4;
+}
 #ajax_results dd a {
-	padding: 1px 5px !important;
+	padding: 0px 3px !important;
 }
 #ajax_result_disc {
 	margin-bottom: 5px;

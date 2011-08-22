@@ -79,7 +79,7 @@ window.EApi = {
 		if (error === undefined) {
 			elem.addClass('apidone').removeClass('apistarted apierror');
 			if (res !== undefined) {
-				EUi.showResult(EPrinter.resultToHTML(EConstants.MODE_IPA, res), idpart);
+				EUi.showResult(EPrinter.resultToHTML(mode, res), idpart);
 			}
 		} else {
 			elem.addClass('apierror').removeClass('apistarted apidone').html(error);

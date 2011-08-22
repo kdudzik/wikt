@@ -486,10 +486,12 @@ window.EConstants = {
 		],
 	MODE_IPA : 0,
 	MODE_IW : 1,
+	MODE_PICTURE : 2,
 	API_ID :
 		{
 			0 : 'add_ipa',
-			1 : 'add_iw'
+			1 : 'add_iw',
+			2 : 'add_picture'
 		},
 	IPA_MODE_ADDS_NOTHING : 1,
 	IPA_MODE_ADDS_SLASH : 2,
@@ -640,10 +642,16 @@ window.EStr = {
 		'Dodaj (zaktualizuj) interwiki',
 	GET_INTERWIKI:
 		'Pobierz interwiki z innych wersji językowych Wikisłownika',
+	ADD_PICTURE:
+		'Dodaj grafikę',
+	GET_PICTURE:
+		'Pobierz grafikę z innych wersji językowych Wikisłownika',
 	WILL_BE_SHOWN:
 		'<br/><small>Wyniki zapytania z poszczególnych wersji językowych zostaną pokazane w okienku, które umożliwi ich proste dodawanie do hasła.</small>',
 	NO_IPA_FOUND:
 		'Nie znaleziono IPA',
+	NO_PICTURE_FOUND:
+		'Nie znaleziono grafik',
 	AJAX_IPA_RESULT_INSTRUCTION:
 		'<div id="ajax_result_disc"><small>\
 		Poniżej wyświetlono zapisy w międzynarodowym alfabecie fonetycznym, które udało się znaleźć \
@@ -653,7 +661,14 @@ window.EStr = {
 		target="_blank"><tt>{{IPA}}</tt> lub <tt>{{IPA3}}</tt>, dostosuj to do danej sytuacji</a>. \
 		</small></div>',
 	VIEW_ARTICLE:
-		'zobacz hasło'
+		'zobacz hasło',
+	AJAX_PICTURE_RESULT_INSTRUCTION:
+		'<div id="ajax_result_disc"><small>\
+		Poniżej wyświetlono grafiki, które udało się znaleźć \
+		w artykułach o tej samej nazwie w innych wersjach językowych Wikisłownika. Kliknij wybrany wynik, aby wstawić go w miejscu, \
+		w którym znajduje się teraz kursor.<br/> \
+		Po najechaniu myszką na nazwę pliku pokaże się jego podgląd. \
+		</small></div>'
 };
 
 

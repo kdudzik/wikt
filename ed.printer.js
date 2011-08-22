@@ -89,18 +89,18 @@ window.EPrinter = {
 	},
 
 	resultToHTML : function (mode, res) {
-		var html = '';
 		switch (mode) {
 		case EConstants.MODE_IPA:
-			html = EPrinter.ipaResultToHTML(res);
-			break;
+			return EPrinter.ipaResult(res);
+		case EConstants.MODE_PICTURE:
+			return EPrinter.pictureResult(res);
 		default:
 			break;
 		}
-		return html;
+		return '';
 	},
 
-	ipaResultToHTML : function (res) {
+	ipaResult : function (res) {
 		var arr = [],
 			html = EStr.AJAX_IPA_RESULT_INSTRUCTION;
 		$.each(res, function (lang, langresult) {
@@ -126,13 +126,13 @@ window.EPrinter = {
 					beg = withOuter.template === 'IPA' ? '/' : '[',
 					end = withOuter.template === 'IPA' ? '/' : ']';
 				html += '<a href="#" class="ipa" onclick="insertTags(\'' + EUtil.escapeJS(toInsert) + '\', \'\', \'\'); return false">'
-					+ beg + EUtil.escapeHTML(withOuter.str) + end + '</a>';
+					+ beg + EUtil.escapeHTML(withOuter.str) + end + '</a> ';
 			});
 			html += '</dd>';
 		});
 		html += '</dl>';
 
-		return html;
+		return $(html);
 	},
 
 	ipaWithOuter : function (str, lang) {
@@ -149,6 +149,41 @@ window.EPrinter = {
 				return { template: 'IPA', str: str };
 			}
 		}
+	},
+
+	pictureResult : function (res) {
+		var arr = [],
+			html = EStr.AJAX_PICTURE_RESULT_INSTRUCTION;
+		$.each(res, function (lang, langresult) {
+			langresult.sort();
+			arr.push({
+				lang: lang,
+				arr: langresult,
+				caption : EConstants.WIKTCODE_TO_LANG[lang] || EConstants.CODE_TO_LANG[lang].replace('język', 'Wikisłownik') || lang
+			});
+		});
+		arr.sort(function (a, b) {
+			return a.caption > b.caption ? 1 : -1;
+		});
+
+		html += '<dl>';
+		$.each(arr, function (ignored, arrelem) {
+			var langlink = '<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>';
+			html += '<dt>' + arrelem.caption + ' ' + langlink + '</dt>';
+			html += '<dd>';
+			$.each(arrelem.arr, function (ignored, elem) {
+				var toInsert;
+				elem = elem.replace('_', ' ');
+				toInsert = '[[Plik:' + elem + '|thumb|' + mw.config.get('wgTitle');
+				html += '<a href="#" onclick="insertTags(\'' + EUtil.escapeJS(toInsert) + '\', \' (1.1)]]\', \'\'); return false">'
+					+ EUtil.escapeHTML(elem) + '</a> ';
+				//TODO onmouseover
+			});
+			html += '</dd>';
+		});
+		html += '</dl>';
+
+		return $(html);
 	}
 };
 

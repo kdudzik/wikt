@@ -304,8 +304,11 @@ div.subsection_extra > span.apierror {\
 	font-size: 0.85em;\
 	font-style: normal;\
 }\
+#ajax_results dd {\
+	line-height: 1.4;\
+}\
 #ajax_results dd a {\
-	padding: 1px 5px !important;\
+	padding: 0px 3px !important;\
 }\
 #ajax_result_disc {\
 	margin-bottom: 5px;\
@@ -1494,10 +1497,12 @@ window.EConstants = {
 		],
 	MODE_IPA : 0,
 	MODE_IW : 1,
+	MODE_PICTURE : 2,
 	API_ID :
 		{
 			0 : 'add_ipa',
-			1 : 'add_iw'
+			1 : 'add_iw',
+			2 : 'add_picture'
 		},
 	IPA_MODE_ADDS_NOTHING : 1,
 	IPA_MODE_ADDS_SLASH : 2,
@@ -1648,10 +1653,16 @@ window.EStr = {
 		'Dodaj (zaktualizuj) interwiki',
 	GET_INTERWIKI:
 		'Pobierz interwiki z innych wersji językowych Wikisłownika',
+	ADD_PICTURE:
+		'Dodaj grafikę',
+	GET_PICTURE:
+		'Pobierz grafikę z innych wersji językowych Wikisłownika',
 	WILL_BE_SHOWN:
 		'<br/><small>Wyniki zapytania z poszczególnych wersji językowych zostaną pokazane w okienku, które umożliwi ich proste dodawanie do hasła.</small>',
 	NO_IPA_FOUND:
 		'Nie znaleziono IPA',
+	NO_PICTURE_FOUND:
+		'Nie znaleziono grafik',
 	AJAX_IPA_RESULT_INSTRUCTION:
 		'<div id="ajax_result_disc"><small>\
 		Poniżej wyświetlono zapisy w międzynarodowym alfabecie fonetycznym, które udało się znaleźć \
@@ -1661,7 +1672,14 @@ window.EStr = {
 		target="_blank"><tt>{{IPA}}</tt> lub <tt>{{IPA3}}</tt>, dostosuj to do danej sytuacji</a>. \
 		</small></div>',
 	VIEW_ARTICLE:
-		'zobacz hasło'
+		'zobacz hasło',
+	AJAX_PICTURE_RESULT_INSTRUCTION:
+		'<div id="ajax_result_disc"><small>\
+		Poniżej wyświetlono grafiki, które udało się znaleźć \
+		w artykułach o tej samej nazwie w innych wersjach językowych Wikisłownika. Kliknij wybrany wynik, aby wstawić go w miejscu, \
+		w którym znajduje się teraz kursor.<br/> \
+		Po najechaniu myszką na nazwę pliku pokaże się jego podgląd. \
+		</small></div>'
 };
 
 
@@ -2160,18 +2178,18 @@ window.EPrinter = {
 	},
 
 	resultToHTML : function (mode, res) {
-		var html = '';
 		switch (mode) {
 		case EConstants.MODE_IPA:
-			html = EPrinter.ipaResultToHTML(res);
-			break;
+			return EPrinter.ipaResult(res);
+		case EConstants.MODE_PICTURE:
+			return EPrinter.pictureResult(res);
 		default:
 			break;
 		}
-		return html;
+		return '';
 	},
 
-	ipaResultToHTML : function (res) {
+	ipaResult : function (res) {
 		var arr = [],
 			html = EStr.AJAX_IPA_RESULT_INSTRUCTION;
 		$.each(res, function (lang, langresult) {
@@ -2197,13 +2215,13 @@ window.EPrinter = {
 					beg = withOuter.template === 'IPA' ? '/' : '[',
 					end = withOuter.template === 'IPA' ? '/' : ']';
 				html += '<a href="#" class="ipa" onclick="insertTags(\'' + EUtil.escapeJS(toInsert) + '\', \'\', \'\'); return false">'
-					+ beg + EUtil.escapeHTML(withOuter.str) + end + '</a>';
+					+ beg + EUtil.escapeHTML(withOuter.str) + end + '</a> ';
 			});
 			html += '</dd>';
 		});
 		html += '</dl>';
 
-		return html;
+		return $(html);
 	},
 
 	ipaWithOuter : function (str, lang) {
@@ -2220,6 +2238,41 @@ window.EPrinter = {
 				return { template: 'IPA', str: str };
 			}
 		}
+	},
+
+	pictureResult : function (res) {
+		var arr = [],
+			html = EStr.AJAX_PICTURE_RESULT_INSTRUCTION;
+		$.each(res, function (lang, langresult) {
+			langresult.sort();
+			arr.push({
+				lang: lang,
+				arr: langresult,
+				caption : EConstants.WIKTCODE_TO_LANG[lang] || EConstants.CODE_TO_LANG[lang].replace('język', 'Wikisłownik') || lang
+			});
+		});
+		arr.sort(function (a, b) {
+			return a.caption > b.caption ? 1 : -1;
+		});
+
+		html += '<dl>';
+		$.each(arr, function (ignored, arrelem) {
+			var langlink = '<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>';
+			html += '<dt>' + arrelem.caption + ' ' + langlink + '</dt>';
+			html += '<dd>';
+			$.each(arrelem.arr, function (ignored, elem) {
+				var toInsert;
+				elem = elem.replace('_', ' ');
+				toInsert = '[[Plik:' + elem + '|thumb|' + mw.config.get('wgTitle');
+				html += '<a href="#" onclick="insertTags(\'' + EUtil.escapeJS(toInsert) + '\', \' (1.1)]]\', \'\'); return false">'
+					+ EUtil.escapeHTML(elem) + '</a> ';
+				//TODO onmouseover
+			});
+			html += '</dd>';
+		});
+		html += '</dl>';
+
+		return $(html);
 	}
 };
 
@@ -2485,7 +2538,7 @@ window.EUi = {
 				fset.append(EUi.getSubsectionObj(id, section, section.subsections[i]));
 			}
 		}
-		EUi.prepareSectionAutomation(id, section.code);
+		EUi.prepareSectionAutomation(id);
 	},
 
 	getSubsectionObj : function (langid, section, subsection) {
@@ -2555,10 +2608,12 @@ window.EUi = {
 	},
 
 	prepareSectionAutomation : function (id) {
-		EUi.addExtraButtons(id, 'wymowa', 'add_ipa', EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_SHOWN);
 		if (id === EConstants.SECTION_ID_INTRO) {
 			EUi.addExtraButtons(id, '', 'add_iw', EStr.ADD_INTERWIKI, EAutomator.fillInterwiki, EStr.GET_INTERWIKI);
+		} else {
+			EUi.addExtraButtons(id, '', 'add_picture', EStr.ADD_PICTURE, EAutomator.getPicture, EStr.GET_PICTURE + EStr.WILL_BE_SHOWN);
 		}
+		EUi.addExtraButtons(id, 'wymowa', 'add_ipa', EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_SHOWN);
 	},
 
 	showResult : function (ajaxResult, buttonIdPart) {
@@ -2569,7 +2624,7 @@ window.EUi = {
 			ajr = $('<div id="ajax_results"/>').appendTo($('body'));
 			$(window).resize(EUi.relocateResult);
 		}
-		ajr.html(ajaxResult).show().data('buttonIdPart', buttonIdPart);
+		ajr.html('').append(ajaxResult).show().data('buttonIdPart', buttonIdPart);
 		EUi.relocateResult();
 
 		closelink.prependTo(ajr).click(function () {
@@ -2891,7 +2946,7 @@ window.EApi = {
 		if (error === undefined) {
 			elem.addClass('apidone').removeClass('apistarted apierror');
 			if (res !== undefined) {
-				EUi.showResult(EPrinter.resultToHTML(EConstants.MODE_IPA, res), idpart);
+				EUi.showResult(EPrinter.resultToHTML(mode, res), idpart);
 			}
 		} else {
 			elem.addClass('apierror').removeClass('apistarted apidone').html(error);
@@ -3145,6 +3200,58 @@ window.EAutomator = {
 		} else {
 			textarea.val('{{translit|' + sectionCode + '}}');
 		}
+	},
+
+	getPicture : function () {
+		var urls, query;
+
+		EApi.started(EConstants.MODE_PICTURE, '');
+		urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
+		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
+		EApi.askMore(query, 'EAutomator.getPictureRe', urls);
+
+		// callback
+	},
+	getPictureRe : function (results) {
+		var pics = {},
+			error = EStr.NO_PICTURE_FOUND;
+		$.each(results, function (ignored, res) {
+			var lang;
+
+			if (res.query === undefined || res.query.pages === undefined) {
+				return false;
+			}
+			lang = res.query.general.lang;
+			$.each(res.query.pages, function (j, val) {
+				var content, pic;
+
+				if (j === '-1' || !val.revisions || !val.revisions[0]) {
+					return false;
+				}
+				content = val.revisions[0]['*'];
+				pic = EAutomator.extractPicture(content, lang);
+				if (pic !== undefined && pic.length) {
+					pics[lang] = pic;
+					error = undefined;
+				}
+				return true;
+			});
+			return true;
+		});
+		EApi.done(EConstants.MODE_PICTURE, pics, error);
+	},
+
+	extractPicture : function (str, lang) {
+		var arr, el, results = [],
+			re = new RegExp('\\:([^\\|\\]]+\\.(jpg|png|gif|svg))', 'gi');
+
+		while ((arr = re.exec(str)) !== null) {
+			el = $.trim(arr[1]);
+			if (el && results.indexOf(el) === -1) {
+				results.push(el);
+			}
+		}
+		return results;
 	}
 };
 

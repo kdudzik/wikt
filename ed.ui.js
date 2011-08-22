@@ -259,7 +259,7 @@ window.EUi = {
 				fset.append(EUi.getSubsectionObj(id, section, section.subsections[i]));
 			}
 		}
-		EUi.prepareSectionAutomation(id, section.code);
+		EUi.prepareSectionAutomation(id);
 	},
 
 	getSubsectionObj : function (langid, section, subsection) {
@@ -329,10 +329,12 @@ window.EUi = {
 	},
 
 	prepareSectionAutomation : function (id) {
-		EUi.addExtraButtons(id, 'wymowa', 'add_ipa', EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_SHOWN);
 		if (id === EConstants.SECTION_ID_INTRO) {
 			EUi.addExtraButtons(id, '', 'add_iw', EStr.ADD_INTERWIKI, EAutomator.fillInterwiki, EStr.GET_INTERWIKI);
+		} else {
+			EUi.addExtraButtons(id, '', 'add_picture', EStr.ADD_PICTURE, EAutomator.getPicture, EStr.GET_PICTURE + EStr.WILL_BE_SHOWN);
 		}
+		EUi.addExtraButtons(id, 'wymowa', 'add_ipa', EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_SHOWN);
 	},
 
 	showResult : function (ajaxResult, buttonIdPart) {
@@ -343,7 +345,7 @@ window.EUi = {
 			ajr = $('<div id="ajax_results"/>').appendTo($('body'));
 			$(window).resize(EUi.relocateResult);
 		}
-		ajr.html(ajaxResult).show().data('buttonIdPart', buttonIdPart);
+		ajr.html('').append(ajaxResult).show().data('buttonIdPart', buttonIdPart);
 		EUi.relocateResult();
 
 		closelink.prependTo(ajr).click(function () {

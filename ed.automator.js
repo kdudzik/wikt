@@ -239,6 +239,58 @@ window.EAutomator = {
 		} else {
 			textarea.val('{{translit|' + sectionCode + '}}');
 		}
+	},
+
+	getPicture : function () {
+		var urls, query;
+
+		EApi.started(EConstants.MODE_PICTURE, '');
+		urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
+		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
+		EApi.askMore(query, 'EAutomator.getPictureRe', urls);
+
+		// callback
+	},
+	getPictureRe : function (results) {
+		var pics = {},
+			error = EStr.NO_PICTURE_FOUND;
+		$.each(results, function (ignored, res) {
+			var lang;
+
+			if (res.query === undefined || res.query.pages === undefined) {
+				return false;
+			}
+			lang = res.query.general.lang;
+			$.each(res.query.pages, function (j, val) {
+				var content, pic;
+
+				if (j === '-1' || !val.revisions || !val.revisions[0]) {
+					return false;
+				}
+				content = val.revisions[0]['*'];
+				pic = EAutomator.extractPicture(content, lang);
+				if (pic !== undefined && pic.length) {
+					pics[lang] = pic;
+					error = undefined;
+				}
+				return true;
+			});
+			return true;
+		});
+		EApi.done(EConstants.MODE_PICTURE, pics, error);
+	},
+
+	extractPicture : function (str, lang) {
+		var arr, el, results = [],
+			re = new RegExp('\\:([^\\|\\]]+\\.(jpg|png|gif|svg))', 'gi');
+
+		while ((arr = re.exec(str)) !== null) {
+			el = $.trim(arr[1]);
+			if (el && results.indexOf(el) === -1) {
+				results.push(el);
+			}
+		}
+		return results;
 	}
 };
 
