@@ -224,6 +224,21 @@ window.EAutomator = {
 			}
 		}
 		return results;
+	},
+
+	addTransliteration: function (sectionName, sectionCode) {
+		var textarea = $('#ed_' + sectionName + '_transliteracja');
+		if (EConstants.TRANSLIT_SUPPORTED.indexOf(sectionCode) === -1) {
+			return;
+		}
+		if (textarea.val()) {
+			return;
+		}
+		if (sectionCode === 'ru') {
+			textarea.val('{{translit}}');
+		} else {
+			textarea.val('{{translit|' + sectionCode + '}}');
+		}
 	}
 };
 

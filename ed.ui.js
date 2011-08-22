@@ -259,7 +259,7 @@ window.EUi = {
 				fset.append(EUi.getSubsectionObj(id, section, section.subsections[i]));
 			}
 		}
-		EUi.prepareSectionAutomation(id);
+		EUi.prepareSectionAutomation(id, section.code);
 	},
 
 	getSubsectionObj : function (langid, section, subsection) {
@@ -381,6 +381,7 @@ window.EForm = {
 				EForm.val(langid, subs, defaultText);
 			}
 		}
+		EAutomator.addTransliteration(langid, code);
 	},
 
 	removeDefaultTexts : function (langid, code) {

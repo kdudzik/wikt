@@ -1534,6 +1534,10 @@ window.EConstants = {
 			'sl' : 3,
 			'tl' : 3,
 		},
+	TRANSLIT_SUPPORTED :
+		[
+			'ru', 'uk', 'by', 'bg', 'mk'
+		],
 
 	init : function () {
 		var name;
@@ -2481,7 +2485,7 @@ window.EUi = {
 				fset.append(EUi.getSubsectionObj(id, section, section.subsections[i]));
 			}
 		}
-		EUi.prepareSectionAutomation(id);
+		EUi.prepareSectionAutomation(id, section.code);
 	},
 
 	getSubsectionObj : function (langid, section, subsection) {
@@ -2603,6 +2607,7 @@ window.EForm = {
 				EForm.val(langid, subs, defaultText);
 			}
 		}
+		EAutomator.addTransliteration(langid, code);
 	},
 
 	removeDefaultTexts : function (langid, code) {
@@ -3125,6 +3130,21 @@ window.EAutomator = {
 			}
 		}
 		return results;
+	},
+
+	addTransliteration: function (sectionName, sectionCode) {
+		var textarea = $('#ed_' + sectionName + '_transliteracja');
+		if (EConstants.TRANSLIT_SUPPORTED.indexOf(sectionCode) === -1) {
+			return;
+		}
+		if (textarea.val()) {
+			return;
+		}
+		if (sectionCode === 'ru') {
+			textarea.val('{{translit}}');
+		} else {
+			textarea.val('{{translit|' + sectionCode + '}}');
+		}
 	}
 };
 

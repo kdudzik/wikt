@@ -526,6 +526,10 @@ window.EConstants = {
 			'sl' : 3,
 			'tl' : 3,
 		},
+	TRANSLIT_SUPPORTED :
+		[
+			'ru', 'uk', 'by', 'bg', 'mk'
+		],
 
 	init : function () {
 		var name;
