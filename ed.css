@@ -272,6 +272,8 @@ div.subsection_extra > span.apierror {
 	position: absolute;
 	z-index: 699;
 	word-wrap: break-word;
+	max-height: 450px;
+	overflow-y: auto;
 }
 
 #ajax_results a {

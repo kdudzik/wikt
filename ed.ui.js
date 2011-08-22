@@ -83,7 +83,7 @@ window.EUi = {
 			}
 		}
 
-		if (EUtil.getParameter('section') === '') {
+		if (!EUtil.getParameter('section')) {
 			addItem = $('<li id="ed_menuitem_new" class="tip menuitem">' + EStr.ADD + '</li>');
 			addItem.appendTo(EUi.menu).click(function () {
 				EUi.addNewSection();

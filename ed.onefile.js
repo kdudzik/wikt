@@ -278,6 +278,8 @@ div.subsection_extra > span.apierror {\
 	position: absolute;\
 	z-index: 699;\
 	word-wrap: break-word;\
+	max-height: 450px;\
+	overflow-y: auto;\
 }\
 \
 #ajax_results a {\
@@ -1393,6 +1395,13 @@ window.EConstants = {
 		},
 	CODE_TO_LANG :
 		{},
+	WIKTCODE_TO_LANG :
+		{
+			'no' : 'Wikisłownik norweski',
+			'simple' : 'Uproszczony Wikisłownik angielski',
+			'li' : 'Wikisłownik limburgijski',
+			'eo' : 'Wikisłownik w esperanto'
+		},
 	ONELINE_SECTIONS :
 		20,
 	SUBSECTIONS_WITHOUT_NL :
@@ -1489,6 +1498,41 @@ window.EConstants = {
 		{
 			0 : 'add_ipa',
 			1 : 'add_iw'
+		},
+	IPA_MODE_ADDS_NOTHING : 1,
+	IPA_MODE_ADDS_SLASH : 2,
+	IPA_MODE_ADDS_BRACKET : 3,
+	IPA_TEMPLATE_MODE :
+		{
+			'de' : 3,
+			'es' : 1,
+			'fr' : 2,
+			'en' : 1,
+			'cs' : 3,
+			'sk' : 3,
+			'it' : 1,
+			'af' : 3,
+			'ca' : 1,
+			'ro' : 1,
+			'et' : 3,
+			'ko' : 3,
+			'nl' : 1,
+			'vi' : 1,
+			'simple' : 1,
+			'ru' : 3,
+			'ja' : 2,
+			'co' : 1,
+			'el' : 1,
+			'eo' : 1,
+			'ga' : 1,
+			'is' : 1,
+			'li' : 1,
+			'lv' : 1,
+			'mg' : 2,
+			'no' : 1,
+			'oc' : 3,
+			'sl' : 3,
+			'tl' : 3,
 		},
 
 	init : function () {
@@ -1608,7 +1652,9 @@ window.EStr = {
 		'<div id="ajax_result_disc"><small>\
 		Poniżej wyświetlono zapisy w międzynarodowym alfabecie fonetycznym, które udało się znaleźć \
 		w artykułach o tej samej nazwie w innych wersjach językowych Wikisłownika. Kliknij wybrany wynik, aby wstawić go w miejscu, \
-		w którym znajduje się teraz kursor.\
+		w którym znajduje się teraz kursor.<br/> \
+		Zapis zostanie wstawiony w szablonie <a href="http://pl.wiktionary.org/wiki/Wikis%C5%82ownik:Zasady_tworzenia_hase%C5%82#Sekcja_.27wymowa.27" \
+		target="_blank"><tt>{{IPA}}</tt> lub <tt>{{IPA3}}</tt>, dostosuj to do danej sytuacji</a>. \
 		</small></div>',
 	VIEW_ARTICLE:
 		'zobacz hasło'
@@ -2125,27 +2171,51 @@ window.EPrinter = {
 		var arr = [],
 			html = EStr.AJAX_IPA_RESULT_INSTRUCTION;
 		$.each(res, function (lang, langresult) {
-			arr.push({ lang: lang, arr: langresult });
+			langresult.sort();
+			arr.push({
+				lang: lang,
+				arr: langresult,
+				caption : EConstants.WIKTCODE_TO_LANG[lang] || EConstants.CODE_TO_LANG[lang].replace('język', 'Wikisłownik') || lang
+			});
 		});
 		arr.sort(function (a, b) {
-			return EConstants.CODE_TO_LANG[a.lang] > EConstants.CODE_TO_LANG[b.lang] ? 1 : -1;
+			return a.caption > b.caption ? 1 : -1;
 		});
 
 		html += '<dl>';
 		$.each(arr, function (ignored, arrelem) {
 			var langlink = '<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>';
-			html += '<dt>' + EConstants.CODE_TO_LANG[arrelem.lang] + ' ' + langlink + '</dt>';
+			html += '<dt>' + arrelem.caption + ' ' + langlink + '</dt>';
 			html += '<dd>';
 			$.each(arrelem.arr, function (ignored, elem) {
-				var elemHTML = EUtil.escapeHTML(elem),
-					elemJS = EUtil.escapeJS(elem);
-				html += '<a href="#" onclick="insertTags(\'' + elemJS + '\', \'\', \'\'); return false">' + elemHTML + '</a>';
+				var withOuter = EPrinter.ipaWithOuter(elem, arrelem.lang),
+					toInsert = '{{' + withOuter.template + '|' + withOuter.str + '}}',
+					beg = withOuter.template === 'IPA' ? '/' : '[',
+					end = withOuter.template === 'IPA' ? '/' : ']';
+				html += '<a href="#" class="ipa" onclick="insertTags(\'' + EUtil.escapeJS(toInsert) + '\', \'\', \'\'); return false">'
+					+ beg + EUtil.escapeHTML(withOuter.str) + end + '</a>';
 			});
 			html += '</dd>';
 		});
 		html += '</dl>';
 
 		return html;
+	},
+
+	ipaWithOuter : function (str, lang) {
+		if (EConstants.IPA_TEMPLATE_MODE[lang] === EConstants.IPA_MODE_ADDS_SLASH) {
+			return { template: 'IPA', str: str };
+		} else if (EConstants.IPA_TEMPLATE_MODE[lang] === EConstants.IPA_MODE_ADDS_BRACKET) {
+			return { template: 'IPA3', str: str };
+		} else {
+			if (str.indexOf('/') !== -1) {
+				return { template: 'IPA', str: str.replace(/(^\s*)?\/(\s*$)?/g, '') };
+			} else if (str.indexOf('[') !== -1) {
+				return { template: 'IPA3', str: str.replace(/(^\s*)?[\[\]](\s*$)?/g, '') };
+			} else {
+				return { template: 'IPA', str: str };
+			}
+		}
 	}
 };
 
@@ -2235,7 +2305,7 @@ window.EUi = {
 			}
 		}
 
-		if (EUtil.getParameter('section') === '') {
+		if (!EUtil.getParameter('section')) {
 			addItem = $('<li id="ed_menuitem_new" class="tip menuitem">' + EStr.ADD + '</li>');
 			addItem.appendTo(EUi.menu).click(function () {
 				EUi.addNewSection();
@@ -2880,7 +2950,7 @@ window.EAutomator = {
 	},
 
 	getActiveAndInterwikiLangs : function () {
-		return $.merge(EAutomator.getActiveLangs(), EAutomator.getInterwikiLangs().slice(0, 10));
+		return $.merge(EAutomator.getActiveLangs(), EAutomator.getInterwikiLangs().slice(0, 50));
 	},
 
 	/*
@@ -2987,11 +3057,11 @@ window.EAutomator = {
 
 	extractFirstArgsFromTemplates : function (str, template) {
 		var arr, el, results = [],
-			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*[\\/\\[]?\\s*([^\\}\\/\\|<\\]=]+)', 'g');
+			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\{\\}\\|<=]+)[\\}\\|<]', 'g');
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]);
-			if (el && el !== '…' && el !== 'lang' && results.indexOf(el) === -1) {
+			if (el && el !== '…' && el !== '...' && results.indexOf(el) === -1) {
 				results.push(el);
 			}
 		}
@@ -3000,7 +3070,7 @@ window.EAutomator = {
 
 	extractSecondArgsFromTemplates : function (str, template) {
 		var arr, el, results = [],
-			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\}\\|]*)\\|\\s*[\\/\\]]?([^\\}\\/\\|<=]+)', 'gi');
+			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\{\\}\\|]*)\\|\\s*[\\/\\]]?([^\\{\\}\\/\\|<=]+)[\\}\\|\\/<\\]]', 'gi');
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[2]);
@@ -3024,29 +3094,25 @@ window.EAutomator = {
 	extractIPA_et: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'hääldus'); },
 	extractIPA_ko: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
 	extractIPA_nl: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_co: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_el: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'ΔΦΑ'); },
+	extractIPA_eo: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IFA'); },
 	extractIPA_vi: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_ja: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA1'); },
 	extractIPA_simple: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_ga: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_is: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_li: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_lv: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_mg: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'pron'); },
+	extractIPA_no: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_oc: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'pron'); },
+	extractIPA_sl: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_tl: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'API'); },
 	extractIPA_ru: function (str) {
 		var arr, el,
 			results = EAutomator.extractFirstArgsFromTemplates(str, 'transcription'),
 			re = /\{\{transcriptions\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)\s*\}\}/g;
-
-		while ((arr = re.exec(str)) !== null) {
-			el = $.trim(arr[1]);
-			if (el && results.indexOf(el) === -1) {
-				results.push(el);
-			}
-			el = $.trim(arr[2]);
-			if (el && results.indexOf(el) === -1) {
-				results.push(el);
-			}
-		}
-		return results;
-	},
-	extractIPA_ja: function (str) {
-		var arr, el,
-			results = [],
-			re = /\{\{pron-en1\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)/g;
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]);

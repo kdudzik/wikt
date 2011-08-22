@@ -104,27 +104,51 @@ window.EPrinter = {
 		var arr = [],
 			html = EStr.AJAX_IPA_RESULT_INSTRUCTION;
 		$.each(res, function (lang, langresult) {
-			arr.push({ lang: lang, arr: langresult });
+			langresult.sort();
+			arr.push({
+				lang: lang,
+				arr: langresult,
+				caption : EConstants.WIKTCODE_TO_LANG[lang] || EConstants.CODE_TO_LANG[lang].replace('język', 'Wikisłownik') || lang
+			});
 		});
 		arr.sort(function (a, b) {
-			return EConstants.CODE_TO_LANG[a.lang] > EConstants.CODE_TO_LANG[b.lang] ? 1 : -1;
+			return a.caption > b.caption ? 1 : -1;
 		});
 
 		html += '<dl>';
 		$.each(arr, function (ignored, arrelem) {
 			var langlink = '<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>';
-			html += '<dt>' + EConstants.CODE_TO_LANG[arrelem.lang] + ' ' + langlink + '</dt>';
+			html += '<dt>' + arrelem.caption + ' ' + langlink + '</dt>';
 			html += '<dd>';
 			$.each(arrelem.arr, function (ignored, elem) {
-				var elemHTML = EUtil.escapeHTML(elem),
-					elemJS = EUtil.escapeJS(elem);
-				html += '<a href="#" onclick="insertTags(\'' + elemJS + '\', \'\', \'\'); return false">' + elemHTML + '</a>';
+				var withOuter = EPrinter.ipaWithOuter(elem, arrelem.lang),
+					toInsert = '{{' + withOuter.template + '|' + withOuter.str + '}}',
+					beg = withOuter.template === 'IPA' ? '/' : '[',
+					end = withOuter.template === 'IPA' ? '/' : ']';
+				html += '<a href="#" class="ipa" onclick="insertTags(\'' + EUtil.escapeJS(toInsert) + '\', \'\', \'\'); return false">'
+					+ beg + EUtil.escapeHTML(withOuter.str) + end + '</a>';
 			});
 			html += '</dd>';
 		});
 		html += '</dl>';
 
 		return html;
+	},
+
+	ipaWithOuter : function (str, lang) {
+		if (EConstants.IPA_TEMPLATE_MODE[lang] === EConstants.IPA_MODE_ADDS_SLASH) {
+			return { template: 'IPA', str: str };
+		} else if (EConstants.IPA_TEMPLATE_MODE[lang] === EConstants.IPA_MODE_ADDS_BRACKET) {
+			return { template: 'IPA3', str: str };
+		} else {
+			if (str.indexOf('/') !== -1) {
+				return { template: 'IPA', str: str.replace(/(^\s*)?\/(\s*$)?/g, '') };
+			} else if (str.indexOf('[') !== -1) {
+				return { template: 'IPA3', str: str.replace(/(^\s*)?[\[\]](\s*$)?/g, '') };
+			} else {
+				return { template: 'IPA', str: str };
+			}
+		}
 	}
 };
 

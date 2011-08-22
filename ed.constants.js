@@ -387,6 +387,13 @@ window.EConstants = {
 		},
 	CODE_TO_LANG :
 		{},
+	WIKTCODE_TO_LANG :
+		{
+			'no' : 'Wikisłownik norweski',
+			'simple' : 'Uproszczony Wikisłownik angielski',
+			'li' : 'Wikisłownik limburgijski',
+			'eo' : 'Wikisłownik w esperanto'
+		},
 	ONELINE_SECTIONS :
 		20,
 	SUBSECTIONS_WITHOUT_NL :
@@ -483,6 +490,41 @@ window.EConstants = {
 		{
 			0 : 'add_ipa',
 			1 : 'add_iw'
+		},
+	IPA_MODE_ADDS_NOTHING : 1,
+	IPA_MODE_ADDS_SLASH : 2,
+	IPA_MODE_ADDS_BRACKET : 3,
+	IPA_TEMPLATE_MODE :
+		{
+			'de' : 3,
+			'es' : 1,
+			'fr' : 2,
+			'en' : 1,
+			'cs' : 3,
+			'sk' : 3,
+			'it' : 1,
+			'af' : 3,
+			'ca' : 1,
+			'ro' : 1,
+			'et' : 3,
+			'ko' : 3,
+			'nl' : 1,
+			'vi' : 1,
+			'simple' : 1,
+			'ru' : 3,
+			'ja' : 2,
+			'co' : 1,
+			'el' : 1,
+			'eo' : 1,
+			'ga' : 1,
+			'is' : 1,
+			'li' : 1,
+			'lv' : 1,
+			'mg' : 2,
+			'no' : 1,
+			'oc' : 3,
+			'sl' : 3,
+			'tl' : 3,
 		},
 
 	init : function () {
@@ -602,7 +644,9 @@ window.EStr = {
 		'<div id="ajax_result_disc"><small>\
 		Poniżej wyświetlono zapisy w międzynarodowym alfabecie fonetycznym, które udało się znaleźć \
 		w artykułach o tej samej nazwie w innych wersjach językowych Wikisłownika. Kliknij wybrany wynik, aby wstawić go w miejscu, \
-		w którym znajduje się teraz kursor.\
+		w którym znajduje się teraz kursor.<br/> \
+		Zapis zostanie wstawiony w szablonie <a href="http://pl.wiktionary.org/wiki/Wikis%C5%82ownik:Zasady_tworzenia_hase%C5%82#Sekcja_.27wymowa.27" \
+		target="_blank"><tt>{{IPA}}</tt> lub <tt>{{IPA3}}</tt>, dostosuj to do danej sytuacji</a>. \
 		</small></div>',
 	VIEW_ARTICLE:
 		'zobacz hasło'

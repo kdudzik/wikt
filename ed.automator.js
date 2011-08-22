@@ -49,7 +49,7 @@ window.EAutomator = {
 	},
 
 	getActiveAndInterwikiLangs : function () {
-		return $.merge(EAutomator.getActiveLangs(), EAutomator.getInterwikiLangs().slice(0, 10));
+		return $.merge(EAutomator.getActiveLangs(), EAutomator.getInterwikiLangs().slice(0, 50));
 	},
 
 	/*
@@ -156,11 +156,11 @@ window.EAutomator = {
 
 	extractFirstArgsFromTemplates : function (str, template) {
 		var arr, el, results = [],
-			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*[\\/\\[]?\\s*([^\\}\\/\\|<\\]=]+)', 'g');
+			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\{\\}\\|<=]+)[\\}\\|<]', 'g');
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]);
-			if (el && el !== '…' && el !== 'lang' && results.indexOf(el) === -1) {
+			if (el && el !== '…' && el !== '...' && results.indexOf(el) === -1) {
 				results.push(el);
 			}
 		}
@@ -169,7 +169,7 @@ window.EAutomator = {
 
 	extractSecondArgsFromTemplates : function (str, template) {
 		var arr, el, results = [],
-			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\}\\|]*)\\|\\s*[\\/\\]]?([^\\}\\/\\|<=]+)', 'gi');
+			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\{\\}\\|]*)\\|\\s*[\\/\\]]?([^\\{\\}\\/\\|<=]+)[\\}\\|\\/<\\]]', 'gi');
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[2]);
@@ -193,29 +193,25 @@ window.EAutomator = {
 	extractIPA_et: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'hääldus'); },
 	extractIPA_ko: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
 	extractIPA_nl: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_co: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_el: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'ΔΦΑ'); },
+	extractIPA_eo: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IFA'); },
 	extractIPA_vi: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_ja: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA1'); },
 	extractIPA_simple: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_ga: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_is: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_li: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_lv: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_mg: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'pron'); },
+	extractIPA_no: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_oc: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'pron'); },
+	extractIPA_sl: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
+	extractIPA_tl: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'API'); },
 	extractIPA_ru: function (str) {
 		var arr, el,
 			results = EAutomator.extractFirstArgsFromTemplates(str, 'transcription'),
 			re = /\{\{transcriptions\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)\s*\}\}/g;
-
-		while ((arr = re.exec(str)) !== null) {
-			el = $.trim(arr[1]);
-			if (el && results.indexOf(el) === -1) {
-				results.push(el);
-			}
-			el = $.trim(arr[2]);
-			if (el && results.indexOf(el) === -1) {
-				results.push(el);
-			}
-		}
-		return results;
-	},
-	extractIPA_ja: function (str) {
-		var arr, el,
-			results = [],
-			re = /\{\{pron-en1\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)/g;
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]);
