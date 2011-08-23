@@ -160,7 +160,7 @@ window.EAutomator = {
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]);
-			if (el && el !== '…' && el !== '...' && results.indexOf(el) === -1) {
+			if (el && EConstants.FORBIDDEN_IPA_CONTENT.indexOf(el) === -1 && results.indexOf(el) === -1) {
 				results.push(el);
 			}
 		}
@@ -173,7 +173,7 @@ window.EAutomator = {
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[2]);
-			if (el && el !== 'lang' && results.indexOf(el) === -1) {
+			if (el && EConstants.FORBIDDEN_IPA_CONTENT.indexOf(el) === -1 && results.indexOf(el) === -1) {
 				results.push(el);
 			}
 		}
@@ -215,11 +215,11 @@ window.EAutomator = {
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]);
-			if (el && results.indexOf(el) === -1) {
+			if (el && EConstants.FORBIDDEN_IPA_CONTENT.indexOf(el) === -1 && results.indexOf(el) === -1) {
 				results.push(el);
 			}
 			el = $.trim(arr[2]);
-			if (el && results.indexOf(el) === -1) {
+			if (el && EConstants.FORBIDDEN_IPA_CONTENT.indexOf(el) === -1 && results.indexOf(el) === -1) {
 				results.push(el);
 			}
 		}
@@ -254,6 +254,7 @@ window.EAutomator = {
 	getPictureRe : function (results) {
 		var pics = {},
 			error = EStr.NO_PICTURE_FOUND;
+
 		$.each(results, function (ignored, res) {
 			var lang;
 
@@ -268,7 +269,7 @@ window.EAutomator = {
 					return false;
 				}
 				content = val.revisions[0]['*'];
-				pic = EAutomator.extractPicture(content, lang);
+				pic = EAutomator.extractPicture(content);
 				if (pic !== undefined && pic.length) {
 					pics[lang] = pic;
 					error = undefined;
@@ -281,13 +282,14 @@ window.EAutomator = {
 		EAutomator.getPictureUrls(pics);
 	},
 
-	extractPicture : function (str, lang) {
+	extractPicture : function (str) {
 		var arr, el, results = [],
 			re = new RegExp('\\:([^\\|\\]:]+?\\.(jpg|png|gif|svg))', 'gi');
 
 		while ((arr = re.exec(str)) !== null) {
-			el = $.trim(arr[1]);
+			el = $.trim(arr[1]).replace(/_/g, ' ');
 			if (el && results.indexOf(el) === -1) {
+				el = el.charAt(0).toUpperCase() + el.substr(1);
 				results.push(el);
 			}
 		}
@@ -297,15 +299,17 @@ window.EAutomator = {
 	imageUrls : {},
 
 	getPictureUrls : function (results) {
-		var allImages = [];
+		var allImages = [],
+			query;
+
 		$.each(results, function (ignored, arr) {
 			$.each(arr, function (ignored, imgName) {
 				if (imgName && allImages.indexOf(imgName) === -1) {
-					allImages.push('File:' + imgName.replace(/_/g, ' '));
+					allImages.push('File:' + imgName);
 				}
 			});
 		});
-		var query = { titles: allImages.join('|'), prop: 'imageinfo', iiprop: 'url', iiurlwidth: 150 };
+		query = { titles: allImages.join('|'), prop: 'imageinfo', iiprop: 'url', iiurlwidth: 150 };
 		EApi.ask(query, 'EAutomator.getPictureUrlsRe', EApi.commonsUrl());
 	},
 

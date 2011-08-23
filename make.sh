@@ -9,7 +9,7 @@ CSS=ed.css
 
 echo -n "//<nowiki>
 /*global $, jQuery, mw, insertTags: true, jQuery: false, checkSelectedText, is_opera, is_opera_seven, is_opera_95 */
-/*jslint devel: true, browser: true, sloppy: true, es5: true, vars: true, indent: 4, regexp: true */
+/*jslint devel: true, browser: true, sloppy: true, es5: true, indent: 4, regexp: true */
 
 var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParser, ESectionParser, ESpecialChars, EPrinter;
 var jPrompt, jAlert, jConfirm;

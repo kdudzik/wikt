@@ -532,6 +532,10 @@ window.EConstants = {
 		[
 			'ru', 'uk', 'by', 'bg', 'mk'
 		],
+	FORBIDDEN_IPA_CONTENT :
+		[
+			'…', '...', '//', '/ /', '[]', '[ ]', 'lang', '[ eˈxem.plo ]'
+		],
 
 	init : function () {
 		var name;
@@ -668,8 +672,8 @@ window.EStr = {
 		'zobacz hasło',
 	AJAX_PICTURE_RESULT_INSTRUCTION:
 		'<div id="ajax_result_disc"><small>\
-		Poniżej wyświetlono grafiki, które udało się znaleźć \
-		w artykułach o tej samej nazwie w innych wersjach językowych Wikisłownika. Kliknij wybrany wynik, aby wstawić go w miejscu, \
+		Poniżej znajduje się lista grafik, które udało się znaleźć \
+		w artykułach o tej samej nazwie w innych wersjach językowych Wikisłownika. Kliknij wybrany wynik, aby wstawić ten plik w miejscu, \
 		w którym znajduje się teraz kursor.<br/> \
 		Po najechaniu myszką na nazwę pliku pokaże się jego podgląd. \
 		</small></div>'

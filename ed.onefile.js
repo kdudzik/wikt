@@ -1,6 +1,6 @@
 //<nowiki>
 /*global $, jQuery, mw, insertTags: true, jQuery: false, checkSelectedText, is_opera, is_opera_seven, is_opera_95 */
-/*jslint devel: true, browser: true, sloppy: true, es5: true, vars: true, indent: 4, regexp: true */
+/*jslint devel: true, browser: true, sloppy: true, es5: true, indent: 4, regexp: true */
 
 var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParser, ESectionParser, ESpecialChars, EPrinter;
 var jPrompt, jAlert, jConfirm;
@@ -1545,6 +1545,10 @@ window.EConstants = {
 		[
 			'ru', 'uk', 'by', 'bg', 'mk'
 		],
+	FORBIDDEN_IPA_CONTENT :
+		[
+			'…', '...', '//', '/ /', '[]', '[ ]', 'lang', '[ eˈxem.plo ]'
+		],
 
 	init : function () {
 		var name;
@@ -1681,8 +1685,8 @@ window.EStr = {
 		'zobacz hasło',
 	AJAX_PICTURE_RESULT_INSTRUCTION:
 		'<div id="ajax_result_disc"><small>\
-		Poniżej wyświetlono grafiki, które udało się znaleźć \
-		w artykułach o tej samej nazwie w innych wersjach językowych Wikisłownika. Kliknij wybrany wynik, aby wstawić go w miejscu, \
+		Poniżej znajduje się lista grafik, które udało się znaleźć \
+		w artykułach o tej samej nazwie w innych wersjach językowych Wikisłownika. Kliknij wybrany wynik, aby wstawić ten plik w miejscu, \
 		w którym znajduje się teraz kursor.<br/> \
 		Po najechaniu myszką na nazwę pliku pokaże się jego podgląd. \
 		</small></div>'
@@ -2197,7 +2201,8 @@ window.EPrinter = {
 
 	ipaResult : function (res) {
 		var arr = [],
-			html = EStr.AJAX_IPA_RESULT_INSTRUCTION;
+			dl = $('<dl/>');
+
 		$.each(res, function (lang, langresult) {
 			langresult.sort();
 			arr.push({
@@ -2210,24 +2215,28 @@ window.EPrinter = {
 			return a.caption > b.caption ? 1 : -1;
 		});
 
-		html += '<dl>';
 		$.each(arr, function (ignored, arrelem) {
-			var langlink = '<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>';
-			html += '<dt>' + arrelem.caption + ' ' + langlink + '</dt>';
-			html += '<dd>';
+			var dt = $('<dt/>'),
+				dd = $('<dd/>');
+
+			dt.append(arrelem.caption + ' ');
+			dt.append('<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
 			$.each(arrelem.arr, function (ignored, elem) {
 				var withOuter = EPrinter.ipaWithOuter(elem, arrelem.lang),
-					toInsert = '{{' + withOuter.template + '|' + withOuter.str + '}}',
 					beg = withOuter.template === 'IPA' ? '/' : '[',
-					end = withOuter.template === 'IPA' ? '/' : ']';
-				html += '<a href="#" class="ipa" onclick="insertTags(\'' + EUtil.escapeJS(toInsert) + '\', \'\', \'\'); return false">'
-					+ beg + EUtil.escapeHTML(withOuter.str) + end + '</a> ';
-			});
-			html += '</dd>';
-		});
-		html += '</dl>';
+					end = withOuter.template === 'IPA' ? '/' : ']',
+					link = $('<a href="#" class="ipa"/>');
 
-		return $(html);
+				link.click(function () {
+					insertTags('{{' + withOuter.template + '|' + withOuter.str + '}}', '', '');
+					return false;
+				});
+				link.append(beg + EUtil.escapeHTML(withOuter.str) + end);
+				dd.append(link);
+			});
+			dl.append(dt).append(dd);
+		});
+		return $(EStr.AJAX_PICTURE_RESULT_INSTRUCTION).append(dl);
 	},
 
 	ipaWithOuter : function (str, lang) {
@@ -2237,9 +2246,9 @@ window.EPrinter = {
 			return { template: 'IPA3', str: str };
 		} else {
 			if (str.indexOf('/') !== -1) {
-				return { template: 'IPA', str: str.replace(/(^\s*)?\/(\s*$)?/g, '') };
+				return { template: 'IPA', str: str.replace(/(^\s*\/\s*|\s*\/\s*$)?/g, '') };
 			} else if (str.indexOf('[') !== -1) {
-				return { template: 'IPA3', str: str.replace(/(^\s*)?[\[\]](\s*$)?/g, '') };
+				return { template: 'IPA3', str: str.replace(/(^\s*\[\s*|\s*\]\s*$)?/g, '') };
 			} else {
 				return { template: 'IPA', str: str };
 			}
@@ -2247,7 +2256,9 @@ window.EPrinter = {
 	},
 
 	pictureResult : function (res) {
-		var arr = [];
+		var arr = [],
+			dl = $('<dl/>');
+
 		$.each(res, function (lang, langresult) {
 			langresult.sort();
 			arr.push({
@@ -2260,15 +2271,15 @@ window.EPrinter = {
 			return a.caption > b.caption ? 1 : -1;
 		});
 
-		var dl = $('<dl/>');
 		$.each(arr, function (ignored, arrelem) {
-			var dt = $('<dt/>');
-			var dd = $('<dd/>');
+			var dt = $('<dt/>'),
+				dd = $('<dd/>');
+
 			dt.append(arrelem.caption + ' ');
 			dt.append('<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
 			$.each(arrelem.arr, function (ignored, elem) {
 				var link = $('<a class="pictureInsertLink tip tipdown" href="#"/>');
-				elem = elem.replace(/_/g, ' ');
+
 				link.html(EUtil.escapeHTML(elem));
 				link.click(function () {
 					insertTags('[[Plik:' + elem + '|thumb|' + mw.config.get('wgTitle'), ' (1.1)]]', '');
@@ -2283,8 +2294,9 @@ window.EPrinter = {
 
 	setPictureTooltips : function () {
 		$('a.pictureInsertLink').each(function () {
-			var index = 'File:' + $(this).text().replace(/_/g, ' ');
-			var img = EAutomator.imageUrls[index] ? '<img src="' + EAutomator.imageUrls[index] + '" />' : '';
+			var index = 'File:' + $(this).text().replace(/_/g, ' '),
+				img = EAutomator.imageUrls[index] ? '<img src="' + EAutomator.imageUrls[index] + '" />' : '';
+
 			$(this).data('tip', img);
 		});
 	}
@@ -3144,7 +3156,7 @@ window.EAutomator = {
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]);
-			if (el && el !== '…' && el !== '...' && results.indexOf(el) === -1) {
+			if (el && EConstants.FORBIDDEN_IPA_CONTENT.indexOf(el) === -1 && results.indexOf(el) === -1) {
 				results.push(el);
 			}
 		}
@@ -3157,7 +3169,7 @@ window.EAutomator = {
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[2]);
-			if (el && el !== 'lang' && results.indexOf(el) === -1) {
+			if (el && EConstants.FORBIDDEN_IPA_CONTENT.indexOf(el) === -1 && results.indexOf(el) === -1) {
 				results.push(el);
 			}
 		}
@@ -3199,11 +3211,11 @@ window.EAutomator = {
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]);
-			if (el && results.indexOf(el) === -1) {
+			if (el && EConstants.FORBIDDEN_IPA_CONTENT.indexOf(el) === -1 && results.indexOf(el) === -1) {
 				results.push(el);
 			}
 			el = $.trim(arr[2]);
-			if (el && results.indexOf(el) === -1) {
+			if (el && EConstants.FORBIDDEN_IPA_CONTENT.indexOf(el) === -1 && results.indexOf(el) === -1) {
 				results.push(el);
 			}
 		}
@@ -3238,6 +3250,7 @@ window.EAutomator = {
 	getPictureRe : function (results) {
 		var pics = {},
 			error = EStr.NO_PICTURE_FOUND;
+
 		$.each(results, function (ignored, res) {
 			var lang;
 
@@ -3252,7 +3265,7 @@ window.EAutomator = {
 					return false;
 				}
 				content = val.revisions[0]['*'];
-				pic = EAutomator.extractPicture(content, lang);
+				pic = EAutomator.extractPicture(content);
 				if (pic !== undefined && pic.length) {
 					pics[lang] = pic;
 					error = undefined;
@@ -3265,13 +3278,14 @@ window.EAutomator = {
 		EAutomator.getPictureUrls(pics);
 	},
 
-	extractPicture : function (str, lang) {
+	extractPicture : function (str) {
 		var arr, el, results = [],
 			re = new RegExp('\\:([^\\|\\]:]+?\\.(jpg|png|gif|svg))', 'gi');
 
 		while ((arr = re.exec(str)) !== null) {
-			el = $.trim(arr[1]);
+			el = $.trim(arr[1]).replace(/_/g, ' ');
 			if (el && results.indexOf(el) === -1) {
+				el = el.charAt(0).toUpperCase() + el.substr(1);
 				results.push(el);
 			}
 		}
@@ -3281,15 +3295,17 @@ window.EAutomator = {
 	imageUrls : {},
 
 	getPictureUrls : function (results) {
-		var allImages = [];
+		var allImages = [],
+			query;
+
 		$.each(results, function (ignored, arr) {
 			$.each(arr, function (ignored, imgName) {
 				if (imgName && allImages.indexOf(imgName) === -1) {
-					allImages.push('File:' + imgName.replace(/_/g, ' '));
+					allImages.push('File:' + imgName);
 				}
 			});
 		});
-		var query = { titles: allImages.join('|'), prop: 'imageinfo', iiprop: 'url', iiurlwidth: 150 };
+		query = { titles: allImages.join('|'), prop: 'imageinfo', iiprop: 'url', iiurlwidth: 150 };
 		EApi.ask(query, 'EAutomator.getPictureUrlsRe', EApi.commonsUrl());
 	},
 

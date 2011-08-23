@@ -102,7 +102,8 @@ window.EPrinter = {
 
 	ipaResult : function (res) {
 		var arr = [],
-			html = EStr.AJAX_IPA_RESULT_INSTRUCTION;
+			dl = $('<dl/>');
+
 		$.each(res, function (lang, langresult) {
 			langresult.sort();
 			arr.push({
@@ -115,24 +116,28 @@ window.EPrinter = {
 			return a.caption > b.caption ? 1 : -1;
 		});
 
-		html += '<dl>';
 		$.each(arr, function (ignored, arrelem) {
-			var langlink = '<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>';
-			html += '<dt>' + arrelem.caption + ' ' + langlink + '</dt>';
-			html += '<dd>';
+			var dt = $('<dt/>'),
+				dd = $('<dd/>');
+
+			dt.append(arrelem.caption + ' ');
+			dt.append('<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
 			$.each(arrelem.arr, function (ignored, elem) {
 				var withOuter = EPrinter.ipaWithOuter(elem, arrelem.lang),
-					toInsert = '{{' + withOuter.template + '|' + withOuter.str + '}}',
 					beg = withOuter.template === 'IPA' ? '/' : '[',
-					end = withOuter.template === 'IPA' ? '/' : ']';
-				html += '<a href="#" class="ipa" onclick="insertTags(\'' + EUtil.escapeJS(toInsert) + '\', \'\', \'\'); return false">'
-					+ beg + EUtil.escapeHTML(withOuter.str) + end + '</a> ';
-			});
-			html += '</dd>';
-		});
-		html += '</dl>';
+					end = withOuter.template === 'IPA' ? '/' : ']',
+					link = $('<a href="#" class="ipa"/>');
 
-		return $(html);
+				link.click(function () {
+					insertTags('{{' + withOuter.template + '|' + withOuter.str + '}}', '', '');
+					return false;
+				});
+				link.append(beg + EUtil.escapeHTML(withOuter.str) + end);
+				dd.append(link);
+			});
+			dl.append(dt).append(dd);
+		});
+		return $(EStr.AJAX_PICTURE_RESULT_INSTRUCTION).append(dl);
 	},
 
 	ipaWithOuter : function (str, lang) {
@@ -142,9 +147,9 @@ window.EPrinter = {
 			return { template: 'IPA3', str: str };
 		} else {
 			if (str.indexOf('/') !== -1) {
-				return { template: 'IPA', str: str.replace(/(^\s*)?\/(\s*$)?/g, '') };
+				return { template: 'IPA', str: str.replace(/(^\s*\/\s*|\s*\/\s*$)?/g, '') };
 			} else if (str.indexOf('[') !== -1) {
-				return { template: 'IPA3', str: str.replace(/(^\s*)?[\[\]](\s*$)?/g, '') };
+				return { template: 'IPA3', str: str.replace(/(^\s*\[\s*|\s*\]\s*$)?/g, '') };
 			} else {
 				return { template: 'IPA', str: str };
 			}
@@ -152,7 +157,9 @@ window.EPrinter = {
 	},
 
 	pictureResult : function (res) {
-		var arr = [];
+		var arr = [],
+			dl = $('<dl/>');
+
 		$.each(res, function (lang, langresult) {
 			langresult.sort();
 			arr.push({
@@ -165,15 +172,15 @@ window.EPrinter = {
 			return a.caption > b.caption ? 1 : -1;
 		});
 
-		var dl = $('<dl/>');
 		$.each(arr, function (ignored, arrelem) {
-			var dt = $('<dt/>');
-			var dd = $('<dd/>');
+			var dt = $('<dt/>'),
+				dd = $('<dd/>');
+
 			dt.append(arrelem.caption + ' ');
 			dt.append('<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
 			$.each(arrelem.arr, function (ignored, elem) {
 				var link = $('<a class="pictureInsertLink tip tipdown" href="#"/>');
-				elem = elem.replace(/_/g, ' ');
+
 				link.html(EUtil.escapeHTML(elem));
 				link.click(function () {
 					insertTags('[[Plik:' + elem + '|thumb|' + mw.config.get('wgTitle'), ' (1.1)]]', '');
@@ -188,8 +195,9 @@ window.EPrinter = {
 
 	setPictureTooltips : function () {
 		$('a.pictureInsertLink').each(function () {
-			var index = 'File:' + $(this).text().replace(/_/g, ' ');
-			var img = EAutomator.imageUrls[index] ? '<img src="' + EAutomator.imageUrls[index] + '" />' : '';
+			var index = 'File:' + $(this).text().replace(/_/g, ' '),
+				img = EAutomator.imageUrls[index] ? '<img src="' + EAutomator.imageUrls[index] + '" />' : '';
+
 			$(this).data('tip', img);
 		});
 	}
