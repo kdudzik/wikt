@@ -39,6 +39,7 @@ window.ESpecialChars = {
 };
 
 window.EKeyboard = {
+	opened : 0,
 
 	init : function () {
 		var keyboard = $('<div id="keyboard"/>'),
@@ -51,10 +52,16 @@ window.EKeyboard = {
 		if (EUi.usingNew) {
 			ESpecialChars.detach();
 		}
+		EKeyboard.opened = $.cookie('keyboard_opened') === '1';
 
 		keyboard.click(function () {
 			keys.toggle();
+			EKeyboard.opened = !EKeyboard.opened;
+			$.cookie('keyboard_opened', +EKeyboard.opened);
 		});
+		if (EKeyboard.opened) {
+			keys.show();
+		}
 
 		$(window).resize(function () {
 			if (document.activeElement) {
