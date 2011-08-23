@@ -7,7 +7,7 @@ window.EAutomator = {
 		var ret = EConstants.USED_WIKTIONARIES.slice(0),
 			act = EUtil.getActiveLangCode();
 
-		if (ret.indexOf(act) === -1 && EConstants.ALL_WIKTIONARIES.indexOf(act) !== -1) {
+		if (ret.indexOf(act) === -1 && act !== 'pl' && EConstants.ALL_WIKTIONARIES.indexOf(act) !== -1) {
 			ret.push(act);
 		}
 		return ret;
@@ -278,11 +278,12 @@ window.EAutomator = {
 			return true;
 		});
 		EApi.done(EConstants.MODE_PICTURE, pics, error);
+		EAutomator.getPictureUrls(pics);
 	},
 
 	extractPicture : function (str, lang) {
 		var arr, el, results = [],
-			re = new RegExp('\\:([^\\|\\]]+\\.(jpg|png|gif|svg))', 'gi');
+			re = new RegExp('\\:([^\\|\\]:]+?\\.(jpg|png|gif|svg))', 'gi');
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]);
@@ -291,6 +292,36 @@ window.EAutomator = {
 			}
 		}
 		return results;
+	},
+
+	imageUrls : {},
+
+	getPictureUrls : function (results) {
+		var allImages = [];
+		$.each(results, function (ignored, arr) {
+			$.each(arr, function (ignored, imgName) {
+				if (imgName && allImages.indexOf(imgName) === -1) {
+					allImages.push('File:' + imgName.replace(/_/g, ' '));
+				}
+			});
+		});
+		var query = { titles: allImages.join('|'), prop: 'imageinfo', iiprop: 'url', iiurlwidth: 150 };
+		EApi.ask(query, 'EAutomator.getPictureUrlsRe', EApi.commonsUrl());
+	},
+
+	getPictureUrlsRe : function (results) {
+		if (!results || !results[0] || !results[0].query || !results[0].query.pages) {
+			return false;
+		}
+		$.each(results[0].query.pages, function (ignored, page) {
+			var loader;
+			if (!page.imageinfo || !page.imageinfo[0]) {
+				return true;
+			}
+			EAutomator.imageUrls[page.title] = page.imageinfo[0].thumburl;
+			loader = new Image(page.imageinfo[0].thumburl);
+		});
+		EPrinter.setPictureTooltips();
 	}
 };
 

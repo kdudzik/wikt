@@ -636,16 +636,20 @@ window.EStr = {
 		'Proszę poczekać, trwa wyszukiwanie za pomocą API…',
 	ADD_IPA:
 		'Dodaj IPA',
-	GET_IPA:
-		'Spróbuj pobrać wymowę zapisaną w międzynarodowym alfabecie fonetycznym z innych wersji językowych Wikisłownika',
 	ADD_INTERWIKI:
 		'Dodaj (zaktualizuj) interwiki',
-	GET_INTERWIKI:
-		'Pobierz interwiki z innych wersji językowych Wikisłownika',
 	ADD_PICTURE:
 		'Dodaj grafikę',
+	ADD_AUDIO:
+		'Dodaj nagranie dźwiękowe',
+	GET_IPA:
+		'Spróbuj pobrać wymowę zapisaną w międzynarodowym alfabecie fonetycznym z innych wersji językowych Wikisłownika',
+	GET_INTERWIKI:
+		'Pobierz interwiki z innych wersji językowych Wikisłownika',
 	GET_PICTURE:
 		'Pobierz grafikę z innych wersji językowych Wikisłownika',
+	GET_AUDIO:
+		'Pobierz nagranie dźwiękowe z innych wersji językowych Wikisłownika',
 	WILL_BE_SHOWN:
 		'<br/><small>Wyniki zapytania z poszczególnych wersji językowych zostaną pokazane w okienku, które umożliwi ich proste dodawanie do hasła.</small>',
 	NO_IPA_FOUND:

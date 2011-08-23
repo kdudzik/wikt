@@ -54,11 +54,12 @@ window.EApi = {
 	},
 
 	callback : function (res) {
+		var tmp = String(EApi.waitingName);
 		EApi.waitingResults.push(res);
 		EApi.waiting -= 1;
 		if (!EApi.waiting) {
-			EUtil.executeFn(EApi.waitingName, window, EApi.waitingResults);
 			EApi.waitingName = '';
+			EUtil.executeFn(tmp, window, EApi.waitingResults);
 			EApi.waitingResults = [];
 		}
 	},

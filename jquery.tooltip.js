@@ -35,7 +35,9 @@
         // When we hover over the element that we want the tooltip applied to
         $(this).hover(function () {
             var yOffset, xOffset, pos, nPos;
-
+			if (!$(this).data('tip')) {
+				return true;
+			}
             tooltip.html($(this).data('tip'));
 
             if ($(this).hasClass('tipdown')) {

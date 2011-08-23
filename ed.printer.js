@@ -152,8 +152,7 @@ window.EPrinter = {
 	},
 
 	pictureResult : function (res) {
-		var arr = [],
-			html = EStr.AJAX_PICTURE_RESULT_INSTRUCTION;
+		var arr = [];
 		$.each(res, function (lang, langresult) {
 			langresult.sort();
 			arr.push({
@@ -166,24 +165,33 @@ window.EPrinter = {
 			return a.caption > b.caption ? 1 : -1;
 		});
 
-		html += '<dl>';
+		var dl = $('<dl/>');
 		$.each(arr, function (ignored, arrelem) {
-			var langlink = '<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>';
-			html += '<dt>' + arrelem.caption + ' ' + langlink + '</dt>';
-			html += '<dd>';
+			var dt = $('<dt/>');
+			var dd = $('<dd/>');
+			dt.append(arrelem.caption + ' ');
+			dt.append('<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
 			$.each(arrelem.arr, function (ignored, elem) {
-				var toInsert;
-				elem = elem.replace('_', ' ');
-				toInsert = '[[Plik:' + elem + '|thumb|' + mw.config.get('wgTitle');
-				html += '<a href="#" onclick="insertTags(\'' + EUtil.escapeJS(toInsert) + '\', \' (1.1)]]\', \'\'); return false">'
-					+ EUtil.escapeHTML(elem) + '</a> ';
-				//TODO onmouseover
+				var link = $('<a class="pictureInsertLink tip tipdown" href="#"/>');
+				elem = elem.replace(/_/g, ' ');
+				link.html(EUtil.escapeHTML(elem));
+				link.click(function () {
+					insertTags('[[Plik:' + elem + '|thumb|' + mw.config.get('wgTitle'), ' (1.1)]]', '');
+					return false;
+				});
+				dd.append(link).append(' ');
 			});
-			html += '</dd>';
+			dl.append(dt).append(dd);
 		});
-		html += '</dl>';
+		return $(EStr.AJAX_PICTURE_RESULT_INSTRUCTION).append(dl);
+	},
 
-		return $(html);
+	setPictureTooltips : function () {
+		$('a.pictureInsertLink').each(function () {
+			var index = 'File:' + $(this).text().replace(/_/g, ' ');
+			var img = EAutomator.imageUrls[index] ? '<img src="' + EAutomator.imageUrls[index] + '" />' : '';
+			$(this).data('tip', img);
+		});
 	}
 };
 

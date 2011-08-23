@@ -44,7 +44,7 @@ window.EParser = {
 
 	getTitleFromCode : function (code) {
 		var lang,
-			pagename = mw.config.get('wgPageName').replace('_', ' ');
+			pagename = mw.config.get('wgPageName').replace(/_/g, ' ');
 
 		if (code === 'zh-char' || code === 'zh') {
 			pagename = '{{zh|' + pagename + '}}';

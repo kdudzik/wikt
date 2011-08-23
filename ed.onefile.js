@@ -645,7 +645,9 @@ mw.util.addCSS(css);
         // When we hover over the element that we want the tooltip applied to
         $(this).hover(function () {
             var yOffset, xOffset, pos, nPos;
-
+			if (!$(this).data('tip')) {
+				return true;
+			}
             tooltip.html($(this).data('tip'));
 
             if ($(this).hasClass('tipdown')) {
@@ -1647,16 +1649,20 @@ window.EStr = {
 		'Proszę poczekać, trwa wyszukiwanie za pomocą API…',
 	ADD_IPA:
 		'Dodaj IPA',
-	GET_IPA:
-		'Spróbuj pobrać wymowę zapisaną w międzynarodowym alfabecie fonetycznym z innych wersji językowych Wikisłownika',
 	ADD_INTERWIKI:
 		'Dodaj (zaktualizuj) interwiki',
-	GET_INTERWIKI:
-		'Pobierz interwiki z innych wersji językowych Wikisłownika',
 	ADD_PICTURE:
 		'Dodaj grafikę',
+	ADD_AUDIO:
+		'Dodaj nagranie dźwiękowe',
+	GET_IPA:
+		'Spróbuj pobrać wymowę zapisaną w międzynarodowym alfabecie fonetycznym z innych wersji językowych Wikisłownika',
+	GET_INTERWIKI:
+		'Pobierz interwiki z innych wersji językowych Wikisłownika',
 	GET_PICTURE:
 		'Pobierz grafikę z innych wersji językowych Wikisłownika',
+	GET_AUDIO:
+		'Pobierz nagranie dźwiękowe z innych wersji językowych Wikisłownika',
 	WILL_BE_SHOWN:
 		'<br/><small>Wyniki zapytania z poszczególnych wersji językowych zostaną pokazane w okienku, które umożliwi ich proste dodawanie do hasła.</small>',
 	NO_IPA_FOUND:
@@ -1854,7 +1860,7 @@ window.EParser = {
 
 	getTitleFromCode : function (code) {
 		var lang,
-			pagename = mw.config.get('wgPageName').replace('_', ' ');
+			pagename = mw.config.get('wgPageName').replace(/_/g, ' ');
 
 		if (code === 'zh-char' || code === 'zh') {
 			pagename = '{{zh|' + pagename + '}}';
@@ -2241,8 +2247,7 @@ window.EPrinter = {
 	},
 
 	pictureResult : function (res) {
-		var arr = [],
-			html = EStr.AJAX_PICTURE_RESULT_INSTRUCTION;
+		var arr = [];
 		$.each(res, function (lang, langresult) {
 			langresult.sort();
 			arr.push({
@@ -2255,24 +2260,33 @@ window.EPrinter = {
 			return a.caption > b.caption ? 1 : -1;
 		});
 
-		html += '<dl>';
+		var dl = $('<dl/>');
 		$.each(arr, function (ignored, arrelem) {
-			var langlink = '<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>';
-			html += '<dt>' + arrelem.caption + ' ' + langlink + '</dt>';
-			html += '<dd>';
+			var dt = $('<dt/>');
+			var dd = $('<dd/>');
+			dt.append(arrelem.caption + ' ');
+			dt.append('<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
 			$.each(arrelem.arr, function (ignored, elem) {
-				var toInsert;
-				elem = elem.replace('_', ' ');
-				toInsert = '[[Plik:' + elem + '|thumb|' + mw.config.get('wgTitle');
-				html += '<a href="#" onclick="insertTags(\'' + EUtil.escapeJS(toInsert) + '\', \' (1.1)]]\', \'\'); return false">'
-					+ EUtil.escapeHTML(elem) + '</a> ';
-				//TODO onmouseover
+				var link = $('<a class="pictureInsertLink tip tipdown" href="#"/>');
+				elem = elem.replace(/_/g, ' ');
+				link.html(EUtil.escapeHTML(elem));
+				link.click(function () {
+					insertTags('[[Plik:' + elem + '|thumb|' + mw.config.get('wgTitle'), ' (1.1)]]', '');
+					return false;
+				});
+				dd.append(link).append(' ');
 			});
-			html += '</dd>';
+			dl.append(dt).append(dd);
 		});
-		html += '</dl>';
+		return $(EStr.AJAX_PICTURE_RESULT_INSTRUCTION).append(dl);
+	},
 
-		return $(html);
+	setPictureTooltips : function () {
+		$('a.pictureInsertLink').each(function () {
+			var index = 'File:' + $(this).text().replace(/_/g, ' ');
+			var img = EAutomator.imageUrls[index] ? '<img src="' + EAutomator.imageUrls[index] + '" />' : '';
+			$(this).data('tip', img);
+		});
 	}
 };
 
@@ -2542,7 +2556,7 @@ window.EUi = {
 	},
 
 	getSubsectionObj : function (langid, section, subsection) {
-		var name = langid + '_' + subsection.title.replace(' ', '_'),
+		var name = langid + '_' + subsection.title.replace(/ /g, '_'),
 			p = $('<p id="ed_subsection_' + name + '"/>'),
 			caption = EConstants.SUBSECTION_TITLE[subsection.title],
 			label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>'),
@@ -2614,6 +2628,7 @@ window.EUi = {
 			EUi.addExtraButtons(id, '', 'add_picture', EStr.ADD_PICTURE, EAutomator.getPicture, EStr.GET_PICTURE + EStr.WILL_BE_SHOWN);
 		}
 		EUi.addExtraButtons(id, 'wymowa', 'add_ipa', EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_SHOWN);
+		EUi.addExtraButtons(id, 'wymowa', 'add_audio', EStr.ADD_AUDIO, EAutomator.getAudio, EStr.GET_AUDIO + EStr.WILL_BE_SHOWN);
 	},
 
 	showResult : function (ajaxResult, buttonIdPart) {
@@ -2681,7 +2696,7 @@ window.EForm = {
 
 	val : function (langid, subsectionTitle, newValue) {
 		if (newValue === undefined) {
-			return $.trim($('#ed_' + langid + '_' + subsectionTitle.replace(' ', '_')).val());
+			return $.trim($('#ed_' + langid + '_' + subsectionTitle.replace(/ /g, '_')).val());
 		} else {
 			$('#ed_' + langid + '_' + subsectionTitle).val(newValue);
 			return 0;
@@ -2928,11 +2943,12 @@ window.EApi = {
 	},
 
 	callback : function (res) {
+		var tmp = String(EApi.waitingName);
 		EApi.waitingResults.push(res);
 		EApi.waiting -= 1;
 		if (!EApi.waiting) {
-			EUtil.executeFn(EApi.waitingName, window, EApi.waitingResults);
 			EApi.waitingName = '';
+			EUtil.executeFn(tmp, window, EApi.waitingResults);
 			EApi.waitingResults = [];
 		}
 	},
@@ -2975,7 +2991,7 @@ window.EAutomator = {
 		var ret = EConstants.USED_WIKTIONARIES.slice(0),
 			act = EUtil.getActiveLangCode();
 
-		if (ret.indexOf(act) === -1 && EConstants.ALL_WIKTIONARIES.indexOf(act) !== -1) {
+		if (ret.indexOf(act) === -1 && act !== 'pl' && EConstants.ALL_WIKTIONARIES.indexOf(act) !== -1) {
 			ret.push(act);
 		}
 		return ret;
@@ -3246,11 +3262,12 @@ window.EAutomator = {
 			return true;
 		});
 		EApi.done(EConstants.MODE_PICTURE, pics, error);
+		EAutomator.getPictureUrls(pics);
 	},
 
 	extractPicture : function (str, lang) {
 		var arr, el, results = [],
-			re = new RegExp('\\:([^\\|\\]]+\\.(jpg|png|gif|svg))', 'gi');
+			re = new RegExp('\\:([^\\|\\]:]+?\\.(jpg|png|gif|svg))', 'gi');
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]);
@@ -3259,6 +3276,36 @@ window.EAutomator = {
 			}
 		}
 		return results;
+	},
+
+	imageUrls : {},
+
+	getPictureUrls : function (results) {
+		var allImages = [];
+		$.each(results, function (ignored, arr) {
+			$.each(arr, function (ignored, imgName) {
+				if (imgName && allImages.indexOf(imgName) === -1) {
+					allImages.push('File:' + imgName.replace(/_/g, ' '));
+				}
+			});
+		});
+		var query = { titles: allImages.join('|'), prop: 'imageinfo', iiprop: 'url', iiurlwidth: 150 };
+		EApi.ask(query, 'EAutomator.getPictureUrlsRe', EApi.commonsUrl());
+	},
+
+	getPictureUrlsRe : function (results) {
+		if (!results || !results[0] || !results[0].query || !results[0].query.pages) {
+			return false;
+		}
+		$.each(results[0].query.pages, function (ignored, page) {
+			var loader;
+			if (!page.imageinfo || !page.imageinfo[0]) {
+				return true;
+			}
+			EAutomator.imageUrls[page.title] = page.imageinfo[0].thumburl;
+			loader = new Image(page.imageinfo[0].thumburl);
+		});
+		EPrinter.setPictureTooltips();
 	}
 };
 

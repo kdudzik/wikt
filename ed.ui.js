@@ -263,7 +263,7 @@ window.EUi = {
 	},
 
 	getSubsectionObj : function (langid, section, subsection) {
-		var name = langid + '_' + subsection.title.replace(' ', '_'),
+		var name = langid + '_' + subsection.title.replace(/ /g, '_'),
 			p = $('<p id="ed_subsection_' + name + '"/>'),
 			caption = EConstants.SUBSECTION_TITLE[subsection.title],
 			label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>'),
@@ -335,6 +335,7 @@ window.EUi = {
 			EUi.addExtraButtons(id, '', 'add_picture', EStr.ADD_PICTURE, EAutomator.getPicture, EStr.GET_PICTURE + EStr.WILL_BE_SHOWN);
 		}
 		EUi.addExtraButtons(id, 'wymowa', 'add_ipa', EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_SHOWN);
+		EUi.addExtraButtons(id, 'wymowa', 'add_audio', EStr.ADD_AUDIO, EAutomator.getAudio, EStr.GET_AUDIO + EStr.WILL_BE_SHOWN);
 	},
 
 	showResult : function (ajaxResult, buttonIdPart) {
@@ -402,7 +403,7 @@ window.EForm = {
 
 	val : function (langid, subsectionTitle, newValue) {
 		if (newValue === undefined) {
-			return $.trim($('#ed_' + langid + '_' + subsectionTitle.replace(' ', '_')).val());
+			return $.trim($('#ed_' + langid + '_' + subsectionTitle.replace(/ /g, '_')).val());
 		} else {
 			$('#ed_' + langid + '_' + subsectionTitle).val(newValue);
 			return 0;
