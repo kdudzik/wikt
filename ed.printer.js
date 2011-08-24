@@ -198,7 +198,7 @@ window.EPrinter = {
 	setPictureTooltips : function () {
 		$('a.pictureInsertLink').each(function () {
 			var index = 'File:' + $(this).text().replace(/_/g, ' '),
-				img = EAutomator.imageUrls[index] ? '<img src="' + EAutomator.imageUrls[index] + '" />' : '';
+				img = EAutomator.imageCache[index] || '';
 
 			$(this).data('tip', img);
 		});

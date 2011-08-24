@@ -284,7 +284,7 @@ window.EAutomator = {
 
 	extractPicture : function (str) {
 		var arr, el, results = [],
-			re = new RegExp('[:=\\|]([^\\|\\]:]+?\\.(jpg|png|gif|svg))', 'gi');
+			re = new RegExp('[:=\\|]([^\\|\\]:=]+?\\.(jpg|png|gif|svg))', 'gi');
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]).replace(/_/g, ' ');
@@ -296,7 +296,7 @@ window.EAutomator = {
 		return results;
 	},
 
-	imageUrls : {},
+	imageCache : {},
 
 	getPictureUrls : function (results) {
 		var allImages = [],
@@ -309,7 +309,7 @@ window.EAutomator = {
 				}
 			});
 		});
-		query = { titles: allImages.join('|'), prop: 'imageinfo', iiprop: 'url', iiurlwidth: 150 };
+		query = { titles: allImages.join('|'), prop: 'imageinfo', iiprop: 'url', iiurlwidth: 150, iiurlheight: 150 };
 		EApi.ask(query, 'EAutomator.getPictureUrlsRe', EApi.commonsUrl());
 	},
 
@@ -319,11 +319,12 @@ window.EAutomator = {
 		}
 		$.each(results[0].query.pages, function (ignored, page) {
 			var loader;
+
 			if (!page.imageinfo || !page.imageinfo[0]) {
 				return true;
 			}
-			EAutomator.imageUrls[page.title] = page.imageinfo[0].thumburl;
-			loader = new Image(page.imageinfo[0].thumburl);
+			EAutomator.imageCache[page.title] = '<img src="' + page.imageinfo[0].thumburl + '"/>';
+			loader = $(EAutomator.imageCache[page.title]);
 		});
 		EPrinter.setPictureTooltips();
 	},

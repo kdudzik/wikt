@@ -128,7 +128,7 @@
 					$.alerts.hide__prv();
 					callback(true);
 				});
-				$("#popup_ok").focus().keypress(function (e) {
+				$("#popup_ok").focus().keyup(function (e) {
 					if (e.keyCode === 13 || e.keyCode === 27) {
 						$("#popup_ok").trigger('click');
 					}
@@ -151,7 +151,7 @@
 					}
 				});
 				$("#popup_ok").focus();
-				$("#popup_ok, #popup_cancel").keypress(function (e) {
+				$("#popup_ok, #popup_cancel").keyup(function (e) {
 					if (e.keyCode === 13) {
 						$("#popup_ok").trigger('click');
 					}
@@ -180,7 +180,7 @@
 						callback(null);
 					}
 				});
-				$("#popup_prompt, #popup_ok, #popup_cancel").keypress(function (e) {
+				$("#popup_prompt, #popup_ok, #popup_cancel").keyup(function (e) {
 					if (e.keyCode === 13) {
 						$("#popup_ok").trigger('click');
 					}

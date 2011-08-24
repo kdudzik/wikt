@@ -96,7 +96,7 @@ window.EUi = {
 
 		EUi.clickDefaultSection();
 		EUi.resizeTextareas();
-		if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length === 0) {
+		if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length === 0 && !EUtil.getParameter('section')) {
 			EUi.addIntroAdder();
 		}
 		$(window).resize(EUi.resizeTextareas);

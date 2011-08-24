@@ -103,7 +103,7 @@ window.EConstants = {
 		],
 	DOUBLE_LANGS :
 		[
-			'az', 'be', 'bs', 'crh', 'jdt', 'lad', 'slovio', 'sr', 'tk', 'tt', 'tut', 'ug'
+			'az', 'be', 'crh', 'jdt', 'lad', 'slovio', 'sr', 'tk', 'tt', 'tut', 'ug'
 		],
 	LANG_CODES_SHORT :
 		{
