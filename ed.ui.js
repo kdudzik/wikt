@@ -330,17 +330,22 @@ window.EUi = {
 
 	prepareSectionAutomation : function (id) {
 		if (id === EConstants.SECTION_ID_INTRO) {
-			EUi.addExtraButtons(id, '', 'add_iw', EStr.ADD_INTERWIKI, EAutomator.fillInterwiki, EStr.GET_INTERWIKI);
+			EUi.addExtraButtons(id, '', EConstants.API_ID[EConstants.MODE_IW], EStr.ADD_INTERWIKI, EAutomator.fillInterwiki, EStr.GET_INTERWIKI);
 		} else {
-			EUi.addExtraButtons(id, '', 'add_picture', EStr.ADD_PICTURE, EAutomator.getPicture, EStr.GET_PICTURE + EStr.WILL_BE_SHOWN);
+			EUi.addExtraButtons(id, '', EConstants.API_ID[EConstants.MODE_PICTURE], EStr.ADD_PICTURE, EAutomator.getPicture, EStr.GET_PICTURE + EStr.WILL_BE_SHOWN);
 		}
-		EUi.addExtraButtons(id, 'wymowa', 'add_ipa', EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_SHOWN);
-		EUi.addExtraButtons(id, 'wymowa', 'add_audio', EStr.ADD_AUDIO, EAutomator.getAudio, EStr.GET_AUDIO + EStr.WILL_BE_SHOWN);
+		EUi.addExtraButtons(id, 'wymowa', EConstants.API_ID[EConstants.MODE_IPA], EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_SHOWN);
+		EUi.addExtraButtons(id, 'wymowa', EConstants.API_ID[EConstants.MODE_AUDIO], EStr.ADD_AUDIO, EAutomator.getAudio, EStr.GET_AUDIO + EStr.WILL_BE_SHOWN);
+		$(document).keyup(function (e) {
+			if (e.keyCode === 27) {
+				EUi.hideResult();
+			}
+		});
 	},
 
 	showResult : function (ajaxResult, buttonIdPart) {
 		var ajr = $('#ajax_results'),
-			closelink = $('<a id="closelink">×</a>');
+			closelink = $('<a id="closelink" class="tip">×</a>');
 
 		if (ajr.length === 0) {
 			ajr = $('<div id="ajax_results"/>').appendTo($('body'));
@@ -349,7 +354,7 @@ window.EUi = {
 		ajr.html('').append(ajaxResult).show().data('buttonIdPart', buttonIdPart);
 		EUi.relocateResult();
 
-		closelink.prependTo(ajr).click(function () {
+		closelink.prependTo(ajr).data('tip', EStr.ESCAPE).click(function () {
 			EUi.hideResult();
 		});
 

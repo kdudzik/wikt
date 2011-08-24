@@ -94,6 +94,8 @@ window.EPrinter = {
 			return EPrinter.ipaResult(res);
 		case EConstants.MODE_PICTURE:
 			return EPrinter.pictureResult(res);
+		case EConstants.MODE_AUDIO:
+			return EPrinter.audioResult(res);
 		default:
 			break;
 		}
@@ -132,12 +134,12 @@ window.EPrinter = {
 					insertTags('{{' + withOuter.template + '|' + withOuter.str + '}}', '', '');
 					return false;
 				});
-				link.append(beg + EUtil.escapeHTML(withOuter.str) + end);
+				link.append(beg + withOuter.str + end);
 				dd.append(link);
 			});
 			dl.append(dt).append(dd);
 		});
-		return $(EStr.AJAX_PICTURE_RESULT_INSTRUCTION).append(dl);
+		return $(EStr.AJAX_IPA_RESULT_INSTRUCTION).append(dl);
 	},
 
 	ipaWithOuter : function (str, lang) {
@@ -181,7 +183,7 @@ window.EPrinter = {
 			$.each(arrelem.arr, function (ignored, elem) {
 				var link = $('<a class="pictureInsertLink tip tipdown" href="#"/>');
 
-				link.html(EUtil.escapeHTML(elem));
+				link.html(elem);
 				link.click(function () {
 					insertTags('[[Plik:' + elem + '|thumb|' + mw.config.get('wgTitle'), ' (1.1)]]', '');
 					return false;
@@ -200,6 +202,44 @@ window.EPrinter = {
 
 			$(this).data('tip', img);
 		});
+	},
+
+	audioResult : function (res) {
+		var arr = [],
+			dl = $('<dl/>');
+
+		$.each(res, function (lang, langresult) {
+			langresult.sort();
+			arr.push({
+				lang: lang,
+				arr: langresult,
+				caption : EConstants.WIKTCODE_TO_LANG[lang] || EConstants.CODE_TO_LANG[lang].replace('język', 'Wikisłownik') || lang
+			});
+		});
+		arr.sort(function (a, b) {
+			return a.caption > b.caption ? 1 : -1;
+		});
+
+		$.each(arr, function (ignored, arrelem) {
+			var dt = $('<dt/>'),
+				dd = $('<dd/>');
+
+			dt.append(arrelem.caption + ' ');
+			dt.append('<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
+			$.each(arrelem.arr, function (ignored, elem) {
+				var link = $('<a href="#"/>');
+				elem = elem.replace(/\{\{(PAGENAME|pn)\}\}/g, mw.config.get('wgTitle'));
+
+				link.html(elem);
+				link.click(function () {
+					insertTags('{{audio|' + elem + '}}', '', '');
+					return false;
+				});
+				dd.append(link).append(' ');
+			});
+			dl.append(dt).append(dd);
+		});
+		return $(EStr.AJAX_AUDIO_RESULT_INSTRUCTION).append(dl);
 	}
 };
 

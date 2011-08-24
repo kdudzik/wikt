@@ -1500,11 +1500,13 @@ window.EConstants = {
 	MODE_IPA : 0,
 	MODE_IW : 1,
 	MODE_PICTURE : 2,
+	MODE_AUDIO : 3,
 	API_ID :
 		{
 			0 : 'add_ipa',
 			1 : 'add_iw',
-			2 : 'add_picture'
+			2 : 'add_picture',
+			3 : 'add_audio'
 		},
 	IPA_MODE_ADDS_NOTHING : 1,
 	IPA_MODE_ADDS_SLASH : 2,
@@ -1539,7 +1541,7 @@ window.EConstants = {
 			'no' : 1,
 			'oc' : 3,
 			'sl' : 3,
-			'tl' : 3,
+			'tl' : 3
 		},
 	TRANSLIT_SUPPORTED :
 		[
@@ -1547,7 +1549,7 @@ window.EConstants = {
 		],
 	FORBIDDEN_IPA_CONTENT :
 		[
-			'…', '...', '//', '/ /', '[]', '[ ]', 'lang', '[ eˈxem.plo ]'
+			'…', '...', '//', '/ /', '[]', '[ ]', 'lang', '[ eˈxem.plo ]', '/xxxx/'
 		],
 
 	init : function () {
@@ -1673,6 +1675,8 @@ window.EStr = {
 		'Nie znaleziono IPA',
 	NO_PICTURE_FOUND:
 		'Nie znaleziono grafik',
+	NO_AUDIO_FOUND:
+		'Nie znaleziono plików dźwiękowych',
 	AJAX_IPA_RESULT_INSTRUCTION:
 		'<div id="ajax_result_disc"><small>\
 		Poniżej wyświetlono zapisy w międzynarodowym alfabecie fonetycznym, które udało się znaleźć \
@@ -1689,7 +1693,17 @@ window.EStr = {
 		w artykułach o tej samej nazwie w innych wersjach językowych Wikisłownika. Kliknij wybrany wynik, aby wstawić ten plik w miejscu, \
 		w którym znajduje się teraz kursor.<br/> \
 		Po najechaniu myszką na nazwę pliku pokaże się jego podgląd. \
-		</small></div>'
+		</small></div>',
+	AJAX_AUDIO_RESULT_INSTRUCTION:
+		'<div id="ajax_result_disc"><small>\
+		Poniżej znajduje się lista nagrań dźwiękowych, które udało się znaleźć \
+		w artykułach o tej samej nazwie w innych wersjach językowych Wikisłownika. Kliknij wybrany wynik, aby wstawić ten plik w miejscu, \
+		w którym znajduje się teraz kursor.<br/> \
+		Zapis zostanie wstawiony w szablonie <a href="http://pl.wiktionary.org/wiki/Wikis%C5%82ownik:Zasady_tworzenia_hase%C5%82#Sekcja_.27wymowa.27" \
+		target="_blank"><tt>{{audio}}</tt>, dostosuj to do danej sytuacji</a>. \
+		</small></div>',
+	ESCAPE:
+		'Zamknij okno wyników.<br/><small>Możesz też użyć klawisza Esc</small>'
 };
 
 
@@ -2193,6 +2207,8 @@ window.EPrinter = {
 			return EPrinter.ipaResult(res);
 		case EConstants.MODE_PICTURE:
 			return EPrinter.pictureResult(res);
+		case EConstants.MODE_AUDIO:
+			return EPrinter.audioResult(res);
 		default:
 			break;
 		}
@@ -2231,12 +2247,12 @@ window.EPrinter = {
 					insertTags('{{' + withOuter.template + '|' + withOuter.str + '}}', '', '');
 					return false;
 				});
-				link.append(beg + EUtil.escapeHTML(withOuter.str) + end);
+				link.append(beg + withOuter.str + end);
 				dd.append(link);
 			});
 			dl.append(dt).append(dd);
 		});
-		return $(EStr.AJAX_PICTURE_RESULT_INSTRUCTION).append(dl);
+		return $(EStr.AJAX_IPA_RESULT_INSTRUCTION).append(dl);
 	},
 
 	ipaWithOuter : function (str, lang) {
@@ -2280,7 +2296,7 @@ window.EPrinter = {
 			$.each(arrelem.arr, function (ignored, elem) {
 				var link = $('<a class="pictureInsertLink tip tipdown" href="#"/>');
 
-				link.html(EUtil.escapeHTML(elem));
+				link.html(elem);
 				link.click(function () {
 					insertTags('[[Plik:' + elem + '|thumb|' + mw.config.get('wgTitle'), ' (1.1)]]', '');
 					return false;
@@ -2299,6 +2315,44 @@ window.EPrinter = {
 
 			$(this).data('tip', img);
 		});
+	},
+
+	audioResult : function (res) {
+		var arr = [],
+			dl = $('<dl/>');
+
+		$.each(res, function (lang, langresult) {
+			langresult.sort();
+			arr.push({
+				lang: lang,
+				arr: langresult,
+				caption : EConstants.WIKTCODE_TO_LANG[lang] || EConstants.CODE_TO_LANG[lang].replace('język', 'Wikisłownik') || lang
+			});
+		});
+		arr.sort(function (a, b) {
+			return a.caption > b.caption ? 1 : -1;
+		});
+
+		$.each(arr, function (ignored, arrelem) {
+			var dt = $('<dt/>'),
+				dd = $('<dd/>');
+
+			dt.append(arrelem.caption + ' ');
+			dt.append('<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
+			$.each(arrelem.arr, function (ignored, elem) {
+				var link = $('<a href="#"/>');
+				elem = elem.replace(/\{\{(PAGENAME|pn)\}\}/g, mw.config.get('wgTitle'));
+
+				link.html(elem);
+				link.click(function () {
+					insertTags('{{audio|' + elem + '}}', '', '');
+					return false;
+				});
+				dd.append(link).append(' ');
+			});
+			dl.append(dt).append(dd);
+		});
+		return $(EStr.AJAX_AUDIO_RESULT_INSTRUCTION).append(dl);
 	}
 };
 
@@ -2635,17 +2689,22 @@ window.EUi = {
 
 	prepareSectionAutomation : function (id) {
 		if (id === EConstants.SECTION_ID_INTRO) {
-			EUi.addExtraButtons(id, '', 'add_iw', EStr.ADD_INTERWIKI, EAutomator.fillInterwiki, EStr.GET_INTERWIKI);
+			EUi.addExtraButtons(id, '', EConstants.API_ID[EConstants.MODE_IW], EStr.ADD_INTERWIKI, EAutomator.fillInterwiki, EStr.GET_INTERWIKI);
 		} else {
-			EUi.addExtraButtons(id, '', 'add_picture', EStr.ADD_PICTURE, EAutomator.getPicture, EStr.GET_PICTURE + EStr.WILL_BE_SHOWN);
+			EUi.addExtraButtons(id, '', EConstants.API_ID[EConstants.MODE_PICTURE], EStr.ADD_PICTURE, EAutomator.getPicture, EStr.GET_PICTURE + EStr.WILL_BE_SHOWN);
 		}
-		EUi.addExtraButtons(id, 'wymowa', 'add_ipa', EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_SHOWN);
-		EUi.addExtraButtons(id, 'wymowa', 'add_audio', EStr.ADD_AUDIO, EAutomator.getAudio, EStr.GET_AUDIO + EStr.WILL_BE_SHOWN);
+		EUi.addExtraButtons(id, 'wymowa', EConstants.API_ID[EConstants.MODE_IPA], EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_SHOWN);
+		EUi.addExtraButtons(id, 'wymowa', EConstants.API_ID[EConstants.MODE_AUDIO], EStr.ADD_AUDIO, EAutomator.getAudio, EStr.GET_AUDIO + EStr.WILL_BE_SHOWN);
+		$(document).keyup(function (e) {
+			if (e.keyCode === 27) {
+				EUi.hideResult();
+			}
+		});
 	},
 
 	showResult : function (ajaxResult, buttonIdPart) {
 		var ajr = $('#ajax_results'),
-			closelink = $('<a id="closelink">×</a>');
+			closelink = $('<a id="closelink" class="tip">×</a>');
 
 		if (ajr.length === 0) {
 			ajr = $('<div id="ajax_results"/>').appendTo($('body'));
@@ -2654,7 +2713,7 @@ window.EUi = {
 		ajr.html('').append(ajaxResult).show().data('buttonIdPart', buttonIdPart);
 		EUi.relocateResult();
 
-		closelink.prependTo(ajr).click(function () {
+		closelink.prependTo(ajr).data('tip', EStr.ESCAPE).click(function () {
 			EUi.hideResult();
 		});
 
@@ -2966,11 +3025,15 @@ window.EApi = {
 	},
 
 	started : function (mode, subs) {
-		var idpart = EConstants.API_ID[mode];
+		var idpart = EConstants.API_ID[mode],
+			elem = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart);
 
-		$('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart).removeClass('apidone apierror').addClass('apistarted');
+		elem.removeClass('apidone apierror').addClass('apistarted');
 		if (subs !== undefined) {
 			EUtil.focusArea(subs);
+		}
+		if (elem.data('orig_html')) {
+			elem.html(elem.data('orig_html'));
 		}
 	},
 
@@ -2984,7 +3047,7 @@ window.EApi = {
 				EUi.showResult(EPrinter.resultToHTML(mode, res), idpart);
 			}
 		} else {
-			elem.addClass('apierror').removeClass('apistarted apidone').html(error);
+			elem.addClass('apierror').removeClass('apistarted apidone').data('orig_html', elem.html()).html(error);
 		}
 	},
 
@@ -3280,7 +3343,7 @@ window.EAutomator = {
 
 	extractPicture : function (str) {
 		var arr, el, results = [],
-			re = new RegExp('\\:([^\\|\\]:]+?\\.(jpg|png|gif|svg))', 'gi');
+			re = new RegExp('[:=\\|]([^\\|\\]:]+?\\.(jpg|png|gif|svg))', 'gi');
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]).replace(/_/g, ' ');
@@ -3322,6 +3385,60 @@ window.EAutomator = {
 			loader = new Image(page.imageinfo[0].thumburl);
 		});
 		EPrinter.setPictureTooltips();
+	},
+
+	getAudio : function () {
+		var urls, query;
+
+		EApi.started(EConstants.MODE_AUDIO, 'wymowa');
+		urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
+		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
+		EApi.askMore(query, 'EAutomator.getAudioRe', urls);
+
+		// callback
+	},
+	getAudioRe : function (results) {
+		var oggs = {},
+			error = EStr.NO_AUDIO_FOUND;
+
+		$.each(results, function (ignored, res) {
+			var lang;
+
+			if (res.query === undefined || res.query.pages === undefined) {
+				return false;
+			}
+			lang = res.query.general.lang;
+			$.each(res.query.pages, function (j, val) {
+				var content, ogg;
+
+				if (j === '-1' || !val.revisions || !val.revisions[0]) {
+					return false;
+				}
+				content = val.revisions[0]['*'];
+				ogg = EAutomator.extractAudio(content);
+				if (ogg !== undefined && ogg.length) {
+					oggs[lang] = ogg;
+					error = undefined;
+				}
+				return true;
+			});
+			return true;
+		});
+		EApi.done(EConstants.MODE_AUDIO, oggs, error);
+	},
+
+	extractAudio : function (str) {
+		var arr, el, results = [],
+			re = new RegExp('[\\|:=]([^\\|\\]:=]+?\\.ogg)', 'gi');
+
+		while ((arr = re.exec(str)) !== null) {
+			el = $.trim(arr[1]).replace(/_/g, ' ');
+			if (el && results.indexOf(el) === -1) {
+				el = el.charAt(0).toUpperCase() + el.substr(1);
+				results.push(el);
+			}
+		}
+		return results;
 	}
 };
 

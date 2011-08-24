@@ -284,7 +284,7 @@ window.EAutomator = {
 
 	extractPicture : function (str) {
 		var arr, el, results = [],
-			re = new RegExp('\\:([^\\|\\]:]+?\\.(jpg|png|gif|svg))', 'gi');
+			re = new RegExp('[:=\\|]([^\\|\\]:]+?\\.(jpg|png|gif|svg))', 'gi');
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]).replace(/_/g, ' ');
@@ -326,6 +326,60 @@ window.EAutomator = {
 			loader = new Image(page.imageinfo[0].thumburl);
 		});
 		EPrinter.setPictureTooltips();
+	},
+
+	getAudio : function () {
+		var urls, query;
+
+		EApi.started(EConstants.MODE_AUDIO, 'wymowa');
+		urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
+		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
+		EApi.askMore(query, 'EAutomator.getAudioRe', urls);
+
+		// callback
+	},
+	getAudioRe : function (results) {
+		var oggs = {},
+			error = EStr.NO_AUDIO_FOUND;
+
+		$.each(results, function (ignored, res) {
+			var lang;
+
+			if (res.query === undefined || res.query.pages === undefined) {
+				return false;
+			}
+			lang = res.query.general.lang;
+			$.each(res.query.pages, function (j, val) {
+				var content, ogg;
+
+				if (j === '-1' || !val.revisions || !val.revisions[0]) {
+					return false;
+				}
+				content = val.revisions[0]['*'];
+				ogg = EAutomator.extractAudio(content);
+				if (ogg !== undefined && ogg.length) {
+					oggs[lang] = ogg;
+					error = undefined;
+				}
+				return true;
+			});
+			return true;
+		});
+		EApi.done(EConstants.MODE_AUDIO, oggs, error);
+	},
+
+	extractAudio : function (str) {
+		var arr, el, results = [],
+			re = new RegExp('[\\|:=]([^\\|\\]:=]+?\\.ogg)', 'gi');
+
+		while ((arr = re.exec(str)) !== null) {
+			el = $.trim(arr[1]).replace(/_/g, ' ');
+			if (el && results.indexOf(el) === -1) {
+				el = el.charAt(0).toUpperCase() + el.substr(1);
+				results.push(el);
+			}
+		}
+		return results;
 	}
 };
 

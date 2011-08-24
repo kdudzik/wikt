@@ -65,11 +65,15 @@ window.EApi = {
 	},
 
 	started : function (mode, subs) {
-		var idpart = EConstants.API_ID[mode];
+		var idpart = EConstants.API_ID[mode],
+			elem = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart);
 
-		$('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart).removeClass('apidone apierror').addClass('apistarted');
+		elem.removeClass('apidone apierror').addClass('apistarted');
 		if (subs !== undefined) {
 			EUtil.focusArea(subs);
+		}
+		if (elem.data('orig_html')) {
+			elem.html(elem.data('orig_html'));
 		}
 	},
 
@@ -83,7 +87,7 @@ window.EApi = {
 				EUi.showResult(EPrinter.resultToHTML(mode, res), idpart);
 			}
 		} else {
-			elem.addClass('apierror').removeClass('apistarted apidone').html(error);
+			elem.addClass('apierror').removeClass('apistarted apidone').data('orig_html', elem.html()).html(error);
 		}
 	},
 

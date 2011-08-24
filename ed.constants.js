@@ -487,11 +487,13 @@ window.EConstants = {
 	MODE_IPA : 0,
 	MODE_IW : 1,
 	MODE_PICTURE : 2,
+	MODE_AUDIO : 3,
 	API_ID :
 		{
 			0 : 'add_ipa',
 			1 : 'add_iw',
-			2 : 'add_picture'
+			2 : 'add_picture',
+			3 : 'add_audio'
 		},
 	IPA_MODE_ADDS_NOTHING : 1,
 	IPA_MODE_ADDS_SLASH : 2,
@@ -526,7 +528,7 @@ window.EConstants = {
 			'no' : 1,
 			'oc' : 3,
 			'sl' : 3,
-			'tl' : 3,
+			'tl' : 3
 		},
 	TRANSLIT_SUPPORTED :
 		[
@@ -534,7 +536,7 @@ window.EConstants = {
 		],
 	FORBIDDEN_IPA_CONTENT :
 		[
-			'…', '...', '//', '/ /', '[]', '[ ]', 'lang', '[ eˈxem.plo ]'
+			'…', '...', '//', '/ /', '[]', '[ ]', 'lang', '[ eˈxem.plo ]', '/xxxx/'
 		],
 
 	init : function () {
@@ -660,6 +662,8 @@ window.EStr = {
 		'Nie znaleziono IPA',
 	NO_PICTURE_FOUND:
 		'Nie znaleziono grafik',
+	NO_AUDIO_FOUND:
+		'Nie znaleziono plików dźwiękowych',
 	AJAX_IPA_RESULT_INSTRUCTION:
 		'<div id="ajax_result_disc"><small>\
 		Poniżej wyświetlono zapisy w międzynarodowym alfabecie fonetycznym, które udało się znaleźć \
@@ -676,7 +680,17 @@ window.EStr = {
 		w artykułach o tej samej nazwie w innych wersjach językowych Wikisłownika. Kliknij wybrany wynik, aby wstawić ten plik w miejscu, \
 		w którym znajduje się teraz kursor.<br/> \
 		Po najechaniu myszką na nazwę pliku pokaże się jego podgląd. \
-		</small></div>'
+		</small></div>',
+	AJAX_AUDIO_RESULT_INSTRUCTION:
+		'<div id="ajax_result_disc"><small>\
+		Poniżej znajduje się lista nagrań dźwiękowych, które udało się znaleźć \
+		w artykułach o tej samej nazwie w innych wersjach językowych Wikisłownika. Kliknij wybrany wynik, aby wstawić ten plik w miejscu, \
+		w którym znajduje się teraz kursor.<br/> \
+		Zapis zostanie wstawiony w szablonie <a href="http://pl.wiktionary.org/wiki/Wikis%C5%82ownik:Zasady_tworzenia_hase%C5%82#Sekcja_.27wymowa.27" \
+		target="_blank"><tt>{{audio}}</tt>, dostosuj to do danej sytuacji</a>. \
+		</small></div>',
+	ESCAPE:
+		'Zamknij okno wyników.<br/><small>Możesz też użyć klawisza Esc</small>'
 };
 
 
