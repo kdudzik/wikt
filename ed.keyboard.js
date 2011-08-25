@@ -161,6 +161,8 @@ window.EKeyboard = {
 			}
 			txtarea.scrollTop = textScroll;
 		}
+		$(txtarea).autoresize();
+		EUi.relocateResult();
 	}
 
 };

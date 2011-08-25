@@ -227,12 +227,13 @@ window.EPrinter = {
 			dt.append(arrelem.caption + ' ');
 			dt.append('<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
 			$.each(arrelem.arr, function (ignored, elem) {
-				var link = $('<a href="#"/>');
-				elem = elem.replace(/\{\{(PAGENAME|pn)\}\}/g, mw.config.get('wgTitle'));
+				var template = EPrinter.audioTemplate(elem),
+					link = $('<a href="#"/>');
 
+				elem = elem.replace(/\{\{(PAGENAME|pn)\}\}/g, mw.config.get('wgTitle'));
 				link.html(elem);
 				link.click(function () {
-					insertTags('{{audio|' + elem + '}}', '', '');
+					insertTags('{{' + template + '|' + elem + '}}', '', '');
 					return false;
 				});
 				dd.append(link).append(' ');
@@ -240,6 +241,21 @@ window.EPrinter = {
 			dl.append(dt).append(dd);
 		});
 		return $(EStr.AJAX_AUDIO_RESULT_INSTRUCTION).append(dl);
+	},
+
+	audioTemplate : function (filename) {
+		if (filename.indexOf('En-us-') === 0) {
+			return 'audioUS';
+		} else if (filename.indexOf('En-uk-') === 0) {
+			return 'audioUK';
+		} else if (filename.indexOf('En-au-') === 0) {
+			return 'audioAU';
+		} else if (filename.indexOf('En-ca-') === 0) {
+			return 'audioCA';
+		} else if (filename.indexOf('De-at-') === 0) {
+			return 'audioAT';
+		}
+		return 'audio';
 	}
 };
 

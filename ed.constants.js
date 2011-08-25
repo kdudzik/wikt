@@ -687,7 +687,7 @@ window.EStr = {
 		w artykułach o tej samej nazwie w innych wersjach językowych Wikisłownika. Kliknij wybrany wynik, aby wstawić ten plik w miejscu, \
 		w którym znajduje się teraz kursor.<br/> \
 		Zapis zostanie wstawiony w szablonie <a href="http://pl.wiktionary.org/wiki/Wikis%C5%82ownik:Zasady_tworzenia_hase%C5%82#Sekcja_.27wymowa.27" \
-		target="_blank"><tt>{{audio}}</tt>, dostosuj to do danej sytuacji</a>. \
+		target="_blank"><tt>{{audio}}</tt> lub pokrewnym, dostosuj to do danej sytuacji</a>. \
 		</small></div>',
 	ESCAPE:
 		'Zamknij okno wyników.<br/><small>Możesz też użyć klawisza Esc</small>'

@@ -98,10 +98,10 @@ window.EAutomator = {
 		iwikiString = $.map(iwikis, function (val) { return '[[' + val + ':' + mw.config.get('wgTitle') + ']]'; }).join(' ');
 		curIwiki = $('#ed_0000_').val();
 		if (curIwiki === '') {
-			$('#ed_0000_').val(iwikiString);
+			$('#ed_0000_').val(iwikiString).autoresize();
 		} else {
 			re = new RegExp('(\\[\\[[a-z\\-]+' + ':' + mw.config.get('wgTitle') + '\\]\\]\\s*)+');
-			$('#ed_0000_').val(iwikiString + curIwiki.replace(re, '\n'));
+			$('#ed_0000_').val(iwikiString + curIwiki.replace(re, '\n')).autoresize();
 		}
 		EApi.done(EConstants.MODE_IW);
 	},
