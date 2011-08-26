@@ -31,7 +31,6 @@
 \marginparwidth15mm
 
 
-\linespread{1.3}
 
 \renewcommand\maketitle{%
   \begin{titlepage}%
