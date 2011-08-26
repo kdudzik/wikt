@@ -101,7 +101,7 @@ window.EAutomator = {
 			$('#ed_0000_').val(iwikiString).autoresize();
 		} else {
 			re = new RegExp('(\\[\\[[a-z\\-]+' + ':' + mw.config.get('wgTitle') + '\\]\\]\\s*)+');
-			$('#ed_0000_').val(iwikiString + curIwiki.replace(re, '\n')).autoresize();
+			$('#ed_0000_').val($.trim(iwikiString + curIwiki.replace(re, '\n'))).autoresize();
 		}
 		EApi.done(EConstants.MODE_IW);
 	},
