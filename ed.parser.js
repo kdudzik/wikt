@@ -141,6 +141,8 @@ window.ESectionParser = {
 			mode = 'KOREAN';
 		} else if (code === 'ja') {
 			mode = 'JAPANESE';
+		} else if (code === 'eo') {
+			mode = 'ESPERANTO';
 		} else if (code === 'inter') {
 			mode = 'INTERNATIONAL';
 		} else if (EConstants.NON_LATIN_LANGS.indexOf(code) !== -1) {
@@ -175,6 +177,8 @@ window.ESectionParser = {
 			targetSubsections = EConstants.SUBSECTIONS.KOREAN; break;
 		case 'JAPANESE':
 			targetSubsections = EConstants.SUBSECTIONS.JAPANESE; break;
+		case 'ESPERANTO':
+			targetSubsections = EConstants.SUBSECTIONS.ESPERANTO; break;
 		case 'INTERNATIONAL':
 			targetSubsections = EConstants.SUBSECTIONS.INTERNATIONAL; break;
 		case 'EGYPTIAN':

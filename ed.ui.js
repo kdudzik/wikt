@@ -180,7 +180,7 @@ window.EUi = {
 
 						EUi.addSection(id);
 						EUi.prepareFormSubsections(id);
-						EForm.addDefaultTexts(id, sec.code);
+						EUi.addDefaultTexts(id, sec.code);
 						$.cookie('lastAdded', sec.code);
 					}
 					$('#ed_menuitem_' + id).click();
@@ -266,6 +266,9 @@ window.EUi = {
 			}
 		}
 		EUi.prepareSectionAutomation(id);
+		if (id === 'esperanto') {
+			EUi.prepareEsperanto();
+		}
 	},
 
 	getSubsectionObj : function (langid, section, subsection) {
@@ -380,10 +383,7 @@ window.EUi = {
 
 	hideResult : function () {
 		$('#ajax_results').hide();
-	}
-};
-
-window.EForm = {
+	},
 
 	addDefaultTexts : function (langid, code) {
 		var subs, defaultText,
@@ -392,7 +392,7 @@ window.EForm = {
 		for (subs in arr) {
 			if (arr.hasOwnProperty(subs)) {
 				defaultText = arr[subs];
-				EForm.val(langid, subs, defaultText);
+				EUi.val(langid, subs, defaultText);
 			}
 		}
 		EAutomator.addTransliteration(langid, code);
@@ -405,8 +405,8 @@ window.EForm = {
 		for (subs in arr) {
 			if (arr.hasOwnProperty(subs)) {
 				defaultText = arr[subs];
-				if (EForm.val(langid, subs) === defaultText) {
-					EForm.val(langid, subs, '');
+				if (EUi.val(langid, subs) === defaultText) {
+					EUi.val(langid, subs, '');
 				}
 			}
 		}
@@ -419,8 +419,55 @@ window.EForm = {
 			$('#ed_' + langid + '_' + subsectionTitle).val(newValue);
 			return 0;
 		}
-	}
+	},
 
+	relatedS : undefined,
+	derivedS : undefined,
+
+	prepareEsperanto : function () {
+		var meaningTA = $('#ed_esperanto_znaczenia'),
+			related = $('#ed_subsection_esperanto_pokrewne'),
+			derived = $('#ed_subsection_esperanto_pochodne'),
+			updateEsperanto = function () {
+				var isMorpheme = meaningTA.val().match(/\{\{\s*morfem\s*[\|\}]/g) !== null,
+					isOtherPart = meaningTA.val().match(/''\s*(rzeczownik|przymiotnik|czasownik|przysłówek|skrót|spójnik|liczebnik|zaimek|wykrzyknik|partykuła)/g) !== null;
+
+				if (isMorpheme) {
+					derived.removeClass('inactive');
+					derived.data('tip', '');
+				} else {
+					derived.addClass('inactive');
+					derived.data('tip', EStr.SECTION_DERIVED_INACTIVE);
+				}
+				if (isOtherPart) {
+					related.removeClass('inactive');
+					related.data('tip', '');
+				} else {
+					related.addClass('inactive');
+					related.data('tip', EStr.SECTION_RELATED_INACTIVE);
+				}
+
+				if (meaningTA.val() === '') {
+					EUi.derivedS.active = true;
+					EUi.relatedS.active = true;
+				} else {
+					EUi.derivedS.active = isMorpheme;
+					EUi.relatedS.active = isOtherPart;
+				}
+			};
+
+		$.each(Ed.content.sections.esperanto.subsections, function () {
+			if (this.title === 'pochodne') {
+				EUi.derivedS = this;
+			} else if (this.title === 'pokrewne') {
+				EUi.relatedS = this;
+			}
+		});
+		related.addClass('tip');
+		derived.addClass('tip');
+		meaningTA.change(updateEsperanto).blur(updateEsperanto).keyup(updateEsperanto).focus(updateEsperanto);
+		updateEsperanto();
+	}
 };
 
 

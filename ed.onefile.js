@@ -313,6 +313,13 @@ div.subsection_extra > span.apierror {\
 #ajax_result_disc {\
 	margin-bottom: 5px;\
 }\
+p.inactive label {\
+	color: #999;\
+}\
+p.inactive textarea {\
+	background-color: lemonChiffon;\
+	color: #999;\
+}\
 ";
 mw.util.addCSS(css);
 // jQuery Alert Dialogs Plugin
@@ -1053,6 +1060,11 @@ window.EConstants = {
 					'transliteracja', 'czytania', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy',
 					'antonimy', 'złożenia', 'pokrewne', 'frazeologia', 'etymologia', 'uwagi', 'źródła'
 				],
+			ESPERANTO :
+				[//eo
+					'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne', 'pochodne',
+					'frazeologia', 'etymologia', 'uwagi', 'źródła'
+				],
 			INTERNATIONAL :
 				[// inter
 					'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne', 'frazeologia',
@@ -1703,7 +1715,11 @@ window.EStr = {
 		target="_blank"><tt>{{audio}}</tt> lub pokrewnym, dostosuj to do danej sytuacji</a>. \
 		</small></div>',
 	ESCAPE:
-		'Zamknij okno wyników.<br/><small>Możesz też użyć klawisza Esc</small>'
+		'Zamknij okno wyników.<br/><small>Możesz też użyć klawisza Esc</small>',
+	SECTION_DERIVED_INACTIVE:
+		'Sekcja <em>pochodne</em> jest nieaktywna.<br/><small>Nie zostanie dołączona do hasła, ponieważ wśród znaczeń hasła nie ma morfemu.</small>',
+	SECTION_RELATED_INACTIVE:
+		'Sekcja <em>pokrewne</em> jest nieaktywna.<br/><small>Nie zostanie dołączona do hasła, ponieważ wśród znaczeń hasła nie ma części mowy innej niż morfem.</small>'
 };
 
 
@@ -1975,6 +1991,8 @@ window.ESectionParser = {
 			mode = 'KOREAN';
 		} else if (code === 'ja') {
 			mode = 'JAPANESE';
+		} else if (code === 'eo') {
+			mode = 'ESPERANTO';
 		} else if (code === 'inter') {
 			mode = 'INTERNATIONAL';
 		} else if (EConstants.NON_LATIN_LANGS.indexOf(code) !== -1) {
@@ -2009,6 +2027,8 @@ window.ESectionParser = {
 			targetSubsections = EConstants.SUBSECTIONS.KOREAN; break;
 		case 'JAPANESE':
 			targetSubsections = EConstants.SUBSECTIONS.JAPANESE; break;
+		case 'ESPERANTO':
+			targetSubsections = EConstants.SUBSECTIONS.ESPERANTO; break;
 		case 'INTERNATIONAL':
 			targetSubsections = EConstants.SUBSECTIONS.INTERNATIONAL; break;
 		case 'EGYPTIAN':
@@ -2120,7 +2140,7 @@ window.EPrinter = {
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
 				sec = Ed.content.sections[id];
-				EForm.removeDefaultTexts(id, sec.code);
+				EUi.removeDefaultTexts(id, sec.code);
 				sortableSections.push(sec);
 			}
 		}
@@ -2130,13 +2150,13 @@ window.EPrinter = {
 			if (sortableSections.hasOwnProperty(i)) {
 				sec = sortableSections[i];
 				if (sec.id === EConstants.SECTION_ID_INTRO) {
-					code = EForm.val(EConstants.SECTION_ID_INTRO, '') + '\n';
+					code = EUi.val(EConstants.SECTION_ID_INTRO, '') + '\n';
 				} else {
 					code += '== ' + sec.title + ' ==\n';
 					for (j = 0; j < sec.subsections.length; j += 1) {
 						subs = sec.subsections[j];
 						if (subs.active) {
-							subs.content = EForm.val(sec.id, subs.title);
+							subs.content = EUi.val(sec.id, subs.title);
 
 							if (!subs.title && subs.content) {
 								code += subs.content + '\n';
@@ -2555,7 +2575,7 @@ window.EUi = {
 
 						EUi.addSection(id);
 						EUi.prepareFormSubsections(id);
-						EForm.addDefaultTexts(id, sec.code);
+						EUi.addDefaultTexts(id, sec.code);
 						$.cookie('lastAdded', sec.code);
 					}
 					$('#ed_menuitem_' + id).click();
@@ -2641,6 +2661,9 @@ window.EUi = {
 			}
 		}
 		EUi.prepareSectionAutomation(id);
+		if (id === 'esperanto') {
+			EUi.prepareEsperanto();
+		}
 	},
 
 	getSubsectionObj : function (langid, section, subsection) {
@@ -2755,10 +2778,7 @@ window.EUi = {
 
 	hideResult : function () {
 		$('#ajax_results').hide();
-	}
-};
-
-window.EForm = {
+	},
 
 	addDefaultTexts : function (langid, code) {
 		var subs, defaultText,
@@ -2767,7 +2787,7 @@ window.EForm = {
 		for (subs in arr) {
 			if (arr.hasOwnProperty(subs)) {
 				defaultText = arr[subs];
-				EForm.val(langid, subs, defaultText);
+				EUi.val(langid, subs, defaultText);
 			}
 		}
 		EAutomator.addTransliteration(langid, code);
@@ -2780,8 +2800,8 @@ window.EForm = {
 		for (subs in arr) {
 			if (arr.hasOwnProperty(subs)) {
 				defaultText = arr[subs];
-				if (EForm.val(langid, subs) === defaultText) {
-					EForm.val(langid, subs, '');
+				if (EUi.val(langid, subs) === defaultText) {
+					EUi.val(langid, subs, '');
 				}
 			}
 		}
@@ -2794,8 +2814,55 @@ window.EForm = {
 			$('#ed_' + langid + '_' + subsectionTitle).val(newValue);
 			return 0;
 		}
-	}
+	},
 
+	relatedS : undefined,
+	derivedS : undefined,
+
+	prepareEsperanto : function () {
+		var meaningTA = $('#ed_esperanto_znaczenia'),
+			related = $('#ed_subsection_esperanto_pokrewne'),
+			derived = $('#ed_subsection_esperanto_pochodne'),
+			updateEsperanto = function () {
+				var isMorpheme = meaningTA.val().match(/\{\{\s*morfem\s*[\|\}]/g) !== null,
+					isOtherPart = meaningTA.val().match(/''\s*(rzeczownik|przymiotnik|czasownik|przysłówek|skrót|spójnik|liczebnik|zaimek|wykrzyknik|partykuła)/g) !== null;
+
+				if (isMorpheme) {
+					derived.removeClass('inactive');
+					derived.data('tip', '');
+				} else {
+					derived.addClass('inactive');
+					derived.data('tip', EStr.SECTION_DERIVED_INACTIVE);
+				}
+				if (isOtherPart) {
+					related.removeClass('inactive');
+					related.data('tip', '');
+				} else {
+					related.addClass('inactive');
+					related.data('tip', EStr.SECTION_RELATED_INACTIVE);
+				}
+
+				if (meaningTA.val() === '') {
+					EUi.derivedS.active = true;
+					EUi.relatedS.active = true;
+				} else {
+					EUi.derivedS.active = isMorpheme;
+					EUi.relatedS.active = isOtherPart;
+				}
+			};
+
+		$.each(Ed.content.sections.esperanto.subsections, function () {
+			if (this.title === 'pochodne') {
+				EUi.derivedS = this;
+			} else if (this.title === 'pokrewne') {
+				EUi.relatedS = this;
+			}
+		});
+		related.addClass('tip');
+		derived.addClass('tip');
+		meaningTA.change(updateEsperanto).blur(updateEsperanto).keyup(updateEsperanto).focus(updateEsperanto);
+		updateEsperanto();
+	}
 };
 
 

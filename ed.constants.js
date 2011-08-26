@@ -40,6 +40,11 @@ window.EConstants = {
 					'transliteracja', 'czytania', 'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy',
 					'antonimy', 'złożenia', 'pokrewne', 'frazeologia', 'etymologia', 'uwagi', 'źródła'
 				],
+			ESPERANTO :
+				[//eo
+					'wymowa', 'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne', 'pochodne',
+					'frazeologia', 'etymologia', 'uwagi', 'źródła'
+				],
 			INTERNATIONAL :
 				[// inter
 					'znaczenia', 'odmiana', 'przykłady', 'składnia', 'kolokacje', 'synonimy', 'antonimy', 'pokrewne', 'frazeologia',
@@ -690,7 +695,11 @@ window.EStr = {
 		target="_blank"><tt>{{audio}}</tt> lub pokrewnym, dostosuj to do danej sytuacji</a>. \
 		</small></div>',
 	ESCAPE:
-		'Zamknij okno wyników.<br/><small>Możesz też użyć klawisza Esc</small>'
+		'Zamknij okno wyników.<br/><small>Możesz też użyć klawisza Esc</small>',
+	SECTION_DERIVED_INACTIVE:
+		'Sekcja <em>pochodne</em> jest nieaktywna.<br/><small>Nie zostanie dołączona do hasła, ponieważ wśród znaczeń hasła nie ma morfemu.</small>',
+	SECTION_RELATED_INACTIVE:
+		'Sekcja <em>pokrewne</em> jest nieaktywna.<br/><small>Nie zostanie dołączona do hasła, ponieważ wśród znaczeń hasła nie ma części mowy innej niż morfem.</small>'
 };
 
 

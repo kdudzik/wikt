@@ -307,3 +307,10 @@ div.subsection_extra > span.apierror {
 #ajax_result_disc {
 	margin-bottom: 5px;
 }
+p.inactive label {
+	color: #999;
+}
+p.inactive textarea {
+	background-color: lemonChiffon;
+	color: #999;
+}

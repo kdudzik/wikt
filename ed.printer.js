@@ -7,7 +7,7 @@ window.EPrinter = {
 		for (id in Ed.content.sections) {
 			if (Ed.content.sections.hasOwnProperty(id)) {
 				sec = Ed.content.sections[id];
-				EForm.removeDefaultTexts(id, sec.code);
+				EUi.removeDefaultTexts(id, sec.code);
 				sortableSections.push(sec);
 			}
 		}
@@ -17,13 +17,13 @@ window.EPrinter = {
 			if (sortableSections.hasOwnProperty(i)) {
 				sec = sortableSections[i];
 				if (sec.id === EConstants.SECTION_ID_INTRO) {
-					code = EForm.val(EConstants.SECTION_ID_INTRO, '') + '\n';
+					code = EUi.val(EConstants.SECTION_ID_INTRO, '') + '\n';
 				} else {
 					code += '== ' + sec.title + ' ==\n';
 					for (j = 0; j < sec.subsections.length; j += 1) {
 						subs = sec.subsections[j];
 						if (subs.active) {
-							subs.content = EForm.val(sec.id, subs.title);
+							subs.content = EUi.val(sec.id, subs.title);
 
 							if (!subs.title && subs.content) {
 								code += subs.content + '\n';
