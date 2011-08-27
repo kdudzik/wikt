@@ -1,3 +1,4 @@
+\label{chap:wikt}
 Rozdział ten stanowi charakterystykę Wikisłownika -- sieciowego słownika opartego na oprogramowaniu MediaWiki. Wikisłownik jest jednym z~największych i~najpopularniejszych słowników dostępnych w~polskim internecie. W~kolejnych sekcjach projekt ten został opisany na różnych poziomach szczegółowości. Omówiono zarówno oprogramowanie, na jakim bazuje słownik, jak i~swego rodzaju ,,ekosystem'', w~którym znajduje on swoje miejsce.
 
 \section{Projekty Fundacji Wikimedia}
@@ -129,6 +130,7 @@ Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której 
 
 
 \subsection{Wady dotychczasowych rozwiązań}
+\label{wikt:drawbacks}
 W~dotychczasowym systemie edycji w~Wikisłowniku przedstawiona wyżej regularna struktura nie jest wykorzystywana w~wystarczającym stopniu. W~dużej mierze wiąże się to z~pierwotnym założeniem, jakim jest oparcie projektu na silniku MediaWiki. Każde hasło przechowywane jest w~bazie danych jako jeden ciąg znaków, a~ich struktura jest wymuszona dopiero przez społeczność -- brakuje jakichkolwiek mechanizmów, które pomagałyby w~utrzymywaniu haseł zgodnie ze standardem.
 
 Baza Wikisłownika nie zachowuje nawet pierwszej postaci normalnej~\cite{book:introduction} -- hasła nie są przecież danymi atomowymi. To duża wada projektu takiego jak słownik internetowy, w~którym dane powinny być prezentowane możliwie jednolicie. Postaci normalne pozwalają też na łatwiejszą modyfikację i~obróbkę danych. Niestety niemożliwa jest zmiana silnika MediaWiki, dlatego należy dbać o~standaryzację artykułów za pomocą innych środków. Aby pomieścić i~logicznie powiązać informacje w~każdym haśle, konieczne jest użycie omówionej struktury -- sekcji i~podsekcji, z~zastosowaniem licznych szablonów. Edycja takiego hasła (p.~ilustracja~\ref{fig:plhaslo-edit} na str.~\pageref{fig:plhaslo-edit}) będzie bardzo trudna dla początkującego redaktora Wikisłownika. Jeszcze większe problemy występują przy tworzeniu nowych haseł. Ilustracja~\ref{fig:plnew} pokazuje ekran służący do tego celu (wywoływany np. po kliknięciu w~czerwony link w~dowolnym haśle, oznaczający nieistniejący do tej pory artykuł).
