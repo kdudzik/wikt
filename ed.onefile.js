@@ -33,7 +33,6 @@ ul#ed_menu {\
 	background-color: white;\
 	width: 97%;\
 	display: block;\
-	list-style: none;\
 	margin: 0;\
 	float: left;\
 	border: 0;\
@@ -48,6 +47,8 @@ ul#ed_menu li {\
 	border-style: dotted;\
 	border-color: khaki;\
 	cursor: pointer;\
+	list-style-type: none;\
+	list-style-image: none;\
 }\
 \
 ul#ed_menu li.active {\
@@ -82,6 +83,7 @@ fieldset.ed_section textarea {\
 	height: 1em;\
 	font-family: Consolas, \"Lucida Console\", monospace;\
 	font-size: 9pt;\
+	overflow: auto;\
 }\
 \
 fieldset.ed_section p {\
@@ -276,7 +278,7 @@ div.subsection_extra > span.apierror {\
 	padding: 5px;\
 	width: 350px;\
 	position: absolute;\
-	z-index: 699;\
+	z-index: 598;\
 	word-wrap: break-word;\
 	max-height: 450px;\
 	overflow-y: auto;\
@@ -455,6 +457,7 @@ mw.util.addCSS(css);
 				$("#popup_ok").focus().keyup(function (e) {
 					if (e.keyCode === 13 || e.keyCode === 27) {
 						$("#popup_ok").trigger('click');
+						return false;
 					}
 				});
 				break;
@@ -481,6 +484,7 @@ mw.util.addCSS(css);
 					}
 					if (e.keyCode === 27) {
 						$("#popup_cancel").trigger('click');
+						return false;
 					}
 				});
 				break;
@@ -510,6 +514,7 @@ mw.util.addCSS(css);
 					}
 					if (e.keyCode === 27) {
 						$("#popup_cancel").trigger('click');
+						return false;
 					}
 				});
 				if (value) {
@@ -1783,6 +1788,16 @@ window.EUtil = {
 
 $.fn.reverse = [].reverse;
 
+if (!Array.prototype.indexOf) {
+	Array.prototype.indexOf = function (obj, start) {
+		var i, j;
+		for (i = (start || 0), j = this.length; i < j; i += 1) {
+			if (this[i] === obj) { return i; }
+		}
+		return -1;
+	};
+}
+
 
 /**
  *
@@ -2671,7 +2686,7 @@ window.EUi = {
 			p = $('<p id="ed_subsection_' + name + '"/>'),
 			caption = EConstants.SUBSECTION_TITLE[subsection.title],
 			label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>'),
-			textarea = $('<textarea class="newform keyboardable" name="ed_' + name + '" id="ed_' + name + '"/>').text(subsection.content),
+			textarea = $('<textarea class="newform keyboardable" name="ed_' + name + '" id="ed_' + name + '"/>').val(subsection.content),
 			extra = $('<div class="subsection_extra" id="ed_' + name + '_extra"/>');
 
 		if (ESectionParser.obligatorySubsection(subsection, section)) {
@@ -2743,6 +2758,7 @@ window.EUi = {
 		$(document).keyup(function (e) {
 			if (e.keyCode === 27) {
 				EUi.hideResult();
+				return false;
 			}
 		});
 	},

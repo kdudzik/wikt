@@ -57,5 +57,15 @@ window.EUtil = {
 
 $.fn.reverse = [].reverse;
 
+if (!Array.prototype.indexOf) {
+	Array.prototype.indexOf = function (obj, start) {
+		var i, j;
+		for (i = (start || 0), j = this.length; i < j; i += 1) {
+			if (this[i] === obj) { return i; }
+		}
+		return -1;
+	};
+}
+
 window.EFilesLoaded++;
 window.ETryInit();

@@ -276,7 +276,7 @@ window.EUi = {
 			p = $('<p id="ed_subsection_' + name + '"/>'),
 			caption = EConstants.SUBSECTION_TITLE[subsection.title],
 			label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>'),
-			textarea = $('<textarea class="newform keyboardable" name="ed_' + name + '" id="ed_' + name + '"/>').text(subsection.content),
+			textarea = $('<textarea class="newform keyboardable" name="ed_' + name + '" id="ed_' + name + '"/>').val(subsection.content),
 			extra = $('<div class="subsection_extra" id="ed_' + name + '_extra"/>');
 
 		if (ESectionParser.obligatorySubsection(subsection, section)) {
@@ -348,6 +348,7 @@ window.EUi = {
 		$(document).keyup(function (e) {
 			if (e.keyCode === 27) {
 				EUi.hideResult();
+				return false;
 			}
 		});
 	},

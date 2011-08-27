@@ -131,6 +131,7 @@
 				$("#popup_ok").focus().keyup(function (e) {
 					if (e.keyCode === 13 || e.keyCode === 27) {
 						$("#popup_ok").trigger('click');
+						return false;
 					}
 				});
 				break;
@@ -157,6 +158,7 @@
 					}
 					if (e.keyCode === 27) {
 						$("#popup_cancel").trigger('click');
+						return false;
 					}
 				});
 				break;
@@ -186,6 +188,7 @@
 					}
 					if (e.keyCode === 27) {
 						$("#popup_cancel").trigger('click');
+						return false;
 					}
 				});
 				if (value) {
