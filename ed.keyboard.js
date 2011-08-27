@@ -168,15 +168,13 @@ window.EKeyboard = {
 };
 
 (function ($) {
-
 	$.fn.keyboard = function () {
 		$(this).focus(function () {
 			EKeyboard.updatePosition($(this));
-		}).blur(function () {
 		});
+		EKeyboard.updatePosition($(this));
 		return $(this);
 	};
-
 }(jQuery));
 
 window.EFilesLoaded++;

@@ -9,7 +9,6 @@ window.EFiles =
 	'http://localhost/wikt/jquery.alerts.js',
 	'http://localhost/wikt/jquery.tooltip.js',
 	'http://localhost/wikt/jquery.autoresize.js',
-	'http://localhost/wikt/jquery.livequery.js',
 	'http://localhost/wikt/ed.constants.js',
 	'http://localhost/wikt/ed.util.js',
 	'http://localhost/wikt/ed.main.js',

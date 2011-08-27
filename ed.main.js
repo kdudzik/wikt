@@ -40,12 +40,9 @@ window.Ed = {
 
 		EUi.prepareForm(oldform, instruction);
 
-        $('.tip').livequery(function () {
-			$(this).tooltip('tip');
-        });
-        $('.keyboardable').livequery(function () {
-			$(this).keyboard();
-		});
+        $('#ed .tip').live('hover', $(this).toggletip);
+        $('#ed .keyboardable').live('focus', $(this).keyboard);
+
 	},
 
 	resetNew : function () {

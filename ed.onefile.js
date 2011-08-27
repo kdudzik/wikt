@@ -1,5 +1,5 @@
 //<nowiki>
-/*global $, jQuery, mw, insertTags: true, jQuery: false, checkSelectedText, is_opera, is_opera_seven, is_opera_95 */
+/*global $, jQuery, mw, insertTags: true, checkSelectedText, is_opera, is_opera_seven, is_opera_95 */
 /*jslint devel: true, browser: true, sloppy: true, es5: true, indent: 4, regexp: true */
 
 var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParser, ESectionParser, ESpecialChars, EPrinter;
@@ -13,7 +13,6 @@ var css = "#ed {\
 	border: 0;\
 	width: 100%;\
 	height: auto;\
-	position: relative;\
 }\
 \
 fieldset.ed_section {\
@@ -272,7 +271,6 @@ div.subsection_extra > span.apierror {\
 }\
 \
 #ajax_results {\
-	font-size: 0.8em;\
 	background-color: lemonchiffon;\
 	border: 2px solid palegoldenrod;\
 	padding: 5px;\
@@ -361,10 +359,8 @@ mw.util.addCSS(css);
 		repositionOnResize: true,           // re-centers the dialog on window resize
 		overlayOpacity: 0.2,                // transparency level of overlay
 		overlayColor: '#000',               // base color of overlay
-		draggable: false,                    // make the dialogs draggable (requires UI Draggables plugin)
 		okButton: '',         // text for the OK button
 		cancelButton: '', // text for the Cancel button
-		dialogClass: null,                  // if specified, this class will be applied to all dialogs
 		init: false,
 
 		initialize: function () {
@@ -421,11 +417,7 @@ mw.util.addCSS(css);
 			$.alerts.hide__prv();
 			$.alerts.overlay__prv('show');
 
-			$("BODY").append('<div id="popup_container"><h1 id="popup_title"></h1><div id="popup_content"><div id="popup_message"></div></div></div>');
-
-			if ($.alerts.dialogClass) {
-				$("#popup_container").addClass($.alerts.dialogClass);
-			}
+			$("body").append('<div id="popup_container"><h1 id="popup_title"></h1><div id="popup_content"><div id="popup_message"></div></div></div>');
 
 			$("#popup_container").css({
 				padding: 0,
@@ -525,14 +517,6 @@ mw.util.addCSS(css);
 			default:
 				break;
 			}
-
-			// Make draggable
-			if ($.alerts.draggable) {
-				try {
-					$("#popup_container").draggable({ handle: $("#popup_title") });
-					$("#popup_title").css({ cursor: 'move' });
-				} catch (e) { /* requires jQuery UI draggables */ }
-			}
 		},
 
 		hide__prv: function () {
@@ -545,7 +529,7 @@ mw.util.addCSS(css);
 			switch (status) {
 			case 'show':
 				$.alerts.overlay__prv('hide');
-				$("BODY").append('<div id="popup_overlay"></div>');
+				$("body").append('<div id="popup_overlay"></div>');
 				$("#popup_overlay").css({
 					position: 'absolute',
 					top: '0px',
@@ -620,72 +604,39 @@ mw.util.addCSS(css);
 }(jQuery));
 
 
-/*                    tinyTips Plugin                                   */
-/*                      Version: 1.0                                    */
-/*                      Mike Merritt                                    */
-/*                 Updated: Feb 4th, 2010                               */
-/* Copyright (c) 2009 Mike Merritt
-
-    Permission is hereby granted, free of charge, to any person
-    obtaining a copy of this software and associated documentation
-    files (the "Software"), to deal in the Software without
-    restriction, including without limitation the rights to use,
-    copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the
-    Software is furnished to do so, subject to the following
-    conditions:
-
-    The above copyright notice and this permission notice shall be
-    included in all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-    HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-    OTHER DEALINGS IN THE SOFTWARE.
-**************************************************************************/
-
 (function ($) {
-    $.fn.tooltip = function () {
 
-        var tooltip = $('<div class="tooltip"/>');
-        tooltip.css('position', 'absolute').css('z-index', '1000').appendTo($('body'));
+	var shown = false,
+		tooltip = $('<div class="tooltip"/>');
 
-        // When we hover over the element that we want the tooltip applied to
-        $(this).hover(function () {
-            var yOffset, xOffset, pos, nPos;
-			if (!$(this).data('tip')) {
-				return true;
-			}
-            tooltip.html($(this).data('tip'));
+	tooltip.css('position', 'absolute').css('z-index', '1000').appendTo($('body'));
 
-            if ($(this).hasClass('tipdown')) {
-                yOffset = -$(this).outerHeight() - 3;
-            } else {
-                yOffset = tooltip.height() + 17;
-            }
+	$.fn.showtip = function () {
+		var yOffset, xOffset, pos;
+		if (!$(this).data('tip')) {
+			return true;
+		}
+		tooltip.html($(this).data('tip'));
 
-            xOffset = (((tooltip.width() - 10) / 2)) - ($(this).width() / 2);
+		yOffset = $(this).hasClass('tipdown') ? -$(this).outerHeight() - 3 : tooltip.height() + 17;
+		xOffset = (tooltip.width() - 10) / 2 - $(this).width() / 2;
+		pos = $(this).offset();
+		tooltip.css({ top: pos.top - yOffset, left: pos.left - xOffset }).show();
+		shown = true;
+	};
 
-            // Grab the coordinates for the element with the tooltip and make a new copy
-            // so that we can keep the original un-touched.
-            pos = $(this).offset();
-            nPos = pos;
+	$.fn.hidetip = function () {
+		tooltip.hide();
+		shown = false;
+	};
 
-            // Add the offsets to the tooltip position
-            nPos.top = pos.top - yOffset;
-            nPos.left = pos.left - xOffset;
-
-            tooltip.css(nPos).show();
-
-        }, function () {
-            tooltip.hide();
-        });
-
-    };
+	$.fn.toggletip = function () {
+		if (shown === true) {
+			$(this).hidetip();
+		} else {
+			$(this).showtip();
+		}
+	};
 
 }(jQuery));
 
@@ -698,12 +649,11 @@ mw.util.addCSS(css);
     $.fn.autoresize = function () {
 
         this.filter('textarea').each(function () {
-
             var $this       = $(this),
                 minHeight   = 20,
                 maxHeight   = 500,
 
-                shadow = $('<div></div>').css({
+                shadow = $('<div/>').css({
 					position:   'absolute',
 					top:        -10000,
 					left:       -10000,
@@ -722,303 +672,12 @@ mw.util.addCSS(css);
 					EKeyboard.updatePosition($(this));
 				};
 
-            $(this).change(update).keyup(update).keydown(update);
-
+            $(this).change(update).keyup(update).keydown(update).blur(update);
             update.apply(this);
-
         });
-
         return this;
 
     };
-
-}(jQuery));
-
-
-/*! Copyright (c) 2008 Brandon Aaron (http://brandonaaron.net)
- * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
- * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
- *
- * Version: 1.0.3
- * Requires jQuery 1.1.3+
- * Docs: http://docs.jquery.com/Plugins/livequery
- */
-
-(function ($) {
-	// Save a reference to the original init method
-	var init = $.prototype.init;
-
-	$.extend($.fn, {
-		livequery: function (type, fn, fn2) {
-			var self = this, q;
-
-			// Handle different call patterns
-			if ($.isFunction(type)) {
-				fn2 = fn;
-				fn = type;
-				type = undefined;
-			}
-
-			// See if Live Query already exists
-			$.each($.livequery.queries, function (ignored, query) {
-				if (self.selector === query.selector && self.context === query.context &&
-						type === query.type && (!fn || fn.$lqguid === query.fn.$lqguid) && (!fn2 || fn2.$lqguid === query.fn2.$lqguid)) {
-					// Found the query, exit the each loop
-					q = query;
-					return false;
-				}
-			});
-
-			// Create new Live Query if it wasn't found
-			q = q || new $.livequery(this.selector, this.context, type, fn, fn2);
-
-			// Make sure it is running
-			q.stopped = false;
-
-			// Run it immediately for the first time
-			q.run();
-
-			// Contnue the chain
-			return this;
-		},
-
-		expire: function (type, fn, fn2) {
-			var self = this;
-
-			// Handle different call patterns
-			if ($.isFunction(type)) {
-				fn2 = fn;
-				fn = type;
-				type = undefined;
-			}
-
-			// Find the Live Query based on arguments and stop it
-			$.each($.livequery.queries, function (ignored, query) {
-				if (self.selector === query.selector && self.context === query.context &&
-						(!type || type === query.type) && (!fn || fn.$lqguid === query.fn.$lqguid) && (!fn2 || fn2.$lqguid === query.fn2.$lqguid) && !this.stopped) {
-					$.livequery.stop(query.id);
-				}
-			});
-
-			// Continue the chain
-			return this;
-		}
-	});
-
-	$.livequery = function (selector, context, type, fn, fn2) {
-		this.selector = selector;
-		this.context  = context || document;
-		this.type     = type;
-		this.fn       = fn;
-		this.fn2      = fn2;
-		this.elements = [];
-		this.stopped  = false;
-
-		// The id is the index of the Live Query in $.livequery.queries
-		this.id = $.livequery.queries.push(this) - 1;
-
-		// Mark the functions for matching later on
-		if (!fn.$lqguid) {
-			fn.$lqguid = $.livequery.guid;
-			$.livequery.guid += 1;
-		}
-		if (fn2) {
-			if (!fn2.$lqguid) {
-				fn2.$lqguid = $.livequery.guid;
-				$.livequery.guid += 1;
-			}
-		}
-
-		// Return the Live Query
-		return this;
-	};
-
-	$.livequery.prototype = {
-		stop: function () {
-			var query = this;
-
-			if (this.type) {
-				// Unbind all bound events
-				this.elements.unbind(this.type, this.fn);
-			} else if (this.fn2) {
-				// Call the second function for all matched elements
-				this.elements.each(function (ignored, el) {
-					query.fn2.apply(el);
-				});
-			}
-
-			// Clear out matched elements
-			this.elements = [];
-
-			// Stop the Live Query from running until restarted
-			this.stopped = true;
-		},
-
-		run: function () {
-			var els, nEls,
-				query = this,
-				oEls = this.elements;
-
-			// Short-circuit if stopped
-			if (this.stopped) {
-				return;
-			}
-			els = $(this.selector, this.context);
-			nEls = els.not(oEls);
-
-			// Set elements to the latest set of matched elements
-			this.elements = els;
-
-			if (this.type) {
-				// Bind events to newly matched elements
-				nEls.bind(this.type, this.fn);
-
-				// Unbind events to elements no longer matched
-				if (oEls.length > 0) {
-					$.each(oEls, function (ignored, el) {
-						if ($.inArray(el, els) < 0) {
-							$.event.remove(el, query.type, query.fn);
-						}
-					});
-				}
-			} else {
-				// Call the first function for newly matched elements
-				nEls.each(function () {
-					query.fn.apply(this);
-				});
-
-				// Call the second function for elements no longer matched
-				if (this.fn2 && oEls.length > 0) {
-					$.each(oEls, function (ignored, el) {
-						if ($.inArray(el, els) < 0) {
-							query.fn2.apply(el);
-						}
-					});
-				}
-			}
-		}
-	};
-
-	$.extend($.livequery, {
-		guid: 0,
-		queries: [],
-		queue: [],
-		running: false,
-		timeout: null,
-
-		checkQueue: function () {
-			if ($.livequery.running && $.livequery.queue.length) {
-				var length = $.livequery.queue.length;
-				// Run each Live Query currently in the queue
-				while (length) {
-					$.livequery.queries[$.livequery.queue.shift()].run();
-					length -= 1;
-				}
-			}
-		},
-
-		pause: function () {
-			// Don't run anymore Live Queries until restarted
-			$.livequery.running = false;
-		},
-
-		play: function () {
-			// Restart Live Queries
-			$.livequery.running = true;
-			// Request a run of the Live Queries
-			$.livequery.run();
-		},
-
-		registerPlugin: function () {
-			$.each(arguments, function (ignored, n) {
-				var old;
-				// Short-circuit if the method doesn't exist
-				if (!$.fn[n]) {
-					return;
-				}
-
-				// Save a reference to the original method
-				old = $.fn[n];
-
-				// Create a new method
-				$.fn[n] = function () {
-					// Call the original method
-					var r = old.apply(this, arguments);
-
-					// Request a run of the Live Queries
-					$.livequery.run();
-
-					// Return the original methods result
-					return r;
-				};
-			});
-		},
-
-		run: function (id) {
-			if (id !== undefined) {
-				// Put the particular Live Query in the queue if it doesn't already exist
-				if ($.inArray(id, $.livequery.queue) < 0) {
-					$.livequery.queue.push(id);
-				}
-			} else {
-				// Put each Live Query in the queue if it doesn't already exist
-				$.each($.livequery.queries, function (id) {
-					if ($.inArray(id, $.livequery.queue) < 0) {
-						$.livequery.queue.push(id);
-					}
-				});
-			}
-
-			// Clear timeout if it already exists
-			if ($.livequery.timeout) {
-				clearTimeout($.livequery.timeout);
-			}
-			// Create a timeout to check the queue and actually run the Live Queries
-			$.livequery.timeout = setTimeout($.livequery.checkQueue, 20);
-		},
-
-		stop: function (id) {
-			if (id !== undefined) {
-				// Stop are particular Live Query
-				$.livequery.queries[id].stop();
-			} else {
-				// Stop all Live Queries
-				$.each($.livequery.queries, function (id) {
-					$.livequery.queries[id].stop();
-				});
-			}
-		}
-	});
-
-	// Register core DOM manipulation methods
-	$.livequery.registerPlugin('append', 'prepend', 'after', 'before', 'wrap', 'attr', 'removeAttr', 'addClass', 'removeClass', 'toggleClass', 'empty', 'remove');
-
-	// Run Live Queries when the Document is ready
-	$(function () { $.livequery.play(); });
-
-	// Create a new init method that exposes two new properties: selector and context
-	$.prototype.init = function (a, c) {
-		// Call the original init and save the result
-		var r = init.apply(this, arguments);
-
-		// Copy over properties if they exist already
-		if (a && a.selector) {
-			r.context = a.context;
-			r.selector = a.selector;
-		}
-
-		// Set properties
-		if (typeof a === 'string') {
-			r.context = c || document;
-			r.selector = a;
-		}
-
-		// Return the result
-		return r;
-	};
-
-	// Give the init function the jQuery prototype for later instantiation (needed after Rev 4091)
-	$.prototype.init.prototype = $.prototype;
 
 }(jQuery));
 
@@ -1841,12 +1500,9 @@ window.Ed = {
 
 		EUi.prepareForm(oldform, instruction);
 
-        $('.tip').livequery(function () {
-			$(this).tooltip('tip');
-        });
-        $('.keyboardable').livequery(function () {
-			$(this).keyboard();
-		});
+        $('#ed .tip').live('hover', $(this).toggletip);
+        $('#ed .keyboardable').live('focus', $(this).keyboard);
+
 	},
 
 	resetNew : function () {
@@ -2768,7 +2424,7 @@ window.EUi = {
 			closelink = $('<a id="closelink" class="tip">×</a>');
 
 		if (ajr.length === 0) {
-			ajr = $('<div id="ajax_results"/>').appendTo($('body'));
+			ajr = $('<div id="ajax_results"/>').appendTo($('#ed'));
 			$(window).resize(EUi.relocateResult);
 		}
 		ajr.html('').append(ajaxResult).show().data('buttonIdPart', buttonIdPart);
@@ -2786,8 +2442,8 @@ window.EUi = {
 			button = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + ajr.data('buttonIdPart')),
 			textbox = button.parent().prev();
 
-		nPos.top = button.offset().top;
-		nPos.left = textbox.offset().left + 60;
+		nPos.top = button.position().top;
+		nPos.left = textbox.position().left + 60;
 		ajr.css(nPos);
 		ajr.width(textbox.outerWidth() - 120);
 	},
@@ -3053,15 +2709,13 @@ window.EKeyboard = {
 };
 
 (function ($) {
-
 	$.fn.keyboard = function () {
 		$(this).focus(function () {
 			EKeyboard.updatePosition($(this));
-		}).blur(function () {
 		});
+		EKeyboard.updatePosition($(this));
 		return $(this);
 	};
-
 }(jQuery));
 
 

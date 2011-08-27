@@ -6,12 +6,11 @@
     $.fn.autoresize = function () {
 
         this.filter('textarea').each(function () {
-
             var $this       = $(this),
                 minHeight   = 20,
                 maxHeight   = 500,
 
-                shadow = $('<div></div>').css({
+                shadow = $('<div/>').css({
 					position:   'absolute',
 					top:        -10000,
 					left:       -10000,
@@ -30,12 +29,9 @@
 					EKeyboard.updatePosition($(this));
 				};
 
-            $(this).change(update).keyup(update).keydown(update);
-
+            $(this).change(update).keyup(update).keydown(update).blur(update);
             update.apply(this);
-
         });
-
         return this;
 
     };

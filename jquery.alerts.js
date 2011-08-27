@@ -35,10 +35,8 @@
 		repositionOnResize: true,           // re-centers the dialog on window resize
 		overlayOpacity: 0.2,                // transparency level of overlay
 		overlayColor: '#000',               // base color of overlay
-		draggable: false,                    // make the dialogs draggable (requires UI Draggables plugin)
 		okButton: '',         // text for the OK button
 		cancelButton: '', // text for the Cancel button
-		dialogClass: null,                  // if specified, this class will be applied to all dialogs
 		init: false,
 
 		initialize: function () {
@@ -95,11 +93,7 @@
 			$.alerts.hide__prv();
 			$.alerts.overlay__prv('show');
 
-			$("BODY").append('<div id="popup_container"><h1 id="popup_title"></h1><div id="popup_content"><div id="popup_message"></div></div></div>');
-
-			if ($.alerts.dialogClass) {
-				$("#popup_container").addClass($.alerts.dialogClass);
-			}
+			$("body").append('<div id="popup_container"><h1 id="popup_title"></h1><div id="popup_content"><div id="popup_message"></div></div></div>');
 
 			$("#popup_container").css({
 				padding: 0,
@@ -199,14 +193,6 @@
 			default:
 				break;
 			}
-
-			// Make draggable
-			if ($.alerts.draggable) {
-				try {
-					$("#popup_container").draggable({ handle: $("#popup_title") });
-					$("#popup_title").css({ cursor: 'move' });
-				} catch (e) { /* requires jQuery UI draggables */ }
-			}
 		},
 
 		hide__prv: function () {
@@ -219,7 +205,7 @@
 			switch (status) {
 			case 'show':
 				$.alerts.overlay__prv('hide');
-				$("BODY").append('<div id="popup_overlay"></div>');
+				$("body").append('<div id="popup_overlay"></div>');
 				$("#popup_overlay").css({
 					position: 'absolute',
 					top: '0px',

@@ -7,7 +7,6 @@
 	border: 0;
 	width: 100%;
 	height: auto;
-	position: relative;
 }
 
 fieldset.ed_section {
@@ -266,7 +265,6 @@ div.subsection_extra > span.apierror {
 }
 
 #ajax_results {
-	font-size: 0.8em;
 	background-color: lemonchiffon;
 	border: 2px solid palegoldenrod;
 	padding: 5px;

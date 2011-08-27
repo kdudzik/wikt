@@ -358,7 +358,7 @@ window.EUi = {
 			closelink = $('<a id="closelink" class="tip">×</a>');
 
 		if (ajr.length === 0) {
-			ajr = $('<div id="ajax_results"/>').appendTo($('body'));
+			ajr = $('<div id="ajax_results"/>').appendTo($('#ed'));
 			$(window).resize(EUi.relocateResult);
 		}
 		ajr.html('').append(ajaxResult).show().data('buttonIdPart', buttonIdPart);
@@ -376,8 +376,8 @@ window.EUi = {
 			button = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + ajr.data('buttonIdPart')),
 			textbox = button.parent().prev();
 
-		nPos.top = button.offset().top;
-		nPos.left = textbox.offset().left + 60;
+		nPos.top = button.position().top;
+		nPos.left = textbox.position().left + 60;
 		ajr.css(nPos);
 		ajr.width(textbox.outerWidth() - 120);
 	},
