@@ -3218,7 +3218,11 @@ window.EAutomator = {
 };
 
 
-if ((mw.config.get('wgAction') === 'edit' || mw.config.get('wgAction') === 'submit') &&
-		mw.config.get('wgNamespaceNumber') === 0) {
-	$(document).ready(Ed.init);
-}
+
+(function () {
+	if ((mw.config.get('wgAction') === 'edit' || mw.config.get('wgAction') === 'submit') &&
+			mw.config.get('wgNamespaceNumber') === 0) {
+		$(document).ready(Ed.init);
+	}
+}());
+

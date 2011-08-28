@@ -26,10 +26,14 @@ do
 	echo "" >> $JS
 done
 
-echo "if ((mw.config.get('wgAction') === 'edit' || mw.config.get('wgAction') === 'submit') &&" >> $JS
-echo "		mw.config.get('wgNamespaceNumber') === 0) {" >> $JS
-echo "	\$(document).ready(Ed.init);" >> $JS
-echo "}" >> $JS
+echo "
+(function () {
+	if ((mw.config.get('wgAction') === 'edit' || mw.config.get('wgAction') === 'submit') &&
+			mw.config.get('wgNamespaceNumber') === 0) {
+		\$(document).ready(Ed.init);
+	}
+}());
+" >> $JS
 
 bomstrip-files *.js
 rm *.bom
