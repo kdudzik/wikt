@@ -1915,14 +1915,15 @@ window.EPrinter = {
 			return a.caption > b.caption ? 1 : -1;
 		});
 
-		$.each(arr, function (ignored, arrelem) {
+		$.each(arr, function () {
 			var dt = $('<dt/>'),
-				dd = $('<dd/>');
+				dd = $('<dd/>'),
+				arrelem = this;
 
 			dt.append(arrelem.caption + ' ');
 			dt.append('<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
-			$.each(arrelem.arr, function (ignored, elem) {
-				var withOuter = EPrinter.ipaWithOuter(elem, arrelem.lang),
+			$.each(arrelem.arr, function () {
+				var withOuter = EPrinter.ipaWithOuter(this, arrelem.lang),
 					beg = withOuter.template === 'IPA' ? '/' : '[',
 					end = withOuter.template === 'IPA' ? '/' : ']',
 					link = $('<a class="ipa"/>');
@@ -1971,14 +1972,16 @@ window.EPrinter = {
 			return a.caption > b.caption ? 1 : -1;
 		});
 
-		$.each(arr, function (ignored, arrelem) {
+		$.each(arr, function () {
 			var dt = $('<dt/>'),
-				dd = $('<dd/>');
+				dd = $('<dd/>'),
+				arrelem = this;
 
 			dt.append(arrelem.caption + ' ');
 			dt.append('<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
-			$.each(arrelem.arr, function (ignored, elem) {
-				var link = $('<a class="pictureInsertLink tip tipdown"/>');
+			$.each(arrelem.arr, function () {
+				var link = $('<a class="pictureInsertLink tip tipdown"/>'),
+					elem = this.toString();
 
 				link.html(elem);
 				link.click(function () {
@@ -2017,14 +2020,16 @@ window.EPrinter = {
 			return a.caption > b.caption ? 1 : -1;
 		});
 
-		$.each(arr, function (ignored, arrelem) {
+		$.each(arr, function () {
 			var dt = $('<dt/>'),
-				dd = $('<dd/>');
+				dd = $('<dd/>'),
+				arrelem = this;
 
 			dt.append(arrelem.caption + ' ');
 			dt.append('<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
-			$.each(arrelem.arr, function (ignored, elem) {
-				var template = EPrinter.audioTemplate(elem),
+			$.each(arrelem.arr, function () {
+				var elem = this,
+					template = EPrinter.audioTemplate(elem),
 					link = $('<a/>');
 
 				elem = elem.replace(/\{\{(PAGENAME|pn)\}\}/g, mw.config.get('wgTitle'));
@@ -2767,8 +2772,8 @@ window.EApi = {
 		}
 		EApi.waitingName = callback;
 		EApi.waiting = urls.length;
-		$.each(urls, function (ignored, url) {
-			EApi.ask__prv(query, url);
+		$.each(urls, function () {
+			EApi.ask__prv(query, this);
 		});
 		return 0;
 	},
@@ -2891,7 +2896,9 @@ window.EAutomator = {
 		var iwikiString, curIwiki, re,
 			iwikis = [];
 
-		$.each(results, function (ignored, res) {
+		$.each(results, function () {
+			var res = this;
+
 			if (res.query === undefined || res.query.pages === undefined) {
 				return false;
 			}
@@ -2905,9 +2912,9 @@ window.EAutomator = {
 				if (val.langlinks === undefined) {
 					return false;
 				}
-				$.each(val.langlinks, function (ignored, link) {
-					if (link['*'] === mw.config.get('wgTitle') && iwikis.indexOf(link.lang) === -1 && link.lang !== 'pl') {
-						iwikis.push(link.lang);
+				$.each(val.langlinks, function () {
+					if (this['*'] === mw.config.get('wgTitle') && iwikis.indexOf(this.lang) === -1 && this.lang !== 'pl') {
+						iwikis.push(this.lang);
 					}
 				});
 				return true;
@@ -2941,8 +2948,9 @@ window.EAutomator = {
 		var ipas = {},
 			error = EStr.NO_IPA_FOUND;
 
-		$.each(results, function (ignored, res) {
-			var lang;
+		$.each(results, function () {
+			var lang,
+				res = this;
 
 			if (res.query === undefined || res.query.pages === undefined) {
 				return false;
@@ -3077,8 +3085,9 @@ window.EAutomator = {
 		var pics = {},
 			error = EStr.NO_PICTURE_FOUND;
 
-		$.each(results, function (ignored, res) {
-			var lang;
+		$.each(results, function () {
+			var lang,
+				res = this;
 
 			if (res.query === undefined || res.query.pages === undefined) {
 				return false;
@@ -3124,10 +3133,10 @@ window.EAutomator = {
 		var allImages = [],
 			query;
 
-		$.each(results, function (ignored, arr) {
-			$.each(arr, function (ignored, imgName) {
-				if (imgName && allImages.indexOf(imgName) === -1) {
-					allImages.push('File:' + imgName);
+		$.each(results, function () {
+			$.each(this, function () {
+				if (this && allImages.indexOf(this) === -1) {
+					allImages.push('File:' + this);
 				}
 			});
 		});
@@ -3139,14 +3148,14 @@ window.EAutomator = {
 		if (!results || !results[0] || !results[0].query || !results[0].query.pages) {
 			return false;
 		}
-		$.each(results[0].query.pages, function (ignored, page) {
+		$.each(results[0].query.pages, function () {
 			var loader;
 
-			if (!page.imageinfo || !page.imageinfo[0]) {
+			if (!this.imageinfo || !this.imageinfo[0]) {
 				return true;
 			}
-			EAutomator.imageCache[page.title] = '<img src="' + page.imageinfo[0].thumburl + '"/>';
-			loader = $(EAutomator.imageCache[page.title]);
+			EAutomator.imageCache[this.title] = '<img src="' + this.imageinfo[0].thumburl + '"/>';
+			loader = $(EAutomator.imageCache[this.title]);
 		});
 		EPrinter.setPictureTooltips();
 	},
@@ -3166,8 +3175,9 @@ window.EAutomator = {
 		var oggs = {},
 			error = EStr.NO_AUDIO_FOUND;
 
-		$.each(results, function (ignored, res) {
-			var lang;
+		$.each(results, function () {
+			var lang,
+				res = this;
 
 			if (res.query === undefined || res.query.pages === undefined) {
 				return false;

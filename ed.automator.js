@@ -72,7 +72,9 @@ window.EAutomator = {
 		var iwikiString, curIwiki, re,
 			iwikis = [];
 
-		$.each(results, function (ignored, res) {
+		$.each(results, function () {
+			var res = this;
+
 			if (res.query === undefined || res.query.pages === undefined) {
 				return false;
 			}
@@ -86,9 +88,9 @@ window.EAutomator = {
 				if (val.langlinks === undefined) {
 					return false;
 				}
-				$.each(val.langlinks, function (ignored, link) {
-					if (link['*'] === mw.config.get('wgTitle') && iwikis.indexOf(link.lang) === -1 && link.lang !== 'pl') {
-						iwikis.push(link.lang);
+				$.each(val.langlinks, function () {
+					if (this['*'] === mw.config.get('wgTitle') && iwikis.indexOf(this.lang) === -1 && this.lang !== 'pl') {
+						iwikis.push(this.lang);
 					}
 				});
 				return true;
@@ -122,8 +124,9 @@ window.EAutomator = {
 		var ipas = {},
 			error = EStr.NO_IPA_FOUND;
 
-		$.each(results, function (ignored, res) {
-			var lang;
+		$.each(results, function () {
+			var lang,
+				res = this;
 
 			if (res.query === undefined || res.query.pages === undefined) {
 				return false;
@@ -258,8 +261,9 @@ window.EAutomator = {
 		var pics = {},
 			error = EStr.NO_PICTURE_FOUND;
 
-		$.each(results, function (ignored, res) {
-			var lang;
+		$.each(results, function () {
+			var lang,
+				res = this;
 
 			if (res.query === undefined || res.query.pages === undefined) {
 				return false;
@@ -305,10 +309,10 @@ window.EAutomator = {
 		var allImages = [],
 			query;
 
-		$.each(results, function (ignored, arr) {
-			$.each(arr, function (ignored, imgName) {
-				if (imgName && allImages.indexOf(imgName) === -1) {
-					allImages.push('File:' + imgName);
+		$.each(results, function () {
+			$.each(this, function () {
+				if (this && allImages.indexOf(this) === -1) {
+					allImages.push('File:' + this);
 				}
 			});
 		});
@@ -320,14 +324,14 @@ window.EAutomator = {
 		if (!results || !results[0] || !results[0].query || !results[0].query.pages) {
 			return false;
 		}
-		$.each(results[0].query.pages, function (ignored, page) {
+		$.each(results[0].query.pages, function () {
 			var loader;
 
-			if (!page.imageinfo || !page.imageinfo[0]) {
+			if (!this.imageinfo || !this.imageinfo[0]) {
 				return true;
 			}
-			EAutomator.imageCache[page.title] = '<img src="' + page.imageinfo[0].thumburl + '"/>';
-			loader = $(EAutomator.imageCache[page.title]);
+			EAutomator.imageCache[this.title] = '<img src="' + this.imageinfo[0].thumburl + '"/>';
+			loader = $(EAutomator.imageCache[this.title]);
 		});
 		EPrinter.setPictureTooltips();
 	},
@@ -347,8 +351,9 @@ window.EAutomator = {
 		var oggs = {},
 			error = EStr.NO_AUDIO_FOUND;
 
-		$.each(results, function (ignored, res) {
-			var lang;
+		$.each(results, function () {
+			var lang,
+				res = this;
 
 			if (res.query === undefined || res.query.pages === undefined) {
 				return false;

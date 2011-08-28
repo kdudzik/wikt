@@ -47,8 +47,8 @@ window.EApi = {
 		}
 		EApi.waitingName = callback;
 		EApi.waiting = urls.length;
-		$.each(urls, function (ignored, url) {
-			EApi.ask__prv(query, url);
+		$.each(urls, function () {
+			EApi.ask__prv(query, this);
 		});
 		return 0;
 	},

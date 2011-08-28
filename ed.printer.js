@@ -117,14 +117,15 @@ window.EPrinter = {
 			return a.caption > b.caption ? 1 : -1;
 		});
 
-		$.each(arr, function (ignored, arrelem) {
+		$.each(arr, function () {
 			var dt = $('<dt/>'),
-				dd = $('<dd/>');
+				dd = $('<dd/>'),
+				arrelem = this;
 
 			dt.append(arrelem.caption + ' ');
 			dt.append('<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
-			$.each(arrelem.arr, function (ignored, elem) {
-				var withOuter = EPrinter.ipaWithOuter(elem, arrelem.lang),
+			$.each(arrelem.arr, function () {
+				var withOuter = EPrinter.ipaWithOuter(this, arrelem.lang),
 					beg = withOuter.template === 'IPA' ? '/' : '[',
 					end = withOuter.template === 'IPA' ? '/' : ']',
 					link = $('<a class="ipa"/>');
@@ -173,14 +174,16 @@ window.EPrinter = {
 			return a.caption > b.caption ? 1 : -1;
 		});
 
-		$.each(arr, function (ignored, arrelem) {
+		$.each(arr, function () {
 			var dt = $('<dt/>'),
-				dd = $('<dd/>');
+				dd = $('<dd/>'),
+				arrelem = this;
 
 			dt.append(arrelem.caption + ' ');
 			dt.append('<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
-			$.each(arrelem.arr, function (ignored, elem) {
-				var link = $('<a class="pictureInsertLink tip tipdown"/>');
+			$.each(arrelem.arr, function () {
+				var link = $('<a class="pictureInsertLink tip tipdown"/>'),
+					elem = this.toString();
 
 				link.html(elem);
 				link.click(function () {
@@ -219,14 +222,16 @@ window.EPrinter = {
 			return a.caption > b.caption ? 1 : -1;
 		});
 
-		$.each(arr, function (ignored, arrelem) {
+		$.each(arr, function () {
 			var dt = $('<dt/>'),
-				dd = $('<dd/>');
+				dd = $('<dd/>'),
+				arrelem = this;
 
 			dt.append(arrelem.caption + ' ');
 			dt.append('<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
-			$.each(arrelem.arr, function (ignored, elem) {
-				var template = EPrinter.audioTemplate(elem),
+			$.each(arrelem.arr, function () {
+				var elem = this,
+					template = EPrinter.audioTemplate(elem),
 					link = $('<a/>');
 
 				elem = elem.replace(/\{\{(PAGENAME|pn)\}\}/g, mw.config.get('wgTitle'));
