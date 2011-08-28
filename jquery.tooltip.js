@@ -24,14 +24,6 @@
 		shown = false;
 	};
 
-	$.fn.toggletip = function () {
-		if (shown === true) {
-			$(this).hidetip();
-		} else {
-			$(this).showtip();
-		}
-	};
-
 }(jQuery));
 
 window.EFilesLoaded++;

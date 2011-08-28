@@ -17,7 +17,7 @@ window.EUtil = {
 
 	executeFn : function (functionName, context) { /*, args */
 		var args = Array.prototype.slice.call(arguments, 2),
-			namespaces = functionName.split("."),
+			namespaces = functionName.split('.'),
 			func = namespaces.pop(),
 			i;
 
@@ -43,7 +43,7 @@ window.EUtil = {
 	},
 
 	escapeHTML : function (html) {
-		return html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+		return html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 	},
 
 	escapeJS : function (js) {

@@ -58,6 +58,7 @@ window.EKeyboard = {
 			keys.toggle();
 			EKeyboard.opened = !EKeyboard.opened;
 			$.cookie('keyboard_opened', +EKeyboard.opened);
+			return false;
 		});
 		if (EKeyboard.opened) {
 			keys.show();
@@ -68,6 +69,7 @@ window.EKeyboard = {
 				$(document.activeElement).focus();
 			}
 		});
+        $('#ed .keyboardable').live('focus', $(this).keyboard);
 
 	},
 
@@ -87,8 +89,7 @@ window.EKeyboard = {
 		nPos.top += (origin.height() + 7);
 		nPos.left += 20;
 		$('#keyboard').show().css({ top: nPos.top, left: nPos.left });
-		$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 34 });
-		$('#keyboard_keys').data('active_area', origin.attr('id'));
+		$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 34 }).data('active_area', origin.attr('id'));
 
 		window.insertTags = EKeyboard.insertTags;
 	},

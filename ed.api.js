@@ -6,7 +6,7 @@ window.EApi = {
 		if (project === undefined) {
 			project = EConstants.WIKTIONARY;
 		}
-		return "http://" + lang + "." + project + ".org/w/api.php?";
+		return 'http://' + lang + '.' + project + '.org/w/api.php?';
 	},
 
 	commonsUrl : function () {

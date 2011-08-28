@@ -417,21 +417,21 @@ mw.util.addCSS(css);
 			$.alerts.hide__prv();
 			$.alerts.overlay__prv('show');
 
-			$("body").append('<div id="popup_container"><h1 id="popup_title"></h1><div id="popup_content"><div id="popup_message"></div></div></div>');
+			$('body').append('<div id="popup_container"><h1 id="popup_title"></h1><div id="popup_content"><div id="popup_message"></div></div></div>');
 
-			$("#popup_container").css({
+			$('#popup_container').css({
 				padding: 0,
 				margin: 0
 			});
 
-			$("#popup_title").text(title);
-			$("#popup_content").addClass(type);
-			$("#popup_message").text(msg);
-			$("#popup_message").html($("#popup_message").text().replace(/\n/g, '<br />'));
+			$('#popup_title').text(title);
+			$('#popup_content').addClass(type);
+			$('#popup_message').text(msg);
+			$('#popup_message').html($('#popup_message').text().replace(/\n/g, '<br />'));
 
-			$("#popup_container").css({
-				minWidth: $("#popup_container").outerWidth(),
-				maxWidth: $("#popup_container").outerWidth()
+			$('#popup_container').css({
+				minWidth: $('#popup_container').outerWidth(),
+				maxWidth: $('#popup_container').outerWidth()
 			});
 
 			$.alerts.reposition__prv();
@@ -441,14 +441,15 @@ mw.util.addCSS(css);
 			case 'alert':
 				$('#popup_container').addClass('alert').removeClass('confirm').removeClass('prompt');
 				$('#popup_overlay').addClass('alert').removeClass('confirm').removeClass('prompt');
-				$("#popup_message").after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /></div>');
-				$("#popup_ok").click(function () {
+				$('#popup_message').after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /></div>');
+				$('#popup_ok').click(function () {
 					$.alerts.hide__prv();
 					callback(true);
+					return false;
 				});
-				$("#popup_ok").focus().keyup(function (e) {
+				$('#popup_ok').focus().keyup(function (e) {
 					if (e.keyCode === 13 || e.keyCode === 27) {
-						$("#popup_ok").trigger('click');
+						$('#popup_ok').trigger('click');
 						return false;
 					}
 				});
@@ -456,26 +457,28 @@ mw.util.addCSS(css);
 			case 'confirm':
 				$('#popup_container').removeClass('alert').addClass('confirm').removeClass('prompt');
 				$('#popup_overlay').removeClass('alert').addClass('confirm').removeClass('prompt');
-				$("#popup_message").after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
-				$("#popup_ok").click(function () {
+				$('#popup_message').after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
+				$('#popup_ok').click(function () {
 					$.alerts.hide__prv();
 					if (callback) {
 						callback(true);
 					}
+					return false;
 				});
-				$("#popup_cancel").click(function () {
+				$('#popup_cancel').click(function () {
 					$.alerts.hide__prv();
 					if (callback) {
 						callback(false);
 					}
+					return false;
 				});
-				$("#popup_ok").focus();
-				$("#popup_ok, #popup_cancel").keyup(function (e) {
+				$('#popup_ok').focus();
+				$('#popup_ok, #popup_cancel').keyup(function (e) {
 					if (e.keyCode === 13) {
-						$("#popup_ok").trigger('click');
+						$('#popup_ok').trigger('click');
 					}
 					if (e.keyCode === 27) {
-						$("#popup_cancel").trigger('click');
+						$('#popup_cancel').trigger('click');
 						return false;
 					}
 				});
@@ -483,36 +486,38 @@ mw.util.addCSS(css);
 			case 'prompt':
 				$('#popup_container').removeClass('alert').removeClass('confirm').addClass('prompt');
 				$('#popup_overlay').removeClass('alert').removeClass('confirm').addClass('prompt');
-				$("#popup_message").append('<br /><input type="text" size="30" id="popup_prompt" class="keyboardable" />').after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
-				$("#popup_prompt").width($("#popup_message").width());
-				$("#popup_ok").click(function () {
-					var val = $("#popup_prompt").val();
+				$('#popup_message').append('<br /><input type="text" id="popup_prompt" class="keyboardable" />').after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
+				$('#popup_prompt').width($('#popup_message').width());
+				$('#popup_ok').click(function () {
+					var val = $('#popup_prompt').val();
 					EKeyboard.hide();
 					$.alerts.hide__prv();
 					if (callback) {
 						callback(val);
 					}
+					return false;
 				});
-				$("#popup_cancel").click(function () {
+				$('#popup_cancel').click(function () {
 					EKeyboard.hide();
 					$.alerts.hide__prv();
 					if (callback) {
 						callback(null);
 					}
+					return false;
 				});
-				$("#popup_prompt, #popup_ok, #popup_cancel").keyup(function (e) {
+				$('#popup_prompt, #popup_ok, #popup_cancel').keyup(function (e) {
 					if (e.keyCode === 13) {
-						$("#popup_ok").trigger('click');
+						$('#popup_ok').trigger('click');
 					}
 					if (e.keyCode === 27) {
-						$("#popup_cancel").trigger('click');
+						$('#popup_cancel').trigger('click');
 						return false;
 					}
 				});
 				if (value) {
-					$("#popup_prompt").val(value);
+					$('#popup_prompt').val(value);
 				}
-				$("#popup_prompt").keyboard().focus().select();
+				$('#popup_prompt').keyboard().focus().select();
 				break;
 			default:
 				break;
@@ -520,7 +525,7 @@ mw.util.addCSS(css);
 		},
 
 		hide__prv: function () {
-			$("#popup_container").remove();
+			$('#popup_container').remove();
 			$.alerts.overlay__prv('hide');
 			$.alerts.maintainPosition__prv(false);
 		},
@@ -529,8 +534,8 @@ mw.util.addCSS(css);
 			switch (status) {
 			case 'show':
 				$.alerts.overlay__prv('hide');
-				$("body").append('<div id="popup_overlay"></div>');
-				$("#popup_overlay").css({
+				$('body').append('<div id="popup_overlay"></div>');
+				$('#popup_overlay').css({
 					position: 'absolute',
 					top: '0px',
 					left: '0px',
@@ -541,7 +546,7 @@ mw.util.addCSS(css);
 				});
 				break;
 			case 'hide':
-				$("#popup_overlay").remove();
+				$('#popup_overlay').remove();
 				break;
 			default:
 				break;
@@ -549,8 +554,8 @@ mw.util.addCSS(css);
 		},
 
 		reposition__prv: function () {
-			var top = (($(window).height() / 2) - ($("#popup_container").outerHeight() / 2)) + $.alerts.verticalOffset,
-				left = (($(window).width() / 2) - ($("#popup_container").outerWidth() / 2)) + $.alerts.horizontalOffset;
+			var top = (($(window).height() / 2) - ($('#popup_container').outerHeight() / 2)) + $.alerts.verticalOffset,
+				left = (($(window).width() / 2) - ($('#popup_container').outerWidth() / 2)) + $.alerts.horizontalOffset;
 			if (top < 0) {
 				top = 0;
 			}
@@ -563,12 +568,12 @@ mw.util.addCSS(css);
 				top = top + $(window).scrollTop();
 			}
 
-			$("#popup_container").css({
+			$('#popup_container').css({
 				top: top + 'px',
 				left: left + 'px'
 			});
-			$("#popup_overlay").height($(document).height());
-			$("#popup_prompt").keyboard().focus().select();
+			$('#popup_overlay').height($(document).height());
+			$('#popup_prompt').keyboard().focus().select();
 		},
 
 		maintainPosition__prv: function (status) {
@@ -628,14 +633,6 @@ mw.util.addCSS(css);
 	$.fn.hidetip = function () {
 		tooltip.hide();
 		shown = false;
-	};
-
-	$.fn.toggletip = function () {
-		if (shown === true) {
-			$(this).hidetip();
-		} else {
-			$(this).showtip();
-		}
 	};
 
 }(jQuery));
@@ -1407,7 +1404,7 @@ window.EUtil = {
 
 	executeFn : function (functionName, context) { /*, args */
 		var args = Array.prototype.slice.call(arguments, 2),
-			namespaces = functionName.split("."),
+			namespaces = functionName.split('.'),
 			func = namespaces.pop(),
 			i;
 
@@ -1433,7 +1430,7 @@ window.EUtil = {
 	},
 
 	escapeHTML : function (html) {
-		return html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+		return html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 	},
 
 	escapeJS : function (js) {
@@ -1491,7 +1488,7 @@ window.Ed = {
 		EConstants.init();
 
 		tbox = $('#wpTextbox1');
-		oldform = $('.wikiEditor-ui');
+		oldform = $('div.wikiEditor-ui');
 		instruction = $('#nat-instrukcja');
 		Ed.code = tbox.val();
 
@@ -1499,9 +1496,6 @@ window.Ed = {
 		Ed.parseSectionsToSubsections();
 
 		EUi.prepareForm(oldform, instruction);
-
-        $('#ed .tip').live('hover', $(this).toggletip);
-        $('#ed .keyboardable').live('focus', $(this).keyboard);
 
 	},
 
@@ -1805,7 +1799,7 @@ window.ESectionParser = {
 window.EPrinter = {
 	recalculateCode : function () {
 		var id, sec, i, j, subs,
-			code = '',
+			code = [],
 			sortableSections = [];
 
 		for (id in Ed.content.sections) {
@@ -1821,31 +1815,30 @@ window.EPrinter = {
 			if (sortableSections.hasOwnProperty(i)) {
 				sec = sortableSections[i];
 				if (sec.id === EConstants.SECTION_ID_INTRO) {
-					code = EUi.val(EConstants.SECTION_ID_INTRO, '') + '\n';
+					code.push(EUi.val(EConstants.SECTION_ID_INTRO, '') + '\n');
 				} else {
-					code += '== ' + sec.title + ' ==\n';
+					code.push('== ' + sec.title + ' ==\n');
 					for (j = 0; j < sec.subsections.length; j += 1) {
 						subs = sec.subsections[j];
 						if (subs.active) {
 							subs.content = EUi.val(sec.id, subs.title);
 
 							if (!subs.title && subs.content) {
-								code += subs.content + '\n';
+								code.push(subs.content + '\n');
 							} else if (subs.title && !subs.content) {
-								code += '{{' + subs.title + '}}\n';
+								code.push('{{' + subs.title + '}}\n');
 							} else if (subs.shortened) {
-								code += '{{' + subs.title + '}}' + EPrinter.adequateWhitespace(subs) + subs.content + '\n';
+								code.push('{{' + subs.title + '}}' + EPrinter.adequateWhitespace(subs) + subs.content + '\n');
 							} else if (subs.content) {
-								code += subs.content + '\n';
+								code.push(subs.content + '\n');
 							}
 						}
 					}
-					code += '\n';
+					code.push('\n');
 				}
 			}
 		}
-		code = $.trim(code);
-		return code;
+		return $.trim(code.join(''));
 	},
 
 	adequateWhitespace : function (subsection) {
@@ -1932,7 +1925,7 @@ window.EPrinter = {
 				var withOuter = EPrinter.ipaWithOuter(elem, arrelem.lang),
 					beg = withOuter.template === 'IPA' ? '/' : '[',
 					end = withOuter.template === 'IPA' ? '/' : ']',
-					link = $('<a href="#" class="ipa"/>');
+					link = $('<a class="ipa"/>');
 
 				link.click(function () {
 					insertTags('{{' + withOuter.template + '|' + withOuter.str + '}}', '', '');
@@ -1985,7 +1978,7 @@ window.EPrinter = {
 			dt.append(arrelem.caption + ' ');
 			dt.append('<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
 			$.each(arrelem.arr, function (ignored, elem) {
-				var link = $('<a class="pictureInsertLink tip tipdown" href="#"/>');
+				var link = $('<a class="pictureInsertLink tip tipdown"/>');
 
 				link.html(elem);
 				link.click(function () {
@@ -2000,7 +1993,7 @@ window.EPrinter = {
 	},
 
 	setPictureTooltips : function () {
-		$('a.pictureInsertLink').each(function () {
+		$('#ajax_results a.pictureInsertLink').each(function () {
 			var index = 'File:' + $(this).text().replace(/_/g, ' '),
 				img = EAutomator.imageCache[index] || '';
 
@@ -2032,7 +2025,7 @@ window.EPrinter = {
 			dt.append('<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
 			$.each(arrelem.arr, function (ignored, elem) {
 				var template = EPrinter.audioTemplate(elem),
-					link = $('<a href="#"/>');
+					link = $('<a/>');
 
 				elem = elem.replace(/\{\{(PAGENAME|pn)\}\}/g, mw.config.get('wgTitle'));
 				link.html(elem);
@@ -2110,6 +2103,7 @@ window.EUi = {
 		EUi.prepareFormSections();
 		EUi.rebindFormActions();
 		EKeyboard.init();
+		$('#ed .tip').live('mouseover', $(this).showtip).live('mouseout', $(this).hidetip);
 	},
 
 	reset : function () {
@@ -2126,7 +2120,7 @@ window.EUi = {
 		if (!EUi.usingNew) {
 			return false;
 		}
-		firstTab = EUi.menu.children(":not(#ed_menuitem_" + EConstants.SECTION_ID_INTRO + ")").first();
+		firstTab = EUi.menu.children(':not(#ed_menuitem_' + EConstants.SECTION_ID_INTRO + ')').first();
 		if (firstTab.attr('id') !== 'ed_menuitem_new') {
 			firstTab.click();
 		} else if (Ed.content.sections[EConstants.SECTION_ID_INTRO] !== undefined) {
@@ -2153,11 +2147,12 @@ window.EUi = {
 			addItem = $('<li id="ed_menuitem_new" class="tip menuitem">' + EStr.ADD + '</li>');
 			addItem.appendTo(EUi.menu).click(function () {
 				EUi.addNewSection();
+				return false;
 			}).data('tip', EStr.ADD_SECTION);
 		}
 
 		if (size > EConstants.ONELINE_SECTIONS) {
-			$('li.menuitem:nth-child(' + Math.floor(size / 2) + ')').css('clear', 'left');
+			$('#ed_menu li.menuitem:nth-child(' + Math.floor(size / 2) + ')').css('clear', 'left');
 		}
 
 		EUi.clickDefaultSection();
@@ -2195,15 +2190,16 @@ window.EUi = {
 			EUi.resizeTextareas();
 			EUi.activeLangCode = $(this).data('code');
 			EUi.activeLangId = id;
-			defFocus = $('textarea.oblig_subsection:visible');
+			defFocus = $('#ed_content textarea.oblig_subsection:visible');
 			if (defFocus.length === 0) {
-				defFocus = $('fieldset.active textarea:first');
+				defFocus = $('#ed_content fieldset.active textarea:first');
 			}
 			setTimeout(function () { defFocus.focus(); }, 100); //FIXME why?
+			return false;
 		});
 
 		// insert alphabetically
-		EUi.menu.children("li").each(function () {
+		EUi.menu.children('li').each(function () {
 			if ($(this).attr('id') > item.attr('id') || $(this).attr('id') === 'ed_menuitem_new') {
 				item.insertBefore($(this));
 				added = true;
@@ -2369,7 +2365,7 @@ window.EUi = {
 	},
 
 	resizeTextareas : function () {
-		$('fieldset.active').find('textarea').reverse().autoresize();
+		$('#ed_content fieldset.active').find('textarea').reverse().autoresize();
 	},
 
 	addIntroAdder : function () {
@@ -2390,6 +2386,7 @@ window.EUi = {
 			$('#ed_menuitem_newintro').hide();
 			$('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).click();
 			EAutomator.fillInterwiki();
+			return false;
 		}).data('tip', EStr.ADD_INTRO_SECTION);
 	},
 
@@ -2432,6 +2429,7 @@ window.EUi = {
 
 		closelink.prependTo(ajr).data('tip', EStr.ESCAPE).click(function () {
 			EUi.hideResult();
+			return false;
 		});
 
 	},
@@ -2599,6 +2597,7 @@ window.EKeyboard = {
 			keys.toggle();
 			EKeyboard.opened = !EKeyboard.opened;
 			$.cookie('keyboard_opened', +EKeyboard.opened);
+			return false;
 		});
 		if (EKeyboard.opened) {
 			keys.show();
@@ -2609,6 +2608,7 @@ window.EKeyboard = {
 				$(document.activeElement).focus();
 			}
 		});
+        $('#ed .keyboardable').live('focus', $(this).keyboard);
 
 	},
 
@@ -2628,8 +2628,7 @@ window.EKeyboard = {
 		nPos.top += (origin.height() + 7);
 		nPos.left += 20;
 		$('#keyboard').show().css({ top: nPos.top, left: nPos.left });
-		$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 34 });
-		$('#keyboard_keys').data('active_area', origin.attr('id'));
+		$('#keyboard_keys').css({ top: nPos.top, left: nPos.left + 34 }).data('active_area', origin.attr('id'));
 
 		window.insertTags = EKeyboard.insertTags;
 	},
@@ -2727,7 +2726,7 @@ window.EApi = {
 		if (project === undefined) {
 			project = EConstants.WIKTIONARY;
 		}
-		return "http://" + lang + "." + project + ".org/w/api.php?";
+		return 'http://' + lang + '.' + project + '.org/w/api.php?';
 	},
 
 	commonsUrl : function () {
@@ -2884,6 +2883,7 @@ window.EAutomator = {
 		urls = $.map(langs, function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'langlinks', lllimit: 200 };
 		EApi.askMore(query, 'EAutomator.fillInterwikiRe', urls);
+		return false;
 
 		// callback
 	},
@@ -2933,6 +2933,7 @@ window.EAutomator = {
 		urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
 		EApi.askMore(query, 'EAutomator.getIPARe', urls);
+		return false;
 
 		// callback
 	},
@@ -3068,6 +3069,7 @@ window.EAutomator = {
 		urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
 		EApi.askMore(query, 'EAutomator.getPictureRe', urls);
+		return false;
 
 		// callback
 	},
@@ -3156,6 +3158,7 @@ window.EAutomator = {
 		urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
 		EApi.askMore(query, 'EAutomator.getAudioRe', urls);
+		return false;
 
 		// callback
 	},

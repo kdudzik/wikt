@@ -93,21 +93,21 @@
 			$.alerts.hide__prv();
 			$.alerts.overlay__prv('show');
 
-			$("body").append('<div id="popup_container"><h1 id="popup_title"></h1><div id="popup_content"><div id="popup_message"></div></div></div>');
+			$('body').append('<div id="popup_container"><h1 id="popup_title"></h1><div id="popup_content"><div id="popup_message"></div></div></div>');
 
-			$("#popup_container").css({
+			$('#popup_container').css({
 				padding: 0,
 				margin: 0
 			});
 
-			$("#popup_title").text(title);
-			$("#popup_content").addClass(type);
-			$("#popup_message").text(msg);
-			$("#popup_message").html($("#popup_message").text().replace(/\n/g, '<br />'));
+			$('#popup_title').text(title);
+			$('#popup_content').addClass(type);
+			$('#popup_message').text(msg);
+			$('#popup_message').html($('#popup_message').text().replace(/\n/g, '<br />'));
 
-			$("#popup_container").css({
-				minWidth: $("#popup_container").outerWidth(),
-				maxWidth: $("#popup_container").outerWidth()
+			$('#popup_container').css({
+				minWidth: $('#popup_container').outerWidth(),
+				maxWidth: $('#popup_container').outerWidth()
 			});
 
 			$.alerts.reposition__prv();
@@ -117,14 +117,15 @@
 			case 'alert':
 				$('#popup_container').addClass('alert').removeClass('confirm').removeClass('prompt');
 				$('#popup_overlay').addClass('alert').removeClass('confirm').removeClass('prompt');
-				$("#popup_message").after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /></div>');
-				$("#popup_ok").click(function () {
+				$('#popup_message').after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /></div>');
+				$('#popup_ok').click(function () {
 					$.alerts.hide__prv();
 					callback(true);
+					return false;
 				});
-				$("#popup_ok").focus().keyup(function (e) {
+				$('#popup_ok').focus().keyup(function (e) {
 					if (e.keyCode === 13 || e.keyCode === 27) {
-						$("#popup_ok").trigger('click');
+						$('#popup_ok').trigger('click');
 						return false;
 					}
 				});
@@ -132,26 +133,28 @@
 			case 'confirm':
 				$('#popup_container').removeClass('alert').addClass('confirm').removeClass('prompt');
 				$('#popup_overlay').removeClass('alert').addClass('confirm').removeClass('prompt');
-				$("#popup_message").after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
-				$("#popup_ok").click(function () {
+				$('#popup_message').after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
+				$('#popup_ok').click(function () {
 					$.alerts.hide__prv();
 					if (callback) {
 						callback(true);
 					}
+					return false;
 				});
-				$("#popup_cancel").click(function () {
+				$('#popup_cancel').click(function () {
 					$.alerts.hide__prv();
 					if (callback) {
 						callback(false);
 					}
+					return false;
 				});
-				$("#popup_ok").focus();
-				$("#popup_ok, #popup_cancel").keyup(function (e) {
+				$('#popup_ok').focus();
+				$('#popup_ok, #popup_cancel').keyup(function (e) {
 					if (e.keyCode === 13) {
-						$("#popup_ok").trigger('click');
+						$('#popup_ok').trigger('click');
 					}
 					if (e.keyCode === 27) {
-						$("#popup_cancel").trigger('click');
+						$('#popup_cancel').trigger('click');
 						return false;
 					}
 				});
@@ -159,36 +162,38 @@
 			case 'prompt':
 				$('#popup_container').removeClass('alert').removeClass('confirm').addClass('prompt');
 				$('#popup_overlay').removeClass('alert').removeClass('confirm').addClass('prompt');
-				$("#popup_message").append('<br /><input type="text" size="30" id="popup_prompt" class="keyboardable" />').after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
-				$("#popup_prompt").width($("#popup_message").width());
-				$("#popup_ok").click(function () {
-					var val = $("#popup_prompt").val();
+				$('#popup_message').append('<br /><input type="text" id="popup_prompt" class="keyboardable" />').after('<div id="popup_panel"><input type="button" value="' + $.alerts.okButton + '" id="popup_ok" /> <input type="button" value="' + $.alerts.cancelButton + '" id="popup_cancel" /></div>');
+				$('#popup_prompt').width($('#popup_message').width());
+				$('#popup_ok').click(function () {
+					var val = $('#popup_prompt').val();
 					EKeyboard.hide();
 					$.alerts.hide__prv();
 					if (callback) {
 						callback(val);
 					}
+					return false;
 				});
-				$("#popup_cancel").click(function () {
+				$('#popup_cancel').click(function () {
 					EKeyboard.hide();
 					$.alerts.hide__prv();
 					if (callback) {
 						callback(null);
 					}
+					return false;
 				});
-				$("#popup_prompt, #popup_ok, #popup_cancel").keyup(function (e) {
+				$('#popup_prompt, #popup_ok, #popup_cancel').keyup(function (e) {
 					if (e.keyCode === 13) {
-						$("#popup_ok").trigger('click');
+						$('#popup_ok').trigger('click');
 					}
 					if (e.keyCode === 27) {
-						$("#popup_cancel").trigger('click');
+						$('#popup_cancel').trigger('click');
 						return false;
 					}
 				});
 				if (value) {
-					$("#popup_prompt").val(value);
+					$('#popup_prompt').val(value);
 				}
-				$("#popup_prompt").keyboard().focus().select();
+				$('#popup_prompt').keyboard().focus().select();
 				break;
 			default:
 				break;
@@ -196,7 +201,7 @@
 		},
 
 		hide__prv: function () {
-			$("#popup_container").remove();
+			$('#popup_container').remove();
 			$.alerts.overlay__prv('hide');
 			$.alerts.maintainPosition__prv(false);
 		},
@@ -205,8 +210,8 @@
 			switch (status) {
 			case 'show':
 				$.alerts.overlay__prv('hide');
-				$("body").append('<div id="popup_overlay"></div>');
-				$("#popup_overlay").css({
+				$('body').append('<div id="popup_overlay"></div>');
+				$('#popup_overlay').css({
 					position: 'absolute',
 					top: '0px',
 					left: '0px',
@@ -217,7 +222,7 @@
 				});
 				break;
 			case 'hide':
-				$("#popup_overlay").remove();
+				$('#popup_overlay').remove();
 				break;
 			default:
 				break;
@@ -225,8 +230,8 @@
 		},
 
 		reposition__prv: function () {
-			var top = (($(window).height() / 2) - ($("#popup_container").outerHeight() / 2)) + $.alerts.verticalOffset,
-				left = (($(window).width() / 2) - ($("#popup_container").outerWidth() / 2)) + $.alerts.horizontalOffset;
+			var top = (($(window).height() / 2) - ($('#popup_container').outerHeight() / 2)) + $.alerts.verticalOffset,
+				left = (($(window).width() / 2) - ($('#popup_container').outerWidth() / 2)) + $.alerts.horizontalOffset;
 			if (top < 0) {
 				top = 0;
 			}
@@ -239,12 +244,12 @@
 				top = top + $(window).scrollTop();
 			}
 
-			$("#popup_container").css({
+			$('#popup_container').css({
 				top: top + 'px',
 				left: left + 'px'
 			});
-			$("#popup_overlay").height($(document).height());
-			$("#popup_prompt").keyboard().focus().select();
+			$('#popup_overlay').height($(document).height());
+			$('#popup_prompt').keyboard().focus().select();
 		},
 
 		maintainPosition__prv: function (status) {

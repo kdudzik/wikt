@@ -44,6 +44,7 @@ window.EUi = {
 		EUi.prepareFormSections();
 		EUi.rebindFormActions();
 		EKeyboard.init();
+		$('#ed .tip').live('mouseover', $(this).showtip).live('mouseout', $(this).hidetip);
 	},
 
 	reset : function () {
@@ -60,7 +61,7 @@ window.EUi = {
 		if (!EUi.usingNew) {
 			return false;
 		}
-		firstTab = EUi.menu.children(":not(#ed_menuitem_" + EConstants.SECTION_ID_INTRO + ")").first();
+		firstTab = EUi.menu.children(':not(#ed_menuitem_' + EConstants.SECTION_ID_INTRO + ')').first();
 		if (firstTab.attr('id') !== 'ed_menuitem_new') {
 			firstTab.click();
 		} else if (Ed.content.sections[EConstants.SECTION_ID_INTRO] !== undefined) {
@@ -87,11 +88,12 @@ window.EUi = {
 			addItem = $('<li id="ed_menuitem_new" class="tip menuitem">' + EStr.ADD + '</li>');
 			addItem.appendTo(EUi.menu).click(function () {
 				EUi.addNewSection();
+				return false;
 			}).data('tip', EStr.ADD_SECTION);
 		}
 
 		if (size > EConstants.ONELINE_SECTIONS) {
-			$('li.menuitem:nth-child(' + Math.floor(size / 2) + ')').css('clear', 'left');
+			$('#ed_menu li.menuitem:nth-child(' + Math.floor(size / 2) + ')').css('clear', 'left');
 		}
 
 		EUi.clickDefaultSection();
@@ -129,15 +131,16 @@ window.EUi = {
 			EUi.resizeTextareas();
 			EUi.activeLangCode = $(this).data('code');
 			EUi.activeLangId = id;
-			defFocus = $('textarea.oblig_subsection:visible');
+			defFocus = $('#ed_content textarea.oblig_subsection:visible');
 			if (defFocus.length === 0) {
-				defFocus = $('fieldset.active textarea:first');
+				defFocus = $('#ed_content fieldset.active textarea:first');
 			}
 			setTimeout(function () { defFocus.focus(); }, 100); //FIXME why?
+			return false;
 		});
 
 		// insert alphabetically
-		EUi.menu.children("li").each(function () {
+		EUi.menu.children('li').each(function () {
 			if ($(this).attr('id') > item.attr('id') || $(this).attr('id') === 'ed_menuitem_new') {
 				item.insertBefore($(this));
 				added = true;
@@ -303,7 +306,7 @@ window.EUi = {
 	},
 
 	resizeTextareas : function () {
-		$('fieldset.active').find('textarea').reverse().autoresize();
+		$('#ed_content fieldset.active').find('textarea').reverse().autoresize();
 	},
 
 	addIntroAdder : function () {
@@ -324,6 +327,7 @@ window.EUi = {
 			$('#ed_menuitem_newintro').hide();
 			$('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).click();
 			EAutomator.fillInterwiki();
+			return false;
 		}).data('tip', EStr.ADD_INTRO_SECTION);
 	},
 
@@ -366,6 +370,7 @@ window.EUi = {
 
 		closelink.prependTo(ajr).data('tip', EStr.ESCAPE).click(function () {
 			EUi.hideResult();
+			return false;
 		});
 
 	},

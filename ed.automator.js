@@ -64,6 +64,7 @@ window.EAutomator = {
 		urls = $.map(langs, function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'langlinks', lllimit: 200 };
 		EApi.askMore(query, 'EAutomator.fillInterwikiRe', urls);
+		return false;
 
 		// callback
 	},
@@ -113,6 +114,7 @@ window.EAutomator = {
 		urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
 		EApi.askMore(query, 'EAutomator.getIPARe', urls);
+		return false;
 
 		// callback
 	},
@@ -248,6 +250,7 @@ window.EAutomator = {
 		urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
 		EApi.askMore(query, 'EAutomator.getPictureRe', urls);
+		return false;
 
 		// callback
 	},
@@ -336,6 +339,7 @@ window.EAutomator = {
 		urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
 		EApi.askMore(query, 'EAutomator.getAudioRe', urls);
+		return false;
 
 		// callback
 	},

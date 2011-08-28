@@ -31,7 +31,7 @@ window.Ed = {
 		EConstants.init();
 
 		tbox = $('#wpTextbox1');
-		oldform = $('.wikiEditor-ui');
+		oldform = $('div.wikiEditor-ui');
 		instruction = $('#nat-instrukcja');
 		Ed.code = tbox.val();
 
@@ -39,9 +39,6 @@ window.Ed = {
 		Ed.parseSectionsToSubsections();
 
 		EUi.prepareForm(oldform, instruction);
-
-        $('#ed .tip').live('hover', $(this).toggletip);
-        $('#ed .keyboardable').live('focus', $(this).keyboard);
 
 	},
 
