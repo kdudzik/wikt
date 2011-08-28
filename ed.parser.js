@@ -1,4 +1,4 @@
-window.EParser = {
+EParser = {
 	getSections : function (code) {
 		var sections, reta, s, sec, section, id;
 
@@ -121,7 +121,7 @@ window.EParser = {
 	}
 };
 
-window.ESectionParser = {
+ESectionParser = {
 
 	parse: function (section) {
 		var i, targetSubsections,

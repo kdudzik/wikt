@@ -1,24 +1,24 @@
 // https://github.com/jaz303/jquery-grab-bag/raw/master/javascripts/jquery.autogrow-textarea.js
 (function ($) {
-    /*
-     * Auto-growing textareas; technique ripped from Facebook
-     */
-    $.fn.autoresize = function () {
+	/*
+	 * Auto-growing textareas; technique ripped from Facebook
+	 */
+	$.fn.autoresize = function () {
 
-        this.filter('textarea').each(function () {
-            var $this       = $(this),
-                minHeight   = 20,
-                maxHeight   = 500,
+		this.filter('textarea').each(function () {
+			var $this	   = $(this),
+				minHeight   = 20,
+				maxHeight   = 500,
 
-                shadow = $('<div/>').css({
+				shadow = $('<div/>').css({
 					position:   'absolute',
-					top:        -10000,
-					left:       -10000,
-					width:      $(this).width() - parseInt($this.css('paddingLeft'), 10) - parseInt($this.css('paddingRight'), 10),
+					top:		-10000,
+					left:	   -10000,
+					width:	  $(this).width() - parseInt($this.css('paddingLeft'), 10) - parseInt($this.css('paddingRight'), 10),
 					fontSize:   $this.css('fontSize'),
 					fontFamily: $this.css('fontFamily'),
 					lineHeight: $this.css('lineHeight'),
-					resize:     'none'
+					resize:	 'none'
 				}).appendTo(document.body),
 
 				update = function () {
@@ -29,12 +29,12 @@
 					EKeyboard.updatePosition($(this));
 				};
 
-            $(this).change(update).keyup(update).keydown(update).blur(update);
-            update.apply(this);
-        });
-        return this;
+			$(this).change(update).keyup(update).keydown(update).blur(update);
+			update.apply(this);
+		});
+		return this;
 
-    };
+	};
 
 }(jQuery));
 

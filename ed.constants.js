@@ -1,8 +1,4 @@
-/**
- *
- */
-
-window.EConstants = {
+EConstants = {
 	INTRO : '«',
 	SUBSECTIONS :
 		{
@@ -473,7 +469,7 @@ window.EConstants = {
 			'udm', 'uk', 'ur', 'ug', 'za', 'vec', 'vo', 'fiu-vro', 'wa',
 			'zh-classical', 'vls', 'war', 'wo', 'wuu', 'ts', 'yi', 'yo',
 			'zh-yue', 'diq', 'zea', 'bat-smg', 'zh', 'zh-tw', 'zh-cn'
-        ],
+		],
 	ALL_WIKTIONARIES:
 		[
 			'af', 'als', 'an', 'roa-rup', 'ast', 'gn', 'ay', 'az', 'id', 'ms', 'zh-min-nan',
@@ -559,7 +555,7 @@ window.EConstants = {
 	}
 };
 
-window.EStr = {
+EStr = {
 	TOGGLE_EDITOR :
 		'Przełącz edytor',
 	ADD :

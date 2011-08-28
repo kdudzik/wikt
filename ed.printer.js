@@ -1,4 +1,4 @@
-window.EPrinter = {
+EPrinter = {
 	recalculateCode : function () {
 		var id, sec, i, j, subs,
 			code = [],

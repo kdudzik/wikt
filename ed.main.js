@@ -1,8 +1,4 @@
-/**
- *
- */
-
-window.Ed = {
+Ed = {
 
 	code : '',
 	content : {},

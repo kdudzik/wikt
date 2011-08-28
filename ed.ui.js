@@ -1,4 +1,4 @@
-window.EUi = {
+EUi = {
 
 	oldform : undefined,
 	instruction : undefined,
@@ -135,7 +135,7 @@ window.EUi = {
 			if (defFocus.length === 0) {
 				defFocus = $('#ed_content fieldset.active textarea:first');
 			}
-			setTimeout(function () { defFocus.focus(); }, 100); //FIXME why?
+			window.setTimeout(function () { defFocus.focus(); }, 100); //FIXME why?
 			return false;
 		});
 

@@ -1,4 +1,4 @@
-window.EApi = {
+EApi = {
 	url : function (lang, project) {
 		if (lang === undefined) {
 			lang = 'pl';
@@ -31,7 +31,7 @@ window.EApi = {
 
 	ask : function (query, callback, url) {
 		if (EApi.waiting) {
-			alert(EStr.WAITING_FOR_API);
+			jAlert(EStr.WAITING_FOR_API);
 			return -1;
 		}
 		EApi.waitingName = callback;
@@ -42,7 +42,7 @@ window.EApi = {
 
 	askMore : function (query, callback, urls) {
 		if (EApi.waiting) {
-			alert(EStr.WAITING_FOR_API);
+			jAlert(EStr.WAITING_FOR_API);
 			return -1;
 		}
 		EApi.waitingName = callback;

@@ -1,4 +1,4 @@
-window.ESpecialChars = {
+ESpecialChars = {
 
 	obj : undefined,
 	formerParent : undefined,
@@ -38,7 +38,7 @@ window.ESpecialChars = {
 	}
 };
 
-window.EKeyboard = {
+EKeyboard = {
 	opened : 0,
 
 	init : function () {
@@ -69,8 +69,7 @@ window.EKeyboard = {
 				$(document.activeElement).focus();
 			}
 		});
-        $('#ed .keyboardable').live('focus', $(this).keyboard);
-
+		$('#ed .keyboardable').live('focus', $(this).keyboard);
 	},
 
 	hide : function () {

@@ -1,41 +1,20 @@
 // jQuery Alert Dialogs Plugin
-//
 // Version 1.1
-//
 // Cory S.N. LaViska
 // A Beautiful Site (http://abeautifulsite.net/)
 // 14 May 2009
-//
 // Visit http://abeautifulsite.net/notebook/87 for more information
-//
-// Usage:
-//		jAlert( message, [title, callback] )
-//		jConfirm( message, [title, callback] )
-//		jPrompt( message, [value, title, callback] )
-//
-// History:
-//
-//		1.00 - Released (29 December 2008)
-//
-//		1.01 - Fixed bug where unbinding would destroy all resize events
-//
-// License:
-//
 // This plugin is dual-licensed under the GNU General Public License and the MIT License and
 // is copyright 2008 A Beautiful Site, LLC.
-//
 (function ($) {
 
 	$.alerts = {
-
-		// These properties can be read/written by accessing $.alerts.propertyName from your scripts at any time
-
-		verticalOffset: -75,                // vertical offset of the dialog from center screen, in pixels
-		horizontalOffset: 0,                // horizontal offset of the dialog from center screen, in pixels/
-		repositionOnResize: true,           // re-centers the dialog on window resize
-		overlayOpacity: 0.2,                // transparency level of overlay
-		overlayColor: '#000',               // base color of overlay
-		okButton: '',         // text for the OK button
+		verticalOffset: -75, // vertical offset of the dialog from center screen, in pixels
+		horizontalOffset: 0, // horizontal offset of the dialog from center screen, in pixels/
+		repositionOnResize: true, // re-centers the dialog on window resize
+		overlayOpacity: 0.2, // transparency level of overlay
+		overlayColor: '#000', // base color of overlay
+		okButton: '', // text for the OK button
 		cancelButton: '', // text for the Cancel button
 		init: false,
 

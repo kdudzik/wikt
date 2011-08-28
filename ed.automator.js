@@ -1,4 +1,4 @@
-window.EAutomator = {
+EAutomator = {
 
 	/*
 	 * Zwraca kody wersji językowej z aktywnej sekcji + domyślnych

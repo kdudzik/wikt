@@ -1,4 +1,4 @@
-window.EUtil = {
+EUtil = {
 	getParameter : function (name) {
 		return mw.util.getParamValue(name);
 	},
