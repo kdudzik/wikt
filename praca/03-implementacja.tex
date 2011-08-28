@@ -2,12 +2,25 @@
 W~ostatnim rozdziale szczegółowo przedstawiony została implementacja aplikacji. Opisano użyte technologie i~metodologię, a~szczególną uwagę poświęcono problemom, które powstały podczas procesu tworzenia programu. Pierwsza sekcja zawiera opis środowiska, w~którym osadzona jest aplikacja, natomiast kolejne dwie skupiają się na dwóch logicznie wyodrębionych częściach projektu: uproszczonym formularzu edycyjnym oraz automatyzacji tworzenia haseł. W~ostatniej części rozdziału przedstawiono przebieg wdrożenia aplikacji w~polskim Wikisłowniku i~możliwości dalszego rozwoju.
 
 \section{Wprowadzenie}
-MediaWiki
+Oprogramowanie MediaWiki zostało napisane w~języku PHP (\emph{PHP Hypertext Preprocessor}) i~jest wysoce konfigurowalne za pomocą tzw. rozszerzeń, dodających kolejne funkcje -- przykładowo: obsługę przypisów, dodatkowe strony specjalne czy nowe funkcje parsera~\cite{mw:extensions}. W~projektach Fundacji obsługa rozszerzeń jest kontrolowana przez Fundację. Poszczególne projekty mogą składać prośby o~włączenie określonego rozszerzenia, decyzję podejmują zaś główni programiści Fundacji. Teoretycznie można rozważać utworzenie aplikacji dla Wikisłownika jako rozszerzenia w~PHP. Opcja ta została jednak odrzucona we wstępnej fazie projektu -- stworzenie rozszerzenia wymagałoby nieporównanie więcej formalności niż aplikacja kliencka, przede wszystkim jednak jego funkcjonalność byłaby znacznie ograniczona: poza polskim Wikisłownikiem żaden inny projekt nie mógłby z~niego skorzystać, na pewno nie zostałby więc włączony do głównej wersji MediaWiki.
+
+Podobnie jak w~większości przypadków w~projektach Wikimedia jako metodę dostosowania silnika MediaWiki do szczególnych potrzeb wybrano zatem aplikację napisaną w~JavaScript. Konieczne jest zatem przedstawienie sposobu obsługi skryptów na stronach tych witryn. Pliki JavaScript ładowane są z~wielu różnych źródeł -- hierarchia w~nieco uproszczonej postaci jest następująca~\cite{de:js}:
+\begin{enumerate}
+	\item skrypty systemowe oprogramowania MediaWiki, wspólne dla wszystkich projektów oraz charakterystyczne dla danego projektu ze względu na ładowane rozszerzenia,
+	\item skrypt zapisany na poziomie danego projektu jako strona \kod|MediaWiki:Common.js| -- dostęp do niego mają lokalni administratorzy,
+	\item skrypt zapisany na poziomie danego projektu dla wybranej przez użytkownika skórki (domyślną jest \emph{Vector}, poprzednią był \emph{Monobook}) jako strona, np. \kod|MediaWiki:Vector.js| -- dostęp do niego mają lokalni administratorzy,
+	\item tzw. gadżety, czyli dodatkowe skrypty rozszerzające funkcjonalność, możliwe do włączenia w~preferencjach użytkownika -- także one edytowane są przez administratorów,
+	\item skrypt zapisany na stronie danego użytkownika, np. \kod|User:Sokrates/common.js| -- na tym poziomie możliwe jest dostosowywanie skryptów do swoich potrzeb przez każdego użytkownika,
+	\item skrypt zapisany na stronie danego użytkownika dla wybranej skórki, np. \kod|User:Sokrates/vector.js|.
+\end{enumerate}
+Jak widać, możliwości dołączania dodatkowych skryptów są elastyczne i~dostępne na różnych poziomach dla różnych użytkowników. Decyzja o~włączeniu skryptów dla wszystkich użytkowników danego projektu należy do jego administratorów (nie licząc wspólnych skryptów narzuconych przez Fundację), natomiast każdy użytkownik poprzez edycję specjalnej strony może uruchamiać różne skrypty na swoje potrzeby, nie będąc zmuszonym do korzystania z~dodatków do przeglądarek, takich jak Greasemonkey. W~ten sposób ułatwiony jest proces powstawania i~testowania nowych skryptów: osoby chcące przetestować nowy skrypt mogą na swojej stronie JS dołączyć go do swojej. Jeśli administratorzy uznają skrypt za wartościowy, mogą go dodać do zbioru gadżetów (wtedy każdy użytkownik ma możliwość włączenia skryptu bez konieczności edycji plików JS) lub do ogólnego pliku \kod|MediaWiki:Common.js|.
 
 % możliwości
 % jquery, rozszerzenia MW
 % API, JSONP
 % jeden plik, make
+
+% http://www.mediawiki.org/wiki/Coding_conventions
 
 \section{Formularz edycyjny}
 \label{sec:impl-form}
