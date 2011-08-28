@@ -19,7 +19,7 @@ Ed = {
 	},
 
 	init : function () {
-		var tbox, oldform, instruction;
+		var tbox, oldform;
 
 		if (EUtil.getParameter('oldid') && EUtil.getParameter('oldid') !== mw.config.get('wgCurRevisionId').toString()) {
 			return;
@@ -27,14 +27,13 @@ Ed = {
 		EConstants.init();
 
 		tbox = $('#wpTextbox1');
-		oldform = $('div.wikiEditor-ui');
-		instruction = $('#nat-instrukcja');
+		oldform = $('div.wikiEditor-ui, #nat-instrukcja, #wpTextbox1, #toolbar');
 		Ed.code = tbox.val();
 
 		Ed.parseContentToSections();
 		Ed.parseSectionsToSubsections();
 
-		EUi.prepareForm(oldform, instruction);
+		EUi.prepareForm(oldform, tbox);
 
 	},
 

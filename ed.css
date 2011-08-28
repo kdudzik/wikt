@@ -205,6 +205,18 @@ div.subsection_extra > span.apierror {
 	color: saddlebrown;
 }
 
+body.skin-monobook .tooltip, body.skin-monobook #keyboard_keys, body.skin-monobook #popup_container {
+	font-size: 1.4em !important;
+}
+
+body.skin-monobook .tooltip small, body.skin-monobook #keyboard_keys small, body.skin-monobook #popup_container small, body.skin-monobook #ajax_results small {
+	font-size: 0.9em !important;
+}
+
+body.skin-monobook .tooltip small tt, body.skin-monobook #keyboard_keys small tt, body.skin-monobook #popup_container small tt, body.skin-monobook #ajax_results small tt {
+	font-size: 1.3em !important;
+}
+
 #keyboard {
 	width: 32px;
 	height: 32px;

@@ -5,7 +5,7 @@
 var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParser, ESectionParser, ESpecialChars, EPrinter;
 (function ($) {
   var jPrompt, jAlert, jConfirm,
-    css = "#ed {  overflow : auto;  background-color: white;  padding: 0;  display: none;  line-height: 1.3;  border: 0;  width: 100%;  height: auto; }  fieldset.ed_section {  display: none;  margin: 0;  border: 1px solid khaki;  min-height: 250px;  background-color: LemonChiffon;  padding-top: 7px; }  fieldset.ed_section.active {  display: block; }  ul#ed_menu {  background-color: white;  width: 97%;  display: block;  margin: 0;  float: left;  border: 0;  padding-left: 3%; }  ul#ed_menu li {  float: left;  padding: 3px 7px;  background: white;  border-width: 1px 1px 0 1px;  border-style: dotted;  border-color: khaki;  cursor: pointer;  list-style-type: none;  list-style-image: none; }  ul#ed_menu li.active {  background: LemonChiffon;  border-color: DarkKhaki;  border-style: solid; }  #ed_menuitem_new {  font-weight: bold; }  #ed_content {  clear: left;  padding: 0; }   fieldset.ed_section label {  float: left;  width: 20%;  padding: 2px 1% 0 1%;  line-height: 1;  clear: left;  text-align: right;  max-width: 170px; }  fieldset.ed_section textarea {  width: 77%;  border: 1px solid khaki;  height: 1em;  font-family: Consolas, \"Lucida Console\", monospace;  font-size: 9pt;  overflow: auto; }  fieldset.ed_section p {  clear: both;  text-align: center; }  fieldset.ed_section p.top {  margin-top: 10px;  margin-bottom: 10px; }  fieldset.ed_section p.top a {  margin-right: 15px; }  fieldset.ed_section a:hover {  cursor: pointer; }  label.oblig_subsection {  color: #CC0000;  font-weight: bold; }  div.subsection_extra.active {  margin-top: 6px; }  div.subsection_extra > span {  cursor: pointer;  background-color: lemonchiffon;  border: 1px dotted khaki;  padding: 5px; }  div.subsection_extra > span.apidone {  padding-right: 25px;  background: url(http://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Gtk-ok.svg/20px-Gtk-ok.svg.png) no-repeat right; }  div.subsection_extra > span.apistarted {  padding-right: 32px;  background: url(http://upload.wikimedia.org/wikipedia/commons/3/32/Loader3.gif) no-repeat right; }  div.subsection_extra > span.apierror {  padding-right: 25px;  background: url(http://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Crystal_128_error.svg/20px-Crystal_128_error.svg.png) no-repeat right; }  #popup_container {  font-size: 0.8em;  min-width: 300px; /* Dialog will be no smaller than this */  max-width: 600px; /* Dialog will wrap after this width */  background: #FFF;  border: solid 5px #999;  color: #000;  -moz-border-radius: 5px;  -webkit-border-radius: 5px;  border-radius: 5px;  z-index: 900;  position: absolute; }  #popup_overlay {  z-index: 899; }  #popup_container.prompt {  z-index: 600; }  #popup_overlay.prompt {  z-index: 599; }  #popup_title {  font-size: 1em;  font-weight: bold;  text-align: center;  line-height: 1.75em;  color: #666;  background-color: #CCC;  border: solid 1px #FFF;  border-bottom: solid 1px #999; }  #popup_content {  background: 16px 16px no-repeat url(images/info.gif);  padding: 1em 1.75em;  margin: 0em; }  #popup_content.alert {  background-image: url(images/info.gif); }  #popup_content.confirm {  background-image: url(images/important.gif); }  #popup_content.prompt {  background-image: url(images/help.gif); }  #popup_message {  padding-left: 48px; }  #popup_panel {  text-align: center;  margin: 1em 0em 0em 1em; }  #popup_prompt {  margin: .5em 0em;  border: 1px solid darkkhaki; }  .tooltip {  padding: 5px;  max-width: 450px;  background-color: lemonchiffon;  border: 1px solid darkkhaki;  color: saddlebrown; }  #keyboard {  width: 32px;  height: 32px;  background-color: lemonchiffon;  background-image: url('http://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Input-keyboard.svg/32px-Input-keyboard.svg.png');  border: 2px solid PaleGoldenrod;  padding: 0;  position: absolute;  z-index: 700;  cursor: pointer; }  #keyboard_keys {  font-size: 0.8em;  background-color: lemonchiffon;  border: 2px solid palegoldenrod;  padding: 5px;  max-width: 400px;  position: absolute;  z-index: 700; }  #keyboard_keys .plainlinks {  border: 0 !important; }  #keyboard_keys select {  width: 100%; }  #keyboard_keys #editpage-specialchars.plainlinks a {  padding: 1px 2px !important;  margin: 0 !important; } #keyboard_keys #editpage-specialchars.plainlinks a:hover {  text-decoration: none;  background-color: palegoldenrod !important; } #keyboard_keys #editpage-specialchars.plainlinks a.extiw {  padding: 0 !important; } #keyboard_keys #editpage-specialchars.plainlinks a.extiw:hover {  text-decoration: underline;  background-color: transparent !important; } #keyboard_keys .keyboard_always {  margin: 5px 2px; } #keyboard_keys .keyboard_always a {  padding: 2px 7px;  font-size: 1.2em;  border: 1px solid palegoldenrod;  background-color: palegoldenrod; } #keyboard_keys .keyboard_always a:hover {  text-decoration: none;  border: 1px solid darkkhaki; }  #ajax_results {  background-color: lemonchiffon;  border: 2px solid palegoldenrod;  padding: 5px;  width: 350px;  position: absolute;  z-index: 598;  word-wrap: break-word;  max-height: 450px;  overflow-y: auto; }  #ajax_results a {  padding: 1px 2px !important;  margin: 0 !important;  cursor: pointer; } #ajax_results a:hover {  text-decoration: none;  background-color: palegoldenrod !important; } #ajax_results a#closelink {  font-size: 1.7em;  font-weight: bold;  float: right; } #ajax_results dt {  font-weight: normal;  font-style: italic; } #ajax_results dt a {  font-size: 0.85em;  font-style: normal; } #ajax_results dd {  line-height: 1.4; } #ajax_results dd a {  padding: 0px 3px !important; } #ajax_result_disc {  margin-bottom: 5px; } p.inactive label {  color: #999; } p.inactive textarea {  background-color: lemonChiffon;  color: #999; } ";
+    css = "#ed {  overflow : auto;  background-color: white;  padding: 0;  display: none;  line-height: 1.3;  border: 0;  width: 100%;  height: auto; }  fieldset.ed_section {  display: none;  margin: 0;  border: 1px solid khaki;  min-height: 250px;  background-color: LemonChiffon;  padding-top: 7px; }  fieldset.ed_section.active {  display: block; }  ul#ed_menu {  background-color: white;  width: 97%;  display: block;  margin: 0;  float: left;  border: 0;  padding-left: 3%; }  ul#ed_menu li {  float: left;  padding: 3px 7px;  background: white;  border-width: 1px 1px 0 1px;  border-style: dotted;  border-color: khaki;  cursor: pointer;  list-style-type: none;  list-style-image: none; }  ul#ed_menu li.active {  background: LemonChiffon;  border-color: DarkKhaki;  border-style: solid; }  #ed_menuitem_new {  font-weight: bold; }  #ed_content {  clear: left;  padding: 0; }   fieldset.ed_section label {  float: left;  width: 20%;  padding: 2px 1% 0 1%;  line-height: 1;  clear: left;  text-align: right;  max-width: 170px; }  fieldset.ed_section textarea {  width: 77%;  border: 1px solid khaki;  height: 1em;  font-family: Consolas, \"Lucida Console\", monospace;  font-size: 9pt;  overflow: auto; }  fieldset.ed_section p {  clear: both;  text-align: center; }  fieldset.ed_section p.top {  margin-top: 10px;  margin-bottom: 10px; }  fieldset.ed_section p.top a {  margin-right: 15px; }  fieldset.ed_section a:hover {  cursor: pointer; }  label.oblig_subsection {  color: #CC0000;  font-weight: bold; }  div.subsection_extra.active {  margin-top: 6px; }  div.subsection_extra > span {  cursor: pointer;  background-color: lemonchiffon;  border: 1px dotted khaki;  padding: 5px; }  div.subsection_extra > span.apidone {  padding-right: 25px;  background: url(http://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Gtk-ok.svg/20px-Gtk-ok.svg.png) no-repeat right; }  div.subsection_extra > span.apistarted {  padding-right: 32px;  background: url(http://upload.wikimedia.org/wikipedia/commons/3/32/Loader3.gif) no-repeat right; }  div.subsection_extra > span.apierror {  padding-right: 25px;  background: url(http://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Crystal_128_error.svg/20px-Crystal_128_error.svg.png) no-repeat right; }  #popup_container {  font-size: 0.8em;  min-width: 300px; /* Dialog will be no smaller than this */  max-width: 600px; /* Dialog will wrap after this width */  background: #FFF;  border: solid 5px #999;  color: #000;  -moz-border-radius: 5px;  -webkit-border-radius: 5px;  border-radius: 5px;  z-index: 900;  position: absolute; }  #popup_overlay {  z-index: 899; }  #popup_container.prompt {  z-index: 600; }  #popup_overlay.prompt {  z-index: 599; }  #popup_title {  font-size: 1em;  font-weight: bold;  text-align: center;  line-height: 1.75em;  color: #666;  background-color: #CCC;  border: solid 1px #FFF;  border-bottom: solid 1px #999; }  #popup_content {  background: 16px 16px no-repeat url(images/info.gif);  padding: 1em 1.75em;  margin: 0em; }  #popup_content.alert {  background-image: url(images/info.gif); }  #popup_content.confirm {  background-image: url(images/important.gif); }  #popup_content.prompt {  background-image: url(images/help.gif); }  #popup_message {  padding-left: 48px; }  #popup_panel {  text-align: center;  margin: 1em 0em 0em 1em; }  #popup_prompt {  margin: .5em 0em;  border: 1px solid darkkhaki; }  .tooltip {  padding: 5px;  max-width: 450px;  background-color: lemonchiffon;  border: 1px solid darkkhaki;  color: saddlebrown; }  body.skin-monobook .tooltip, body.skin-monobook #keyboard_keys, body.skin-monobook #popup_container {  font-size: 1.4em !important; }  body.skin-monobook .tooltip small, body.skin-monobook #keyboard_keys small, body.skin-monobook #popup_container small, body.skin-monobook #ajax_results small {  font-size: 0.9em !important; }  body.skin-monobook .tooltip small tt, body.skin-monobook #keyboard_keys small tt, body.skin-monobook #popup_container small tt, body.skin-monobook #ajax_results small tt {  font-size: 1.3em !important; }  #keyboard {  width: 32px;  height: 32px;  background-color: lemonchiffon;  background-image: url('http://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Input-keyboard.svg/32px-Input-keyboard.svg.png');  border: 2px solid PaleGoldenrod;  padding: 0;  position: absolute;  z-index: 700;  cursor: pointer; }  #keyboard_keys {  font-size: 0.8em;  background-color: lemonchiffon;  border: 2px solid palegoldenrod;  padding: 5px;  max-width: 400px;  position: absolute;  z-index: 700; }  #keyboard_keys .plainlinks {  border: 0 !important; }  #keyboard_keys select {  width: 100%; }  #keyboard_keys #editpage-specialchars.plainlinks a {  padding: 1px 2px !important;  margin: 0 !important; } #keyboard_keys #editpage-specialchars.plainlinks a:hover {  text-decoration: none;  background-color: palegoldenrod !important; } #keyboard_keys #editpage-specialchars.plainlinks a.extiw {  padding: 0 !important; } #keyboard_keys #editpage-specialchars.plainlinks a.extiw:hover {  text-decoration: underline;  background-color: transparent !important; } #keyboard_keys .keyboard_always {  margin: 5px 2px; } #keyboard_keys .keyboard_always a {  padding: 2px 7px;  font-size: 1.2em;  border: 1px solid palegoldenrod;  background-color: palegoldenrod; } #keyboard_keys .keyboard_always a:hover {  text-decoration: none;  border: 1px solid darkkhaki; }  #ajax_results {  background-color: lemonchiffon;  border: 2px solid palegoldenrod;  padding: 5px;  width: 350px;  position: absolute;  z-index: 598;  word-wrap: break-word;  max-height: 450px;  overflow-y: auto; }  #ajax_results a {  padding: 1px 2px !important;  margin: 0 !important;  cursor: pointer; } #ajax_results a:hover {  text-decoration: none;  background-color: palegoldenrod !important; } #ajax_results a#closelink {  font-size: 1.7em;  font-weight: bold;  float: right; } #ajax_results dt {  font-weight: normal;  font-style: italic; } #ajax_results dt a {  font-size: 0.85em;  font-style: normal; } #ajax_results dd {  line-height: 1.4; } #ajax_results dd a {  padding: 0px 3px !important; } #ajax_result_disc {  margin-bottom: 5px; } p.inactive label {  color: #999; } p.inactive textarea {  background-color: lemonChiffon;  color: #999; } ";
   mw.util.addCSS(css);
   // jQuery Alert Dialogs Plugin
   // Version 1.1
@@ -1050,6 +1050,10 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       return document.location.hash.replace('#', '');
     },
 
+    isEditingSection : function () {
+      return $('input[name="wpSection"]').val() !== '';
+    },
+
     getActiveLangCode : function () {
       return EUi.activeLangCode;
     },
@@ -1131,7 +1135,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     },
 
     init : function () {
-      var tbox, oldform, instruction;
+      var tbox, oldform;
 
       if (EUtil.getParameter('oldid') && EUtil.getParameter('oldid') !== mw.config.get('wgCurRevisionId').toString()) {
         return;
@@ -1139,14 +1143,13 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       EConstants.init();
 
       tbox = $('#wpTextbox1');
-      oldform = $('div.wikiEditor-ui');
-      instruction = $('#nat-instrukcja');
+      oldform = $('div.wikiEditor-ui, #nat-instrukcja, #wpTextbox1, #toolbar');
       Ed.code = tbox.val();
 
       Ed.parseContentToSections();
       Ed.parseSectionsToSubsections();
 
-      EUi.prepareForm(oldform, instruction);
+      EUi.prepareForm(oldform, tbox);
 
     },
 
@@ -1713,7 +1716,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
   EUi = {
 
     oldform : undefined,
-    instruction : undefined,
+    tbox : undefined,
     form : $('<div id="ed"/>'),
     menu : $('<ul id="ed_menu"/>'),
     content : $('<div id="ed_content"/>'),
@@ -1721,34 +1724,33 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     activeLangCode : '',
     activeLangId : '',
 
-    prepareForm : function (oldform, instruction) {
+    prepareForm : function (oldform, tbox) {
       var toggleEditor;
 
       this.oldform = oldform;
-      this.instruction = instruction;
+      this.tbox = tbox;
       EUi.form.append(EUi.menu).append(EUi.content);
-      oldform.before(EUi.form);
+      oldform.first().before(EUi.form);
       EUi.usingNew = $.cookie('usenew') === null || $.cookie('usenew') === '1';
 
       if (EUi.usingNew) {
         oldform.hide();
-        instruction.hide();
         EUi.form.show();
       }
 
       toggleEditor = $('<a href="#" id="toggleEditor">' + EStr.TOGGLE_EDITOR + '</a>');
       toggleEditor.insertAfter('h1:first').click(function () {
-        oldform.toggle();
-        instruction.toggle();
-        EUi.form.toggle();
-        ESpecialChars.toggle();
-
         EUi.usingNew = !EUi.usingNew;
         if (EUi.usingNew) {
+          oldform.hide();
+          EUi.form.show();
           Ed.resetNew();
         } else {
-          EUi.oldform.find('textarea').val(EPrinter.recalculateCode());
+          oldform.show();
+          EUi.form.hide();
+          EUi.tbox.val(EPrinter.recalculateCode());
         }
+        ESpecialChars.toggle();
         $.cookie('usenew', +EUi.usingNew);
         return false;
       });
@@ -1796,7 +1798,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
         }
       }
 
-      if (!EUtil.getParameter('section')) {
+      if (!EUtil.isEditingSection()) {
         addItem = $('<li id="ed_menuitem_new" class="tip menuitem">' + EStr.ADD + '</li>');
         addItem.appendTo(EUi.menu).click(function () {
           EUi.addNewSection();
@@ -1810,7 +1812,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
 
       EUi.clickDefaultSection();
       EUi.resizeTextareas();
-      if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length === 0 && !EUtil.getParameter('section')) {
+      if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length === 0 && !EUtil.isEditingSection()) {
         EUi.addIntroAdder();
       }
       $(window).resize(EUi.resizeTextareas);
@@ -2011,7 +2013,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       this.form.parent('form').submit(function () {
         if (EUi.usingNew) {
           EUi.deleteEmptySections();
-          EUi.oldform.find('textarea').val(EPrinter.recalculateCode());
+          EUi.tbox.val(EPrinter.recalculateCode());
         }
         return true;
       });

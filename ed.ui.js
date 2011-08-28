@@ -1,7 +1,7 @@
 EUi = {
 
 	oldform : undefined,
-	instruction : undefined,
+	tbox : undefined,
 	form : $('<div id="ed"/>'),
 	menu : $('<ul id="ed_menu"/>'),
 	content : $('<div id="ed_content"/>'),
@@ -9,34 +9,33 @@ EUi = {
 	activeLangCode : '',
 	activeLangId : '',
 
-	prepareForm : function (oldform, instruction) {
+	prepareForm : function (oldform, tbox) {
 		var toggleEditor;
 
 		this.oldform = oldform;
-		this.instruction = instruction;
+		this.tbox = tbox;
 		EUi.form.append(EUi.menu).append(EUi.content);
-		oldform.before(EUi.form);
+		oldform.first().before(EUi.form);
 		EUi.usingNew = $.cookie('usenew') === null || $.cookie('usenew') === '1';
 
 		if (EUi.usingNew) {
 			oldform.hide();
-			instruction.hide();
 			EUi.form.show();
 		}
 
 		toggleEditor = $('<a href="#" id="toggleEditor">' + EStr.TOGGLE_EDITOR + '</a>');
 		toggleEditor.insertAfter('h1:first').click(function () {
-			oldform.toggle();
-			instruction.toggle();
-			EUi.form.toggle();
-			ESpecialChars.toggle();
-
 			EUi.usingNew = !EUi.usingNew;
 			if (EUi.usingNew) {
+				oldform.hide();
+				EUi.form.show();
 				Ed.resetNew();
 			} else {
-				EUi.oldform.find('textarea').val(EPrinter.recalculateCode());
+				oldform.show();
+				EUi.form.hide();
+				EUi.tbox.val(EPrinter.recalculateCode());
 			}
+			ESpecialChars.toggle();
 			$.cookie('usenew', +EUi.usingNew);
 			return false;
 		});
@@ -84,7 +83,7 @@ EUi = {
 			}
 		}
 
-		if (!EUtil.getParameter('section')) {
+		if (!EUtil.isEditingSection()) {
 			addItem = $('<li id="ed_menuitem_new" class="tip menuitem">' + EStr.ADD + '</li>');
 			addItem.appendTo(EUi.menu).click(function () {
 				EUi.addNewSection();
@@ -98,7 +97,7 @@ EUi = {
 
 		EUi.clickDefaultSection();
 		EUi.resizeTextareas();
-		if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length === 0 && !EUtil.getParameter('section')) {
+		if ($('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).length === 0 && !EUtil.isEditingSection()) {
 			EUi.addIntroAdder();
 		}
 		$(window).resize(EUi.resizeTextareas);
@@ -299,7 +298,7 @@ EUi = {
 		this.form.parent('form').submit(function () {
 			if (EUi.usingNew) {
 				EUi.deleteEmptySections();
-				EUi.oldform.find('textarea').val(EPrinter.recalculateCode());
+				EUi.tbox.val(EPrinter.recalculateCode());
 			}
 			return true;
 		});

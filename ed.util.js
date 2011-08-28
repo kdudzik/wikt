@@ -7,6 +7,10 @@ EUtil = {
 		return document.location.hash.replace('#', '');
 	},
 
+	isEditingSection : function () {
+		return $('input[name="wpSection"]').val() !== '';
+	},
+
 	getActiveLangCode : function () {
 		return EUi.activeLangCode;
 	},
