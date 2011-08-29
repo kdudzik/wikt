@@ -16,7 +16,9 @@
 \usepackage{booktabs}
 \usepackage{tocloft}
 
-\hyphenation{MySQL jQuery Google In-sti-tute En-cyc-lo-pae-dia En-cyc-lo-pæ-dia Pre-pro-cessor}
+\hyphenation{MySQL jQuery Google In-sti-tute En-cyc-lo-pae-dia En-cyc-lo-pæ-dia Pre-pro-cessor
+				Grease-mon-key Fire-fox Chrome Ex-plo-rer Fire-bug Gea-ny Git-hub Win-dows Eclipse
+				desk-to-po-wych Regex Coach soft-ware}
 
 % USTAWIENIA PAKIETÓW
 \setmainfont[Mapping=tex-text,Bold=Charis SIL Bold,Scale=1.1]{Gentium}
@@ -50,6 +52,14 @@
 \clubpenalty=1000
 \widowpenalty=1000
 \linespread{1.5}
+\makeatletter
+\renewcommand\paragraph{\@startsection{paragraph}{4}{0mm}%
+{-0.1\baselineskip}%
+{0.1\baselineskip}%
+{\normalfont\bfseries\indent}%
+}%
+
+\makeatother
 
 % MAKRA I DEFINICJE
 
