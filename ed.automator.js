@@ -161,7 +161,7 @@ EAutomator = {
 
 	extractFirstArgsFromTemplates : function (str, template) {
 		var arr, el, results = [],
-			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\{\\}\\|<=]+)[\\}\\|<]', 'g');
+			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\{\\}\\|<=]+)[\\}\\|<]', 'gi');
 
 		while ((arr = re.exec(str)) !== null) {
 			el = $.trim(arr[1]);
@@ -185,8 +185,24 @@ EAutomator = {
 		return results;
 	},
 
+	extractAllArgsFromTemplates : function (str, template) {
+		var arr, el, params, i, results = [],
+			re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\{\\}]*)\\}\\}', 'gi');
+
+		while ((arr = re.exec(str)) !== null) {
+			params = arr[1].split('|');
+			for (i = 0; i < params.length; i += 1) {
+				el = $.trim(params[i].replace(/^.*?=/, ''));
+				if (el && EConstants.FORBIDDEN_IPA_CONTENT.indexOf(el) === -1 && results.indexOf(el) === -1) {
+					results.push(el);
+				}
+			}
+		}
+		return results;
+	},
+
 	extractIPA_de: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'Lautschrift'); },
-	extractIPA_es: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'pronunciación'); },
+	extractIPA_es: function (str) { return EAutomator.extractAllArgsFromTemplates(str, 'pronunciación'); },
 	extractIPA_fr: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'pron'); },
 	extractIPA_en: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
 	extractIPA_cs: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },

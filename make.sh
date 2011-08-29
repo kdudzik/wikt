@@ -15,7 +15,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
 (function ($) {
   var jPrompt, jAlert, jConfirm,
     css = \"" > $JS
-perl -p -e 's/\s+/ /g' $CSS | perl -p -e 's/"/\\"/g' >> $JS
+perl -pe 's/\s+/ /g' $CSS | perl -pe 's/"/\\"/g' >> $JS
 echo "\";
   mw.util.addCSS(css);" >> $JS
 
@@ -23,8 +23,7 @@ JSFILES=`grep localhost $MAINJS | grep -v loader | cut -c 25- | sed "s/',//g"`
 
 for f in $JSFILES
 do
-	grep -v EFilesLoaded $f | grep -v ETryInit | perl -p -e 's/^/  /g' | perl -p -e 's/\t/  /g' | perl -p -e 's/\s+$/\n/g' | perl -p -e 's/\n\n+/\n\n/g' >> $JS
-	#echo "" >> $JS
+	grep -vE '(EFilesLoaded|ETryInit)' $f | perl -pe 's/(^|\t)/  /g' | perl -pe 's/\s+$/\n/g' | perl -pe 's/\n\n+/\n\n/g' >> $JS
 done
 
 echo "

@@ -537,7 +537,7 @@ EConstants = {
 		],
 	FORBIDDEN_IPA_CONTENT :
 		[
-			'…', '...', '//', '/ /', '[]', '[ ]', 'lang', '[ eˈxem.plo ]', '/xxxx/'
+			'…', '...', '//', '/ /', '[]', '[ ]', 'lang', '[ eˈxem.plo ]', '/xxxx/', '-'
 		],
 
 	init : function () {
