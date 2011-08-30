@@ -18,7 +18,7 @@
 
 \hyphenation{MySQL jQuery Google In-sti-tute En-cyc-lo-pae-dia En-cyc-lo-pæ-dia Pre-pro-cessor
 				Grease-mon-key Fire-fox Chrome Ex-plo-rer Fire-bug Gea-ny Git-hub Win-dows Eclipse
-				desk-to-po-wych Regex Coach soft-ware}
+				desk-to-po-wych Regex Coach soft-ware hard-ware Ba-shu Ba-sha}
 
 % USTAWIENIA PAKIETÓW
 \setmainfont[Mapping=tex-text,Bold=Charis SIL Bold,Scale=1.1]{Gentium}
@@ -58,7 +58,11 @@
 {0.1\baselineskip}%
 {\normalfont\bfseries\indent}%
 }%
+\makeatother
 
+\makeatletter
+ \renewcommand\@seccntformat[1]{\csname the#1\endcsname.\quad}
+ \renewcommand\numberline[1]{#1.\hskip0.7em}
 \makeatother
 
 % MAKRA I DEFINICJE
