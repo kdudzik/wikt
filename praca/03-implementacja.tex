@@ -38,7 +38,7 @@ W~aplikacji duże znaczenie odgrywają wyrażenia regularne, wykorzystywane podc
 
 \subsection{Dobre praktyki}
 Nowy edytor został napisany za pomocą biblioteki jQuery, co ułatwia utrzymanie dobrej struktury. Kod podzielono na moduły funkcjonalne, co częściowo stanowi odpowiednik klasycznego paradygmatu obiektowego, często stosowany w~przypadku JavaScript. Język ten umożliwia pisanie aplikacji przy zachowaniu wielu różnych paradygmatów. W~przypadku opisywanej aplikacji zdecydowano się na wspomniany podział na moduły, będący pewnym kompromisem między paradygmatem funkcyjnym i~obiektowym. Moduły zaimplementowane są jako obiekty, których elementami są funkcje odpowiedzialne za operacje działające w~podobnym zakresie. Przykładowo parser wikitekstu jest modułem o~następującej strukturze:
-\begin{lstlisting}
+\begin{lstlisting}[language=JavaScript,caption=Ogólna struktura modułu JavaScript]
 var EParser = {
 	getSections : function (code) {
 		...
@@ -46,7 +46,7 @@ var EParser = {
 	getSectionFromTitle : function (str) {
 		...
 	},
-	getTitleFromCode : function (code) {
+	getTitleFromCode : function (code) { test test test test test test test test test test testtest test test test test
 		...
 	},
 	...
@@ -74,11 +74,15 @@ Kod aplikacji jest w~maksymalnie możliwym zakresie zgodny z~konwencjami przyję
 
 Jedną z~dwóch głównych części aplikacji jest nowy formularz, usprawniający w~znacznym zakresie proces edycji i~tworzenia nowych artykułów. Do tej pory cały ów proces polegał na wpisywaniu, kopiowaniu i~uzupełnianiu wikikodu (por.~ilustracja~\ref{fig:plhaslo-edit}), a~najprostszym rozwiązaniem często okazywało się kopiowanie go z~innego, podobnego hasła i~modyfikowanie jedynie zmieniających się elementów. Dlatego też większość haseł w~Wikisłowniku powstawała seriami --- tworzenie pojedynczych haseł było niepraktyczne, natomiast wstawianie podobnego kodu do dziesiątek haseł dość łatwe do przeprowadzenia. Jako że każda sekcja językowa hasła składa się w~rzeczywistości z~par klucz--wartość, wygodniejszym sposobem wprowadzania danych byłby klasyczny formularz, do wypełniania jakiego przyzwyczajony jest każdy internauta. Nowy edytor został zatem zaprojektowany właśnie w~taki sposób, dzięki czemu zmniejsza się bariera wejścia dla początkującego redaktora. Od tej pory edycja hasła będzie polegać nie na wpisywaniu dość skomplikowanego kodu, co jest porównywalne z~prostym programowaniem, ale na wypełnieniu formularza.
 
-% UI
-% parser
+Implementacja formularza składa się z~kilku modułów, spośród których główną rolę odgrywają \kod|EUi| w~pliku \kod|ed.ui.js| (interfejs użytkownika) oraz \kod|EParser| i~\kod|ESectionParser| w~pliku \kod|ed.parser.js| (parser wikitekstu). Poniżej opisano te moduły, szczególnie uwzględniając powstałe problemy i~ich rozwiązania.
+
+\subsection{Interfejs użytkownika}
+
+\subsection{Parser wikitekstu}
 
 \section{Automatyzacja edycji hasła}
-% API, JSONP
+
+\subsection{API MediaWiki}
 
 \label{sec:impl-auto}
 
