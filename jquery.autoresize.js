@@ -6,10 +6,11 @@
 	$.fn.autoresize = function () {
 
 		this.filter('textarea').each(function () {
-			var $this	   = $(this),
-				minHeight   = 20,
-				maxHeight   = 500,
-
+			var $this = $(this),
+				minHeight = 25,
+				maxHeight = 500,
+				prevHeight = 0,
+				nowHeight = 0,
 				shadow = $('<div/>').css({
 					position:   'absolute',
 					top:		-10000,
@@ -22,14 +23,18 @@
 				}).appendTo(document.body),
 
 				update = function () {
-					var val = this.value.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;').replace(/\n$/, '<br/>&nbsp;').replace(/\n/g, '<br/>');
+					var val = this.value.replace(/[<>&]/g, 'w').replace(/\n$/, '<br/>&nbsp;').replace(/\n/g, '<br/>');
 
 					shadow.html(val);
-					$(this).css('height', Math.min(Math.max(shadow.height(), minHeight), maxHeight));
-					EKeyboard.updatePosition($(this));
+					nowHeight = Math.min(Math.max(shadow.height(), minHeight), maxHeight);
+					if (nowHeight !== prevHeight) {
+						$(this).css('height', nowHeight);
+						EKeyboard.updatePosition($(this));
+						prevHeight = nowHeight;
+					}
 				};
 
-			$(this).change(update).keyup(update).keydown(update).blur(update);
+			$(this).keyup(update).blur(update).focus(update);
 			update.apply(this);
 		});
 		return this;

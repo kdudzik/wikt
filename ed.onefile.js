@@ -308,10 +308,11 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     $.fn.autoresize = function () {
 
       this.filter('textarea').each(function () {
-        var $this     = $(this),
-          minHeight   = 20,
-          maxHeight   = 500,
-
+        var $this = $(this),
+          minHeight = 25,
+          maxHeight = 500,
+          prevHeight = 0,
+          nowHeight = 0,
           shadow = $('<div/>').css({
             position:   'absolute',
             top:    -10000,
@@ -324,14 +325,18 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
           }).appendTo(document.body),
 
           update = function () {
-            var val = this.value.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;').replace(/\n$/, '<br/>&nbsp;').replace(/\n/g, '<br/>');
+            var val = this.value.replace(/[<>&]/g, 'w').replace(/\n$/, '<br/>&nbsp;').replace(/\n/g, '<br/>');
 
             shadow.html(val);
-            $(this).css('height', Math.min(Math.max(shadow.height(), minHeight), maxHeight));
-            EKeyboard.updatePosition($(this));
+            nowHeight = Math.min(Math.max(shadow.height(), minHeight), maxHeight);
+            if (nowHeight !== prevHeight) {
+              $(this).css('height', nowHeight);
+              EKeyboard.updatePosition($(this));
+              prevHeight = nowHeight;
+            }
           };
 
-        $(this).change(update).keyup(update).keydown(update).blur(update);
+        $(this).keyup(update).blur(update).focus(update);
         update.apply(this);
       });
       return this;
@@ -989,7 +994,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     ADD_INTERWIKI:
       'Dodaj (zaktualizuj) interwiki',
     ADD_PICTURE:
-      'Dodaj grafikę',
+      'Dodaj ilustrację',
     ADD_AUDIO:
       'Dodaj nagranie dźwiękowe',
     GET_IPA:
@@ -997,7 +1002,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     GET_INTERWIKI:
       'Pobierz interwiki z innych wersji językowych Wikisłownika',
     GET_PICTURE:
-      'Pobierz grafikę z innych wersji językowych Wikisłownika',
+      'Pobierz ilustrację z innych wersji językowych Wikisłownika',
     GET_AUDIO:
       'Pobierz nagranie dźwiękowe z innych wersji językowych Wikisłownika',
     WILL_BE_SHOWN:
@@ -1005,7 +1010,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     NO_IPA_FOUND:
       'Nie znaleziono IPA',
     NO_PICTURE_FOUND:
-      'Nie znaleziono grafik',
+      'Nie znaleziono ilustracji',
     NO_AUDIO_FOUND:
       'Nie znaleziono plików dźwiękowych',
     AJAX_IPA_RESULT_INSTRUCTION:
@@ -1020,7 +1025,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       'zobacz hasło',
     AJAX_PICTURE_RESULT_INSTRUCTION:
       '<div id="ajax_result_disc"><small>\
-      Poniżej znajduje się lista grafik, które udało się znaleźć \
+      Poniżej znajduje się lista ilustracji, które udało się znaleźć \
       w artykułach o tej samej nazwie w innych wersjach językowych Wikisłownika. Kliknij wybrany wynik, aby wstawić ten plik w miejscu, \
       w którym znajduje się teraz kursor.<br/> \
       Po najechaniu myszką na nazwę pliku pokaże się jego podgląd. \
@@ -2097,10 +2102,12 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
         button = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + ajr.data('buttonIdPart')),
         textbox = button.parent().prev();
 
-      nPos.top = button.position().top;
-      nPos.left = textbox.position().left + 60;
-      ajr.css(nPos);
-      ajr.width(textbox.outerWidth() - 120);
+      if (ajr.length > 0 && button.length > 0) {
+        nPos.top = button.position().top;
+        nPos.left = textbox.position().left + 60;
+        ajr.css(nPos);
+        ajr.width(textbox.outerWidth() - 120);
+      }
     },
 
     hideResult : function () {
@@ -2186,7 +2193,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       });
       related.addClass('tip');
       derived.addClass('tip');
-      meaningTA.change(updateEsperanto).blur(updateEsperanto).keyup(updateEsperanto).focus(updateEsperanto);
+      meaningTA.blur(updateEsperanto).focus(updateEsperanto);
       updateEsperanto();
     }
   };

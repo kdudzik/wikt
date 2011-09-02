@@ -381,10 +381,12 @@ EUi = {
 			button = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + ajr.data('buttonIdPart')),
 			textbox = button.parent().prev();
 
-		nPos.top = button.position().top;
-		nPos.left = textbox.position().left + 60;
-		ajr.css(nPos);
-		ajr.width(textbox.outerWidth() - 120);
+		if (ajr.length > 0 && button.length > 0) {
+			nPos.top = button.position().top;
+			nPos.left = textbox.position().left + 60;
+			ajr.css(nPos);
+			ajr.width(textbox.outerWidth() - 120);
+		}
 	},
 
 	hideResult : function () {
@@ -470,7 +472,7 @@ EUi = {
 		});
 		related.addClass('tip');
 		derived.addClass('tip');
-		meaningTA.change(updateEsperanto).blur(updateEsperanto).keyup(updateEsperanto).focus(updateEsperanto);
+		meaningTA.blur(updateEsperanto).focus(updateEsperanto);
 		updateEsperanto();
 	}
 };
