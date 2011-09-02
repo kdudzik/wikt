@@ -11,7 +11,7 @@ W~tworzeniu Wikipedii i~Wikisłownika biorą udział przedstawiciele całego spo
 \label{sec:plsoc}
 W~podsekcji~\ref{subs:wiki-wikt} przedstawione zostały różnice między technicznymi elementami polskich wersji Wikipedii i~Wikisłownika. Wysokie poziom uporządkowania haseł w~Wikisłowniku daje nadzieję na wprowadzenie ulepszeń --- główną potencjalną barierą może być więc społeczność, która stara się podejmować decyzje konsensualnie.
 
-Najlepszym sposobem przedstawienia społeczności Wikisłownika jest przeciwstawienie jej grupy osób edytujących w~Wikipedii\footnote{Od tej pory pod pojęciami \emph{Wikipedia} i~\emph{Wikisłownik} domyślnie będą kryć się wersje polskojęzyczne.}. W~tabeli~\ref{tab:wiki-wikt2} przedstawiono najbardziej widoczne różnice między nimi, które można zauważyć już po kilkugodzinnej lekturze archiwalnych dyskusji i~historii edycji.
+Dobrym sposobem przedstawienia społeczności Wikisłownika jest przeciwstawienie jej grupy osób edytujących w~Wikipedii\footnote{Od tej pory pod pojęciami \emph{Wikipedia} i~\emph{Wikisłownik} domyślnie będą kryć się wersje polskojęzyczne.}. W~tabeli~\ref{tab:wiki-wikt2} przedstawiono najbardziej widoczne różnice między nimi, które można zauważyć już po kilkugodzinnej lekturze archiwalnych dyskusji i~historii edycji.
 
 \begin{table}[h]
 \begin{center}
@@ -39,14 +39,33 @@ Najlepszym sposobem przedstawienia społeczności Wikisłownika jest przeciwstaw
 \label{tab:wiki-wikt2}
 \end{center}
 \end{table}
-
 Można uznać, że w~przypadku polskich wersji językowych Wikisłownik jest projektem znacznie spokojniejszym niż Wikipedia, której powszechność powoduje nieuniknione problemy, takie jak zaangażowanie osób chcących wykorzystać projekt do celów marketingowych lub ideologicznych czy liczne wandalizmy w~wykonaniu znudzonych nastolatków. Społeczność redaktorów słownika zdecydowanie skupiona jest na stałym udoskonalaniu projektu. Z~racji jego rozmiaru łatwiej jest o~konsensus w~dyskusjach, a~dzięki mniejszej popularności innowacyjne rozwiązania techniczne mają większą szansę na realizację.
 
-
+W~polskim Wikisłowniku działa 26~administratorów, spośród których 14 jest aktywnych. Kilku z~nich obsługuje swoje własne boty~\cite{wikt:admin}. Dyskusje na ogólne tematy toczą się w~tzw. \emph{Barze} (odpowiedniku \emph{Kawiarenki} w~Wikipedii). Na podstawie strony specjalnej \emph{Ostatnie zmiany} można oszacować poziom aktywności redaktorów w~stosunku do Wikipedii. Podczas gdy tam ostatnie 500~zmian obejmują nieco ponad godzinę, w~Wikisłowniku jest to więcej niż doba. Charakterystyczny jest dużo większy udział nowo tworzonych haseł w~stosunku do poprawek w~starszych artykułach niż w~Wikipedii. To dość naturalne --- hasła słownikowe są prostsze i~często nie wymagają dalszych poprawek technicznych po ich utworzeniu. Dużą część haseł tworzy mała, najbardziej aktywna liczba użytkowników: dłuższa obserwacja pozwala na stwierdzenie, że proporcje są mniej więcej zgodne z~zasadą Pareto (\emph{20\% obiektów jest związanych z~80\% zasobów}). Wynika z~tego, że warto stworzyć aplikację, która będzie służyć zarówno nowym użytkownikom (czego skutkiem będzie zwiększenie liczby zaangażowanych osób), jak i~tym doświadczonym, bardziej aktywnym (większa wydajność i~satysfakcja z~użytkowania).
 
 
 \section{Analiza wymagań}
-...
+Aby sprecyzować elementy, które złożą się na implementację aplikacji, konieczne jest przeprowadzenie analizy wymagań. Ten proces pozwoli na zrozumienie dokładnych potrzeb, które powinny zostać spełnione, i~rozbicie ich na konkretne, jasno zdefiniowane wymagania~\cite{guidebook}. Klasyczne metody powinny być jednak nieco zmodyfikowane ze względu na specyfikę projektu --- odbiorcą nie jest klient biznesowy, ale społeczność skupiona wokół otwartego projektu (zob.~sekcja~\ref{sec:spec}).
+
+W~przypadku niniejszego projektu specyfikowanie wymagań prowadzone było w~ramach dyskusji w~\emph{Barze} na łamach Wikisłownika oraz prywatnych rozmów z~redaktorami. Dodatkowo swoje opinie przekazało kilka osób niezwiązanych z~projektem, mogących spojrzeć na zagadnienie z~punktu widzenia nowego użytkownika.
+
+Najważniejszym produktem, będącym wynikiem analizy wymagań, jest specyfikacja wymagań biznesowych. Zgodnie z~klasycznym podziałem zostały one podzielone na wymagania funkcjonalne i~niefunkcjonalne.
+
+\subsection{Definicje}
+
+\begin{itemize}
+\item \textbf{Użytkownik} --- osoba dokonująca edycji w~Wikisłowniku.
+\item \textbf{Użytkownik zalogowany} --- osoba zalogowana w~Wikisłowniku i~dokonująca w~tym projekcie edycji.
+\item \textbf{Użytkownik niezalogowany} --- osoba niezalogowana w~Wikisłowniku i~dokonująca w~tym projekcie edycji. Takie edycje zostaną zapisane wraz z~adresem IP użytkownika, co umożliwia częściową identyfikację autora.
+\item \textbf{Administrator} --- zalogowany użytkownik, posiadający dodatkowe uprawnienia przyznane w~toku głosowania wśród uprawnionych użytkowników. Wśród tych uprawnień są kasowanie i~zabezpieczanie haseł, blokowanie użytkowników i~edytowanie stron w~przestrzeni nazw \kod|MediaWiki:|.
+\item \textbf{Przestrzeń nazw} --- grupa stron w~Wikisłowniku o~wspólnym prefiksie zakończonym dwukropkiem. Przykładowe przestrzenie nazw to \kod|Szablon:|, \kod|Dyskusja:|. Szczególnym przypadkiem jest tzw. przestrzeń główna, skupiająca strony bez dodatkowego prefiksu --- w~niej znajdują się wszystkie hasła słownika.
+\item \textbf{Stary formularz} --- dotychczasowa metoda wprowadzania danych, opisana w~sekcji~\ref{wikt:structure}.
+\item \textbf{Nowy formularz} --- aplikacja będąca przedmiotem niniejszej pracy.
+\item \textbf{Sekcja} --- odcinek pojedynczego hasła dotyczący użycia słowa w~pojedynczym języku, wyróżniony nagłówkiem drugiego stopnia (\kod|==|).
+\item \textbf{Podsekcja} --- element sekcji hasła zgodny z~ogólną strukturą haseł (p.~sekcja~\ref{wikt:subsections}).
+\item \textbf{Interwiki} --- linki pomiędzy poszczególnymi wersjami językowymi Wikisłownika.
+\end{itemize}
+
 \subsection{Wymagania funkcjonalne}
 ...
 \subsection{Wymagania niefunkcjonalne}
@@ -56,4 +75,4 @@ Można uznać, że w~przypadku polskich wersji językowych Wikisłownik jest pro
 %czemu nie desktopowa
 
 \section{Specyfika tworzenia aplikacji dla wikispołeczności}
-...
+\label{sec:spec}
