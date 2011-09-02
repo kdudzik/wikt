@@ -310,6 +310,10 @@ body.skin-monobook .tooltip small tt, body.skin-monobook #keyboard_keys small tt
 	font-size: 0.85em;
 	font-style: normal;
 }
+#ajax_results dt a.normalsize {
+	font-size: 1em;
+	font-style: italic;
+}
 #ajax_results dd {
 	line-height: 1.4;
 }

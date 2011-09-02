@@ -445,6 +445,51 @@ EAutomator = {
 			}
 		}
 		return results;
+	},
+
+	getInternalExample : function () {
+		var query;
+
+		EApi.started(EConstants.MODE_INTERNAL_EXAMPLE, 'przykłady');
+		query = { generator: 'backlinks', gbltitle: mw.config.get('wgTitle'), gbllimit: 40, prop: 'revisions', rvprop: 'content' };
+		EApi.ask(query, 'EAutomator.getInternalExampleRe', EApi.url());
+		return false;
+	},
+
+	getInternalExampleRe : function (result) {
+		var examples = {},
+			error = EStr.NO_INTERNAL_EXAMPLE_FOUND;
+
+		if (result[0] && result[0].query && result[0].query.pages) {
+			$.each(result[0].query.pages, function () {
+				var title = this.title,
+					content = this.revisions[0]['*'],
+					re = new RegExp(":\\s*\\(\\d+\\.\\d+\\)\\s*(''[^\\}\\n]*\\[\\[" + mw.config.get('wgTitle') + "[\\|\\]][^\\}\\n]*)", 'g'),
+					isPolish = EUtil.getActiveLangCode() === 'pl',
+					ex = EAutomator.extractExample(content, re, isPolish),
+					delim = isPolish ? "''" : '';
+
+				if (ex) {
+					examples[title] = delim + $.trim(ex) + delim;
+					error = undefined;
+				}
+			});
+		}
+		EApi.done(EConstants.MODE_INTERNAL_EXAMPLE, examples, error);
+	},
+
+	extractExample : function (content, re, isPolish) {
+		var arr;
+
+		if ((arr = re.exec(content)) !== null) {
+			if (isPolish) {
+				return arr[1].replace(/(.*→\s*|'''?)/g, '');
+			} else {
+				return arr[1].replace(/'''/g, '');
+			}
+		} else {
+			return null;
+		}
 	}
 };
 

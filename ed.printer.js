@@ -95,6 +95,8 @@ EPrinter = {
 			return EPrinter.pictureResult(res);
 		case EConstants.MODE_AUDIO:
 			return EPrinter.audioResult(res);
+		case EConstants.MODE_INTERNAL_EXAMPLE:
+			return EPrinter.internalExample(res);
 		default:
 			break;
 		}
@@ -260,6 +262,27 @@ EPrinter = {
 			return 'audioAT';
 		}
 		return 'audio';
+	},
+
+	internalExample : function (res) {
+		var dl = $('<dl/>');
+
+		$.each(res, function (title, example) {
+			var dt = $('<dt/>'),
+				dd = $('<dd/>'),
+				link = $('<a/>');
+
+			dt.append('Hasło <a class="normalsize" href="' + mw.util.wikiGetlink(title) + '" target="_blank">[' + title + ']</a>:');
+			link.html(example);
+			link.click(function () {
+				insertTags(example, '', '');
+				return false;
+			});
+			dd.append(link);
+			dl.append(dt).append(dd);
+		});
+
+		return $(EStr.AJAX_INTERNAL_EXAMPLE_INSTRUCTION).append(dl);
 	}
 };
 

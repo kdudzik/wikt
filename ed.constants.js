@@ -490,12 +490,14 @@ EConstants = {
 	MODE_IW : 1,
 	MODE_PICTURE : 2,
 	MODE_AUDIO : 3,
+	MODE_INTERNAL_EXAMPLE : 4,
 	API_ID :
 		{
 			0 : 'add_ipa',
 			1 : 'add_iw',
 			2 : 'add_picture',
-			3 : 'add_audio'
+			3 : 'add_audio',
+			4 : 'add_internal_example'
 		},
 	IPA_MODE_ADDS_NOTHING : 1,
 	IPA_MODE_ADDS_SLASH : 2,
@@ -643,13 +645,15 @@ EStr = {
 	WAITING_FOR_API:
 		'Proszę poczekać, trwa wyszukiwanie za pomocą API…',
 	ADD_IPA:
-		'Dodaj IPA',
+		'Szukaj IPA',
 	ADD_INTERWIKI:
 		'Dodaj (zaktualizuj) interwiki',
 	ADD_PICTURE:
-		'Dodaj ilustrację',
+		'Szukaj ilustracji',
 	ADD_AUDIO:
-		'Dodaj nagranie dźwiękowe',
+		'Szukaj nagrań dźwiękowych',
+	ADD_INTERNAL_EXAMPLE:
+		'Szukaj przykładów w Wikisłowniku',
 	GET_IPA:
 		'Spróbuj pobrać wymowę zapisaną w międzynarodowym alfabecie fonetycznym z innych wersji językowych Wikisłownika',
 	GET_INTERWIKI:
@@ -658,6 +662,8 @@ EStr = {
 		'Pobierz ilustrację z innych wersji językowych Wikisłownika',
 	GET_AUDIO:
 		'Pobierz nagranie dźwiękowe z innych wersji językowych Wikisłownika',
+	GET_INTERNAL_EXAMPLE:
+		'Pobierz przykłady z innych haseł w polskim Wikisłowniku',
 	WILL_BE_SHOWN:
 		'<br/><small>Wyniki zapytania z poszczególnych wersji językowych zostaną pokazane w okienku, które umożliwi ich proste dodawanie do hasła.</small>',
 	NO_IPA_FOUND:
@@ -666,6 +672,8 @@ EStr = {
 		'Nie znaleziono ilustracji',
 	NO_AUDIO_FOUND:
 		'Nie znaleziono plików dźwiękowych',
+	NO_INTERNAL_EXAMPLE_FOUND:
+		'Nie znaleziono przykładu w Wikisłowniku',
 	AJAX_IPA_RESULT_INSTRUCTION:
 		'<div id="ajax_result_disc"><small>\
 		Poniżej wyświetlono zapisy w międzynarodowym alfabecie fonetycznym, które udało się znaleźć \
@@ -690,6 +698,14 @@ EStr = {
 		w którym znajduje się teraz kursor.<br/> \
 		Zapis zostanie wstawiony w szablonie <a href="http://pl.wiktionary.org/wiki/Wikis%C5%82ownik:Zasady_tworzenia_hase%C5%82#Sekcja_.27wymowa.27" \
 		target="_blank"><tt>{{audio}}</tt> lub pokrewnym, dostosuj to do danej sytuacji</a>. \
+		</small></div>',
+	AJAX_INTERNAL_EXAMPLE_INSTRUCTION:
+		'<div id="ajax_result_disc"><small>\
+		Poniżej znajduje się lista przykładów użycia szukanego słowa, które udało się znaleźć \
+		w artykułach Wikisłownika linkujących do tej strony. Kliknij wybrany wynik, aby wstawić ten przykład w miejscu, \
+		w którym znajduje się teraz kursor.<br/> \
+		Zapis zostanie wstawiony takiej postaci, w jakiej go widzisz. Pamiętaj, żeby sprecyzować, którego znaczenia wyrazu \
+		dotyczy przykład. \
 		</small></div>',
 	ESCAPE:
 		'Zamknij okno wyników.<br/><small>Możesz też użyć klawisza Esc</small>',

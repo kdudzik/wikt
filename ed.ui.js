@@ -349,6 +349,8 @@ EUi = {
 		}
 		EUi.addExtraButtons(id, 'wymowa', EConstants.API_ID[EConstants.MODE_IPA], EStr.ADD_IPA, EAutomator.getIPA, EStr.GET_IPA + EStr.WILL_BE_SHOWN);
 		EUi.addExtraButtons(id, 'wymowa', EConstants.API_ID[EConstants.MODE_AUDIO], EStr.ADD_AUDIO, EAutomator.getAudio, EStr.GET_AUDIO + EStr.WILL_BE_SHOWN);
+		EUi.addExtraButtons(id, 'przykłady', EConstants.API_ID[EConstants.MODE_INTERNAL_EXAMPLE], EStr.ADD_INTERNAL_EXAMPLE,
+				EAutomator.getInternalExample, EStr.GET_INTERNAL_EXAMPLE + EStr.WILL_BE_SHOWN);
 		$(document).keyup(function (e) {
 			if (e.keyCode === 27) {
 				EUi.hideResult();
