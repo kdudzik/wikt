@@ -40,15 +40,23 @@ EApi = {
 		return 0;
 	},
 
-	askMore : function (query, callback, urls) {
+	askMore : function (queries, callback) {
+		var i, count = 0;
+
 		if (EApi.waiting) {
 			jAlert(EStr.WAITING_FOR_API);
 			return -1;
 		}
 		EApi.waitingName = callback;
-		EApi.waiting = urls.length;
-		$.each(urls, function () {
-			EApi.ask__prv(query, this);
+
+		for (i in queries) {
+			if (queries.hasOwnProperty(i)) {
+				count += 1;
+			}
+		}
+		EApi.waiting = count;
+		$.each(queries, function (url, query) {
+			EApi.ask__prv(query, url);
 		});
 		return 0;
 	},

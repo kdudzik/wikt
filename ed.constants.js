@@ -393,7 +393,8 @@ EConstants = {
 			'no' : 'Wikisłownik norweski',
 			'simple' : 'Uproszczony Wikisłownik angielski',
 			'li' : 'Wikisłownik limburgijski',
-			'eo' : 'Wikisłownik w esperanto'
+			'eo' : 'Wikisłownik w esperanto',
+			'commons' : 'Wikimedia Commons'
 		},
 	ONELINE_SECTIONS :
 		20,
@@ -533,7 +534,7 @@ EConstants = {
 		},
 	TRANSLIT_SUPPORTED :
 		[
-			'ru', 'uk', 'by', 'bg', 'mk'
+			'ru', 'uk', 'be', 'bg', 'mk'
 		],
 	FORBIDDEN_IPA_CONTENT :
 		[

@@ -271,6 +271,7 @@ EUi = {
 		if (id === 'esperanto') {
 			EUi.prepareEsperanto();
 		}
+		EAutomator.addTransliteration(id, section.code);
 	},
 
 	getSubsectionObj : function (langid, section, subsection) {
@@ -400,7 +401,6 @@ EUi = {
 				EUi.val(langid, subs, defaultText);
 			}
 		}
-		EAutomator.addTransliteration(langid, code);
 	},
 
 	removeDefaultTexts : function (langid, code) {

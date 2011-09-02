@@ -735,7 +735,8 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
         'no' : 'Wikisłownik norweski',
         'simple' : 'Uproszczony Wikisłownik angielski',
         'li' : 'Wikisłownik limburgijski',
-        'eo' : 'Wikisłownik w esperanto'
+        'eo' : 'Wikisłownik w esperanto',
+        'commons' : 'Wikimedia Commons'
       },
     ONELINE_SECTIONS :
       20,
@@ -875,7 +876,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       },
     TRANSLIT_SUPPORTED :
       [
-        'ru', 'uk', 'by', 'bg', 'mk'
+        'ru', 'uk', 'be', 'bg', 'mk'
       ],
     FORBIDDEN_IPA_CONTENT :
       [
@@ -1986,6 +1987,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       if (id === 'esperanto') {
         EUi.prepareEsperanto();
       }
+      EAutomator.addTransliteration(id, section.code);
     },
 
     getSubsectionObj : function (langid, section, subsection) {
@@ -2115,7 +2117,6 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
           EUi.val(langid, subs, defaultText);
         }
       }
-      EAutomator.addTransliteration(langid, code);
     },
 
     removeDefaultTexts : function (langid, code) {
@@ -2412,15 +2413,23 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       return 0;
     },
 
-    askMore : function (query, callback, urls) {
+    askMore : function (queries, callback) {
+      var i, count = 0;
+
       if (EApi.waiting) {
         jAlert(EStr.WAITING_FOR_API);
         return -1;
       }
       EApi.waitingName = callback;
-      EApi.waiting = urls.length;
-      $.each(urls, function () {
-        EApi.ask__prv(query, this);
+
+      for (i in queries) {
+        if (queries.hasOwnProperty(i)) {
+          count += 1;
+        }
+      }
+      EApi.waiting = count;
+      $.each(queries, function (url, query) {
+        EApi.ask__prv(query, url);
       });
       return 0;
     },
@@ -2526,14 +2535,17 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
      * Aktualizuje interwiki: do obecnych dodaje z wersji językowych z sekcji + domyślnych
      */
     fillInterwiki : function () {
-      var langs, urls, query;
+      var langs, urls, query, queries = {};
 
       EApi.started(EConstants.MODE_IW, '');
       langs = EAutomator.getAllLangs();
       langs.push('pl');
       urls = $.map(langs, function (val) { return EApi.url(val); });
       query = { titles: mw.config.get('wgTitle'), prop: 'langlinks', lllimit: 200 };
-      EApi.askMore(query, 'EAutomator.fillInterwikiRe', urls);
+      $.each(urls, function () {
+        queries[this] = query;
+      });
+      EApi.askMore(queries, 'EAutomator.fillInterwikiRe');
       return false;
 
       // callback
@@ -2580,12 +2592,15 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     },
 
     getIPA : function () {
-      var urls, query;
+      var urls, query, queries = {};
 
       EApi.started(EConstants.MODE_IPA, 'wymowa');
       urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
       query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
-      EApi.askMore(query, 'EAutomator.getIPARe', urls);
+      $.each(urls, function () {
+        queries[this] = query;
+      });
+      EApi.askMore(queries, 'EAutomator.getIPARe');
       return false;
 
       // callback
@@ -2728,17 +2743,23 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       if (sectionCode === 'ru') {
         textarea.val('{{translit}}');
       } else {
+        if (sectionCode === 'be') {
+          sectionCode = 'by';
+        }
         textarea.val('{{translit|' + sectionCode + '}}');
       }
     },
 
     getPicture : function () {
-      var urls, query;
+      var urls, query, queries = {};
 
       EApi.started(EConstants.MODE_PICTURE, '');
       urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
       query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
-      EApi.askMore(query, 'EAutomator.getPictureRe', urls);
+      $.each(urls, function () {
+        queries[this] = query;
+      });
+      EApi.askMore(queries, 'EAutomator.getPictureRe');
       return false;
 
       // callback
@@ -2823,12 +2844,27 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     },
 
     getAudio : function () {
-      var urls, query;
+      var urls, lang, query, titles = [], queries = {};
 
       EApi.started(EConstants.MODE_AUDIO, 'wymowa');
       urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
       query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
-      EApi.askMore(query, 'EAutomator.getAudioRe', urls);
+      $.each(urls, function () {
+        queries[this] = query;
+      });
+      lang = $.ucFirst(EUtil.getActiveLangCode());
+      titles.push('File:' + lang + '-' + mw.config.get('wgTitle') + '.ogg');
+      if (lang === 'En') {
+        titles.push('File:' + lang + '-uk-' + mw.config.get('wgTitle') + '.ogg');
+        titles.push('File:' + lang + '-us-' + mw.config.get('wgTitle') + '.ogg');
+        titles.push('File:' + lang + '-au-' + mw.config.get('wgTitle') + '.ogg');
+      }
+      if (lang === 'De') {
+        titles.push('File:' + lang + '-at-' + mw.config.get('wgTitle') + '.ogg');
+      }
+
+      queries[EApi.commonsUrl()] = { titles: titles.join('|'), prop: 'info' };
+      EApi.askMore(queries, 'EAutomator.getAudioRe');
       return false;
 
       // callback
@@ -2848,14 +2884,26 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
         $.each(res.query.pages, function (j, val) {
           var content, ogg;
 
-          if (j === '-1' || !val.revisions || !val.revisions[0]) {
+          if (j === '-1') {
             return false;
           }
-          content = val.revisions[0]['*'];
-          ogg = EAutomator.extractAudio(content);
-          if (ogg !== undefined && ogg.length) {
-            oggs[lang] = ogg;
+          if (res.query.general.wikiid === 'commonswiki') {
+            ogg = val.title.replace(/^File:/, '');
+            if (oggs.commons === undefined) {
+              oggs.commons = [];
+            }
+            oggs.commons.push(ogg);
             error = undefined;
+          } else {
+            if (!val.revisions || !val.revisions[0]) {
+              return false;
+            }
+            content = val.revisions[0]['*'];
+            ogg = EAutomator.extractAudio(content);
+            if (ogg !== undefined && ogg.length) {
+              oggs[lang] = ogg;
+              error = undefined;
+            }
           }
           return true;
         });

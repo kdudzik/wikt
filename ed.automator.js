@@ -56,14 +56,17 @@ EAutomator = {
 	 * Aktualizuje interwiki: do obecnych dodaje z wersji językowych z sekcji + domyślnych
 	 */
 	fillInterwiki : function () {
-		var langs, urls, query;
+		var langs, urls, query, queries = {};
 
 		EApi.started(EConstants.MODE_IW, '');
 		langs = EAutomator.getAllLangs();
 		langs.push('pl');
 		urls = $.map(langs, function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'langlinks', lllimit: 200 };
-		EApi.askMore(query, 'EAutomator.fillInterwikiRe', urls);
+		$.each(urls, function () {
+			queries[this] = query;
+		});
+		EApi.askMore(queries, 'EAutomator.fillInterwikiRe');
 		return false;
 
 		// callback
@@ -110,12 +113,15 @@ EAutomator = {
 	},
 
 	getIPA : function () {
-		var urls, query;
+		var urls, query, queries = {};
 
 		EApi.started(EConstants.MODE_IPA, 'wymowa');
 		urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
-		EApi.askMore(query, 'EAutomator.getIPARe', urls);
+		$.each(urls, function () {
+			queries[this] = query;
+		});
+		EApi.askMore(queries, 'EAutomator.getIPARe');
 		return false;
 
 		// callback
@@ -258,17 +264,23 @@ EAutomator = {
 		if (sectionCode === 'ru') {
 			textarea.val('{{translit}}');
 		} else {
+			if (sectionCode === 'be') {
+				sectionCode = 'by';
+			}
 			textarea.val('{{translit|' + sectionCode + '}}');
 		}
 	},
 
 	getPicture : function () {
-		var urls, query;
+		var urls, query, queries = {};
 
 		EApi.started(EConstants.MODE_PICTURE, '');
 		urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
-		EApi.askMore(query, 'EAutomator.getPictureRe', urls);
+		$.each(urls, function () {
+			queries[this] = query;
+		});
+		EApi.askMore(queries, 'EAutomator.getPictureRe');
 		return false;
 
 		// callback
@@ -353,12 +365,27 @@ EAutomator = {
 	},
 
 	getAudio : function () {
-		var urls, query;
+		var urls, lang, query, titles = [], queries = {};
 
 		EApi.started(EConstants.MODE_AUDIO, 'wymowa');
 		urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
-		EApi.askMore(query, 'EAutomator.getAudioRe', urls);
+		$.each(urls, function () {
+			queries[this] = query;
+		});
+		lang = $.ucFirst(EUtil.getActiveLangCode());
+		titles.push('File:' + lang + '-' + mw.config.get('wgTitle') + '.ogg');
+		if (lang === 'En') {
+			titles.push('File:' + lang + '-uk-' + mw.config.get('wgTitle') + '.ogg');
+			titles.push('File:' + lang + '-us-' + mw.config.get('wgTitle') + '.ogg');
+			titles.push('File:' + lang + '-au-' + mw.config.get('wgTitle') + '.ogg');
+		}
+		if (lang === 'De') {
+			titles.push('File:' + lang + '-at-' + mw.config.get('wgTitle') + '.ogg');
+		}
+
+		queries[EApi.commonsUrl()] = { titles: titles.join('|'), prop: 'info' };
+		EApi.askMore(queries, 'EAutomator.getAudioRe');
 		return false;
 
 		// callback
@@ -378,14 +405,26 @@ EAutomator = {
 			$.each(res.query.pages, function (j, val) {
 				var content, ogg;
 
-				if (j === '-1' || !val.revisions || !val.revisions[0]) {
+				if (j === '-1') {
 					return false;
 				}
-				content = val.revisions[0]['*'];
-				ogg = EAutomator.extractAudio(content);
-				if (ogg !== undefined && ogg.length) {
-					oggs[lang] = ogg;
+				if (res.query.general.wikiid === 'commonswiki') {
+					ogg = val.title.replace(/^File:/, '');
+					if (oggs.commons === undefined) {
+						oggs.commons = [];
+					}
+					oggs.commons.push(ogg);
 					error = undefined;
+				} else {
+					if (!val.revisions || !val.revisions[0]) {
+						return false;
+					}
+					content = val.revisions[0]['*'];
+					ogg = EAutomator.extractAudio(content);
+					if (ogg !== undefined && ogg.length) {
+						oggs[lang] = ogg;
+						error = undefined;
+					}
 				}
 				return true;
 			});
