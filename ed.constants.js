@@ -647,7 +647,7 @@ EStr = {
 	ADD_INTERWIKI:
 		'Dodaj (zaktualizuj) interwiki',
 	ADD_PICTURE:
-		'Dodaj grafikę',
+		'Dodaj ilustrację',
 	ADD_AUDIO:
 		'Dodaj nagranie dźwiękowe',
 	GET_IPA:
@@ -655,7 +655,7 @@ EStr = {
 	GET_INTERWIKI:
 		'Pobierz interwiki z innych wersji językowych Wikisłownika',
 	GET_PICTURE:
-		'Pobierz grafikę z innych wersji językowych Wikisłownika',
+		'Pobierz ilustrację z innych wersji językowych Wikisłownika',
 	GET_AUDIO:
 		'Pobierz nagranie dźwiękowe z innych wersji językowych Wikisłownika',
 	WILL_BE_SHOWN:
@@ -663,7 +663,7 @@ EStr = {
 	NO_IPA_FOUND:
 		'Nie znaleziono IPA',
 	NO_PICTURE_FOUND:
-		'Nie znaleziono grafik',
+		'Nie znaleziono ilustracji',
 	NO_AUDIO_FOUND:
 		'Nie znaleziono plików dźwiękowych',
 	AJAX_IPA_RESULT_INSTRUCTION:
@@ -678,7 +678,7 @@ EStr = {
 		'zobacz hasło',
 	AJAX_PICTURE_RESULT_INSTRUCTION:
 		'<div id="ajax_result_disc"><small>\
-		Poniżej znajduje się lista grafik, które udało się znaleźć \
+		Poniżej znajduje się lista ilustracji, które udało się znaleźć \
 		w artykułach o tej samej nazwie w innych wersjach językowych Wikisłownika. Kliknij wybrany wynik, aby wstawić ten plik w miejscu, \
 		w którym znajduje się teraz kursor.<br/> \
 		Po najechaniu myszką na nazwę pliku pokaże się jego podgląd. \

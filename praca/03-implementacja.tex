@@ -18,7 +18,7 @@ Podobnie jak w~wielu innych przypadkach w~obrębie projektów Wikimedia jako met
 \end{enumerate}
 Jak widać, możliwości dołączania dodatkowych skryptów są elastyczne i~dostępne na różnych poziomach dla różnych użytkowników. Decyzja o~włączeniu skryptów dla wszystkich użytkowników danego projektu należy do jego administratorów (nie licząc wspólnych skryptów narzuconych przez Fundację), natomiast każdy użytkownik poprzez edycję specjalnej strony może uruchamiać różne skrypty na swoje potrzeby, nie będąc zmuszonym do korzystania z~dodatków do przeglądarek, takich jak Greasemonkey. W~ten sposób ułatwiony jest proces powstawania i~testowania nowych skryptów: osoby chcące przetestować nowy skrypt mogą na swojej stronie JS dołączyć go do swojej. Jeśli administratorzy uznają skrypt za wartościowy, mogą go dodać do zbioru gadżetów (wtedy każdy użytkownik ma możliwość włączenia skryptu bez konieczności edycji plików JS) lub do ogólnego pliku \kod|MediaWiki:Common.js|.
 
-\paragraph{MediaWiki 1.17}
+\subsubsection{MediaWiki 1.17}
 Projekty Fundacji od czerwca 2011~roku używają wersji MediaWiki~1.17. Wersja ta wprowadziła kilka istotnych zmian, spośród których najważniejszą było wprowadzenie modułu \kod|ResourceLoader|, zmieniającego system ładowania dodatkowych plików, przede wszystkim skryptów i~arkuszy stylów~\cite{mw:117}. Wszystkie potrzebne pliki są łączone w~jeden i~dodatkowo kompresowane, dodatkowo poprawiono też obsługę pamięci podręcznej po stronie klienta. Do tej pory poszczególne pliki JS i~CSS przesyłane były statycznie w~wielu żądaniach HTTP, co mogło powodować problemy z~ich synchronizacją, a~przede wszystkim zwiększało obciążenie sieci. Aktualizacja software'u projektów Fundacji spowodowała konieczność aktualizacji większości używanych w~nich skryptów i~zaangażowała większość aktywnych uczestników zaznajomionych z~technikaliami~\cite{mw:migration}.
 
 Od wersji~1.16 do MediaWiki dołączana jest biblioteka programistyczna jQuery, a~w~najnowszym wydaniu zaktualizowano ją do wersji 1.4.2~\cite{mw:jquery}. Jest to jedna z~najczęściej używanych bibliotek dla JavaScript, w~bardzo dużym stopniu usprawniająca programowanie w~tym języku. Kod pisany za jej pomocą jest o~wiele czytelniejszy i~prostszy, biblioteka pozwala też wyeliminować wiele problemów związanych z~nieprawidłową obsługą JavaScript w~niektórych przeglądarkach~\cite{jquery:action}~\cite{jquery:doc}.
@@ -26,13 +26,13 @@ Od wersji~1.16 do MediaWiki dołączana jest biblioteka programistyczna jQuery, 
 \subsection{Środowisko programistyczne}
 Programowanie w~JavaScript wymaga użycia innych metod niż tworzenie aplikacji desktopowych. Do tworzenia edytora dla Wikisłownika użyto m.in. następujących aplikacji:
 
-\paragraph{Geany}
+\subsubsection{Geany}
 Lekkie zintegrowane środowisko programistyczne (IDE)~\cite{geany}. W~początkowej fazie projektu używane było środowisko Eclipse z~dodatkowymi wtyczkami --- okazało się jednak, że obsługa JavaScript nie jest w~nim na tyle wygodna, aby konieczne było wykorzystywanie tak rozbudowanego edytora.
-\paragraph{Przeglądarki internetowe}
-Aplikacja została przetestowana w~przeglądarkach Firefox $\geq$~4, Chrome $\geq$~10, Opera $\geq$~10 i~Internet Explorer $\geq$~7, pod systemami operacyjnymi Linux i~Windows. Wyeliminowano wszystkie błędy, które zostały odkryte w~czasie testów. Do implementacji używane były przeglądarki Google Chrome (i~jej wbudowane narzędzia deweloperskie) oraz Firefox z~dodatkiem Firebug, ułatwiającym debugowanie aplikacji~\cite{firebug}. Prawidłowe działanie aplikacji pod maksymalną możliwą liczbą dostępnych przeglądarek jest kluczowe ze względu na jej charakter --- edycja jest dostępna dla każdego użytkownika. Nie testowano jednak edytora w~starszych wersjach tych programów ze względu na ich znikome rozpowszechnienie i~niewspółmierny koszt takich testów w~stosunku do spodziewanych korzyści.
-\paragraph{Git}
+\subsubsection{Przeglądarki internetowe}
+Aplikacja została przetestowana w~przeglądarkach Firefox $\geq$~4, Chrome 13, Opera $\geq$~10 i~Internet Explorer $\geq$~7, pod systemami operacyjnymi Linux i~Windows. Wyeliminowano wszystkie błędy, które zostały odkryte w~czasie testów. Do implementacji używane były przeglądarki Google Chrome (i~jej wbudowane narzędzia deweloperskie) oraz Firefox z~dodatkiem Firebug, ułatwiającym debugowanie aplikacji~\cite{firebug}. Prawidłowe działanie aplikacji pod maksymalną możliwą liczbą dostępnych przeglądarek jest kluczowe ze względu na jej charakter --- edycja jest dostępna dla każdego użytkownika. Nie testowano jednak edytora w~starszych wersjach tych programów ze względu na ich znikome rozpowszechnienie i~niewspółmierny koszt takich testów w~stosunku do spodziewanych korzyści.
+\subsubsection{Git}
 Systemem kontroli wersji używanym w~projekcie był Git. Dzięki niemu możliwe było uniknięcie jakichkolwiek problemów związanych z~zarządzaniem wersjami. Dla celów bezpieczeństwa kod był na bieżąco wysyłany do zdalnego repozytorium założonym w~serwisie GitHub~\cite{github}. Kontroli wersji podlegała również niniejsza praca i~jej kod źródłowy w~systemie \LaTeX. Historia zmian aplikacji i~pracy jest dostępna do wglądu na serwerach GitHub~\cite{github:wikt}.
-\paragraph{The Regex Coach}
+\subsubsection{The Regex Coach}
 W~aplikacji duże znaczenie odgrywają wyrażenia regularne, wykorzystywane podczas parsowania wikitekstu. The Regex Coach jest programem ułatwiającym konstruowanie poprawnych wyrażeń~\cite{regexcoach}.
 \spacer
 

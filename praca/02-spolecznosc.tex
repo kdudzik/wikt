@@ -57,8 +57,8 @@ Najważniejszym produktem, będącym wynikiem analizy wymagań, jest specyfikacj
 \item \textbf{Użytkownik} --- osoba dokonująca edycji w~Wikisłowniku.
 \item \textbf{Użytkownik zalogowany} --- osoba zalogowana w~Wikisłowniku i~dokonująca w~tym projekcie edycji.
 \item \textbf{Użytkownik niezalogowany} --- osoba niezalogowana w~Wikisłowniku i~dokonująca w~tym projekcie edycji. Takie edycje zostaną zapisane wraz z~adresem IP użytkownika, co umożliwia częściową identyfikację autora.
-\item \textbf{Administrator} --- zalogowany użytkownik, posiadający dodatkowe uprawnienia przyznane w~toku głosowania wśród uprawnionych użytkowników. Wśród tych uprawnień są kasowanie i~zabezpieczanie haseł, blokowanie użytkowników i~edytowanie stron w~przestrzeni nazw \kod|MediaWiki:|.
 \item \textbf{Przestrzeń nazw} --- grupa stron w~Wikisłowniku o~wspólnym prefiksie zakończonym dwukropkiem. Przykładowe przestrzenie nazw to \kod|Szablon:|, \kod|Dyskusja:|. Szczególnym przypadkiem jest tzw. przestrzeń główna, skupiająca strony bez dodatkowego prefiksu --- w~niej znajdują się wszystkie hasła słownika.
+\item \textbf{Hasło} --- strona w~przestrzeni głównej Wikisłownika.
 \item \textbf{Stary formularz} --- dotychczasowa metoda wprowadzania danych, opisana w~sekcji~\ref{wikt:structure}.
 \item \textbf{Nowy formularz} --- aplikacja będąca przedmiotem niniejszej pracy.
 \item \textbf{Sekcja} --- odcinek pojedynczego hasła dotyczący użycia słowa w~pojedynczym języku, wyróżniony nagłówkiem drugiego stopnia (\kod|==|).
@@ -67,12 +67,54 @@ Najważniejszym produktem, będącym wynikiem analizy wymagań, jest specyfikacj
 \end{itemize}
 
 \subsection{Wymagania funkcjonalne}
-...
+\subsubsection{Edycja istniejących haseł i~sekcji za pomocą nowego formularza}
+Użytkownik musi mieć możliwość wprowadzenia zmian w~obrębie całego hasła Wikisłownika za pomocą nowego formularza. Formularz powinien umożliwiać edycję dowolnego elementu w~haśle --- w~szczególności dotyczy to sekcji wstępnej, zawierającej dane ogólne, niezwiązane z~żadnym językiem. Edycja ma polegać na uzupełnieniu wartości dla poszczególnych kluczy w~formularzu. Kluczami są tytuły kolejnych podsekcji, wartościami ich zawartość.
+
+\subsubsection{Dodanie nowej sekcji do istniejącego hasła za pomocą nowego formularza}
+Użytkownik musi mieć możliwość rozszerzenia istniejącego hasła o~kolejną sekcję językową. Sekcja powinna zostać automatycznie uzupełniona zawartością charakterystyczną dla wybranego języka.
+
+\subsubsection{Utworzenie nowego hasła za pomocą nowego formularza}
+Użytkownik musi mieć możliwość stworzenia nowego hasła, składającego się z~jednej lub wielu sekcji językowych. Każda sekcja powinna być utworzona w~sposób analogiczny do dodawania nowej sekcji do istniejącego hasła.
+
+\subsubsection{Edycja i~utworzenie nowego hasła za pomocą starego formularza}
+Użytkownik, który chce korzystać nadal ze starego formularza, musi mieć taką możliwość. Decyzja o~wyborze starego lub nowego formularza musi być łatwa do podjęcia i~możliwa do odwrócenia w~każdej chwili, także w~trakcie edycji lub tworzenia hasła.
+
+\subsubsection{Wprowadzanie znaków specjalnych}
+Użytkownik musi mieć możliwość prostego wprowadzania do formularza znaków specjalnych, w~szczególności liter alfabetów używanych w~językach opisywanych przez Wikisłownik.
+
+\subsubsection{Usunięcie sekcji językowej}
+Użytkownik musi mieć możliwość usunięcia dowolnej sekcji językowej z~hasła.
+
+\subsubsection{Edycja tytułu sekcji językowej}
+Użytkownik musi mieć możliwość zmiany tytułu sekcji językowej. Jest to konieczne z~powodu odrębnego traktowania haseł opisujących przysłowia, związki frazeologiczne i~inne wyrażenia składające się z~kilku wyrazów.
+
+\subsubsection{Automatyczne pobieranie danych z~innych wersji językowych}
+Użytkownik musi mieć możliwość wyszukania w~innych wersjach językowych Wikisłownika danych, które mogą być cennym uzupełnieniem edytowanego hasła. W~szczególności dotyczy to ilustracji, wymowy w~międzynarodowym alfabecie fonetycznym (IPA), nagrań dźwiękowych.%TODO UPDATE
+
+\subsubsection{Automatyczne uzupełnianie podsekcji}
+Aplikacja powinna automatycznie uzupełnić te spośród podsekcji w~danym haśle, które to umożliwiają. W~szczególności dotyczy to linków interwiki w~nowo dodawanej sekcji wstępnej, szablonów używanych do transliteracji, znacznika \kod|<references/>| w~podsekcji \emph{źródła}.%TODO UPDATE
+
 \subsection{Wymagania niefunkcjonalne}
-...
-\subsection{Spodziewane korzyści}
-...
-%czemu nie desktopowa
+\subsubsection{Licencjonowanie}
+Aplikacja musi zostać udostępniona na licencjach GNU~FDL~1.2 i~CC\dywiz{}BY\dywiz{}SA~3.0 --- wymagają tego zasady Wikisłownika i~wszystkich projektów Wikimedia. W~związku z~powyższym cały kod użyty w~aplikacji musi być dostępny już wcześniej na odpowiednich licencjach bądź udostępniony na nich przez autora pracy. Grafiki użyte w~interfejsie użytkownika muszą pochodzić z~serwisu Wikimedia Commons, zbierającego pliki na wolnych licencjach.
+
+\subsubsection{Integracja z~Wikisłownikiem}
+Aplikacja musi być w~pełni zintegrowana z~istniejącym interfejsem Wikisłownika. Z~tego powodu jedyną możliwą opcją jest aplikacja kliencka napisana w~JavaScript, w~rachubę nie wchodzi natomiast aplikacja desktopowa wymagająca dodatkowych czynności. Korzystanie z~nowego formularza powinno być inicjowane w~dokładnie ten sam sposób co korzystanie ze starego formularza.
+
+\subsubsection{Pomoc kontekstowa}
+Nowy formularz musi zawierać pomoc kontekstową dla wszystkich elementów, których działanie nie jest oczywiste. Wyświetlanie pomocy nie może utrudniać edycji hasła.
+
+\subsubsection{Interfejs użytkownika}
+Interfejs użytkownika musi być prosty, czytelny i~intuicyjny. W~szczególności bardzo istotne jest, aby dla nowego użytkownika nowy formularz stanowił duże ułatwienie i~zmniejszał barierę wejścia do projektu.
+
+\subsubsection{Obsługiwane oprogramowanie}
+Ponieważ Wikisłownik musi być dostępny do edycji dla jak największej liczby użytkowników, jest bardzo ważne, aby aplikacja obsługiwała wszystkie popularne przeglądarki internetowe: Firefox $\geq$~4, Chrome 13 (dzięki automatycznej aktualizacji w~przypadku tej przeglądarki nie występuje problem obsługi starszych wersji), Opera $\geq$~10 i~Internet Explorer $\geq$~7. W~przypadku braku wyłączonej obsługi JavaScript zachowanie formularza ma zostać niezmienione: załaduje się stary formularz z~wyłączonymi niektórymi funkcjami.
+
+\subsubsection{Wydajność}
+Aplikacja musi umożliwiać płynną pracę --- skrypty nie mogą być znacząco wolniejsze od skryptów użytych w~starym formularzu.
+
+\subsubsection{Łatwość modyfikacji}
+Ze względu na niestały charakter zasad panujących w~Wikisłowniku kod aplikacji musi być dostępny publicznie i~możliwy do modyfikacji w~każdej chwili. W~szczególności dotyczy to komunikatów dla użytkownika i~używanych stałych, które powinny być zebrane w~jednym miejscu.
 
 \section{Specyfika tworzenia aplikacji dla wikispołeczności}
 \label{sec:spec}
