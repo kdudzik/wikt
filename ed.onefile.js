@@ -1308,6 +1308,26 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
         code = EConstants.LANG_CODES_SHORT[lang];
       }
       return code || lang;
+    },
+
+    extractSubsections : function (str, name) {
+      var sec, index, re,
+        sections = EParser.getSections(str),
+        subsections = [];
+
+      $.each(sections, function () {
+        if (!this.content) {
+          return true;
+        }
+        sec = this.content;
+        index = sec.indexOf('{{' + name + '}}');
+        if (index > -1) {
+          sec = sec.substring(index + name.length + 4);
+          re = new RegExp('\\{\\{(' + EConstants.SUBSECTIONS.ALL.join('|') + ')[\\}\\|]');
+          subsections.push(sec.substring(0, sec.search(re)));
+        }
+      });
+      return subsections.join('');
     }
   };
 
@@ -1661,7 +1681,14 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
 
           link.html(elem);
           link.click(function () {
-            insertTags('[[Plik:' + elem + '|thumb|' + mw.config.get('wgTitle'), ' (1.1)]]', '');
+            var title = mw.config.get('wgTitle'),
+              last = title.charCodeAt(title.length - 1);
+
+            if (last >= 0x590 && last <= 0x85f) {
+              insertTags('[[Plik:' + elem + '|thumb|' + title, ' &lrm;(1.1)]]', '');
+            } else {
+              insertTags('[[Plik:' + elem + '|thumb|' + title, ' (1.1)]]', '');
+            }
             return false;
           });
           dd.append(link).append(' ');
@@ -1745,7 +1772,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
           link = $('<a/>');
 
         dt.append('Hasło <a class="normalsize" href="' + mw.util.wikiGetlink(title) + '" target="_blank">[' + title + ']</a>:');
-        link.html(example);
+        link.text(example);
         link.click(function () {
           insertTags(example, '', '');
           return false;
@@ -2493,20 +2520,17 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       }
     },
 
-    started : function (mode, subs) {
+    started : function (mode) {
       var idpart = EConstants.API_ID[mode],
         elem = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart);
 
       elem.removeClass('apidone apierror').addClass('apistarted');
-      if (subs !== undefined) {
-        EUtil.focusArea(subs);
-      }
       if (elem.data('orig_html')) {
         elem.html(elem.data('orig_html'));
       }
     },
 
-    done : function (mode, res, error) {
+    done : function (mode, res, subs, error) {
       var idpart = EConstants.API_ID[mode],
         elem = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart);
 
@@ -2517,6 +2541,9 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
         }
       } else {
         elem.addClass('apierror').removeClass('apistarted apidone').data('orig_html', elem.html()).html(error);
+      }
+      if (subs !== undefined) {
+        EUtil.focusArea(subs);
       }
     },
 
@@ -2585,7 +2612,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     fillInterwiki : function () {
       var langs, urls, query, queries = {};
 
-      EApi.started(EConstants.MODE_IW, '');
+      EApi.started(EConstants.MODE_IW);
       langs = EAutomator.getAllLangs();
       langs.push('pl');
       urls = $.map(langs, function (val) { return EApi.url(val); });
@@ -2642,7 +2669,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     getIPA : function () {
       var urls, query, queries = {};
 
-      EApi.started(EConstants.MODE_IPA, 'wymowa');
+      EApi.started(EConstants.MODE_IPA);
       urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
       query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
       $.each(urls, function () {
@@ -2681,7 +2708,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
         });
         return true;
       });
-      EApi.done(EConstants.MODE_IPA, ipas, error);
+      EApi.done(EConstants.MODE_IPA, ipas, 'wymowa', error);
     },
 
     extractIPA : function (str, lang) {
@@ -2801,7 +2828,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     getPicture : function () {
       var urls, query, queries = {};
 
-      EApi.started(EConstants.MODE_PICTURE, '');
+      EApi.started(EConstants.MODE_PICTURE);
       urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
       query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
       $.each(urls, function () {
@@ -2840,7 +2867,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
         });
         return true;
       });
-      EApi.done(EConstants.MODE_PICTURE, pics, error);
+      EApi.done(EConstants.MODE_PICTURE, pics, '', error);
       EAutomator.getPictureUrls(pics);
     },
 
@@ -2894,7 +2921,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     getAudio : function () {
       var urls, lang, query, titles = [], queries = {};
 
-      EApi.started(EConstants.MODE_AUDIO, 'wymowa');
+      EApi.started(EConstants.MODE_AUDIO);
       urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
       query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
       $.each(urls, function () {
@@ -2957,7 +2984,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
         });
         return true;
       });
-      EApi.done(EConstants.MODE_AUDIO, oggs, error);
+      EApi.done(EConstants.MODE_AUDIO, oggs, 'wymowa', error);
     },
 
     extractAudio : function (str) {
@@ -2977,9 +3004,11 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     getInternalExample : function () {
       var query;
 
-      EApi.started(EConstants.MODE_INTERNAL_EXAMPLE, 'przykłady');
-      query = { generator: 'backlinks', gbltitle: mw.config.get('wgTitle'), gbllimit: 40, prop: 'revisions', rvprop: 'content' };
-      EApi.ask(query, 'EAutomator.getInternalExampleRe', EApi.url());
+      EApi.started(EConstants.MODE_INTERNAL_EXAMPLE);
+      setTimeout(function () {
+        query = { generator: 'backlinks', gbltitle: mw.config.get('wgTitle'), gbllimit: 50, gblnamespace: 0, prop: 'revisions', rvprop: 'content' };
+        EApi.ask(query, 'EAutomator.getInternalExampleRe', EApi.url());
+      }, 100);
       return false;
     },
 
@@ -2989,12 +3018,17 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
 
       if (result[0] && result[0].query && result[0].query.pages) {
         $.each(result[0].query.pages, function () {
-          var title = this.title,
-            content = this.revisions[0]['*'],
-            re = new RegExp(":\\s*\\(\\d+\\.\\d+\\)\\s*(''[^\\}\\n]*\\[\\[" + mw.config.get('wgTitle') + "[\\|\\]][^\\}\\n]*)", 'g'),
-            isPolish = EUtil.getActiveLangCode() === 'pl',
-            ex = EAutomator.extractExample(content, re, isPolish),
-            delim = isPolish ? "''" : '';
+          var content, re, isPolish, ex, delim,
+            title = this.title;
+
+          if (title === mw.config.get('wgTitle')) {
+            return true;
+          }
+          content = this.revisions[0]['*'];
+          re = new RegExp(":\\s*\\(\\d+\\.\\d+\\)\\s*(''[^\\}\\n]*\\[\\[" + mw.config.get('wgTitle') + "[\\|\\]][^\\}\\n]*)", 'g');
+          isPolish = EUtil.getActiveLangCode() === 'pl';
+          ex = EAutomator.extractExample(content, re, isPolish);
+          delim = isPolish ? "''" : '';
 
           if (ex) {
             examples[title] = delim + $.trim(ex) + delim;
@@ -3002,11 +3036,13 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
           }
         });
       }
-      EApi.done(EConstants.MODE_INTERNAL_EXAMPLE, examples, error);
+      EApi.done(EConstants.MODE_INTERNAL_EXAMPLE, examples, 'przykłady', error);
     },
 
     extractExample : function (content, re, isPolish) {
       var arr;
+
+      content = EParser.extractSubsections(content, 'przykłady');
 
       if ((arr = re.exec(content)) !== null) {
         if (isPolish) {

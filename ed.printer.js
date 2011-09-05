@@ -189,7 +189,14 @@ EPrinter = {
 
 				link.html(elem);
 				link.click(function () {
-					insertTags('[[Plik:' + elem + '|thumb|' + mw.config.get('wgTitle'), ' (1.1)]]', '');
+					var title = mw.config.get('wgTitle'),
+						last = title.charCodeAt(title.length - 1);
+
+					if (last >= 0x590 && last <= 0x85f) {
+						insertTags('[[Plik:' + elem + '|thumb|' + title, ' &lrm;(1.1)]]', '');
+					} else {
+						insertTags('[[Plik:' + elem + '|thumb|' + title, ' (1.1)]]', '');
+					}
 					return false;
 				});
 				dd.append(link).append(' ');
@@ -273,7 +280,7 @@ EPrinter = {
 				link = $('<a/>');
 
 			dt.append('Hasło <a class="normalsize" href="' + mw.util.wikiGetlink(title) + '" target="_blank">[' + title + ']</a>:');
-			link.html(example);
+			link.text(example);
 			link.click(function () {
 				insertTags(example, '', '');
 				return false;

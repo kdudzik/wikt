@@ -118,6 +118,26 @@ EParser = {
 			code = EConstants.LANG_CODES_SHORT[lang];
 		}
 		return code || lang;
+	},
+
+	extractSubsections : function (str, name) {
+		var sec, index, re,
+			sections = EParser.getSections(str),
+			subsections = [];
+
+		$.each(sections, function () {
+			if (!this.content) {
+				return true;
+			}
+			sec = this.content;
+			index = sec.indexOf('{{' + name + '}}');
+			if (index > -1) {
+				sec = sec.substring(index + name.length + 4);
+				re = new RegExp('\\{\\{(' + EConstants.SUBSECTIONS.ALL.join('|') + ')[\\}\\|]');
+				subsections.push(sec.substring(0, sec.search(re)));
+			}
+		});
+		return subsections.join('');
 	}
 };
 

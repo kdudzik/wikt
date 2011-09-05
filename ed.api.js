@@ -72,20 +72,17 @@ EApi = {
 		}
 	},
 
-	started : function (mode, subs) {
+	started : function (mode) {
 		var idpart = EConstants.API_ID[mode],
 			elem = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart);
 
 		elem.removeClass('apidone apierror').addClass('apistarted');
-		if (subs !== undefined) {
-			EUtil.focusArea(subs);
-		}
 		if (elem.data('orig_html')) {
 			elem.html(elem.data('orig_html'));
 		}
 	},
 
-	done : function (mode, res, error) {
+	done : function (mode, res, subs, error) {
 		var idpart = EConstants.API_ID[mode],
 			elem = $('#ed_' + EUtil.getActiveLangId() + '_extra_' + idpart);
 
@@ -96,6 +93,9 @@ EApi = {
 			}
 		} else {
 			elem.addClass('apierror').removeClass('apistarted apidone').data('orig_html', elem.html()).html(error);
+		}
+		if (subs !== undefined) {
+			EUtil.focusArea(subs);
 		}
 	},
 

@@ -58,7 +58,7 @@ EAutomator = {
 	fillInterwiki : function () {
 		var langs, urls, query, queries = {};
 
-		EApi.started(EConstants.MODE_IW, '');
+		EApi.started(EConstants.MODE_IW);
 		langs = EAutomator.getAllLangs();
 		langs.push('pl');
 		urls = $.map(langs, function (val) { return EApi.url(val); });
@@ -115,7 +115,7 @@ EAutomator = {
 	getIPA : function () {
 		var urls, query, queries = {};
 
-		EApi.started(EConstants.MODE_IPA, 'wymowa');
+		EApi.started(EConstants.MODE_IPA);
 		urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
 		$.each(urls, function () {
@@ -154,7 +154,7 @@ EAutomator = {
 			});
 			return true;
 		});
-		EApi.done(EConstants.MODE_IPA, ipas, error);
+		EApi.done(EConstants.MODE_IPA, ipas, 'wymowa', error);
 	},
 
 	extractIPA : function (str, lang) {
@@ -274,7 +274,7 @@ EAutomator = {
 	getPicture : function () {
 		var urls, query, queries = {};
 
-		EApi.started(EConstants.MODE_PICTURE, '');
+		EApi.started(EConstants.MODE_PICTURE);
 		urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
 		$.each(urls, function () {
@@ -313,7 +313,7 @@ EAutomator = {
 			});
 			return true;
 		});
-		EApi.done(EConstants.MODE_PICTURE, pics, error);
+		EApi.done(EConstants.MODE_PICTURE, pics, '', error);
 		EAutomator.getPictureUrls(pics);
 	},
 
@@ -367,7 +367,7 @@ EAutomator = {
 	getAudio : function () {
 		var urls, lang, query, titles = [], queries = {};
 
-		EApi.started(EConstants.MODE_AUDIO, 'wymowa');
+		EApi.started(EConstants.MODE_AUDIO);
 		urls = $.map(EAutomator.getActiveAndInterwikiLangs(), function (val) { return EApi.url(val); });
 		query = { titles: mw.config.get('wgTitle'), prop: 'revisions', rvprop: 'content' };
 		$.each(urls, function () {
@@ -430,7 +430,7 @@ EAutomator = {
 			});
 			return true;
 		});
-		EApi.done(EConstants.MODE_AUDIO, oggs, error);
+		EApi.done(EConstants.MODE_AUDIO, oggs, 'wymowa', error);
 	},
 
 	extractAudio : function (str) {
@@ -450,9 +450,11 @@ EAutomator = {
 	getInternalExample : function () {
 		var query;
 
-		EApi.started(EConstants.MODE_INTERNAL_EXAMPLE, 'przykłady');
-		query = { generator: 'backlinks', gbltitle: mw.config.get('wgTitle'), gbllimit: 40, prop: 'revisions', rvprop: 'content' };
-		EApi.ask(query, 'EAutomator.getInternalExampleRe', EApi.url());
+		EApi.started(EConstants.MODE_INTERNAL_EXAMPLE);
+		setTimeout(function () {
+			query = { generator: 'backlinks', gbltitle: mw.config.get('wgTitle'), gbllimit: 50, gblnamespace: 0, prop: 'revisions', rvprop: 'content' };
+			EApi.ask(query, 'EAutomator.getInternalExampleRe', EApi.url());
+		}, 100);
 		return false;
 	},
 
@@ -462,12 +464,17 @@ EAutomator = {
 
 		if (result[0] && result[0].query && result[0].query.pages) {
 			$.each(result[0].query.pages, function () {
-				var title = this.title,
-					content = this.revisions[0]['*'],
-					re = new RegExp(":\\s*\\(\\d+\\.\\d+\\)\\s*(''[^\\}\\n]*\\[\\[" + mw.config.get('wgTitle') + "[\\|\\]][^\\}\\n]*)", 'g'),
-					isPolish = EUtil.getActiveLangCode() === 'pl',
-					ex = EAutomator.extractExample(content, re, isPolish),
-					delim = isPolish ? "''" : '';
+				var content, re, isPolish, ex, delim,
+					title = this.title;
+
+				if (title === mw.config.get('wgTitle')) {
+					return true;
+				}
+				content = this.revisions[0]['*'];
+				re = new RegExp(":\\s*\\(\\d+\\.\\d+\\)\\s*(''[^\\}\\n]*\\[\\[" + mw.config.get('wgTitle') + "[\\|\\]][^\\}\\n]*)", 'g');
+				isPolish = EUtil.getActiveLangCode() === 'pl';
+				ex = EAutomator.extractExample(content, re, isPolish);
+				delim = isPolish ? "''" : '';
 
 				if (ex) {
 					examples[title] = delim + $.trim(ex) + delim;
@@ -475,11 +482,13 @@ EAutomator = {
 				}
 			});
 		}
-		EApi.done(EConstants.MODE_INTERNAL_EXAMPLE, examples, error);
+		EApi.done(EConstants.MODE_INTERNAL_EXAMPLE, examples, 'przykłady', error);
 	},
 
 	extractExample : function (content, re, isPolish) {
 		var arr;
+
+		content = EParser.extractSubsections(content, 'przykłady');
 
 		if ((arr = re.exec(content)) !== null) {
 			if (isPolish) {
