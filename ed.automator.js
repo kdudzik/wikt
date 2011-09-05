@@ -471,7 +471,7 @@ EAutomator = {
 					return true;
 				}
 				content = this.revisions[0]['*'];
-				re = new RegExp(":\\s*\\(\\d+\\.\\d+\\)\\s*(''[^\\}\\n]*\\[\\[" + mw.config.get('wgTitle') + "[\\|\\]][^\\}\\n]*)", 'g');
+				re = new RegExp(":\\s*\\(\\d+\\.\\d+\\)\\s*('*[^\\}\\n]*\\[\\[" + mw.config.get('wgTitle') + "[\\|\\]][^\\}\\n]*)", 'g');
 				isPolish = EUtil.getActiveLangCode() === 'pl';
 				ex = EAutomator.extractExample(content, re, isPolish);
 				delim = isPolish ? "''" : '';

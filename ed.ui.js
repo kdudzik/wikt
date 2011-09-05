@@ -409,23 +409,23 @@ EUi = {
 
 	removeDefaultTexts : function (langid) {
 		var subs, defaultText,
-			arr = langid === 'polski' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
+			arr = langid === '0002' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
 
 		for (subs in arr) {
 			if (arr.hasOwnProperty(subs)) {
 				defaultText = arr[subs];
-				if (EUi.isDefaultText(langid, subs)) {
+				if (EUi.isDefaultText(langid, subs, 0)) {
 					EUi.val(langid, subs, '');
 				}
 			}
 		}
 	},
 
-	isDefaultText : function (langid, subsection) {
+	isDefaultText : function (langid, subsection, extendedMode) {
 		var arr = langid === '0002' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN,
 			val = EUi.val(langid, subsection);
 
-		if (val.search(/^: \(\d+\.\d+\)$/) !== -1) {
+		if (extendedMode && val.search(/^: \(\d+\.\d+\)$/) !== -1) {
 			EUi.val(langid, subsection, val + ' ');
 			return true;
 		} else {

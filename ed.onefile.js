@@ -2220,23 +2220,23 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
 
     removeDefaultTexts : function (langid) {
       var subs, defaultText,
-        arr = langid === 'polski' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
+        arr = langid === '0002' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
 
       for (subs in arr) {
         if (arr.hasOwnProperty(subs)) {
           defaultText = arr[subs];
-          if (EUi.isDefaultText(langid, subs)) {
+          if (EUi.isDefaultText(langid, subs, 0)) {
             EUi.val(langid, subs, '');
           }
         }
       }
     },
 
-    isDefaultText : function (langid, subsection) {
+    isDefaultText : function (langid, subsection, extendedMode) {
       var arr = langid === '0002' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN,
         val = EUi.val(langid, subsection);
 
-      if (val.search(/^: \(\d+\.\d+\)$/) !== -1) {
+      if (extendedMode && val.search(/^: \(\d+\.\d+\)$/) !== -1) {
         EUi.val(langid, subsection, val + ' ');
         return true;
       } else {
@@ -2579,7 +2579,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
         elem.addClass('apierror').removeClass('apistarted apidone').data('orig_html', elem.html()).html(error);
       }
       if (subs !== undefined) {
-        EUtil.focusArea(subs, EUi.isDefaultText(EUtil.getActiveLangId(), subs));
+        EUtil.focusArea(subs, EUi.isDefaultText(EUtil.getActiveLangId(), subs, 1));
       }
     },
 
@@ -3061,7 +3061,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
             return true;
           }
           content = this.revisions[0]['*'];
-          re = new RegExp(":\\s*\\(\\d+\\.\\d+\\)\\s*(''[^\\}\\n]*\\[\\[" + mw.config.get('wgTitle') + "[\\|\\]][^\\}\\n]*)", 'g');
+          re = new RegExp(":\\s*\\(\\d+\\.\\d+\\)\\s*('*[^\\}\\n]*\\[\\[" + mw.config.get('wgTitle') + "[\\|\\]][^\\}\\n]*)", 'g');
           isPolish = EUtil.getActiveLangCode() === 'pl';
           ex = EAutomator.extractExample(content, re, isPolish);
           delim = isPolish ? "''" : '';
