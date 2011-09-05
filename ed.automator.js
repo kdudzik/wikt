@@ -486,13 +486,14 @@ EAutomator = {
 	},
 
 	extractExample : function (content, re, isPolish) {
-		var arr;
+		var arr, ret;
 
 		content = EParser.extractSubsections(content, 'przykłady');
 
 		if ((arr = re.exec(content)) !== null) {
 			if (isPolish) {
-				return arr[1].replace(/(.*→\s*|'''?)/g, '');
+				ret = arr[1].replace(/(.*→\s*|'''?)/g, '');
+				return re.exec(": (1.1) ''" + ret) === -1 ? null : ret;
 			} else {
 				return arr[1].replace(/'''/g, '');
 			}

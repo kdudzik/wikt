@@ -5,7 +5,7 @@
 var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParser, ESectionParser, ESpecialChars, EPrinter;
 (function ($) {
   var jPrompt, jAlert, jConfirm,
-    css = "#ed {  overflow : auto;  background-color: white;  padding: 0;  display: none;  line-height: 1.3;  border: 0;  width: 100%;  height: auto; }  fieldset.ed_section {  display: none;  margin: 0;  border: 1px solid khaki;  min-height: 250px;  background-color: LemonChiffon;  padding-top: 7px; }  fieldset.ed_section.active {  display: block; }  ul#ed_menu {  background-color: white;  width: 97%;  display: block;  margin: 0;  float: left;  border: 0;  padding-left: 3%; }  ul#ed_menu li {  float: left;  padding: 3px 7px;  background: white;  border-width: 1px 1px 0 1px;  border-style: dotted;  border-color: khaki;  cursor: pointer;  list-style-type: none;  list-style-image: none; }  ul#ed_menu li.active {  background: LemonChiffon;  border-color: DarkKhaki;  border-style: solid; }  #ed_menuitem_new {  font-weight: bold; }  #ed_content {  clear: left;  padding: 0; }   fieldset.ed_section label {  float: left;  width: 20%;  padding: 2px 1% 0 1%;  line-height: 1;  clear: left;  text-align: right;  max-width: 170px; }  fieldset.ed_section textarea {  width: 77%;  border: 1px solid khaki;  height: 1em;  font-family: Consolas, \"Lucida Console\", monospace;  font-size: 9pt;  overflow: auto; }  fieldset.ed_section p {  clear: both;  text-align: center; }  fieldset.ed_section p.top {  margin-top: 10px;  margin-bottom: 10px; }  fieldset.ed_section p.top a {  margin-right: 15px; }  fieldset.ed_section a:hover {  cursor: pointer; }  label.oblig_subsection {  color: #CC0000;  font-weight: bold; }  div.subsection_extra.active {  margin-top: 6px; }  div.subsection_extra > span {  cursor: pointer;  background-color: lemonchiffon;  border: 1px dotted khaki;  padding: 5px; }  div.subsection_extra > span.apidone {  padding-right: 25px;  background: url(http://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Gtk-ok.svg/20px-Gtk-ok.svg.png) no-repeat right; }  div.subsection_extra > span.apistarted {  padding-right: 32px;  background: url(http://upload.wikimedia.org/wikipedia/commons/3/32/Loader3.gif) no-repeat right; }  div.subsection_extra > span.apierror {  padding-right: 25px;  background: url(http://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Crystal_128_error.svg/20px-Crystal_128_error.svg.png) no-repeat right; }  #popup_container {  font-size: 0.8em;  min-width: 300px; /* Dialog will be no smaller than this */  max-width: 600px; /* Dialog will wrap after this width */  background: #FFF;  border: solid 5px #999;  color: #000;  -moz-border-radius: 5px;  -webkit-border-radius: 5px;  border-radius: 5px;  z-index: 900;  position: absolute; }  #popup_overlay {  z-index: 899; }  #popup_container.prompt {  z-index: 600; }  #popup_overlay.prompt {  z-index: 599; }  #popup_title {  font-size: 1em;  font-weight: bold;  text-align: center;  line-height: 1.75em;  color: #666;  background-color: #CCC;  border: solid 1px #FFF;  border-bottom: solid 1px #999; }  #popup_content {  background: 16px 16px no-repeat url(images/info.gif);  padding: 1em 1.75em;  margin: 0em; }  #popup_content.alert {  background-image: url(images/info.gif); }  #popup_content.confirm {  background-image: url(images/important.gif); }  #popup_content.prompt {  background-image: url(images/help.gif); }  #popup_message {  padding-left: 48px; }  #popup_panel {  text-align: center;  margin: 1em 0em 0em 1em; }  #popup_prompt {  margin: .5em 0em;  border: 1px solid darkkhaki; }  .tooltip {  padding: 5px;  max-width: 450px;  background-color: lemonchiffon;  border: 1px solid darkkhaki;  color: saddlebrown; }  body.skin-monobook .tooltip, body.skin-monobook #keyboard_keys, body.skin-monobook #popup_container {  font-size: 1.4em !important; }  body.skin-monobook .tooltip small, body.skin-monobook #keyboard_keys small, body.skin-monobook #popup_container small, body.skin-monobook #ajax_results small {  font-size: 0.9em !important; }  body.skin-monobook .tooltip small tt, body.skin-monobook #keyboard_keys small tt, body.skin-monobook #popup_container small tt, body.skin-monobook #ajax_results small tt {  font-size: 1.3em !important; }  #keyboard {  width: 32px;  height: 32px;  background-color: lemonchiffon;  background-image: url('http://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Input-keyboard.svg/32px-Input-keyboard.svg.png');  border: 2px solid PaleGoldenrod;  padding: 0;  position: absolute;  z-index: 700;  cursor: pointer; }  #keyboard_keys {  font-size: 0.8em;  background-color: lemonchiffon;  border: 2px solid palegoldenrod;  padding: 5px;  max-width: 400px;  position: absolute;  z-index: 700; }  #keyboard_keys .plainlinks {  border: 0 !important; }  #keyboard_keys select {  width: 100%; }  #keyboard_keys #editpage-specialchars.plainlinks a {  padding: 1px 2px !important;  margin: 0 !important; } #keyboard_keys #editpage-specialchars.plainlinks a:hover {  text-decoration: none;  background-color: palegoldenrod !important; } #keyboard_keys #editpage-specialchars.plainlinks a.extiw {  padding: 0 !important; } #keyboard_keys #editpage-specialchars.plainlinks a.extiw:hover {  text-decoration: underline;  background-color: transparent !important; } #keyboard_keys .keyboard_always {  margin: 5px 2px; } #keyboard_keys .keyboard_always a {  padding: 2px 7px;  font-size: 1.2em;  border: 1px solid palegoldenrod;  background-color: palegoldenrod; } #keyboard_keys .keyboard_always a:hover {  text-decoration: none;  border: 1px solid darkkhaki; }  #ajax_results {  background-color: lemonchiffon;  border: 2px solid palegoldenrod;  padding: 5px;  width: 350px;  position: absolute;  z-index: 598;  word-wrap: break-word;  max-height: 450px;  overflow-y: auto; }  #ajax_results a {  padding: 1px 2px !important;  margin: 0 !important;  cursor: pointer; } #ajax_results a:hover {  text-decoration: none;  background-color: palegoldenrod !important; } #ajax_results a#closelink {  font-size: 1.7em;  font-weight: bold;  float: right; } #ajax_results dt {  font-weight: normal;  font-style: italic; } #ajax_results dt a {  font-size: 0.85em;  font-style: normal; } #ajax_results dt a.normalsize {  font-size: 1em;  font-style: italic; } #ajax_results dd {  line-height: 1.4; } #ajax_results dd a {  padding: 0px 3px !important; } #ajax_result_disc {  margin-bottom: 5px; } p.inactive label {  color: #999; } p.inactive textarea {  background-color: lemonChiffon;  color: #999; } ";
+    css = "#ed {  overflow : auto;  background-color: white;  padding: 0;  display: none;  line-height: 1.3;  border: 0;  width: 100%;  height: auto; }  fieldset.ed_section {  display: none;  margin: 0;  border: 1px solid khaki;  min-height: 250px;  background-color: LemonChiffon;  padding-top: 7px; }  fieldset.ed_section.active {  display: block; }  ul#ed_menu {  background-color: white;  width: 97%;  display: block;  margin: 0;  float: left;  border: 0;  padding-left: 3%; }  ul#ed_menu li {  float: left;  padding: 3px 7px;  background: white;  border-width: 1px 1px 0 1px;  border-style: dotted;  border-color: khaki;  cursor: pointer;  list-style-type: none;  list-style-image: none; }  ul#ed_menu li.active {  background: LemonChiffon;  border-color: DarkKhaki;  border-style: solid; }  #ed_menuitem_new {  font-weight: bold; }  #ed_content {  clear: left;  padding: 0; }   fieldset.ed_section label {  float: left;  width: 20%;  padding: 2px 1% 0 1%;  line-height: 1;  clear: left;  text-align: right;  max-width: 170px; }  fieldset.ed_section textarea {  width: 77%;  border: 1px solid khaki;  height: 1em;  font-family: Consolas, \"Lucida Console\", monospace;  font-size: 9pt;  overflow: auto; }  fieldset.ed_section p {  clear: both;  text-align: center; }  fieldset.ed_section p.top {  margin-top: 10px;  margin-bottom: 10px; }  fieldset.ed_section p.top a {  margin-right: 15px; }  fieldset.ed_section a:hover {  cursor: pointer; }  label.oblig_subsection {  color: #CC0000;  font-weight: bold; }  div.subsection_extra.active {  margin-top: 6px; }  div.subsection_extra > span {  cursor: pointer;  background-color: lemonchiffon;  border: 1px dotted khaki;  padding: 5px; }  div.subsection_extra > span.apidone {  padding-right: 25px;  background: url(http://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Gtk-ok.svg/20px-Gtk-ok.svg.png) no-repeat right; }  div.subsection_extra > span.apistarted {  padding-right: 32px;  background: url(http://upload.wikimedia.org/wikipedia/commons/3/32/Loader3.gif) no-repeat right; }  div.subsection_extra > span.apierror {  padding-right: 25px;  background: url(http://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Crystal_128_error.svg/20px-Crystal_128_error.svg.png) no-repeat right; }  #popup_container {  font-size: 0.8em;  min-width: 300px; /* Dialog will be no smaller than this */  max-width: 600px; /* Dialog will wrap after this width */  background: #FFF;  border: solid 5px #999;  color: #000;  -moz-border-radius: 5px;  -webkit-border-radius: 5px;  border-radius: 5px;  z-index: 900;  position: absolute; }  #popup_overlay {  z-index: 899; }  #popup_container.prompt {  z-index: 600; }  #popup_overlay.prompt {  z-index: 599; }  #popup_title {  font-size: 1em;  font-weight: bold;  text-align: center;  line-height: 1.75em;  color: #666;  background-color: #CCC;  border: solid 1px #FFF;  border-bottom: solid 1px #999; }  #popup_content {  background: 16px 16px no-repeat url(images/info.gif);  padding: 1em 1.75em;  margin: 0em; }  #popup_content.alert {  background-image: url(images/info.gif); }  #popup_content.confirm {  background-image: url(images/important.gif); }  #popup_content.prompt {  background-image: url(images/help.gif); }  #popup_message {  padding-left: 48px; }  #popup_panel {  text-align: center;  margin: 1em 0em 0em 1em; }  #popup_prompt {  margin: .5em 0em;  border: 1px solid darkkhaki; }  .tooltip {  padding: 5px;  max-width: 450px;  background-color: lemonchiffon;  border: 1px solid darkkhaki;  color: saddlebrown; }  body.skin-monobook .tooltip, body.skin-monobook #keyboard_keys, body.skin-monobook #popup_container {  font-size: 1.4em !important; }  body.skin-monobook .tooltip small, body.skin-monobook #keyboard_keys small, body.skin-monobook #popup_container small, body.skin-monobook #ajax_results small {  font-size: 0.9em !important; }  body.skin-monobook .tooltip small tt, body.skin-monobook #keyboard_keys small tt, body.skin-monobook #popup_container small tt, body.skin-monobook #ajax_results small tt {  font-size: 1.3em !important; }  #keyboard {  width: 32px;  height: 32px;  background-color: lemonchiffon;  background-image: url('http://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Input-keyboard.svg/32px-Input-keyboard.svg.png');  border: 2px solid PaleGoldenrod;  padding: 0;  position: absolute;  z-index: 700;  cursor: pointer; }  #keyboard_keys {  font-size: 0.8em;  background-color: lemonchiffon;  border: 2px solid palegoldenrod;  padding: 5px;  max-width: 400px;  position: absolute;  z-index: 700; }  #keyboard_keys .plainlinks {  border: 0 !important; }  #keyboard_keys select {  width: 100%; }  #keyboard_keys #editpage-specialchars.plainlinks a {  padding: 1px 2px !important;  margin: 0 !important; } #keyboard_keys #editpage-specialchars.plainlinks a:hover {  text-decoration: none;  background-color: palegoldenrod !important; } #keyboard_keys #editpage-specialchars.plainlinks a.extiw {  padding: 0 !important; } #keyboard_keys #editpage-specialchars.plainlinks a.extiw:hover {  text-decoration: underline;  background-color: transparent !important; } #keyboard_keys .keyboard_always {  margin: 5px 2px; } #keyboard_keys .keyboard_always a {  padding: 2px 7px;  font-size: 1.2em;  border: 1px solid palegoldenrod;  background-color: palegoldenrod; } #keyboard_keys .keyboard_always a:hover {  text-decoration: none;  border: 1px solid darkkhaki; }  #ajax_results {  background-color: lemonchiffon;  border: 2px solid palegoldenrod;  padding: 5px;  width: 350px;  position: absolute;  z-index: 598;  word-wrap: break-word;  max-height: 450px;  overflow-y: auto; }  #ajax_results a {  padding: 1px 2px !important;  margin: 0 !important;  cursor: pointer; } #ajax_results a:hover {  text-decoration: none;  background-color: palegoldenrod !important; } #ajax_results a#closelink {  font-size: 1.7em;  font-weight: bold;  float: right; } #ajax_results dt {  font-weight: normal;  font-style: italic; } #ajax_results dt a {  font-size: 0.85em;  font-style: normal; } #ajax_results dt a.normalsize {  font-size: 1em;  font-style: italic; } #ajax_results dt.native, #ajax_results dt.native a, #ajax_results dd.native {  font-weight: bold; } #ajax_results dd {  line-height: 1.4; } #ajax_results dd a {  padding: 0px 3px !important; } #ajax_result_disc {  margin-bottom: 5px; } p.inactive label {  color: #999; } p.inactive textarea {  background-color: lemonChiffon;  color: #999; } ";
   mw.util.addCSS(css);
   // jQuery Alert Dialogs Plugin
   // Version 1.1
@@ -756,13 +756,13 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     SAMPLE_SUBSECTION_CONTENTS_POLISH :
       {
         'znaczenia' : "''rzeczownik, rodzaj żeński, męski''\n: (1.1) [[krótki|krótka]] [[definicja]]",
-        'przykłady' : ": (1.1) ''[[przykład|Przykład]] [[zdanie|zdania]].''",
+        'przykłady' : ": (1.1) ''[[przykład|Przykład]] [[zdanie|zdania]].'' ",
         'tłumaczenia' : "* angielski: (1.1) [[ ]]"
       },
     SAMPLE_SUBSECTION_CONTENTS_FOREIGN :
       {
         'znaczenia' : "''rzeczownik, rodzaj żeński, męski''\n: (1.1) [[krótki|krótka]] [[definicja]]",
-        'przykłady' : ": (1.1) ''[[przykład|Przykład]] [[zdanie|zdania]].'' → [[tłumaczenie|Tłumaczenie]] [[zdanie|zdania]]."
+        'przykłady' : ": (1.1) ''[[przykład|Przykład]] [[zdanie|zdania]].'' → [[tłumaczenie|Tłumaczenie]] [[zdanie|zdania]]. "
       },
     SECTION_ID_INTRO :
       '0000',
@@ -1096,8 +1096,20 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       return context[func].apply(context, args);
     },
 
-    focusArea : function (subs) {
-      $('#ed_' + EUtil.getActiveLangId() + '_' + subs).focus();
+    focusArea : function (subs, atEnd) {
+      var elem = $('#ed_' + EUtil.getActiveLangId() + '_' + subs),
+        len;
+
+      elem.focus();
+      if (atEnd && elem[0]) {
+        if (elem[0].setSelectionRange) {
+          len = elem.val().length * 2;
+          elem[0].setSelectionRange(len, len);
+        } else {
+          elem.val(elem.val());
+        }
+        elem[0].scrollTop = 999999;
+      }
     },
 
     isEmpty : function (obj) {
@@ -1608,7 +1620,15 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
         });
       });
       arr.sort(function (a, b) {
-        return a.caption > b.caption ? 1 : -1;
+        var active = EUtil.getActiveLangCode();
+
+        if (a.lang === active) {
+          return -1;
+        } else if (b.lang === active) {
+          return 1;
+        } else {
+          return a.caption > b.caption ? 1 : -1;
+        }
       });
 
       $.each(arr, function () {
@@ -1625,13 +1645,17 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
             link = $('<a class="ipa"/>');
 
           link.click(function () {
-            insertTags('{{' + withOuter.template + '|' + withOuter.str + '}}', '', '');
+            insertTags('{{' + withOuter.template + '|' + withOuter.str + '}} ', '', '');
             return false;
           });
           link.append(beg + withOuter.str + end);
           dd.append(link);
         });
         dl.append(dt).append(dd);
+        if (arrelem.lang === EUtil.getActiveLangCode()) {
+          dt.addClass('native');
+          dd.addClass('native');
+        }
       });
       return $(EStr.AJAX_IPA_RESULT_INSTRUCTION).append(dl);
     },
@@ -1685,9 +1709,9 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
               last = title.charCodeAt(title.length - 1);
 
             if (last >= 0x590 && last <= 0x85f) {
-              insertTags('[[Plik:' + elem + '|thumb|' + title, ' &lrm;(1.1)]]', '');
+              insertTags('[[Plik:' + elem + '|thumb|' + title, ' &lrm;(1.1)]]\n', '');
             } else {
-              insertTags('[[Plik:' + elem + '|thumb|' + title, ' (1.1)]]', '');
+              insertTags('[[Plik:' + elem + '|thumb|' + title, ' (1.1)]]\n', '');
             }
             return false;
           });
@@ -1738,7 +1762,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
           elem = elem.replace(/\{\{(PAGENAME|pn)\}\}/g, mw.config.get('wgTitle'));
           link.html(elem);
           link.click(function () {
-            insertTags('{{' + template + '|' + elem + '}}', '', '');
+            insertTags('{{' + template + '|' + elem + '}} ', '', '');
             return false;
           });
           dd.append(link).append(' ');
@@ -2194,17 +2218,29 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       }
     },
 
-    removeDefaultTexts : function (langid, code) {
+    removeDefaultTexts : function (langid) {
       var subs, defaultText,
-        arr = code === 'pl' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
+        arr = langid === 'polski' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN;
 
       for (subs in arr) {
         if (arr.hasOwnProperty(subs)) {
           defaultText = arr[subs];
-          if (EUi.val(langid, subs) === defaultText) {
+          if (EUi.isDefaultText(langid, subs)) {
             EUi.val(langid, subs, '');
           }
         }
+      }
+    },
+
+    isDefaultText : function (langid, subsection) {
+      var arr = langid === '0002' ? EConstants.SAMPLE_SUBSECTION_CONTENTS_POLISH : EConstants.SAMPLE_SUBSECTION_CONTENTS_FOREIGN,
+        val = EUi.val(langid, subsection);
+
+      if (val.search(/^: \(\d+\.\d+\)$/) !== -1) {
+        EUi.val(langid, subsection, val + ' ');
+        return true;
+      } else {
+        return val === $.trim(arr[subsection]);
       }
     },
 
@@ -2543,7 +2579,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
         elem.addClass('apierror').removeClass('apistarted apidone').data('orig_html', elem.html()).html(error);
       }
       if (subs !== undefined) {
-        EUtil.focusArea(subs);
+        EUtil.focusArea(subs, EUi.isDefaultText(EUtil.getActiveLangId(), subs));
       }
     },
 
@@ -3040,13 +3076,14 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     },
 
     extractExample : function (content, re, isPolish) {
-      var arr;
+      var arr, ret;
 
       content = EParser.extractSubsections(content, 'przykłady');
 
       if ((arr = re.exec(content)) !== null) {
         if (isPolish) {
-          return arr[1].replace(/(.*→\s*|'''?)/g, '');
+          ret = arr[1].replace(/(.*→\s*|'''?)/g, '');
+          return re.exec(": (1.1) ''" + ret) === -1 ? null : ret;
         } else {
           return arr[1].replace(/'''/g, '');
         }

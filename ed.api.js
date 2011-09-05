@@ -95,7 +95,7 @@ EApi = {
 			elem.addClass('apierror').removeClass('apistarted apidone').data('orig_html', elem.html()).html(error);
 		}
 		if (subs !== undefined) {
-			EUtil.focusArea(subs);
+			EUtil.focusArea(subs, EUi.isDefaultText(EUtil.getActiveLangId(), subs));
 		}
 	},
 

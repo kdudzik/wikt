@@ -314,6 +314,9 @@ body.skin-monobook .tooltip small tt, body.skin-monobook #keyboard_keys small tt
 	font-size: 1em;
 	font-style: italic;
 }
+#ajax_results dt.native, #ajax_results dt.native a, #ajax_results dd.native {
+	font-weight: bold;
+}
 #ajax_results dd {
 	line-height: 1.4;
 }

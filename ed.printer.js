@@ -116,7 +116,15 @@ EPrinter = {
 			});
 		});
 		arr.sort(function (a, b) {
-			return a.caption > b.caption ? 1 : -1;
+			var active = EUtil.getActiveLangCode();
+
+			if (a.lang === active) {
+				return -1;
+			} else if (b.lang === active) {
+				return 1;
+			} else {
+				return a.caption > b.caption ? 1 : -1;
+			}
 		});
 
 		$.each(arr, function () {
@@ -133,13 +141,17 @@ EPrinter = {
 					link = $('<a class="ipa"/>');
 
 				link.click(function () {
-					insertTags('{{' + withOuter.template + '|' + withOuter.str + '}}', '', '');
+					insertTags('{{' + withOuter.template + '|' + withOuter.str + '}} ', '', '');
 					return false;
 				});
 				link.append(beg + withOuter.str + end);
 				dd.append(link);
 			});
 			dl.append(dt).append(dd);
+			if (arrelem.lang === EUtil.getActiveLangCode()) {
+				dt.addClass('native');
+				dd.addClass('native');
+			}
 		});
 		return $(EStr.AJAX_IPA_RESULT_INSTRUCTION).append(dl);
 	},
@@ -193,9 +205,9 @@ EPrinter = {
 						last = title.charCodeAt(title.length - 1);
 
 					if (last >= 0x590 && last <= 0x85f) {
-						insertTags('[[Plik:' + elem + '|thumb|' + title, ' &lrm;(1.1)]]', '');
+						insertTags('[[Plik:' + elem + '|thumb|' + title, ' &lrm;(1.1)]]\n', '');
 					} else {
-						insertTags('[[Plik:' + elem + '|thumb|' + title, ' (1.1)]]', '');
+						insertTags('[[Plik:' + elem + '|thumb|' + title, ' (1.1)]]\n', '');
 					}
 					return false;
 				});
@@ -246,7 +258,7 @@ EPrinter = {
 				elem = elem.replace(/\{\{(PAGENAME|pn)\}\}/g, mw.config.get('wgTitle'));
 				link.html(elem);
 				link.click(function () {
-					insertTags('{{' + template + '|' + elem + '}}', '', '');
+					insertTags('{{' + template + '|' + elem + '}} ', '', '');
 					return false;
 				});
 				dd.append(link).append(' ');

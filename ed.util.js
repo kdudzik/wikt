@@ -31,8 +31,20 @@ EUtil = {
 		return context[func].apply(context, args);
 	},
 
-	focusArea : function (subs) {
-		$('#ed_' + EUtil.getActiveLangId() + '_' + subs).focus();
+	focusArea : function (subs, atEnd) {
+		var elem = $('#ed_' + EUtil.getActiveLangId() + '_' + subs),
+			len;
+
+		elem.focus();
+		if (atEnd && elem[0]) {
+			if (elem[0].setSelectionRange) {
+				len = elem.val().length * 2;
+				elem[0].setSelectionRange(len, len);
+			} else {
+				elem.val(elem.val());
+			}
+			elem[0].scrollTop = 999999;
+		}
 	},
 
 	isEmpty : function (obj) {
