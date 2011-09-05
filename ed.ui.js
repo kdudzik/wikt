@@ -296,7 +296,7 @@ EUi = {
 
 	rebindFormActions : function () {
 		this.form.find('textarea').removeAttr('name');
-		this.form.parent('form').submit(function () {
+		$('form').submit(function () {
 			if (EUi.usingNew) {
 				EUi.deleteEmptySections();
 				EUi.tbox.val(EPrinter.recalculateCode());
