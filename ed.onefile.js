@@ -1148,6 +1148,10 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     };
   }
 
+  String.prototype.endsWith = function (suffix) {
+    return this.indexOf(suffix, this.length - suffix.length) !== -1;
+  };
+
   Ed = {
 
     code : '',
@@ -1544,7 +1548,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
           }
         }
       }
-      return $.trim(code.join(''));
+      return $.trim(code.join('')).replace(/  +/g, ' ');
     },
 
     adequateWhitespace : function (subsection) {
@@ -1634,10 +1638,11 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       $.each(arr, function () {
         var dt = $('<dt/>'),
           dd = $('<dd/>'),
-          arrelem = this;
+          arrelem = this,
+          title = mw.config.get('wgTitle');
 
         dt.append(arrelem.caption + ' ');
-        dt.append('<a href="' + EUtil.getUrl(arrelem.lang, mw.config.get('wgTitle')) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
+        dt.append('<a href="' + EUtil.getUrl(arrelem.lang, title) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
         $.each(arrelem.arr, function () {
           var withOuter = EPrinter.ipaWithOuter(this, arrelem.lang),
             beg = withOuter.template === 'IPA' ? '/' : '[',
@@ -1645,7 +1650,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
             link = $('<a class="ipa"/>');
 
           link.click(function () {
-            insertTags('{{' + withOuter.template + '|' + withOuter.str + '}} ', '', '');
+            EPrinter.insertCode('{{' + withOuter.template + '|' + withOuter.str + '}} ', '', '', '+IPA z [[:' + arrelem.lang + ':' + title + ']]');
             return false;
           });
           link.append(beg + withOuter.str + end);
@@ -1709,9 +1714,9 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
               last = title.charCodeAt(title.length - 1);
 
             if (last >= 0x590 && last <= 0x85f) {
-              insertTags('[[Plik:' + elem + '|thumb|' + title, ' &lrm;(1.1)]]\n', '');
+              EPrinter.insertCode('[[Plik:' + elem + '|thumb|' + title, ' &lrm;(1.1)]]\n', '', '+ilustracja z [[:' + arrelem.lang + ':' + title + ']]');
             } else {
-              insertTags('[[Plik:' + elem + '|thumb|' + title, ' (1.1)]]\n', '');
+              EPrinter.insertCode('[[Plik:' + elem + '|thumb|' + title, ' (1.1)]]\n', '', '+ilustracja z [[:' + arrelem.lang + ':' + title + ']]');
             }
             return false;
           });
@@ -1762,7 +1767,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
           elem = elem.replace(/\{\{(PAGENAME|pn)\}\}/g, mw.config.get('wgTitle'));
           link.html(elem);
           link.click(function () {
-            insertTags('{{' + template + '|' + elem + '}} ', '', '');
+            EPrinter.insertCode('{{' + template + '|' + elem + '}} ', '', '', '+nagranie wymowy');
             return false;
           });
           dd.append(link).append(' ');
@@ -1798,7 +1803,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
         dt.append('Hasło <a class="normalsize" href="' + mw.util.wikiGetlink(title) + '" target="_blank">[' + title + ']</a>:');
         link.text(example);
         link.click(function () {
-          insertTags(example, '', '');
+          EPrinter.insertCode(example, '', '', '+przykład z hasła [[' + title + ']]');
           return false;
         });
         dd.append(link);
@@ -1806,6 +1811,29 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       });
 
       return $(EStr.AJAX_INTERNAL_EXAMPLE_INSTRUCTION).append(dl);
+    },
+
+    appendEditDescription : function (res) {
+      var input = $('#wpSummary'),
+        val = input.val();
+
+      if (!val) {
+        input.val(res);
+      } else if (val.indexOf(res) === -1) {
+        if (val.endsWith('*/')) {
+          input.val(val + ' ' + res);
+        } else if (val.endsWith('*/ ')) {
+          input.val(val + res);
+        } else {
+          input.val(val + ', ' + res);
+        }
+      }
+    },
+
+    insertCode : function (pre, post, mid, editDescription) {
+      insertTags(pre, post, mid);
+      EPrinter.appendEditDescription(editDescription);
+      EUi.hideResult();
     }
   };
 

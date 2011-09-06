@@ -83,5 +83,9 @@ if (!Array.prototype.indexOf) {
 	};
 }
 
+String.prototype.endsWith = function (suffix) {
+	return this.indexOf(suffix, this.length - suffix.length) !== -1;
+};
+
 window.EFilesLoaded++;
 window.ETryInit();
