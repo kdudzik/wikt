@@ -1059,7 +1059,11 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     SECTION_DERIVED_INACTIVE:
       'Sekcja <em>pochodne</em> jest nieaktywna.<br/><small>Nie zostanie dołączona do hasła, ponieważ wśród znaczeń hasła nie ma morfemu.</small>',
     SECTION_RELATED_INACTIVE:
-      'Sekcja <em>pokrewne</em> jest nieaktywna.<br/><small>Nie zostanie dołączona do hasła, ponieważ wśród znaczeń hasła nie ma części mowy innej niż morfem.</small>'
+      'Sekcja <em>pokrewne</em> jest nieaktywna.<br/><small>Nie zostanie dołączona do hasła, ponieważ wśród znaczeń hasła nie ma części mowy innej niż morfem.</small>',
+    IPA_HEADER_INFO:
+      'Wymowa znaleziona w sekcji oznaczonej nagłówkiem:<br />',
+    IPA_HEADER_FAILED:
+      '<small>Nie udało się rozpoznać sekcji językowej, w której znaleziono wymowę.</small>'
   };
 
 
@@ -1205,10 +1209,45 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
   };
 
   EParser = {
-    getSections : function (code) {
+    getSections : function (code, lang) {
       var sections, reta, s, sec, section, id;
 
-      code = code.replace(/\s*==\s*([^=]+)\s*==\s*/g, '<BE>$1<EN>');
+      if (lang === undefined) {
+        code = code.replace(/(\n|^)==([^=][^\n]+?)==\s*\n/g, '<BE>$2<EN>');
+      } else {
+        switch (lang) {
+        case 'ru':
+          code = code.replace(/(\n|^)(=([^=][^\n]+?)=)\s*\n/g, '<BE>$2<EN>');
+          break;
+        case 'fr':
+        case 'li':
+        case 'nl':
+        case 'oc':
+          code = code.replace(/(\{\{=([^=\-][^\n]*?)=\}\})/g, '<BE>$1<EN>');
+          break;
+        case 'lv':
+          code = code.replace(/(\{\{-([^=\-][^\n]*?)-\}\})/g, '<BE>$1<EN>');
+          break;
+        case 'co':
+        case 'is':
+        case 'ga':
+          code = code.replace(/(\{\{-\w\w-\}\})/g, '<BE>$1<EN>');
+          break;
+        case 'it':
+          code = code.replace(/(\{\{in\|[^\}]+\}\})/g, '<BE>$1<EN>');
+          break;
+        case 'es':
+          code = code.replace(/(\{\{[A-Z\-]{2,}\|[^\}]+\}\})/g, '<BE>$1<EN>');
+          break;
+        case 'af':
+          code = code.replace(/(\{\{-\w\w-\}\})/g, '<BE>$1<EN>');
+          code = code.replace(/(\n|^)(==([^=][^\n]+?)==)\s*\n/g, '<BE>$2<EN>');
+          break;
+        default:
+          code = code.replace(/(\n|^)(==([^=][^\n]+?)==)\s*\n/g, '<BE>$2<EN>');
+          break;
+        }
+      }
       sections = code.split('<BE>');
       reta = {};
       for (s in sections) {
@@ -1223,11 +1262,14 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
               id : EConstants.SECTION_ID_INTRO,
               initcontent: $.trim(sec[0])
             };
-          } else {
+          } else if (lang === undefined) {
+            // polski
             section = this.getSectionFromTitle($.trim(sec[0]));
             id = section.id;
             reta[id] = section;
             reta[id].content = $.trim(sec[1]);
+          } else {
+            reta[sec[0]] = { title: sec[0], content: $.trim(sec[1]) };
           }
         }
       }
@@ -1548,7 +1590,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
           }
         }
       }
-      return $.trim(code.join('')).replace(/  +/g, ' ');
+      return $.trim(code.join('')).replace(/ {2,}/g, ' ');
     },
 
     adequateWhitespace : function (subsection) {
@@ -1616,7 +1658,6 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
         dl = $('<dl/>');
 
       $.each(res, function (lang, langresult) {
-        langresult.sort();
         arr.push({
           lang: lang,
           arr: langresult,
@@ -1644,17 +1685,22 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
         dt.append(arrelem.caption + ' ');
         dt.append('<a href="' + EUtil.getUrl(arrelem.lang, title) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
         $.each(arrelem.arr, function () {
-          var withOuter = EPrinter.ipaWithOuter(this, arrelem.lang),
+          var withOuter = EPrinter.ipaWithOuter(this.ipa, arrelem.lang),
             beg = withOuter.template === 'IPA' ? '/' : '[',
             end = withOuter.template === 'IPA' ? '/' : ']',
-            link = $('<a class="ipa"/>');
+            link = $('<a class="ipa tip tipdown"/>');
 
           link.click(function () {
             EPrinter.insertCode('{{' + withOuter.template + '|' + withOuter.str + '}} ', '', '', '+IPA z [[:' + arrelem.lang + ':' + title + ']]');
             return false;
           });
           link.append(beg + withOuter.str + end);
-          dd.append(link);
+          if (this.header) {
+            link.data('tip', EStr.IPA_HEADER_INFO + '<tt>' + this.header + '</tt>');
+          } else {
+            link.data('tip', EStr.IPA_HEADER_FAILED);
+          }
+          dd.append(link).append(' ');
         });
         dl.append(dt).append(dd);
         if (arrelem.lang === EUtil.getActiveLangCode()) {
@@ -2775,99 +2821,123 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       EApi.done(EConstants.MODE_IPA, ipas, 'wymowa', error);
     },
 
-    extractIPA : function (str, lang) {
-      if (EAutomator['extractIPA_' + lang] === undefined) {
-        return undefined;
-      } else {
-        return EUtil.executeFn('extractIPA_' + lang, EAutomator, str);
-      }
-    },
-
-    extractFirstArgsFromTemplates : function (str, template) {
+    extractFirstArgsFromTemplates : function (str, template, lang) {
       var arr, el, results = [],
-        re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\{\\}\\|<=]+)[\\}\\|<]', 'gi');
+        re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\{\\}\\|<=]+)[\\}\\|<]', 'gi'),
+        sections = EParser.getSections(str, lang);
 
-      while ((arr = re.exec(str)) !== null) {
-        el = $.trim(arr[1]);
-        if (el && EConstants.FORBIDDEN_IPA_CONTENT.indexOf(el) === -1 && results.indexOf(el) === -1) {
-          results.push(el);
-        }
-      }
-      return results;
-    },
-
-    extractSecondArgsFromTemplates : function (str, template) {
-      var arr, el, results = [],
-        re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\{\\}\\|]*)\\|\\s*[\\/\\]]?([^\\{\\}\\/\\|<=]+)[\\}\\|\\/<\\]]', 'gi');
-
-      while ((arr = re.exec(str)) !== null) {
-        el = $.trim(arr[2]);
-        if (el && EConstants.FORBIDDEN_IPA_CONTENT.indexOf(el) === -1 && results.indexOf(el) === -1) {
-          results.push(el);
-        }
-      }
-      return results;
-    },
-
-    extractAllArgsFromTemplates : function (str, template) {
-      var arr, el, params, i, results = [],
-        re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\{\\}]*)\\}\\}', 'gi');
-
-      while ((arr = re.exec(str)) !== null) {
-        params = arr[1].split('|');
-        for (i = 0; i < params.length; i += 1) {
-          el = $.trim(params[i].replace(/^.*?=/, ''));
+      $.each(sections, function () {
+        while ((arr = re.exec(this.content)) !== null) {
+          el = $.trim(arr[1]);
           if (el && EConstants.FORBIDDEN_IPA_CONTENT.indexOf(el) === -1 && results.indexOf(el) === -1) {
-            results.push(el);
+            results.push({ ipa: el, header: this.title });
           }
         }
-      }
+      });
       return results;
     },
 
-    extractIPA_de: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'Lautschrift'); },
-    extractIPA_es: function (str) { return EAutomator.extractAllArgsFromTemplates(str, 'pronunciación'); },
-    extractIPA_fr: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'pron'); },
-    extractIPA_en: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-    extractIPA_cs: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-    extractIPA_sk: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-    extractIPA_it: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-    extractIPA_af: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-    extractIPA_ca: function (str) { return EAutomator.extractSecondArgsFromTemplates(str, 'pron'); },
-    extractIPA_ro: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'AFI'); },
-    extractIPA_et: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'hääldus'); },
-    extractIPA_ko: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-    extractIPA_nl: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-    extractIPA_co: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-    extractIPA_el: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'ΔΦΑ'); },
-    extractIPA_eo: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IFA'); },
-    extractIPA_vi: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-    extractIPA_ja: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA1'); },
-    extractIPA_simple: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-    extractIPA_ga: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-    extractIPA_is: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-    extractIPA_li: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-    extractIPA_lv: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-    extractIPA_mg: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'pron'); },
-    extractIPA_no: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-    extractIPA_oc: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'pron'); },
-    extractIPA_sl: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'IPA'); },
-    extractIPA_tl: function (str) { return EAutomator.extractFirstArgsFromTemplates(str, 'API'); },
+    extractSecondArgsFromTemplates : function (str, template, lang) {
+      var arr, el, results = [],
+        re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\{\\}\\|]*)\\|\\s*[\\/\\]]?([^\\{\\}\\/\\|<=]+)[\\}\\|\\/<\\]]', 'gi'),
+        sections = EParser.getSections(str, lang);
+
+      $.each(sections, function () {
+        while ((arr = re.exec(this.content)) !== null) {
+          el = $.trim(arr[2]);
+          if (el && EConstants.FORBIDDEN_IPA_CONTENT.indexOf(el) === -1 && results.indexOf(el) === -1) {
+            results.push({ ipa: el, header: this.title });
+          }
+        }
+      });
+      return results;
+    },
+
+    extractAllArgsFromTemplates : function (str, template, lang) {
+      var arr, el, params, i, results = [],
+        re = new RegExp('\\{\\{' + template + '\\s*\\|\\s*([^\\{\\}]*)\\}\\}', 'gi'),
+        sections = EParser.getSections(str, lang);
+
+      $.each(sections, function () {
+        while ((arr = re.exec(this.content)) !== null) {
+          params = arr[1].split('|');
+          for (i = 0; i < params.length; i += 1) {
+            el = $.trim(params[i].replace(/^.*?=/, ''));
+            if (el && EConstants.FORBIDDEN_IPA_CONTENT.indexOf(el) === -1 && results.indexOf(el) === -1) {
+              results.push({ ipa: el, header: this.title });
+            }
+          }
+        }
+      });
+
+      return results;
+    },
+
+    extractIPA : function (str, lang) {
+      switch (lang) {
+      case 'en':
+      case 'cs':
+      case 'sk':
+      case 'it':
+      case 'af':
+      case 'ko':
+      case 'nl':
+      case 'co':
+      case 'vi':
+      case 'simple':
+      case 'ga':
+      case 'is':
+      case 'li':
+      case 'lv':
+      case 'no':
+      case 'sl':
+      case 'ja':
+        return EAutomator.extractFirstArgsFromTemplates(str, 'IPA', lang);
+      case 'fr':
+      case 'mg':
+      case 'oc':
+        return EAutomator.extractFirstArgsFromTemplates(str, 'pron', lang);
+      case 'de':
+        return EAutomator.extractFirstArgsFromTemplates(str, 'Lautschrift', lang);
+      case 'es':
+        return EAutomator.extractAllArgsFromTemplates(str, 'pronunciación', lang);
+      case 'ca':
+        return EAutomator.extractSecondArgsFromTemplates(str, 'pron', lang);
+      case 'ro':
+        return EAutomator.extractFirstArgsFromTemplates(str, 'AFI', lang);
+      case 'et':
+        return EAutomator.extractFirstArgsFromTemplates(str, 'hääldus', lang);
+      case 'el':
+        return EAutomator.extractFirstArgsFromTemplates(str, 'ΔΦΑ', lang);
+      case 'eo':
+        return EAutomator.extractFirstArgsFromTemplates(str, 'IFA', lang);
+      case 'tl':
+        return EAutomator.extractFirstArgsFromTemplates(str, 'API', lang);
+      case 'ru':
+        return EAutomator.extractIPA_ru(str);
+      default:
+        return [];
+      }
+    },
+
     extractIPA_ru: function (str) {
       var arr, el,
-        results = EAutomator.extractFirstArgsFromTemplates(str, 'transcription'),
-        re = /\{\{transcriptions\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)\s*\}\}/g;
+        results = EAutomator.extractFirstArgsFromTemplates(str, 'transcription', 'ru'),
+        re = /\{\{transcriptions\s*\|\s*([^\}\|]*)\s*\|\s*([^\}\|]*)\s*\}\}/g,
+        sections = EParser.getSections(str, 'ru');
 
-      while ((arr = re.exec(str)) !== null) {
-        el = $.trim(arr[1]);
-        if (el && EConstants.FORBIDDEN_IPA_CONTENT.indexOf(el) === -1 && results.indexOf(el) === -1) {
-          results.push(el);
+      $.each(sections, function () {
+        while ((arr = re.exec(this.content)) !== null) {
+          el = $.trim(arr[1]);
+          if (el && EConstants.FORBIDDEN_IPA_CONTENT.indexOf(el) === -1 && results.indexOf(el) === -1) {
+            results.push({ ipa: el, header: this.title });
+          }
+          el = $.trim(arr[2]);
+          if (el && EConstants.FORBIDDEN_IPA_CONTENT.indexOf(el) === -1 && results.indexOf(el) === -1) {
+            results.push({ ipa: el, header: this.title });
+          }
         }
-        el = $.trim(arr[2]);
-        if (el && EConstants.FORBIDDEN_IPA_CONTENT.indexOf(el) === -1 && results.indexOf(el) === -1) {
-          results.push(el);
-        }
-      }
+      });
       return results;
     },
 

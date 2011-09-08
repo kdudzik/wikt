@@ -712,7 +712,11 @@ EStr = {
 	SECTION_DERIVED_INACTIVE:
 		'Sekcja <em>pochodne</em> jest nieaktywna.<br/><small>Nie zostanie dołączona do hasła, ponieważ wśród znaczeń hasła nie ma morfemu.</small>',
 	SECTION_RELATED_INACTIVE:
-		'Sekcja <em>pokrewne</em> jest nieaktywna.<br/><small>Nie zostanie dołączona do hasła, ponieważ wśród znaczeń hasła nie ma części mowy innej niż morfem.</small>'
+		'Sekcja <em>pokrewne</em> jest nieaktywna.<br/><small>Nie zostanie dołączona do hasła, ponieważ wśród znaczeń hasła nie ma części mowy innej niż morfem.</small>',
+	IPA_HEADER_INFO:
+		'Wymowa znaleziona w sekcji oznaczonej nagłówkiem:<br />',
+	IPA_HEADER_FAILED:
+		'<small>Nie udało się rozpoznać sekcji językowej, w której znaleziono wymowę.</small>'
 };
 
 

@@ -40,7 +40,7 @@ EPrinter = {
 				}
 			}
 		}
-		return $.trim(code.join('')).replace(/  +/g, ' ');
+		return $.trim(code.join('')).replace(/ {2,}/g, ' ');
 	},
 
 	adequateWhitespace : function (subsection) {
@@ -108,7 +108,6 @@ EPrinter = {
 			dl = $('<dl/>');
 
 		$.each(res, function (lang, langresult) {
-			langresult.sort();
 			arr.push({
 				lang: lang,
 				arr: langresult,
@@ -136,17 +135,22 @@ EPrinter = {
 			dt.append(arrelem.caption + ' ');
 			dt.append('<a href="' + EUtil.getUrl(arrelem.lang, title) + '" target="_blank">[' + EStr.VIEW_ARTICLE + ']</a>');
 			$.each(arrelem.arr, function () {
-				var withOuter = EPrinter.ipaWithOuter(this, arrelem.lang),
+				var withOuter = EPrinter.ipaWithOuter(this.ipa, arrelem.lang),
 					beg = withOuter.template === 'IPA' ? '/' : '[',
 					end = withOuter.template === 'IPA' ? '/' : ']',
-					link = $('<a class="ipa"/>');
+					link = $('<a class="ipa tip tipdown"/>');
 
 				link.click(function () {
 					EPrinter.insertCode('{{' + withOuter.template + '|' + withOuter.str + '}} ', '', '', '+IPA z [[:' + arrelem.lang + ':' + title + ']]');
 					return false;
 				});
 				link.append(beg + withOuter.str + end);
-				dd.append(link);
+				if (this.header) {
+					link.data('tip', EStr.IPA_HEADER_INFO + '<tt>' + this.header + '</tt>');
+				} else {
+					link.data('tip', EStr.IPA_HEADER_FAILED);
+				}
+				dd.append(link).append(' ');
 			});
 			dl.append(dt).append(dd);
 			if (arrelem.lang === EUtil.getActiveLangCode()) {

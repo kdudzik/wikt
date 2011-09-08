@@ -1,8 +1,43 @@
 EParser = {
-	getSections : function (code) {
+	getSections : function (code, lang) {
 		var sections, reta, s, sec, section, id;
 
-		code = code.replace(/\s*==\s*([^=]+)\s*==\s*/g, '<BE>$1<EN>');
+		if (lang === undefined) {
+			code = code.replace(/(\n|^)==([^=][^\n]+?)==\s*\n/g, '<BE>$2<EN>');
+		} else {
+			switch (lang) {
+			case 'ru':
+				code = code.replace(/(\n|^)(=([^=][^\n]+?)=)\s*\n/g, '<BE>$2<EN>');
+				break;
+			case 'fr':
+			case 'li':
+			case 'nl':
+			case 'oc':
+				code = code.replace(/(\{\{=([^=\-][^\n]*?)=\}\})/g, '<BE>$1<EN>');
+				break;
+			case 'lv':
+				code = code.replace(/(\{\{-([^=\-][^\n]*?)-\}\})/g, '<BE>$1<EN>');
+				break;
+			case 'co':
+			case 'is':
+			case 'ga':
+				code = code.replace(/(\{\{-\w\w-\}\})/g, '<BE>$1<EN>');
+				break;
+			case 'it':
+				code = code.replace(/(\{\{in\|[^\}]+\}\})/g, '<BE>$1<EN>');
+				break;
+			case 'es':
+				code = code.replace(/(\{\{[A-Z\-]{2,}\|[^\}]+\}\})/g, '<BE>$1<EN>');
+				break;
+			case 'af':
+				code = code.replace(/(\{\{-\w\w-\}\})/g, '<BE>$1<EN>');
+				code = code.replace(/(\n|^)(==([^=][^\n]+?)==)\s*\n/g, '<BE>$2<EN>');
+				break;
+			default:
+				code = code.replace(/(\n|^)(==([^=][^\n]+?)==)\s*\n/g, '<BE>$2<EN>');
+				break;
+			}
+		}
 		sections = code.split('<BE>');
 		reta = {};
 		for (s in sections) {
@@ -17,11 +52,14 @@ EParser = {
 						id : EConstants.SECTION_ID_INTRO,
 						initcontent: $.trim(sec[0])
 					};
-				} else {
+				} else if (lang === undefined) {
+					// polski
 					section = this.getSectionFromTitle($.trim(sec[0]));
 					id = section.id;
 					reta[id] = section;
 					reta[id].content = $.trim(sec[1]);
+				} else {
+					reta[sec[0]] = { title: sec[0], content: $.trim(sec[1]) };
 				}
 			}
 		}
