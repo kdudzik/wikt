@@ -145,7 +145,9 @@ EPrinter = {
 					return false;
 				});
 				link.append(beg + withOuter.str + end);
-				if (this.header) {
+				if (arrelem.lang === 'simple') {
+					link.data('tip', EStr.IPA_HEADER_SIMPLE_ENGLISH);
+				} else if (this.header) {
 					link.data('tip', EStr.IPA_HEADER_INFO + '<tt>' + this.header + '</tt>');
 				} else {
 					link.data('tip', EStr.IPA_HEADER_FAILED);

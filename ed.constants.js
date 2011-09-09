@@ -1,5 +1,5 @@
 EConstants = {
-	INTRO : '«',
+	INTRO : 'sekcja wstępna',
 	SUBSECTIONS :
 		{
 			POLISH :
@@ -90,7 +90,7 @@ EConstants = {
 			'złożenia' : 'Złożenia',
 			'hanja' : 'Hanja',
 			'pochodne' : 'Wyrazy pochodne',
-			'' : 'Sekcja wstępna'
+			'' : 'Wstęp sekcji językowej'
 		},
 	NON_LATIN_LANGS :
 		[
@@ -716,7 +716,9 @@ EStr = {
 	IPA_HEADER_INFO:
 		'Wymowa znaleziona w sekcji oznaczonej nagłówkiem:<br />',
 	IPA_HEADER_FAILED:
-		'<small>Nie udało się rozpoznać sekcji językowej, w której znaleziono wymowę.</small>'
+		'<small>Nie udało się rozpoznać sekcji językowej, w której znaleziono wymowę.</small>',
+	IPA_HEADER_SIMPLE_ENGLISH:
+		'<small>Wikisłownik <em>Simple English</em> zawiera tylko angielskie wyrazy.</small>'
 };
 
 

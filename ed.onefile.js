@@ -346,7 +346,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
   }(jQuery));
 
   EConstants = {
-    INTRO : '«',
+    INTRO : 'sekcja wstępna',
     SUBSECTIONS :
       {
         POLISH :
@@ -437,7 +437,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
         'złożenia' : 'Złożenia',
         'hanja' : 'Hanja',
         'pochodne' : 'Wyrazy pochodne',
-        '' : 'Sekcja wstępna'
+        '' : 'Wstęp sekcji językowej'
       },
     NON_LATIN_LANGS :
       [
@@ -1063,7 +1063,9 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     IPA_HEADER_INFO:
       'Wymowa znaleziona w sekcji oznaczonej nagłówkiem:<br />',
     IPA_HEADER_FAILED:
-      '<small>Nie udało się rozpoznać sekcji językowej, w której znaleziono wymowę.</small>'
+      '<small>Nie udało się rozpoznać sekcji językowej, w której znaleziono wymowę.</small>',
+    IPA_HEADER_SIMPLE_ENGLISH:
+      '<small>Wikisłownik <em>Simple English</em> zawiera tylko angielskie wyrazy.</small>'
   };
 
 
@@ -1213,38 +1215,40 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       var sections, reta, s, sec, section, id;
 
       if (lang === undefined) {
-        code = code.replace(/(\n|^)==([^=][^\n]+?)==\s*\n/g, '<BE>$2<EN>');
+        code = code.replace(/^==([^=][^\n]+?)==\s*$/gm, '<BE>$1<EN>');
       } else {
         switch (lang) {
         case 'ru':
-          code = code.replace(/(\n|^)(=([^=][^\n]+?)=)\s*\n/g, '<BE>$2<EN>');
+          code = code.replace(/^(=([^=][^\n]+?)=)\s*$/gm, '<BE>$1<EN>');
           break;
         case 'fr':
         case 'li':
         case 'nl':
         case 'oc':
-          code = code.replace(/(\{\{=([^=\-][^\n]*?)=\}\})/g, '<BE>$1<EN>');
+          code = code.replace(/^((==\s*)?\{\{=([^=\-][^\n]*?)=\}\}(\s*==)?)\s*$/gm, '<BE>$1<EN>');
           break;
         case 'lv':
-          code = code.replace(/(\{\{-([^=\-][^\n]*?)-\}\})/g, '<BE>$1<EN>');
+          code = code.replace(/^(\{\{-([^=\-][^\n]*?)-\}\})\s*$/gm, '<BE>$1<EN>');
           break;
         case 'co':
-        case 'is':
         case 'ga':
-          code = code.replace(/(\{\{-\w\w-\}\})/g, '<BE>$1<EN>');
+          code = code.replace(/^(\{\{-\w\w-\}\})\s*$/gm, '<BE>$1<EN>');
+          break;
+        case 'is':
+          code = code.replace(/^(\{\{-\w{2,3}-\}\})\s*$/gm, '<BE>$1<EN>');
           break;
         case 'it':
-          code = code.replace(/(\{\{in\|[^\}]+\}\})/g, '<BE>$1<EN>');
+          code = code.replace(/^(\{\{in\|[^\}]+\}\})\s*$/gm, '<BE>$1<EN>');
           break;
         case 'es':
-          code = code.replace(/(\{\{[A-Z\-]{2,}\|[^\}]+\}\})/g, '<BE>$1<EN>');
+          code = code.replace(/^(\{\{[A-Z\-]{2,}\|[^\}]+\}\})\s*$/gm, '<BE>$1<EN>');
           break;
         case 'af':
-          code = code.replace(/(\{\{-\w\w-\}\})/g, '<BE>$1<EN>');
-          code = code.replace(/(\n|^)(==([^=][^\n]+?)==)\s*\n/g, '<BE>$2<EN>');
+          code = code.replace(/^(\{\{-\w\w-\}\})\s*$/gm, '<BE>$1<EN>');
+          code = code.replace(/^(==([^=][^\n]+?)==)\s*$/gm, '<BE>$1<EN>');
           break;
         default:
-          code = code.replace(/(\n|^)(==([^=][^\n]+?)==)\s*\n/g, '<BE>$2<EN>');
+          code = code.replace(/^(==([^=][^\n]+?)==)\s*$/gm, '<BE>$1<EN>');
           break;
         }
       }
@@ -1695,7 +1699,9 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
             return false;
           });
           link.append(beg + withOuter.str + end);
-          if (this.header) {
+          if (arrelem.lang === 'simple') {
+            link.data('tip', EStr.IPA_HEADER_SIMPLE_ENGLISH);
+          } else if (this.header) {
             link.data('tip', EStr.IPA_HEADER_INFO + '<tt>' + this.header + '</tt>');
           } else {
             link.data('tip', EStr.IPA_HEADER_FAILED);
@@ -2705,7 +2711,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
 
       while ((arr = re.exec(str)) !== null) {
         el = $.trim(arr[1]);
-        if (el) {
+        if (el && (el !== 'simple' || EUtil.getActiveLangCode() === 'en')) {
           res.push(el);
         }
       }
@@ -2713,7 +2719,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     },
 
     getActiveAndInterwikiLangs : function () {
-      return $.merge(EAutomator.getActiveLangs(), EAutomator.getInterwikiLangs().slice(0, 50));
+      return $.merge(EAutomator.getActiveLangs(), EAutomator.getInterwikiLangs().slice(0, 500));
     },
 
     /*
@@ -3148,24 +3154,23 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
 
     getInternalExampleRe : function (result) {
       var examples = {},
-        error = EStr.NO_INTERNAL_EXAMPLE_FOUND;
+        error = EStr.NO_INTERNAL_EXAMPLE_FOUND,
+        re = new RegExp("^:\\s*\\(\\d+\\.\\d+\\)\\s*('*[^\\}\\n]*\\[\\[" + mw.config.get('wgTitle') + "[\\|\\]][^\\}\\n]*)", 'm'),
+        isPolish = EUtil.getActiveLangCode() === 'pl',
+        delim = isPolish ? "''" : '';
 
       if (result[0] && result[0].query && result[0].query.pages) {
         $.each(result[0].query.pages, function () {
-          var content, re, isPolish, ex, delim,
-            title = this.title;
+          var content, ex;
 
-          if (title === mw.config.get('wgTitle')) {
+          if (this.title === mw.config.get('wgTitle')) {
             return true;
           }
           content = this.revisions[0]['*'];
-          re = new RegExp(":\\s*\\(\\d+\\.\\d+\\)\\s*('*[^\\}\\n]*\\[\\[" + mw.config.get('wgTitle') + "[\\|\\]][^\\}\\n]*)", 'g');
-          isPolish = EUtil.getActiveLangCode() === 'pl';
           ex = EAutomator.extractExample(content, re, isPolish);
-          delim = isPolish ? "''" : '';
 
           if (ex) {
-            examples[title] = delim + $.trim(ex) + delim;
+            examples[this.title] = delim + $.trim(ex) + delim;
             error = undefined;
           }
         });
@@ -3181,7 +3186,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       if ((arr = re.exec(content)) !== null) {
         if (isPolish) {
           ret = arr[1].replace(/(.*→\s*|'''?)/g, '');
-          return re.exec(": (1.1) ''" + ret) === -1 ? null : ret;
+          return re.exec(": (1.1) ''" + ret) === null ? null : ret;
         } else {
           return arr[1].replace(/'''/g, '');
         }

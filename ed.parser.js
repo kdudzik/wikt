@@ -3,38 +3,40 @@ EParser = {
 		var sections, reta, s, sec, section, id;
 
 		if (lang === undefined) {
-			code = code.replace(/(\n|^)==([^=][^\n]+?)==\s*\n/g, '<BE>$2<EN>');
+			code = code.replace(/^==([^=][^\n]+?)==\s*$/gm, '<BE>$1<EN>');
 		} else {
 			switch (lang) {
 			case 'ru':
-				code = code.replace(/(\n|^)(=([^=][^\n]+?)=)\s*\n/g, '<BE>$2<EN>');
+				code = code.replace(/^(=([^=][^\n]+?)=)\s*$/gm, '<BE>$1<EN>');
 				break;
 			case 'fr':
 			case 'li':
 			case 'nl':
 			case 'oc':
-				code = code.replace(/(\{\{=([^=\-][^\n]*?)=\}\})/g, '<BE>$1<EN>');
+				code = code.replace(/^((==\s*)?\{\{=([^=\-][^\n]*?)=\}\}(\s*==)?)\s*$/gm, '<BE>$1<EN>');
 				break;
 			case 'lv':
-				code = code.replace(/(\{\{-([^=\-][^\n]*?)-\}\})/g, '<BE>$1<EN>');
+				code = code.replace(/^(\{\{-([^=\-][^\n]*?)-\}\})\s*$/gm, '<BE>$1<EN>');
 				break;
 			case 'co':
-			case 'is':
 			case 'ga':
-				code = code.replace(/(\{\{-\w\w-\}\})/g, '<BE>$1<EN>');
+				code = code.replace(/^(\{\{-\w\w-\}\})\s*$/gm, '<BE>$1<EN>');
+				break;
+			case 'is':
+				code = code.replace(/^(\{\{-\w{2,3}-\}\})\s*$/gm, '<BE>$1<EN>');
 				break;
 			case 'it':
-				code = code.replace(/(\{\{in\|[^\}]+\}\})/g, '<BE>$1<EN>');
+				code = code.replace(/^(\{\{in\|[^\}]+\}\})\s*$/gm, '<BE>$1<EN>');
 				break;
 			case 'es':
-				code = code.replace(/(\{\{[A-Z\-]{2,}\|[^\}]+\}\})/g, '<BE>$1<EN>');
+				code = code.replace(/^(\{\{[A-Z\-]{2,}\|[^\}]+\}\})\s*$/gm, '<BE>$1<EN>');
 				break;
 			case 'af':
-				code = code.replace(/(\{\{-\w\w-\}\})/g, '<BE>$1<EN>');
-				code = code.replace(/(\n|^)(==([^=][^\n]+?)==)\s*\n/g, '<BE>$2<EN>');
+				code = code.replace(/^(\{\{-\w\w-\}\})\s*$/gm, '<BE>$1<EN>');
+				code = code.replace(/^(==([^=][^\n]+?)==)\s*$/gm, '<BE>$1<EN>');
 				break;
 			default:
-				code = code.replace(/(\n|^)(==([^=][^\n]+?)==)\s*\n/g, '<BE>$2<EN>');
+				code = code.replace(/^(==([^=][^\n]+?)==)\s*$/gm, '<BE>$1<EN>');
 				break;
 			}
 		}
