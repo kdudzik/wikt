@@ -19,7 +19,7 @@
 
 \hyphenation{MySQL jQuery Google In-sti-tute En-cyc-lo-pae-dia En-cyc-lo-pæ-dia Pre-pro-cessor
 				Grease-mon-key Fire-fox Chrome Ex-plo-rer Fire-bug Gea-ny Git-hub Win-dows Eclipse
-				desk-to-po-wych Regex Coach soft-ware hard-ware Ba-shu Ba-sha}
+				desk-to-po-wych Regex Coach soft-ware hard-ware Ba-shu Ba-sha Face-boo-ka}
 
 % USTAWIENIA PAKIETÓW
 \setmainfont[Mapping=tex-text,Bold=Charis SIL Bold,Scale=1.1]{Gentium}
@@ -135,6 +135,11 @@
 	framexleftmargin=25pt,
 	xleftmargin=25pt
 }
+\lstnewenvironment{jscode}[2]
+{
+\singlespacing
+\lstset{language=JavaScript, label=#1, caption=#2}}
+{}
 
 % POCZĄTEK DOKUMENTU
 \begin{document}
