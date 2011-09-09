@@ -329,10 +329,96 @@ Moduł \kod|EPrinter| odpowiada także za generowanie kodu z~danych pobranych w~
 
 \section{Automatyzacja edycji hasła}
 \label{sec:impl-auto}
-...
+Drugą funkcją obok uproszczenia ogólnego procesu edycji, jaką spełniać ma aplikacja, jest zautomatyzowanie niektórych działań wykonywanych przez redaktorów. W~sekcji~\ref{wikt:drawbacks} wspomniano o~dużym poziomie redundancji, będącym prostą konsekwencją rozbicia projektu na wersje językowe i~niemożności zachowania pierwszej postaci normalnej danych w~bazie Wikisłownika. Spora część danych wprowadzanych do haseł jest już obecna gdzie indziej --- czy to w~innych hasłach polskiego Wikisłownika, czy też w~innych wersjach językowych. Wielu redaktorów wykorzystuje przykładowo inne edycje projektu do wprowadzania danych takich jak wymowa w~międzynarodowym alfabecie fonetycznym (IPA), grafiki czy nagrania dźwiękowe, zaś na podstawie samej polskiej wersji możliwe jest chociażby kopiowanie przykładów użycia z~jednego hasła do drugiego.
 
 \subsection{API MediaWiki}
-...
+Automatyzacja edytowania Wikisłownika (jak i~innych projektów Fundacji) byłaby niezwykle trudna bez interfejsu programistycznego dołączonego do każdej witryny opartej na MediaWiki~\cite{mw:api}. API umożliwia uproszczony dostęp do bazy Wikisłownika w~licznych formatach wymiany danych takich jak XML, JSON, YAML czy WDDX. Aby otrzymać odpowiedź na dowolne zapytanie, wystarczy pobrać dane z~adresu \url{http://pl.wiktionary.org/w/api.php} uzupełnionego o~odpowiednie parametry.
+
+Ponieważ analogiczną funkcję ma każdy projekt Wikimedia, możliwe jest zautomatyzowane pobieranie informacji nawet z~kilkudziesięciu edycji językowych równocześnie. Przeszkodą w~przetwarzaniu tak pobieranych danych jest \emph{Same Origin Policy}, czyli koncepcja ograniczająca pobieranie danych za pomocą skryptów pomiędzy różnymi stronami internetowymi~\cite{mozilla:sop}. Z~tego powodu niemożliwe jest użycie większości formatów, w~tym XML. Sposobem na obejście niektórych ograniczeń jest użycie tzw. JSONP (lub JSON-P)~\cite{jsonp}. Jest to sposób na użycie istniejących technologii, który umożliwia pobieranie danych w~JavaScript z~innego serwera. Dane w~formacie JSON uzupełniane są na zdalnym serwerze o~wywołanie funkcji zdefiniowanej w~parametrze, z~którym skrypt został wywołany.
+
+Istnieje kilka bibliotek, które mają ułatwiać operacje na API MediaWiki. Żadna z~nich jednak nie spełnia swojej roli w~odpowiedni sposób --- utrudnione jest dokonywanie kilku zapytań równocześnie, biblioteki bywają też przeładowane funkcjami, które nie są potrzebne w~projekcie dla Wikisłownika. Dlatego na jego potrzeby napisano od podstaw moduł \kod|EApi| (w~pliku \kod|ed.api.js|), będący integralną częścią aplikacji. Najistotniejsze funkcje modułu przedstawiono na listingu~\ref{code:api}.
+
+\begin{jscode}{code:api}{Moduł \kod|EApi|}
+EApi = {
+	/* Zwraca adres URL dla danego jezyka i projektu */
+	url : function (lang, project) {
+		if (lang === undefined) {
+			lang = 'pl';
+		}
+		if (project === undefined) {
+			project = EConstants.WIKTIONARY;
+		}
+		return 'http://' + lang + '.' + project + '.org/w/api.php?';
+	},
+
+	/* Wykonanie zapytania pod danym adresem. Do podanych pol dolaczane sa standardowe */
+	ask__prv : function (query, url) {
+		if (url === undefined) {
+			url = EApi.url();
+		}
+		query.action = 'query';
+		query.format = 'json';
+		query.meta = 'siteinfo';
+		query.callback = 'EApi.callback';
+		url += $.param(query);
+		mw.loader.load(url);
+	},
+
+	/* Wykonanie pojedynczego zapytania */
+	ask : function (query, callback, url) {
+		if (EApi.waiting) {
+			jAlert(EStr.WAITING_FOR_API);
+			return -1;
+		}
+		EApi.waitingName = callback;
+		EApi.waiting = 1;
+		EApi.ask__prv(query, url);
+		return 0;
+	},
+
+	/* Wykonanie kilku zapytan naraz */
+	askMore : function (queries, callback) {
+		var i, count = 0;
+
+		if (EApi.waiting) {
+			jAlert(EStr.WAITING_FOR_API);
+			return -1;
+		}
+		EApi.waitingName = callback;
+
+		for (i in queries) {
+			if (queries.hasOwnProperty(i)) {
+				count += 1;
+			}
+		}
+		EApi.waiting = count;
+		$.each(queries, function (url, query) {
+			EApi.ask__prv(query, url);
+		});
+		return 0;
+	},
+
+	/* Funkcja wywolywana po nadejsciu pojedynczego rezultatu. Wynik zapytania dodawany jest do tablicy waitingResults. Jesli wszystkie rezultaty juz sie pojawily, wykonywana jest funkcja o nazwie zapisanej przedtem w zmiennej waitingName z argumentem waitingResults */
+	callback : function (res) {
+		var tmp = String(EApi.waitingName);
+		EApi.waitingResults.push(res);
+		EApi.waiting -= 1;
+		if (!EApi.waiting) {
+			EApi.waitingName = '';
+			EUtil.executeFn(tmp, window, EApi.waitingResults);
+			EApi.waitingResults = [];
+		}
+	},
+
+	waiting : 0,
+	waitingName : '',
+	waitingResults : []
+};
+\end{jscode}
+
+Najprostsze użycie modułu \kod|EApi| jest już nieskomplikowane: pozostaje zdefiniować dwie funkcje, z~których pierwsza odpowiada za przygotowanie i~wysłanie zapytania do wybranych projektów, druga zaś za przetworzenie i~wyświetlenie wyników. Wszystkie tego typu funkcje zebrano w~module \kod|EAutomator|. W~przyszłości możliwe jest podzielenie tego modułu na mniejsze, z~których każdy odpowiadałby konkretnemu zastosowaniu API MediaWiki. Funkcje przygotowane w~ramach opisywanej aplikacji opisano bardziej szczegółowo na kolejnych stronach.
+
+\subsection{Funkcje automatyzujące edycję haseł}
 
 \section{Wdrożenie i~dalszy rozwój}
 \label{sec:impl-deploy}
