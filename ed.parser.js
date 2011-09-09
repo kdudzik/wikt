@@ -319,7 +319,11 @@ ESectionParser = {
 								} else if (sub.content !== '' || sub.title === '') {
 									sub.shortened = false;
 								}
-								sub.initcontent = sub.content;
+								if (targetSubsections.indexOf(pos.title) === -1 && sub.content === '' && sub.title !== '') {
+									sub.active = false;
+								} else {
+									sub.initcontent = sub.content;
+								}
 								break;
 							} else if (targetSubsections.indexOf(pos.title) === -1) {
 								sub.active = false;

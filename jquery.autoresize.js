@@ -1,9 +1,7 @@
-// https://github.com/jaz303/jquery-grab-bag/raw/master/javascripts/jquery.autogrow-textarea.js
+// inspired by https://github.com/jaz303/jquery-grab-bag/raw/master/javascripts/jquery.autogrow-textarea.js
 (function ($) {
-	/*
-	 * Auto-growing textareas; technique ripped from Facebook
-	 */
 	$.fn.autoresize = function () {
+			var shadow = $('<div/>').css({ position: 'absolute', top: -10000, left: -10000, resize:	'none' }).appendTo(document.body);
 
 		this.filter('textarea').each(function () {
 			var $this = $(this),
@@ -11,16 +9,6 @@
 				maxHeight = 500,
 				prevHeight = 0,
 				nowHeight = 0,
-				shadow = $('<div/>').css({
-					position:   'absolute',
-					top:		-10000,
-					left:	   -10000,
-					width:	  $(this).width() - parseInt($this.css('paddingLeft'), 10) - parseInt($this.css('paddingRight'), 10),
-					fontSize:   $this.css('fontSize'),
-					fontFamily: $this.css('fontFamily'),
-					lineHeight: $this.css('lineHeight'),
-					resize:	 'none'
-				}).appendTo(document.body),
 
 				update = function () {
 					var val = this.value.replace(/[<>&]/g, 'w').replace(/\n$/, '<br/>&nbsp;').replace(/\n/g, '<br/>');
@@ -33,6 +21,11 @@
 						prevHeight = nowHeight;
 					}
 				};
+
+			shadow.css({
+				width: $(this).width() - parseInt($this.css('paddingLeft'), 10) - parseInt($this.css('paddingRight'), 10),
+				fontSize: $this.css('fontSize'), fontFamily: $this.css('fontFamily'), lineHeight: $this.css('lineHeight')
+			});
 
 			$(this).keyup(update).blur(update).focus(update);
 			update.apply(this);

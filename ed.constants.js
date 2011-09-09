@@ -104,7 +104,7 @@ EConstants = {
 		],
 	DOUBLE_LANGS :
 		[
-			'az', 'be', 'crh', 'jdt', 'lad', 'slovio', 'sr', 'tk', 'tt', 'tut', 'ug'
+			'az', 'be', 'crh', 'jdt', 'lad', 'mo', 'slovio', 'sr', 'tk', 'tt', 'tut', 'ug'
 		],
 	LANG_CODES_SHORT :
 		{

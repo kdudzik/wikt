@@ -44,12 +44,13 @@ EAutomator = {
 			if (el && (el !== 'simple' || EUtil.getActiveLangCode() === 'en')) {
 				res.push(el);
 			}
+			//TODO sortuj wg wielkości projektu
 		}
 		return res;
 	},
 
 	getActiveAndInterwikiLangs : function () {
-		return $.merge(EAutomator.getActiveLangs(), EAutomator.getInterwikiLangs().slice(0, 500));
+		return $.merge(EAutomator.getActiveLangs(), EAutomator.getInterwikiLangs().slice(0, 50));
 	},
 
 	/*
