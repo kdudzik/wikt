@@ -132,9 +132,13 @@ Do zakładek językowych dodane są także zakładki o~specjalnej funkcji: pierw
 
 \begin{jscode}{code:specialchars}{Moduł \kod|ESpecialChars|}
 ESpecialChars = {
+	/* element HTML zawierajacy klawiaturke */
 	obj : undefined,
+	/* dotychczasowy element-rodzic klawiaturki */
 	formerParent : undefined,
 	detached : 0,
+
+	/* odlaczenie klawiaturki od starego edytora i dodanie do elementu keyboard_keys w nowym formularzu */
 	detach : function () {
 		var container;
 		if (ESpecialChars.detached) {
@@ -149,6 +153,7 @@ ESpecialChars = {
 		ESpecialChars.detached = 1;
 	},
 
+	/* ponowne przylaczenie klawiaturki do starego rodzica */
 	attach : function () {
 		if (!ESpecialChars.detached) {
 			return;
@@ -180,7 +185,7 @@ Na ilustracji~\ref{fig:keyboard} pokazano działanie klawiaturki ekranowej w~now
 Ciekawym problemem było ułożenie pól formularza w~taki sposób, by zajmował możliwie mało miejsca, a przy tym pozostał przejrzysty. Każda sekcja językowa składa się z~kilkunastu podsekcji, dlatego należało dobrze rozmieścić kilkanaście pól tekstowych, przy czym te mogły zawierać bardzo dużo tekstu (np. podsekcja \emph{tłumaczenia} w~popularnych polskich hasłach) albo i~pozostawać puste. Najprostszym, standardowym rozwiązaniem byłoby ustawienie stałej wysokości (np. równej 3~wierszom) dla każdego pola, które byłoby wyposażone w~zwykły pasek przewijania. Takie pola w~większości przypadków zajmowałyby jednak o~wiele za dużo miejsca, przy tym formularz z~dużymi białymi plamami jest niezbyt estetyczny. Zdecydowano się na rozwiązanie spotykane czasem w~portalach internetowych, najlepiej znane z~Facebooka --- pola tekstowe zmieniają swój rozmiar w~trakcie wpisywania kolejnych znaków. Istnieje kilka wtyczek do jQuery o~podobnej funkcjonalności, jednak na potrzeby aplikacji konieczne było stworzenie takiej, która łączy cechy kilku z~nich. Problemem okazała się też wydajność, ponieważ niektóre hasła mają w~trybie edycji nawet ponad sto pól dynamicznie dostosowujących swój rozmiar. Rozwiązaniem jest dołączenie do strony ukrytego elementu \kod|<div>|, do którego na bieżąco kopiowana jest zawartość ukrytego pola tekstowego --- na podstawie jego wysokości ustawiana jest wysokość pola. Kod przedstawiony jest na listingu~\ref{code:autoresize}.
 
 \begin{jscode}{code:autoresize}{Wtyczka jQuery odpowiadająca za zmianę rozmiaru pól tekstowych}
-// inspired by https://github.com/jaz303/jquery-grab-bag/raw/master/javascripts/jquery.autogrow-textarea.js
+/* wzorowane na https://github.com/jaz303/jquery-grab-bag/raw/master/javascripts/jquery.autogrow-textarea.js */
 (function ($) {
 	$.fn.autoresize = function () {
 		var shadow = $('<div/>').css({
@@ -419,6 +424,85 @@ EApi = {
 Najprostsze użycie modułu \kod|EApi| jest już nieskomplikowane: pozostaje zdefiniować dwie funkcje, z~których pierwsza odpowiada za przygotowanie i~wysłanie zapytania do wybranych projektów, druga zaś za przetworzenie i~wyświetlenie wyników. Wszystkie tego typu funkcje zebrano w~module \kod|EAutomator|. W~przyszłości możliwe jest podzielenie tego modułu na mniejsze, z~których każdy odpowiadałby konkretnemu zastosowaniu API MediaWiki. Funkcje przygotowane w~ramach opisywanej aplikacji opisano bardziej szczegółowo na kolejnych stronach.
 
 \subsection{Funkcje automatyzujące edycję haseł}
+
+\subsubsection{Aktualizacja interwiki}
+Linki interwiki w~polskim Wikisłowniku aktualizowane są przez boty. Te działają sprawnie, jednak siłą rzeczy musi wystąpić opóźnienie między utworzeniem hasła a~dodaniem interwiki. Czasem redaktorowi przydatna byłaby wiedza o~innych wersjach językowych hasła, zanim linki do nich pojawią się w~artykule. Poniżej podano parametry zapytania, które zazwyczaj odnajdzie wszystkie wersje językowe.
+
+\begin{opis}
+\item[Projekty] Największe Wikisłowniki (angielski, hiszpański, francuski, niemiecki, rosyjski) oraz Wikisłowniki odpowiadające sekcjom językowym w~haśle
+\item[Zapytanie]
+\begin{verbatim}
+query = {
+	titles: mw.config.get('wgTitle'),
+	prop: 'langlinks',
+	lllimit: 200
+};
+\end{verbatim}
+(Linki interwiki ze stron o~tytule równemu tytułowi obecnej strony)
+\end{opis}
+
+Poniżej przedstawiono kod odpowiadający za przetworzenie wyników i~aktualizację pola tekstowego zawierającego linki interwiki. Tak wygląda ogólny schemat funkcji wywoływanych po otrzymaniu rezultatów. W~przypadku innych funkcji zamiast podawania całego kodu omówione zostaną najciekawsze problemy.
+
+\begin{jscode}{code:iw}{Funkcja \kod|EAutomator.fillInterwikiRe|}
+fillInterwikiRe : function (results) {
+	var iwikiString, curIwiki, re,
+		iwikis = [];
+
+	$.each(results, function () {
+		var res = this;
+		if (res.query === undefined || res.query.pages === undefined) {
+			/* Nieprawidlowy wynik */
+			return false;
+		}
+		$.each(res.query.pages, function (j, val) {
+			if (j === '-1') {
+				/* Indeks strony == -1 oznacza brak strony w danym projekcie */
+				return false;
+			}
+			if (iwikis.indexOf(res.query.general.lang) === -1 && res.query.general.lang !== 'pl') {
+				/* Do interwiki dodajemy dany projekt */
+				iwikis.push(res.query.general.lang);
+			}
+			if (val.langlinks === undefined) {
+				return false;
+			}
+			$.each(val.langlinks, function () {
+				/* val.langlinks zawiera tytuly stron, do ktorych w danym projekcie wystepuja interwiki */
+				if (this['*'] === mw.config.get('wgTitle') && iwikis.indexOf(this.lang) === -1 && this.lang !== 'pl') {
+					iwikis.push(this.lang);
+				}
+			});
+			return true;
+		});
+		return true;
+	});
+	/* sortowanie interwiki wedlug ustalonego klucza */
+	iwikis.sort(function (a, b) { return EConstants.INTERWIKI_ORDER.indexOf(a) - EConstants.INTERWIKI_ORDER.indexOf(b); });
+	/* przygotowanie lancucha znakow ze wszystkimi interwiki */
+	iwikiString = $.map(iwikis, function (val) {
+		return '[[' + val + ':' + mw.config.get('wgTitle') + ']]';
+	}).join(' ');
+	curIwiki = $('#ed_0000_').val();
+	if (curIwiki === '') {
+		/* dotad sekcja wstepna byla pusta */
+		/* .autoresize() powoduje dostosowanie wysokosci pola */
+		$('#ed_0000_').val(iwikiString).autoresize();
+	} else {
+		/* zastapienie poprzedniej wersji */
+		re = new RegExp('(\\[\\[[a-z\\-]+' + ':' + mw.config.get('wgTitle') + '\\]\\]\\s*)+');
+		$('#ed_0000_').val($.trim(iwikiString + curIwiki.replace(re, '\n'))).autoresize();
+	}
+	EApi.done(EConstants.MODE_IW);
+}
+\end{jscode}
+
+\subsubsection{Pobieranie zapisu wymowy w~IPA}
+
+\subsubsection{Pobieranie grafik}
+
+\subsubsection{Pobieranie nagrań wymowy}
+
+\subsubsection{Pobieranie przykładów użycia}
 
 \section{Wdrożenie i~dalszy rozwój}
 \label{sec:impl-deploy}
