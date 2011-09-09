@@ -108,7 +108,7 @@ rebindFormActions : function () {
 }
 \end{jscode}%$
 
-W~momencie próby wysłania formularza na serwer skrypt sprawdza, czy użyty jest nowy formularz. W~takim przypadku ukryte okno tekstowe starego formularza, zapisane jako zmienna \kod|EUi.tbox|, wypełniane jest nową zawartością. Za jej obliczenie odpowiada funkcja \kod|EPrinter.recalculateCode|, opisana w~podsekcji~\ref{impl:printer}. Dzięki usunięciu atrybutów \kod|name| ze wszystkich pól tekstowych w~obrębie nowego formularza redukowana jest ilość przesyłanych danych, a~z~punktu widzenia serwera nic się nie zmienia.
+W~momencie próby wysłania formularza na serwer skrypt sprawdza, czy użyty jest nowy formularz. W~takim przypadku ukryte okno tekstowe starego formularza, zapisane jako zmienna \kod|EUi.tbox|, wypełniane jest nową zawartością. Za jej obliczenie odpowiada funkcja \kod|EPrinter.recalculateCode|, opisana w~podsekcji~\ref{impl:parser}. Dzięki usunięciu atrybutów \kod|name| ze wszystkich pól tekstowych w~obrębie nowego formularza redukowana jest ilość przesyłanych danych, a~z~punktu widzenia serwera nic się nie zmienia.
 
 Z~kolei po zmianach wprowadzonych za pomocą starego formularza konieczne jest ponowne parsowanie wikikodu, które jest wykonywane w~identyczny sposób jak przy inicjowaniu nowego edytora.
 
@@ -497,6 +497,69 @@ fillInterwikiRe : function (results) {
 \end{jscode}
 
 \subsubsection{Pobieranie zapisu wymowy w~IPA}
+Zapis wymowy w~międzynarodowym alfabecie fonetycznym (IPA) to jedna z~tych informacji, które można bez problemu przenosić pomiędzy różnymi wersjami językowymi Wikisłownika. Często zdarza się, że w~wielu wersjach językowych zapis pewnego słowa jest podany, brakuje go zaś w~polskiej edycji. Najczęściej IPA nie jest ręcznie wpisywane do hasła, ale kopiowane z~innego źródła --- jest to oczywiście wygodniejsze z~powodu konieczności używania innego alfabetu. Aby ułatwić wstawienie tej informacji do hasła, można poprzez API pobrać zawartość haseł z~interwiki. Ważne jest, by dobrze sparsować otrzymane hasła w~poszukiwaniu IPA.
+
+\begin{opis}
+\item[Projekty] Wikisłowniki odpowiadające sekcjom językowym w~haśle i~inne z~linków interwiki
+\item[Zapytanie]
+\begin{verbatim}
+query = {
+	titles: mw.config.get('wgTitle'),
+	prop: 'revisions',
+	rvprop: 'content'
+};
+\end{verbatim}
+(Zawartość stron o~tytule równemu tytułowi obecnej strony)
+\end{opis}
+
+Hasła w~innych wersjach językowych mogą dotyczyć wielu języków, w~których występuje dane słowo. Koniecznie trzeba zminimalizować więc ryzyko wstawienia wymowy wyrazu w~innym języku niż w~obecnie edytowanej sekcji przez niedoświadczonego użytkownika. Przy okazji implementacji funkcji odpowiadającej za przetworzenie wyników okazało się, że programistyczny podział hasła na sekcje w~innej wersji językowej wcale nie musi być tak prosty jak w~wersji polskiej. Choć wspólne dla projektów jest stosowanie nagłówków dla poszczególnych języków, to w~części wersji nagłówki te są generowane dynamicznie przez szablony. Przykładowo nagłówek sekcji języka polskiego w~Wikisłowniku hiszpańskim ma postać \kod@{{PL-ES|Nazwa}}@, a~w~Wikisłowniku francuskim: \kod@== {{=pl=}} ==@.
+
+Wydaje się, że dobrym rozwiązaniem problemu jest podanie przy każdej wykrytej informacji o~IPA w~obcojęzycznej wersji hasła także nagłówka sekcji, w~której ją znaleziono. Co prawda istnieją Wikisłowniki takie jak wietnamski, gdzie nie sposób wyodrębnić poszczególne sekcje, jednak dla większości udało się to osiągnąć. W~ten sposób redaktor otrzymuje zawartość nagłówka, która pozwala się zorientować, o~jaki język może chodzić.
+
+Ponieważ w~większości wersji językowych zapisy IPA podawane są w~określonym szablonie, przy użyciu funkcji pomocniczych odnajdujących parametry szablonów udało się doprowadzić do pobierania IPA z~kilkunastu Wikisłowników. Listing pokazuje, jak różnorodne są sposoby podawania IPA.
+
+\begin{jscode}{code:ipa}{Funkcja \kod|EAutomator.extractIPA|}
+extractIPA : function (str, lang) {
+	switch (lang) {
+	case 'en': case 'cs': case 'sk': case 'it': case 'af': case 'ko': case 'nl':
+	case 'co': case 'vi': case 'ga': case 'is': case 'li': case 'lv': case 'no':
+	case 'sl': case 'ja': case 'simple':
+		return EAutomator.extractFirstArgsFromTemplates(str, 'IPA', lang);
+	case 'fr': case 'mg': case 'oc':
+		return EAutomator.extractFirstArgsFromTemplates(str, 'pron', lang);
+	case 'de':
+		return EAutomator.extractFirstArgsFromTemplates(str, 'Lautschrift', lang);
+	case 'es':
+		return EAutomator.extractAllArgsFromTemplates(str, 'pronunciación', lang);
+	case 'ca':
+		return EAutomator.extractSecondArgsFromTemplates(str, 'pron', lang);
+	case 'ro':
+		return EAutomator.extractFirstArgsFromTemplates(str, 'AFI', lang);
+	case 'et':
+		return EAutomator.extractFirstArgsFromTemplates(str, 'hääldus', lang);
+	case 'el':
+		return EAutomator.extractFirstArgsFromTemplates(str, 'ΔΦΑ', lang);
+	case 'eo':
+		return EAutomator.extractFirstArgsFromTemplates(str, 'IFA', lang);
+	case 'tl':
+		return EAutomator.extractFirstArgsFromTemplates(str, 'API', lang);
+	case 'ru':
+		return EAutomator.extractIPA_ru(str);
+	default:
+		return [];
+	}
+}
+\end{jscode}
+
+Dodatkową komplikacją jest występowanie IPA w~dwóch wariantach. Zapis w~nawiasach kwadratowych to zapis fonetyczny, natomiast między ukośnikami --- zapis fonologiczny. W~różnych wersjach językowych używane są różne warianty, natomiast w~polskiej edycji podawane są oba. Aplikacja bierze pod uwagę, jak zbudowany jest szablon w~danym Wikisłowniku, i~w~zależności od tego pozwala na wstawienie IPA w~szablonie \kod|{{IPA}}| lub \kod|{{IPA3}}|.
+
+Za wyświetlenie zapisów IPA, które można następnie wstawić jednym kliknięciem, odpowiedzialna jest funkcja \kod|EPrinter.ipaResult|. Jej efektem jest pojawienie się okienka, z~którego można wybrać odpowiedni zapis (patrz ilustracja~\ref{fig:iparesult}). Nagłówki sekcji językowych, z~których pochodzą IPA, wyświetlane są po najechaniu myszką.
+
+\begin{illustration}
+	\fbox{\includegraphics[width=0.7\textwidth]{iparesult}}
+	\caption{Fragment okna wyświetlającego pobrane zapisy IPA}
+	\label{fig:iparesult}
+\end{illustration}
 
 \subsubsection{Pobieranie grafik}
 
