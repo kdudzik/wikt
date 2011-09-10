@@ -651,7 +651,24 @@ query = {
 Lokalizacja miniatury ilustracji o~zadanej wielkości nie jest bezpośrednio zależna od nazwy pliku --- MediaWiki używa funkcji haszujących, aby umieścić ją w~jednym z~wielu katalogów. Dlatego zwykłymi metodami niezależnymi od MediaWiki nie jest możliwe natychmiastowe wyświetlenie ilustracji bez zapytania do API Wikimedia Commons, które przekaże niezbędne dane. Po otrzymaniu tej informacji aplikacja ładuje odpowiednie obrazy i~wyświetla je po najechaniu myszą na nazwę pliku, jak pokazano na ilustracji~\ref{fig:pic}.
 
 \subsubsection{Pobieranie nagrań wymowy}
+Aplikacja umożliwia także automatyczne odnajdywanie plików dźwiękowych z~wzorcową wymową danego słowa. Wyszukiwanie to odbywa się w~podobny sposób jak w~przypadku ilustracji --- tutaj kod haseł w~innych językach przeszukiwany jest na okoliczność wystąpienia nazwy pliku zakończonego na \kod|.ogg|. Zapytanie o~zawartość stron ma postać identyczną jak w~poprzednim przykładzie.
 
+Nagrania wymowy, podobnie jak ilustracje, umieszczane są w~Wikimedia Commons. Dzięki zasadom obowiązujących w~tym projekcie nazwy tych plików są zestandaryzowane: mają postać \kod|<ISO>-<wyraz>.ogg| (np. \kod|De-Meerschweinchen.ogg| dla słowa \emph{Meerschweinchen} --- \emph{świnka morska}). Z~tego powodu możliwe jest dodatkowe wyszukanie pliku bezpośrednio w~zasobach Commons za pomocą API tego projektu. Dodatkowo dla słów angielskich i~niemieckich często pojawiają się warianty wymowy amerykańskiej, australijskiej czy austriackiej. Listing~\ref{code:audio} pokazuje, jak konstruowane jest zapytanie do Commons.
+
+\begin{jscode}{code:audio}{Fragment funkcji \kod|EAutomator.getAudio|}
+lang = $.ucFirst(EUtil.getActiveLangCode());
+titles.push('File:' + lang + '-' + mw.config.get('wgTitle') + '.ogg');
+if (lang === 'En') {
+	titles.push('File:' + lang + '-uk-' + mw.config.get('wgTitle') + '.ogg');
+	titles.push('File:' + lang + '-us-' + mw.config.get('wgTitle') + '.ogg');
+	titles.push('File:' + lang + '-au-' + mw.config.get('wgTitle') + '.ogg');
+}
+if (lang === 'De') {
+	titles.push('File:' + lang + '-at-' + mw.config.get('wgTitle') + '.ogg');
+}
+
+queries[EApi.commonsUrl()] = { titles: titles.join('|'), prop: 'info' };
+\end{jscode}%$
 
 \subsubsection{Pobieranie przykładów użycia}
 
