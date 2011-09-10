@@ -2775,12 +2775,14 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       iwikis.sort(function (a, b) { return EConstants.INTERWIKI_ORDER.indexOf(a) - EConstants.INTERWIKI_ORDER.indexOf(b); });
       iwikiString = $.map(iwikis, function (val) { return '[[' + val + ':' + mw.config.get('wgTitle') + ']]'; }).join(' ');
       curIwiki = $('#ed_0000_').val();
-      if (curIwiki === '') {
-        $('#ed_0000_').val(iwikiString).autoresize();
-        EPrinter.appendEditDescription('+interwiki');
-      } else {
-        re = new RegExp('(\\[\\[[a-z\\-]+' + ':' + mw.config.get('wgTitle') + '\\]\\]\\s*)+');
-        $('#ed_0000_').val($.trim(iwikiString + curIwiki.replace(re, '\n'))).autoresize();
+      if (iwikiString !== '') {
+        if (curIwiki === '') {
+          $('#ed_0000_').val(iwikiString).autoresize();
+          EPrinter.appendEditDescription('+interwiki');
+        } else {
+          re = new RegExp('(\\[\\[[a-z\\-]+' + ':' + mw.config.get('wgTitle') + '\\]\\]\\s*)+');
+          $('#ed_0000_').val($.trim(iwikiString + curIwiki.replace(re, '\n'))).autoresize();
+        }
       }
       EApi.done(EConstants.MODE_IW);
     },
@@ -3158,7 +3160,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
     getInternalExampleRe : function (result) {
       var examples = {},
         error = EStr.NO_INTERNAL_EXAMPLE_FOUND,
-        re = new RegExp("^:\\s*\\(\\d+\\.\\d+\\)\\s*('*[^\\}\\n]*\\[\\[" + mw.config.get('wgTitle') + "[\\|\\]][^\\}\\n]*)", 'm'),
+        re = new RegExp("^:\\s*\\(\\d+\\.\\d+\\)\\s*('*[^\\n]*\\[\\[" + mw.config.get('wgTitle') + "[\\|\\]][^\\n]*)", 'm'),
         isPolish = EUtil.getActiveLangCode() === 'pl',
         delim = isPolish ? "''" : '';
 

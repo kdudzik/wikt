@@ -721,8 +721,8 @@ Listing~\ref{code:example} przedstawia (nieco uproszczoną) funkcję odpowiadaj�
 \begin{jscode}{code:example}{Funkcja \kod|EAutomator.getInternalExampleRe|}
 getInternalExampleRe : function (result) {
 	var examples = {},
-		re = new RegExp("^:\\s*\\(\\d+\\.\\d+\\)\\s*('*[^\\}\\n]*\\[\\[" +
-			mw.config.get('wgTitle') + "[\\|\\]][^\\}\\n]*)", 'm'),
+		re = new RegExp("^:\\s*\\(\\d+\\.\\d+\\)\\s*('*[^\\n]*\\[\\[" +
+			mw.config.get('wgTitle') + "[\\|\\]][^\\n]*)", 'm'),
 		isPolish = EUtil.getActiveLangCode() === 'pl';
 
 	/* na kazdej stronie linkujacej... */
@@ -762,6 +762,6 @@ W~projektach Wikimedia ważnym elementem edycji hasła jest uzupełnienie tzw. o
 \section{Wdrożenie i~dalszy rozwój}
 \label{sec:impl-deploy}
 
-...
+
 %licencja
 %IE < Win7 :(
