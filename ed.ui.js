@@ -187,6 +187,7 @@ EUi = {
 					}
 					$('#ed_menuitem_' + id).click();
 					$('#ed_section_' + id + ' textarea').reverse().autoresize();
+					EPrinter.appendEditDescription('+sekcja: ' + EConstants.CODE_TO_LANG[sec.code]);
 				} else {
 					jAlert(EStr.ADD_SECTION_NONEXISTENT, EStr.ADD_SECTION_NONEXISTENT_TITLE, function () {
 						EUi.addNewSection();

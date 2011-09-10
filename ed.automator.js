@@ -106,6 +106,7 @@ EAutomator = {
 		curIwiki = $('#ed_0000_').val();
 		if (curIwiki === '') {
 			$('#ed_0000_').val(iwikiString).autoresize();
+			EPrinter.appendEditDescription('+interwiki');
 		} else {
 			re = new RegExp('(\\[\\[[a-z\\-]+' + ':' + mw.config.get('wgTitle') + '\\]\\]\\s*)+');
 			$('#ed_0000_').val($.trim(iwikiString + curIwiki.replace(re, '\n'))).autoresize();
@@ -492,7 +493,7 @@ EAutomator = {
 
 		if (result[0] && result[0].query && result[0].query.pages) {
 			$.each(result[0].query.pages, function () {
-				var content, ex;
+				var content, ex, arr;
 
 				if (this.title === mw.config.get('wgTitle')) {
 					return true;
@@ -500,37 +501,19 @@ EAutomator = {
 				content = EParser.extractSubsections(this.revisions[0]['*'], 'przykłady');
 				if ((arr = re.exec(content)) !== null) {
 					if (isPolish) {
-						ret = arr[1].replace(/(.*→\s*|'''?)/g, '');
-						ex = re.exec(": (1.1) ''" + ret) === null ? null : ret;
+						ex = arr[1].replace(/(.*→\s*|'''?)/g, '');
+						ex = re.exec(": (1.1) ''" + ex) === null ? null : ex;
 					} else {
 						ex = arr[1].replace(/'''/g, '');
 					}
-				}
-
-				if (ex) {
-					examples[this.title] = delim + $.trim(ex) + delim;
-					error = undefined;
+					if (ex) {
+						examples[this.title] = delim + $.trim(ex) + delim;
+						error = undefined;
+					}
 				}
 			});
 		}
 		EApi.done(EConstants.MODE_INTERNAL_EXAMPLE, examples, 'przykłady', error);
-	},
-
-	extractExample : function (content, re, isPolish) {
-		var arr, ret;
-
-		content = EParser.extractSubsections(content, 'przykłady');
-
-		if ((arr = re.exec(content)) !== null) {
-			if (isPolish) {
-				ret = arr[1].replace(/(.*→\s*|'''?)/g, '');
-				return re.exec(": (1.1) ''" + ret) === null ? null : ret;
-			} else {
-				return arr[1].replace(/'''/g, '');
-			}
-		} else {
-			return null;
-		}
 	}
 };
 
