@@ -7,7 +7,7 @@ Niniejszy rozdział zawiera odniesienia do plików źródłowych składających 
 Oprogramowanie MediaWiki zostało napisane w~języku PHP (\emph{PHP Hypertext Preprocessor}) i~jest wysoce konfigurowalne za pomocą tzw. rozszerzeń, dodających kolejne funkcje --- przykładowo: obsługę przypisów, dodatkowe strony specjalne czy nowe funkcje parsera~\cite{mw:extensions}. W~projektach Fundacji obsługa rozszerzeń jest kontrolowana przez Fundację. Poszczególne projekty mogą składać prośby o~włączenie określonego rozszerzenia, decyzję podejmują zaś główni programiści Fundacji. Teoretycznie można rozważać utworzenie aplikacji dla Wikisłownika jako rozszerzenia w~PHP. Opcja ta została jednak odrzucona we wstępnej fazie projektu --- stworzenie rozszerzenia wymagałoby nieporównanie więcej formalności niż aplikacja kliencka, przede wszystkim jednak jego funkcjonalność byłaby znacznie ograniczona: poza polskim Wikisłownikiem żaden inny projekt nie mógłby z~niego skorzystać, na pewno nie zostałby więc włączony do głównej wersji MediaWiki.
 
 \subsection{JavaScript w~Wikisłowniku}
-Podobnie jak w~wielu innych przypadkach w~obrębie projektów Wikimedia jako metodę dostosowania silnika MediaWiki do szczególnych potrzeb wybrano zatem aplikację napisaną w~języku JavaScript. Konieczne jest zatem przedstawienie sposobu obsługi skryptów na stronach tych witryn. Pliki JavaScript ładowane są z~wielu różnych źródeł --- hierarchia w~nieco uproszczonej postaci jest następująca~\cite{de:js}:
+Podobnie jak w~wielu innych przypadkach w~obrębie projektów Wikimedia jako metodę dostosowania silnika MediaWiki do szczególnych potrzeb wybrano zatem aplikację napisaną w~języku JavaScript (JS). Konieczne jest zatem przedstawienie sposobu obsługi skryptów na stronach tych witryn. Pliki JavaScript ładowane są z~wielu różnych źródeł --- hierarchia w~nieco uproszczonej postaci jest następująca~\cite{de:js}:
 \begin{enumerate}
 	\item skrypty systemowe oprogramowania MediaWiki, wspólne dla wszystkich projektów oraz charakterystyczne dla danego projektu ze względu na ładowane rozszerzenia,
 	\item skrypt zapisany na poziomie danego projektu jako strona \kod|MediaWiki:Common.js| --- dostęp do niego mają lokalni administratorzy,
@@ -21,13 +21,13 @@ Jak widać, możliwości dołączania dodatkowych skryptów są elastyczne i~dos
 \subsubsection{MediaWiki 1.17}
 Projekty Fundacji od czerwca 2011~roku używają wersji MediaWiki~1.17. Wersja ta wprowadziła kilka istotnych zmian, spośród których najważniejszą było wprowadzenie modułu \kod|ResourceLoader|, zmieniającego system ładowania dodatkowych plików, przede wszystkim skryptów i~arkuszy stylów~\cite{mw:117}. Wszystkie potrzebne pliki są łączone w~jeden i~dodatkowo kompresowane, dodatkowo poprawiono też obsługę pamięci podręcznej po stronie klienta. Do tej pory poszczególne pliki JS i~CSS przesyłane były statycznie w~wielu żądaniach HTTP, co mogło powodować problemy z~ich synchronizacją, a~przede wszystkim zwiększało obciążenie sieci. Aktualizacja software'u projektów Fundacji spowodowała konieczność aktualizacji większości używanych w~nich skryptów i~zaangażowała większość aktywnych uczestników zaznajomionych z~technikaliami~\cite{mw:migration}.
 
-Od wersji~1.16 do MediaWiki dołączana jest biblioteka programistyczna jQuery, a~w~najnowszym wydaniu zaktualizowano ją do wersji 1.4.2~\cite{mw:jquery}. Jest to jedna z~najczęściej używanych bibliotek dla JavaScript, w~bardzo dużym stopniu usprawniająca programowanie w~tym języku. Kod pisany za jej pomocą jest o~wiele czytelniejszy i~prostszy, biblioteka pozwala też wyeliminować wiele problemów związanych z~nieprawidłową obsługą JavaScript w~niektórych przeglądarkach~\cite{jquery:action}~\cite{jquery:doc}.
+Od wersji~1.16 do MediaWiki dołączana jest biblioteka programistyczna jQuery, a~w~najnowszym wydaniu zaktualizowano ją do wersji 1.4.2~\cite{mw:jquery}. Jest to jedna z~najczęściej używanych bibliotek dla JavaScriptu, w~bardzo dużym stopniu usprawniająca programowanie w~tym języku. Kod pisany za jej pomocą jest o~wiele czytelniejszy i~prostszy, biblioteka pozwala też wyeliminować wiele problemów związanych z~nieprawidłową obsługą JavaScript w~niektórych przeglądarkach~\cite{jquery:action}~\cite{jquery:doc}.
 
 \subsection{Środowisko programistyczne}
-Programowanie w~JavaScript wymaga użycia innych metod niż tworzenie aplikacji desktopowych. Do tworzenia edytora dla Wikisłownika użyto m.in. następujących aplikacji:
+Programowanie w~języku JavaScript wymaga użycia innych metod niż tworzenie aplikacji desktopowych. Do tworzenia edytora dla Wikisłownika użyto m.in. następujących aplikacji:
 
 \subsubsection{Geany}
-Lekkie zintegrowane środowisko programistyczne (IDE)~\cite{geany}. W~początkowej fazie projektu używane było środowisko Eclipse z~dodatkowymi wtyczkami --- okazało się jednak, że obsługa JavaScript nie jest w~nim na tyle wygodna, aby konieczne było wykorzystywanie tak rozbudowanego edytora.
+Lekkie zintegrowane środowisko programistyczne (IDE)~\cite{geany}. W~początkowej fazie projektu używane było środowisko Eclipse z~dodatkowymi wtyczkami --- okazało się jednak, że obsługa JavaScriptu nie jest w~nim na tyle wygodna, aby konieczne było wykorzystywanie tak rozbudowanego edytora.
 \subsubsection{Przeglądarki internetowe}
 Aplikacja została przetestowana w~przeglądarkach Firefox $\geq$~4, Chrome 13, Opera $\geq$~10 i~Internet Explorer $\geq$~7, pod systemami operacyjnymi Linux i~Windows. Wyeliminowano błędy, które zostały odkryte w~czasie testów. W~trakcie implementacji używane były przeglądarki Google Chrome (i~jej wbudowane narzędzia deweloperskie) oraz Firefox z~dodatkiem Firebug, ułatwiającym debugowanie aplikacji~\cite{firebug}. Prawidłowe działanie aplikacji pod maksymalną możliwą liczbą dostępnych przeglądarek jest kluczowe ze względu na jej charakter --- edycja jest dostępna dla każdego użytkownika. Nie testowano jednak edytora w~starszych wersjach tych programów ze względu na ich znikome rozpowszechnienie i~niewspółmierny koszt takich testów w~stosunku do spodziewanych korzyści.
 \subsubsection{Git}
@@ -37,7 +37,7 @@ W~aplikacji duże znaczenie odgrywają wyrażenia regularne, wykorzystywane podc
 \spacer
 
 \subsection{Dobre praktyki}
-Nowy edytor został napisany za pomocą biblioteki jQuery, co ułatwia utrzymanie dobrej struktury. Kod podzielono na moduły funkcjonalne, co częściowo stanowi odpowiednik klasycznego paradygmatu obiektowego, często stosowany w~przypadku JavaScript. Język ten umożliwia pisanie aplikacji przy zachowaniu wielu różnych paradygmatów. W~przypadku opisywanej aplikacji zdecydowano się na wspomniany podział na moduły, będący pewnym kompromisem między paradygmatem funkcyjnym i~obiektowym. Moduły zaimplementowane są jako obiekty, których elementami są funkcje odpowiedzialne za operacje działające w~podobnym zakresie. Przykładowo parser wikitekstu jest modułem o~następującej strukturze:
+Nowy edytor został napisany za pomocą biblioteki jQuery, co ułatwia utrzymanie dobrej struktury. Kod podzielono na moduły funkcjonalne, co częściowo stanowi odpowiednik klasycznego paradygmatu obiektowego, często stosowany w~przypadku JavaScriptu. Język ten umożliwia pisanie aplikacji przy zachowaniu wielu różnych paradygmatów. W~przypadku opisywanej aplikacji zdecydowano się na wspomniany podział na moduły, będący pewnym kompromisem między paradygmatem funkcyjnym i~obiektowym. Moduły zaimplementowane są jako obiekty, których elementami są funkcje odpowiedzialne za operacje działające w~podobnym zakresie. Przykładowo parser wikitekstu jest modułem o~następującej strukturze:
 
 \begin{jscode}{code:module}{Ogólna struktura modułu JavaScript}
 var EParser = {
@@ -53,7 +53,7 @@ var EParser = {
 	...
 };
 \end{jscode}
-Podział na moduły ułatwia uwzględnienie niektórych spośród licznych praktyk zalecanych przy programowaniu w~JavaScript. Istnieje kilka narzędzi, które w~automatyczny sposób badają jakość kodu w~tym języku, pomagając znaleźć potencjalne błędy i~uniknąć kolejnych. Podczas implementacji stale korzystano z~trzech z~nich: JSHint~\cite{jshint:doc}, JavaScriptLint~\cite{javascriptlint:doc}, a~przede wszystkim JSLint~\cite{jslint:doc}. Narzędzia te nie są do końca kompatybilne ze sobą nawzajem, dlatego za cel obrano całkowity brak ostrzeżeń generowanych przez JSLint. W~ten sposób udało się utrzymać m.in. następujące elementy:
+Podział na moduły ułatwia uwzględnienie niektórych spośród licznych praktyk zalecanych przy programowaniu w~języku JavaScript. Istnieje kilka narzędzi, które w~automatyczny sposób badają jakość kodu skryptów, pomagając znaleźć potencjalne błędy i~uniknąć kolejnych. Podczas implementacji stale korzystano z~trzech z~nich: JSHint~\cite{jshint:doc}, JavaScriptLint~\cite{javascriptlint:doc}, a~przede wszystkim JSLint~\cite{jslint:doc}. Narzędzia te nie są do końca kompatybilne ze sobą nawzajem, dlatego za cel obrano całkowity brak ostrzeżeń generowanych przez JSLint. W~ten sposób udało się utrzymać m.in. następujące elementy:
 \begin{itemize}
 	\item kontrola nad zmiennymi globalnymi (w~przeciwieństwie do innych języków, np. PHP, domyślna deklaracja zmiennej bez słowa kluczowego \kod|var| powoduje umieszczenie jej w~zakresie globalnym),
 	\item kończenie poleceń średnikiem (ich brak może prowadzić do błędów bardzo trudnych do wykrycia),
@@ -80,7 +80,7 @@ Implementacja formularza składa się z~kilku modułów, spośród których gł�
 \subsection{Interfejs użytkownika}
 Kluczowym elementem projektu i~implementacji aplikacji jest interfejs użytkownika --- to jego jakość stanowi o~końcowym powodzeniu przedsięwzięcia. Szczególnie ważna jest bezproblemowa integracja nowego formularza z~dotychczasowym interfejsem. Wszystkie dotychczasowe funkcje używane w~trybie edycji, których zastosowanie miałoby sens i~w~nowej wersji, muszą pozostać dostępne.
 
-Zrzuty ekranu nowego formularza załączono w~dodatku~\ref{app:screen}.
+%Zrzuty ekranu nowego formularza załączono w~dodatku~\ref{app:screen}.
 
 \begin{illustration}
 	\fbox{\includegraphics{edit-bottom-desc}}
@@ -88,7 +88,7 @@ Zrzuty ekranu nowego formularza załączono w~dodatku~\ref{app:screen}.
 	\label{fig:edit-bottom}
 \end{illustration}
 
-Podstawowym problemem, powstałym na początku implementacji, było podpięcie nowego formularza pod mechanizmy przetwarzające dane po stronie serwera. Z~powodu braku jakiegokolwiek dostępu do konfiguracji serwera konieczne jest zapewnienie prawidłowego jego działania jedynie przy użyciu JavaScript. Na ilustracji~\ref{fig:edit-bottom} wyróżniono m.in. najważniejsze elementy sterujące edycją hasła. Są to trzy przyciski, których wybór powoduje wysłanie formularza w~trybie \kod|POST| na serwer do strony \kod|index.php| --- dalsze akcje uzależnione są od tego, który przycisk wybrano. Nową treścią hasła staje się zawartość głównego pola typu \kod|<textarea>|, o~identyfikatorze \kod|name="wpTextbox1"|. W~celu zapewnienia działania nowego formularza zgodnie z~oprogramowaniem MediaWiki możliwe były dwie opcje:
+Podstawowym problemem, powstałym na początku implementacji, było podpięcie nowego formularza pod mechanizmy przetwarzające dane po stronie serwera. Z~powodu braku jakiegokolwiek dostępu do konfiguracji serwera konieczne jest zapewnienie prawidłowego jego działania jedynie przy użyciu JavaScriptu. Na ilustracji~\ref{fig:edit-bottom} wyróżniono m.in. najważniejsze elementy sterujące edycją hasła. Są to trzy przyciski, których wybór powoduje wysłanie formularza w~trybie \kod|POST| na serwer do strony \kod|index.php| --- dalsze akcje uzależnione są od tego, który przycisk wybrano. Nową treścią hasła staje się zawartość głównego pola typu \kod|<textarea>|, o~identyfikatorze \kod|name="wpTextbox1"|. W~celu zapewnienia działania nowego formularza zgodnie z~oprogramowaniem MediaWiki możliwe były dwie opcje:
 \begin{enumerate}
 \item Usunięcie standardowych elementów, przede wszystkim pola \kod|wpTextbox1|, i~zastąpienie ich własnymi. Konieczne byłoby stworzenie pola formularza o~nazwie \kod|wpTextbox1| --- mogłoby to być pole ukryte (\kod|<input type="hidden" />|), które musiałoby być synchronizowane z~polami nowego formularza.
 \item Ukrycie standardowych elementów i~synchronizacja zawartości pola \kod|wpTextbox1| z~polami nowego formularza.
@@ -174,7 +174,7 @@ ESpecialChars = {
 };
 \end{jscode}
 
-Na ilustracji~\ref{fig:keyboard} pokazano działanie klawiaturki ekranowej w~nowym formularzu. Klawiaturę włącza się i~wyłącza kliknięciem w~ikonę z~klawiaturą, widoczną pod aktywnym właśnie polem tekstowym. Oprócz zawartości dostępnej w~starym formularzu można też wybrać jeden z~najczęściej używanych znaków. Ta funkcja znacząco usprawniła proces tworzenia haseł w~językach używających innych alfabetów lub znaków diakrytycznych. Stan klawiatury ekranowej (włączona/wyłączona) zapamiętywany jest w~ciasteczku przeglądarki, zostaje więce zachowany na kolejnych stronach.
+Na ilustracji~\ref{fig:keyboard} pokazano działanie klawiaturki ekranowej w~nowym formularzu. Klawiaturę włącza się i~wyłącza kliknięciem w~ikonę z~klawiaturą, widoczną pod aktywnym właśnie polem tekstowym. Oprócz zawartości dostępnej w~starym formularzu można też wybrać jeden z~najczęściej używanych znaków. Ta funkcja znacząco usprawniła proces tworzenia haseł w~językach używających innych alfabetów lub znaków diakrytycznych. Stan klawiatury ekranowej (włączona/wyłączona) zapamiętywany jest w~ciasteczku przeglądarki, zostaje więc zachowany na kolejnych stronach.
 
 \begin{illustration}
 	\fbox{\includegraphics{edit-keyboard}}
@@ -233,7 +233,7 @@ Innymi usprawnieniami interfejsu użytkownika w~aplikacji są np.:
 \label{impl:parser}
 Fundamentalne znaczenie dla aplikacji ma moduł odpowiadający za parsowanie wikitekstu --- kodu źródłowego haseł. O~trudności zagadnienia niech świadczy fakt, że przez ponad 10~lat istnienia Wikipedii nie udało się stworzyć edytora WYSIWYG --- i~prawdopodobnie w~dalszym ciągu nie będzie to wykonalne ze względu na coraz większy poziom skomplikowania artykułów. Tylko dzięki wyjątkowo przejrzystej strukturze polskiego Wikisłownika udało się stworzyć aplikację. Warto zaznaczyć, że kilka lat temu także polska edycja internetowego słownika nie nadawała się do tego typu projektu --- hasła udało się uprzątnąć za pomocą botów sterowanych przez kilka osób, które włożyły w~to dużo wysiłku.
 
-Najistotniejszą funkcją parsera jest podział hasła na sekcje językowe, a~następnie na podsekcje --- zgodnie z~ogólnym schematem danego języka. Dzięki dobrej obsłudze wyrażeń regularnych w~JavaScript kod odpowiadający za to jest dość krótki, jednak stworzenie prawidłowo działającej aplikacji wymagało długich testów, przeprowadzanych zarówno przez autora, jak i~społeczność Wikisłownika.
+Najistotniejszą funkcją parsera jest podział hasła na sekcje językowe, a~następnie na podsekcje --- zgodnie z~ogólnym schematem danego języka. Dzięki dobrej obsłudze wyrażeń regularnych w~JS kod odpowiadający za to jest dość krótki, jednak stworzenie prawidłowo działającej aplikacji wymagało długich testów, przeprowadzanych zarówno przez autora, jak i~społeczność Wikisłownika.
 
 O~ile parsowanie hasła odbywa się według jasnych reguł, o~tyle generowanie wikitekstu z~poszczególnych fragmentów artykułu okazało się o~wiele trudniejsze. Problemem nie było stworzenie kodu, który byłby poprawny, ale zadbanie o~to, by aplikacja nie powodowała zbędnych zmian w~kodzie. Kluczowa jest funkcja \kod|EPrinter.recalculateCode|, zaprezentowana w~wersji uproszczonej na listingu~\ref{code:recalculate}.
 
@@ -339,7 +339,7 @@ Drugą funkcją obok uproszczenia ogólnego procesu edycji, jaką spełniać ma 
 \subsection{API MediaWiki}
 Automatyzacja edytowania Wikisłownika (jak i~innych projektów Fundacji) byłaby niezwykle trudna bez interfejsu programistycznego dołączonego do każdej witryny opartej na MediaWiki~\cite{mw:api}. API umożliwia uproszczony dostęp do bazy Wikisłownika w~licznych formatach wymiany danych takich jak XML, JSON, YAML czy WDDX. Aby otrzymać odpowiedź na dowolne zapytanie, wystarczy pobrać dane z~adresu \url{http://pl.wiktionary.org/w/api.php} uzupełnionego o~odpowiednie parametry.
 
-Ponieważ analogiczną funkcję ma każdy projekt Wikimedia, możliwe jest zautomatyzowane pobieranie informacji nawet z~kilkudziesięciu edycji językowych równocześnie. Przeszkodą w~przetwarzaniu tak pobieranych danych jest \emph{Same Origin Policy}, czyli koncepcja ograniczająca pobieranie danych za pomocą skryptów pomiędzy różnymi stronami internetowymi~\cite{mozilla:sop}. Z~tego powodu niemożliwe jest wykorzystanie większości formatów, w~tym XML. Aby obejść niektóre ograniczenia, konieczne jest zastosowanie tzw. JSONP (lub: \hbox{JSON-P})~\cite{jsonp}. Jest to sposób użycia istniejących technologii, który umożliwia pobieranie danych w~JavaScript z~innego serwera. Dane w~formacie JSON uzupełniane są na zdalnym serwerze o~wywołanie funkcji zdefiniowanej w~parametrze, z~którym skrypt został wywołany.
+Ponieważ analogiczną funkcję ma każdy projekt Wikimedia, możliwe jest zautomatyzowane pobieranie informacji nawet z~kilkudziesięciu edycji językowych równocześnie. Przeszkodą w~przetwarzaniu tak pobieranych danych jest \emph{Same Origin Policy}, czyli koncepcja ograniczająca pobieranie danych za pomocą skryptów pomiędzy różnymi stronami internetowymi~\cite{mozilla:sop}. Z~tego powodu niemożliwe jest wykorzystanie większości formatów, w~tym XML. Aby obejść niektóre ograniczenia, konieczne jest zastosowanie tzw. JSONP (lub: \hbox{JSON-P})~\cite{jsonp}. Jest to sposób użycia istniejących technologii, który umożliwia pobieranie danych w~JS z~innego serwera. Dane w~formacie JSON uzupełniane są na zdalnym serwerze o~wywołanie funkcji zdefiniowanej w~parametrze, z~którym skrypt został wywołany.
 
 Istnieje kilka bibliotek, które mają ułatwiać operacje na API MediaWiki. Żadna z~nich jednak nie spełnia swojej roli w~odpowiedni sposób --- utrudnione jest dokonywanie kilku zapytań równocześnie, biblioteki bywają też przeładowane funkcjami, które nie są potrzebne w~projekcie dla Wikisłownika. Dlatego na jego potrzeby napisano od podstaw moduł \kod|EApi| (w~pliku \kod|ed.api.js|), będący integralną częścią aplikacji. Najistotniejsze funkcje modułu przedstawiono na listingu~\ref{code:api}.
 
@@ -433,9 +433,9 @@ Linki interwiki w~polskim Wikisłowniku aktualizowane są przez boty. Te działa
 \item[Zapytanie]
 \begin{verbatim}
 query = {
-	titles: mw.config.get('wgTitle'),
-	prop: 'langlinks',
-	lllimit: 200
+    titles: mw.config.get('wgTitle'),
+    prop: 'langlinks',
+    lllimit: 200
 };
 \end{verbatim}
 (Linki interwiki ze stron o~tytule równemu tytułowi obecnej strony)
@@ -673,7 +673,23 @@ queries[EApi.commonsUrl()] = { titles: titles.join('|'), prop: 'info' };
 \subsubsection{Pobieranie przykładów użycia}
 Innym elementem procesu tworzenia lub edycji hasła w~Wikisłowniku jest podanie przykładu użycia --- pełnego zdania, w~którym występuje dany wyraz. Oczywiście to samo zdanie może nadawać się jako przykład użycia w~co najmniej kilku artykułach. Ponieważ wszystkie przykłady w~językach inny niż polski są dodatkowo tłumaczone (wersja polska pojawia się po znaku →), szczególnie wielu zdań można użyć ponownie w~przypadku słów polskich.
 
-Pomocny okazuje się fakt, że wszystkie przykłady, a~także liczne inne elementy hasła, opatrywane są linkami do pojedynczych słów w~nich występujących. MediaWiki ma funkcję, która pozwala wykorzystać to do wspomagania edycji --- tzw. ,,Linkujące'', czyli stronę specjalną podającą spis wszystkich stron z~linkami do podanej strony. Ponieważ w~analogiczną możliwość wyposażone jest API, można jednym zapytaniem pobrać zawartość kilkudziesięciu haseł, w~których występuje link do wybranego artykułu. Funkcja \kod|EParser.extractSubsections| (p.~listing~\ref{code:subs}) pozwala z~treści wszystkich tych haseł wybrać jedynie interesujące nas podsekcje --- w~tym przypadku są to \emph{przykłady}.
+Pomocny okazuje się fakt, że wszystkie przykłady, a~także liczne inne elementy hasła, opatrywane są linkami do pojedynczych słów w~nich występujących. MediaWiki ma funkcję, która pozwala wykorzystać to do wspomagania edycji --- tzw. \emph{Linkujące}, czyli stronę specjalną podającą spis wszystkich stron z~linkami do podanej strony. Ponieważ w~analogiczną możliwość wyposażone jest API, można jednym zapytaniem pobrać zawartość kilkudziesięciu haseł, w~których występuje link do wybranego artykułu. Funkcja \kod|EParser.extractSubsections| (p.~listing~\ref{code:subs}) pozwala z~treści wszystkich tych haseł wybrać jedynie interesujące nas podsekcje --- w~tym przypadku są to \emph{przykłady}.
+
+\begin{opis}
+\item[Projekty] Polski Wikisłownik
+\item[Zapytanie]
+\begin{verbatim}
+query = {
+    generator: 'backlinks',
+    gbltitle: mw.config.get('wgTitle'),
+    gbllimit: 50,
+    gblnamespace: 0,
+    prop: 'revisions',
+    rvprop: 'content'
+};
+\end{verbatim}
+(Zawartość pierwszych 50~stron w~przestrzeni głównej, linkujących do obecnej strony)
+\end{opis}
 
 \begin{jscode}{code:subs}{Funkcja \kod|EParser.extractSubsections|}
 extractSubsections : function (str, name) {
@@ -712,7 +728,6 @@ getInternalExampleRe : function (result) {
 	/* na kazdej stronie linkujacej... */
 	$.each(result[0].query.pages, function () {
 		var content, ex;
-
 		/* sprawdzamy tylko podsekcje z przykladami */
 		content = EParser.extractSubsections(this.revisions[0]['*'], 'przyklady');
 		if ((arr = re.exec(content)) !== null) {
