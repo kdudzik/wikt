@@ -339,7 +339,7 @@ Drugą funkcją obok uproszczenia ogólnego procesu edycji, jaką spełniać ma 
 \subsection{API MediaWiki}
 Automatyzacja edytowania Wikisłownika (jak i~innych projektów Fundacji) byłaby niezwykle trudna bez interfejsu programistycznego dołączonego do każdej witryny opartej na MediaWiki~\cite{mw:api}. API umożliwia uproszczony dostęp do bazy Wikisłownika w~licznych formatach wymiany danych takich jak XML, JSON, YAML czy WDDX. Aby otrzymać odpowiedź na dowolne zapytanie, wystarczy pobrać dane z~adresu \url{http://pl.wiktionary.org/w/api.php} uzupełnionego o~odpowiednie parametry.
 
-Ponieważ analogiczną funkcję ma każdy projekt Wikimedia, możliwe jest zautomatyzowane pobieranie informacji nawet z~kilkudziesięciu edycji językowych równocześnie. Przeszkodą w~przetwarzaniu tak pobieranych danych jest \emph{Same Origin Policy}, czyli koncepcja ograniczająca pobieranie danych za pomocą skryptów pomiędzy różnymi stronami internetowymi~\cite{mozilla:sop}. Z~tego powodu niemożliwe jest użycie większości formatów, w~tym XML. Sposobem na obejście niektórych ograniczeń jest użycie tzw. JSONP (lub JSON-P)~\cite{jsonp}. Jest to sposób na użycie istniejących technologii, który umożliwia pobieranie danych w~JavaScript z~innego serwera. Dane w~formacie JSON uzupełniane są na zdalnym serwerze o~wywołanie funkcji zdefiniowanej w~parametrze, z~którym skrypt został wywołany.
+Ponieważ analogiczną funkcję ma każdy projekt Wikimedia, możliwe jest zautomatyzowane pobieranie informacji nawet z~kilkudziesięciu edycji językowych równocześnie. Przeszkodą w~przetwarzaniu tak pobieranych danych jest \emph{Same Origin Policy}, czyli koncepcja ograniczająca pobieranie danych za pomocą skryptów pomiędzy różnymi stronami internetowymi~\cite{mozilla:sop}. Z~tego powodu niemożliwe jest wykorzystanie większości formatów, w~tym XML. Aby obejść niektóre ograniczenia, konieczne jest zastosowanie tzw. JSONP (lub: \hbox{JSON-P})~\cite{jsonp}. Jest to sposób użycia istniejących technologii, który umożliwia pobieranie danych w~JavaScript z~innego serwera. Dane w~formacie JSON uzupełniane są na zdalnym serwerze o~wywołanie funkcji zdefiniowanej w~parametrze, z~którym skrypt został wywołany.
 
 Istnieje kilka bibliotek, które mają ułatwiać operacje na API MediaWiki. Żadna z~nich jednak nie spełnia swojej roli w~odpowiedni sposób --- utrudnione jest dokonywanie kilku zapytań równocześnie, biblioteki bywają też przeładowane funkcjami, które nie są potrzebne w~projekcie dla Wikisłownika. Dlatego na jego potrzeby napisano od podstaw moduł \kod|EApi| (w~pliku \kod|ed.api.js|), będący integralną częścią aplikacji. Najistotniejsze funkcje modułu przedstawiono na listingu~\ref{code:api}.
 
@@ -504,9 +504,9 @@ Zapis wymowy w~międzynarodowym alfabecie fonetycznym (IPA) to jedna z~tych info
 \item[Zapytanie]
 \begin{verbatim}
 query = {
-	titles: mw.config.get('wgTitle'),
-	prop: 'revisions',
-	rvprop: 'content'
+    titles: mw.config.get('wgTitle'),
+    prop: 'revisions',
+    rvprop: 'content'
 };
 \end{verbatim}
 (Zawartość stron o~tytule równemu tytułowi obecnej strony)
@@ -514,9 +514,57 @@ query = {
 
 Hasła w~innych wersjach językowych mogą dotyczyć wielu języków, w~których występuje dane słowo. Koniecznie trzeba zminimalizować więc ryzyko wstawienia wymowy wyrazu w~innym języku niż w~obecnie edytowanej sekcji przez niedoświadczonego użytkownika. Przy okazji implementacji funkcji odpowiadającej za przetworzenie wyników okazało się, że programistyczny podział hasła na sekcje w~innej wersji językowej wcale nie musi być tak prosty jak w~wersji polskiej. Choć wspólne dla projektów jest stosowanie nagłówków dla poszczególnych języków, to w~części wersji nagłówki te są generowane dynamicznie przez szablony. Przykładowo nagłówek sekcji języka polskiego w~Wikisłowniku hiszpańskim ma postać \kod@{{PL-ES|Nazwa}}@, a~w~Wikisłowniku francuskim: \kod@== {{=pl=}} ==@.
 
-Wydaje się, że dobrym rozwiązaniem problemu jest podanie przy każdej wykrytej informacji o~IPA w~obcojęzycznej wersji hasła także nagłówka sekcji, w~której ją znaleziono. Co prawda istnieją Wikisłowniki takie jak wietnamski, gdzie nie sposób wyodrębnić poszczególne sekcje, jednak dla większości udało się to osiągnąć. W~ten sposób redaktor otrzymuje zawartość nagłówka, która pozwala się zorientować, o~jaki język może chodzić.
+Wydaje się, że dobrym rozwiązaniem problemu jest podanie przy każdej wykrytej informacji o~IPA w~obcojęzycznej wersji hasła także nagłówka sekcji, w~której ją znaleziono. Co prawda istnieją Wikisłowniki takie jak wietnamski, gdzie nie sposób wyodrębnić poszczególne sekcje, jednak dla większości udało się to osiągnąć. W~ten sposób redaktor otrzymuje zawartość nagłówka, która pozwala się zorientować, o~jaki język może chodzić. Listing~\ref{code:sections} przedstawia fragment funkcji, która przy użyciu wyrażeń regularnych pozwala na podział artykułu na sekcje. Znacznikami \kod|<BE>| i~\kod|<EN>| oznaczane są granice nagłówków i~na tej podstawie kod jest dzielony na sekcje w~dalszej części funkcji.
 
-Ponieważ w~większości wersji językowych zapisy IPA podawane są w~określonym szablonie, przy użyciu funkcji pomocniczych odnajdujących parametry szablonów udało się doprowadzić do pobierania IPA z~kilkunastu Wikisłowników. Listing pokazuje, jak różnorodne są sposoby podawania IPA.
+\begin{jscode}{code:sections}{Fragment funkcji \kod|EParser.getSections|}
+if (lang === undefined) {
+	/* Polski: naglowki 2. stopnia */
+	code = code.replace(/^==([^=][^\n]+?)==\s*$/gm, '<BE>$1<EN>');
+} else {
+	switch (lang) {
+	case 'ru':
+		/* Rosyjski: naglowki 1. stopnia */
+		code = code.replace(/^(=([^=][^\n]+?)=)\s*$/gm, '<BE>$1<EN>');
+		break;
+	case 'fr':
+	case 'li':
+	case 'nl':
+	case 'oc':
+		/* Francuski i inne: szablony typu {{=en=}} w naglowkach */
+		code = code.replace(/^((==\s*)?\{\{=([^=\-][^\n]*?)=\}\}(\s*==)?)\s*$/gm, '<BE>$1<EN>');
+		break;
+	case 'lv':
+		/* Lotewski: szablony typu {{-en-}} */
+		code = code.replace(/^(\{\{-([^=\-][^\n]*?)-\}\})\s*$/gm, '<BE>$1<EN>');
+		break;
+	case 'co':
+	case 'ga':
+		code = code.replace(/^(\{\{-\w\w-\}\})\s*$/gm, '<BE>$1<EN>');
+		break;
+	case 'is':
+		code = code.replace(/^(\{\{-\w{2,3}-\}\})\s*$/gm, '<BE>$1<EN>');
+		break;
+	case 'it':
+		/* Wloski: szablony typu {{in|en|art}} */
+		code = code.replace(/^(\{\{in\|[^\}]+\}\})\s*$/gm, '<BE>$1<EN>');
+		break;
+	case 'es':
+		/* Hiszpanski: szablony typu {{FR-ES|a}} */
+		code = code.replace(/^(\{\{[A-Z\-]{2,}\|[^\}]+\}\})\s*$/gm, '<BE>$1<EN>');
+		break;
+	case 'af':
+		/* Afrykanerski: dwa rozne sposoby */
+		code = code.replace(/^(\{\{-\w\w-\}\})\s*$/gm, '<BE>$1<EN>');
+		code = code.replace(/^(==([^=][^\n]+?)==)\s*$/gm, '<BE>$1<EN>');
+		break;
+	default:
+		code = code.replace(/^(==([^=][^\n]+?)==)\s*$/gm, '<BE>$1<EN>');
+		break;
+	}
+}
+\end{jscode}%$
+
+Ponieważ w~większości wersji językowych zapisy IPA podawane są w~określonym szablonie, przy użyciu funkcji pomocniczych odnajdujących parametry szablonów udało się doprowadzić do pobierania IPA z~kilkunastu Wikisłowników. Listing~\ref{code:ipa} pokazuje, jak różnorodne są sposoby podawania IPA.
 
 \begin{jscode}{code:ipa}{Funkcja \kod|EAutomator.extractIPA|}
 extractIPA : function (str, lang) {
@@ -556,14 +604,54 @@ Dodatkową komplikacją jest występowanie IPA w~dwóch wariantach. Zapis w~nawi
 Za wyświetlenie zapisów IPA, które można następnie wstawić jednym kliknięciem, odpowiedzialna jest funkcja \kod|EPrinter.ipaResult|. Jej efektem jest pojawienie się okienka, z~którego można wybrać odpowiedni zapis (patrz ilustracja~\ref{fig:iparesult}). Nagłówki sekcji językowych, z~których pochodzą IPA, wyświetlane są po najechaniu myszką.
 
 \begin{illustration}
-	\fbox{\includegraphics[width=0.7\textwidth]{iparesult}}
+	\fbox{\includegraphics[width=0.65\textwidth]{iparesult}}
 	\caption{Fragment okna wyświetlającego pobrane zapisy IPA}
 	\label{fig:iparesult}
 \end{illustration}
 
 \subsubsection{Pobieranie grafik}
+Innym elementem kopiowanym pomiędzy wersjami językowymi są ilustracje do haseł. Jest oczywiste, że ilustracja danego wyrazu będzie równie dobra w~każdej edycji Wikisłownika. Ponieważ znakomita większość używanych w~projektach Wikimedia grafik znajduje się na serwerach Wikimedia Commons (centralnego repozytorium plików dostępnych na wolnej licencji), a~w~polskich projektach tylko takie grafiki są używane, możliwe jest automatyczne odnajdywanie tych ilustracji.
+
+\begin{opis}
+\item[Projekty] Wikisłowniki odpowiadające sekcjom językowym w~haśle i~inne z~linków interwiki
+\item[Zapytanie]
+\begin{verbatim}
+query = {
+    titles: mw.config.get('wgTitle'),
+    prop: 'revisions',
+    rvprop: 'content'
+};
+\end{verbatim}
+(Zawartość stron o~tytule równemu tytułowi obecnej strony)
+\end{opis}
+
+Skrypt odpowiadający za przetworzenie wyników zapytania działa dwuetapowo. Na początku z~obcojęzycznych haseł ekstrahowane są nazwy plików graficznych --- jest to dość proste do wykonania, ponieważ standardowy sposób wstawiania ich do haseł sprawia, że zawsze poprzedzone są dwukropkiem (alternatywnie mogą być parametrami szablonów, a~więc występować po znakach \kod@|@ lub \kod|=|), kończą się zaś oczywiście rozszerzeniem formatu graficznego. Już po odnalezieniu tych nazw możliwe byłoby zakończenie działania funkcji i~umożliwienie wprowadzenia redaktorowi pliku do polskiego hasła na podstawie jego nazwy. Aby jednak zwiększyć intuicyjność obsługi aplikacji i~wyświetlić użytkownikowi miniaturkę każdego z~plików, wykonywane jest kolejne zapytanie:
+
+\begin{illustration}
+	\fbox{\includegraphics[width=0.65\textwidth]{picture}}
+	\caption{Fragment okna do wyboru ilustracji wraz ze wskazaną miniaturą}
+	\label{fig:pic}
+\end{illustration}
+
+\begin{opis}
+\item[Projekty] Wikimedia Commons
+\item[Zapytanie]
+\begin{verbatim}
+query = {
+    titles: allImages.join('|'),
+    prop: 'imageinfo',
+    iiprop: 'url',
+    iiurlwidth: 150,
+    iiurlheight: 150
+};
+\end{verbatim}
+(Adresy URL miniatur o~rozmiarach 150~\texttimes~150~px dla podanych plików)
+\end{opis}
+
+Lokalizacja miniatury ilustracji o~zadanej wielkości nie jest bezpośrednio zależna od nazwy pliku --- MediaWiki używa funkcji haszujących, aby umieścić ją w~jednym z~wielu katalogów. Dlatego zwykłymi metodami niezależnymi od MediaWiki nie jest możliwe natychmiastowe wyświetlenie ilustracji bez zapytania do API Wikimedia Commons, które przekaże niezbędne dane. Po otrzymaniu tej informacji aplikacja ładuje odpowiednie obrazy i~wyświetla je po najechaniu myszą na nazwę pliku, jak pokazano na ilustracji~\ref{fig:pic}.
 
 \subsubsection{Pobieranie nagrań wymowy}
+
 
 \subsubsection{Pobieranie przykładów użycia}
 
