@@ -298,7 +298,7 @@ EPrinter = {
 				dd = $('<dd/>'),
 				link = $('<a/>');
 
-			dt.append('Hasło <a class="normalsize" href="' + mw.util.wikiGetlink(title) + '" target="_blank">[' + title + ']</a>:');
+			dt.append('Hasło <a class="normalsize" href="' + mw.util.wikiGetlink(title) + '" target="_blank">' + title + '</a>:');
 			link.text(example);
 			link.click(function () {
 				EPrinter.insertCode(example, '', '', '+przykład z hasła [[' + title + ']]');

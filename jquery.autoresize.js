@@ -1,7 +1,7 @@
 // inspired by https://github.com/jaz303/jquery-grab-bag/raw/master/javascripts/jquery.autogrow-textarea.js
 (function ($) {
 	$.fn.autoresize = function () {
-			var shadow = $('<div/>').css({ position: 'absolute', top: -10000, left: -10000, resize:	'none' }).appendTo(document.body);
+		var shadow = $('<div/>').css({ position: 'absolute', top: -10000, left: -10000, resize:	'none' }).appendTo(document.body);
 
 		this.filter('textarea').each(function () {
 			var $this = $(this),
@@ -24,7 +24,9 @@
 
 			shadow.css({
 				width: $(this).width() - parseInt($this.css('paddingLeft'), 10) - parseInt($this.css('paddingRight'), 10),
-				fontSize: $this.css('fontSize'), fontFamily: $this.css('fontFamily'), lineHeight: $this.css('lineHeight')
+				fontSize: $this.css('fontSize'),
+				fontFamily: $this.css('fontFamily'),
+				lineHeight: $this.css('lineHeight')
 			});
 
 			$(this).keyup(update).blur(update).focus(update);

@@ -111,7 +111,7 @@ EUi = {
 		fset.appendTo(EUi.content);
 
 		if (id === EConstants.SECTION_ID_INTRO) {
-			sec.code = EConstants.INTRO;
+			sec.code = EStr.INTRO_MENU;
 			sec.title = '';
 		}
 
@@ -277,7 +277,7 @@ EUi = {
 	getSubsectionObj : function (langid, section, subsection) {
 		var name = langid + '_' + subsection.title.replace(/ /g, '_'),
 			p = $('<p id="ed_subsection_' + name + '"/>'),
-			caption = EConstants.SUBSECTION_TITLE[subsection.title],
+			caption = langid === EConstants.SECTION_ID_INTRO ? EStr.INTRO : EConstants.SUBSECTION_TITLE[subsection.title],
 			label = $('<label class="newform" for="ed_' + name + '">' + caption + '</label>'),
 			textarea = $('<textarea class="newform keyboardable" name="ed_' + name + '" id="ed_' + name + '"/>').val(subsection.content),
 			extra = $('<div class="subsection_extra" id="ed_' + name + '_extra"/>');

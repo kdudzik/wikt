@@ -289,8 +289,6 @@ body.skin-monobook .tooltip small tt, body.skin-monobook #keyboard_keys small tt
 }
 
 #ajax_results a {
-	padding: 1px 2px !important;
-	margin: 0 !important;
 	cursor: pointer;
 }
 #ajax_results a:hover {
@@ -318,10 +316,14 @@ body.skin-monobook .tooltip small tt, body.skin-monobook #keyboard_keys small tt
 	font-weight: bold;
 }
 #ajax_results dd {
-	line-height: 1.4;
+	line-height: 1.3;
+	font-family: Consolas, "Lucida Console", monospace;
 }
 #ajax_results dd a {
-	padding: 0px 3px !important;
+	padding: 2px !important;
+}
+#ajax_results dd a.ipa {
+	padding: 0px !important;
 }
 #ajax_result_disc {
 	margin-bottom: 5px;

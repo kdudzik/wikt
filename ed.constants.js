@@ -1,5 +1,4 @@
 EConstants = {
-	INTRO : 'sekcja wstępna',
 	SUBSECTIONS :
 		{
 			POLISH :
@@ -612,6 +611,8 @@ EStr = {
 		'Dodaj sekcję wstępną (interwiki, informacje ogólne).<br /><small>Linki interwiki dodawane są automatycznie po dodaniu sekcji.</small>',
 	INTRO:
 		'Sekcja wstępna',
+	INTRO_MENU:
+		'sekcja wstępna',
 	OBLIGATORY_SUBSECTION:
 		'<br />(sekcja obowiązkowa)',
 	BOT_SUBSECTION:
