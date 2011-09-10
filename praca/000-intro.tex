@@ -68,6 +68,10 @@
  \renewcommand\numberline[1]{#1.\hskip0.7em}
 \makeatother
 
+\newcommand*{\noaddvspace}{\renewcommand*{\addvspace}[1]{}}
+\addtocontents{lof}{\protect\noaddvspace}
+\addtocontents{lot}{\protect\noaddvspace}
+
 % MAKRA I DEFINICJE
 
 \newcommand{\kod}{\lstinline[basicstyle=\large\ttfamily]}
@@ -104,9 +108,9 @@
 \definecolor{darkgray}{rgb}{.4,.4,.4}
 \definecolor{purple}{rgb}{0.65, 0.12, 0.82}
 \lstdefinelanguage{JavaScript}{
-	keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+	keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, for, while, do, else, case, break, default},
 	keywordstyle=\color{blue}\bfseries,
-	ndkeywords={class, export, boolean, throw, implements, import, this},
+	ndkeywords={class, export, boolean, throw, implements, import, this, undefined},
 	ndkeywordstyle=\color{darkgray}\bfseries,
 	identifierstyle=\color{black},
 	sensitive=false,
@@ -115,7 +119,8 @@
 	commentstyle=\color{purple}\ttfamily,
 	stringstyle=\color{red}\ttfamily,
 	morestring=[b]',
-	morestring=[b]"
+	morestring=[b]",
+	prebreak=\mbox{$\hookleftarrow$}
 }
 \lstset{
 	columns=fixed,
@@ -147,7 +152,7 @@
 \maketitle
 
 \begin{abstract}
-  Tematem pracy jest aplikacja służąca do ułatwienia pracy autorów haseł w~polskim Wikisłowniku. Jej funkcje mają w~maksymalny możliwy sposób ułatwić tworzenie i~edytowanie haseł osobom bez wiedzy informatycznej i~technicznej, a~także automatyzować możliwie wiele rutynowych czynności wykonywanych przy redagowaniu hasła, jak tworzenie łącz do haseł powiązanych, zautomatyzowane szukanie zapisów i~nagrań wymowy, grafik, przykładów użycia, wystąpień w~związkach frazeologicznych~itp. Dodatkowo aplikacja może przejąć część funkcji realizowanych obecnie za~pomocą botów.
+  Tematem pracy jest aplikacja służąca do ułatwienia pracy autorów haseł w~polskim Wikisłowniku. Jej funkcje mają w~maksymalny możliwy sposób ułatwić tworzenie i~edytowanie haseł osobom bez wiedzy informatycznej i~technicznej przy zachowaniu kompatybilności z~istniejącym obecnie edytorem, a~także automatyzować możliwie wiele rutynowych czynności wykonywanych przy redagowaniu hasła, jak tworzenie łącz do haseł powiązanych, wyszukiwanie w~innych wersjach językowych zapisów i~nagrań wymowy, ilustracji, kopiowanie przykładów użycia~itp. Dodatkowo aplikacja może przejąć część funkcji realizowanych obecnie za~pomocą botów.
 \end{abstract}
 
 \tableofcontents

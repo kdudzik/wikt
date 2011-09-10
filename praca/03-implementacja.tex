@@ -671,6 +671,78 @@ queries[EApi.commonsUrl()] = { titles: titles.join('|'), prop: 'info' };
 \end{jscode}%$
 
 \subsubsection{Pobieranie przykładów użycia}
+Innym elementem procesu tworzenia lub edycji hasła w~Wikisłowniku jest podanie przykładu użycia --- pełnego zdania, w~którym występuje dany wyraz. Oczywiście to samo zdanie może nadawać się jako przykład użycia w~co najmniej kilku artykułach. Ponieważ wszystkie przykłady w~językach inny niż polski są dodatkowo tłumaczone (wersja polska pojawia się po znaku →), szczególnie wielu zdań można użyć ponownie w~przypadku słów polskich.
+
+Pomocny okazuje się fakt, że wszystkie przykłady, a~także liczne inne elementy hasła, opatrywane są linkami do pojedynczych słów w~nich występujących. MediaWiki ma funkcję, która pozwala wykorzystać to do wspomagania edycji --- tzw. ,,Linkujące'', czyli stronę specjalną podającą spis wszystkich stron z~linkami do podanej strony. Ponieważ w~analogiczną możliwość wyposażone jest API, można jednym zapytaniem pobrać zawartość kilkudziesięciu haseł, w~których występuje link do wybranego artykułu. Funkcja \kod|EParser.extractSubsections| (p.~listing~\ref{code:subs}) pozwala z~treści wszystkich tych haseł wybrać jedynie interesujące nas podsekcje --- w~tym przypadku są to \emph{przykłady}.
+
+\begin{jscode}{code:subs}{Funkcja \kod|EParser.extractSubsections|}
+extractSubsections : function (str, name) {
+	var sec, index, re,
+		sections = EParser.getSections(str),
+		subsections = [];
+
+	/* dla kazdej sekcji jezykowej w hasle */
+	$.each(sections, function () {
+		if (!this.content) {
+			return true;
+		}
+		sec = this.content;
+		/* wyszukanie pozycji szablonu podsekcji */
+		index = sec.indexOf('{{' + name + '}}');
+		if (index > -1) {
+			sec = sec.substring(index + name.length + 4);
+			/* wyszukanie kolejnej, dowolnej podsekcji i obciecie lancucha znakow */
+			re = new RegExp('\\{\\{(' + EConstants.SUBSECTIONS.ALL.join('|') + ')[\\}\\|]');
+			subsections.push(sec.substring(0, sec.search(re)));
+		}
+	});
+	return subsections.join('');
+}
+\end{jscode}%$
+
+Listing~\ref{code:example} przedstawia (nieco uproszczoną) funkcję odpowiadającą za wyłuskanie z~kodu stron linkujących do edytowanej możliwych przykładów użycia. Najważniejsze było tu skonstruowanie odpowiedniego wyrażenia regularnego (\kod|re|) i~odpowiednie zróżnicowanie wyrazów polskich i~niepolskich.
+
+\begin{jscode}{code:example}{Funkcja \kod|EAutomator.getInternalExampleRe|}
+getInternalExampleRe : function (result) {
+	var examples = {},
+		re = new RegExp("^:\\s*\\(\\d+\\.\\d+\\)\\s*('*[^\\}\\n]*\\[\\[" +
+			mw.config.get('wgTitle') + "[\\|\\]][^\\}\\n]*)", 'm'),
+		isPolish = EUtil.getActiveLangCode() === 'pl';
+
+	/* na kazdej stronie linkujacej... */
+	$.each(result[0].query.pages, function () {
+		var content, ex;
+
+		/* sprawdzamy tylko podsekcje z przykladami */
+		content = EParser.extractSubsections(this.revisions[0]['*'], 'przyklady');
+		if ((arr = re.exec(content)) !== null) {
+			if (isPolish) {
+				/* dla polskiego obcinamy czesc przed strzalka */
+				ret = arr[1].replace(/(.*->\s*|''{1,2})/g, '');
+				/* i sprawdzamy, czy nadal jest tam slowo */
+				ex = re.exec(": (1.1) ''" + ret) === null ? null : ret;
+			} else {
+				/* dla innego tylko usuwamy pogrubienie tamtejszego slowa */
+				ex = arr[1].replace(/''{1,2}/g, '');
+			}
+			if (ex) {
+				examples[this.title] = $.trim(ex);
+			}
+		}
+	});
+	...
+}
+\end{jscode}
+
+Przykładowe zdania odnalezione przez tę funkcję wstawiane są w~taki sam sposób jak inne automatycznie pobrane informacje. Przykładowy wynik działania skryptu zaprezentowany został na ilustracji~\ref{fig:example}.
+
+\begin{illustration}
+	\fbox{\includegraphics[width=\textwidth]{example}}
+	\caption{Fragment okna wyświetlającego pobrane przykłady użycia}
+	\label{fig:example}
+\end{illustration}
+
+W~projektach Wikimedia ważnym elementem edycji hasła jest uzupełnienie tzw. opisu zmian --- informacja o~tym, co zostało zmienione, widoczna jest np. w~historii zmian strony czy na specjalnych stronach z~ostatnimi zmianami lub stronami obserwowanymi przez użytkowników. Aby ułatwić redaktorowi edycję, pole to jest uzupełniane, jeśli wykonana zostanie jedna z~akcji opartych na pobieraniu informacji automatycznie z~innych stron. W~przypadku IPA i~przykładów użycia do opisu zmian dołączany jest link do strony, z~której pochodzi nowy element. W~ten sposób łatwiej jest prześledzić proces tworzenia hasła osobie z~zewnątrz.
 
 \section{Wdrożenie i~dalszy rozwój}
 \label{sec:impl-deploy}

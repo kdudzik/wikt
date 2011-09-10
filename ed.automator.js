@@ -497,8 +497,15 @@ EAutomator = {
 				if (this.title === mw.config.get('wgTitle')) {
 					return true;
 				}
-				content = this.revisions[0]['*'];
-				ex = EAutomator.extractExample(content, re, isPolish);
+				content = EParser.extractSubsections(this.revisions[0]['*'], 'przykłady');
+				if ((arr = re.exec(content)) !== null) {
+					if (isPolish) {
+						ret = arr[1].replace(/(.*→\s*|'''?)/g, '');
+						ex = re.exec(": (1.1) ''" + ret) === null ? null : ret;
+					} else {
+						ex = arr[1].replace(/'''/g, '');
+					}
+				}
 
 				if (ex) {
 					examples[this.title] = delim + $.trim(ex) + delim;
