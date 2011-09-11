@@ -105,7 +105,7 @@ EAutomator = {
 		iwikiString = $.map(iwikis, function (val) { return '[[' + val + ':' + mw.config.get('wgTitle') + ']]'; }).join(' ');
 		curIwiki = $('#ed_0000_').val();
 		if (iwikiString !== '') {
-			if (curIwiki === '') {
+			if (!curIwiki) {
 				$('#ed_0000_').val(iwikiString).autoresize();
 				EPrinter.appendEditDescription('+interwiki');
 			} else {

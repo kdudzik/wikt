@@ -2040,6 +2040,9 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       if (!added) {
         item.appendTo(EUi.menu);
       }
+      if (id === EConstants.SECTION_ID_INTRO) {
+        EAutomator.fillInterwiki();
+      }
     },
 
     addNewSection : function () {
@@ -2218,7 +2221,6 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
         EUi.prepareFormSubsections(EConstants.SECTION_ID_INTRO);
         $('#ed_menuitem_newintro').hide();
         $('#ed_menuitem_' + EConstants.SECTION_ID_INTRO).click();
-        EAutomator.fillInterwiki();
         return false;
       }).data('tip', EStr.ADD_INTRO_SECTION);
     },
@@ -2776,7 +2778,7 @@ var Ed, EForm, EUtil, EUi, EKeyboard, EApi, EAutomator, EConstants, EStr, EParse
       iwikiString = $.map(iwikis, function (val) { return '[[' + val + ':' + mw.config.get('wgTitle') + ']]'; }).join(' ');
       curIwiki = $('#ed_0000_').val();
       if (iwikiString !== '') {
-        if (curIwiki === '') {
+        if (!curIwiki) {
           $('#ed_0000_').val(iwikiString).autoresize();
           EPrinter.appendEditDescription('+interwiki');
         } else {
