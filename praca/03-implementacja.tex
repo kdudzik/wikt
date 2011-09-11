@@ -227,6 +227,7 @@ Innymi usprawnieniami interfejsu użytkownika w~aplikacji są np.:
 \begin{itemize}
 \item Podpowiedzi pojawiające się po najechaniu myszką na część elementów strony. Aby ułatwić ich tworzenie, powstała wtyczka do jQuery. Dzięki jej użyciu aby dodać podpowiedź do dowolnego elementu HTML, wystarczyło nadać jej klasę CSS \kod|tip| i~treść podpowiedzi nadać za pomocą metody jQuery \kod|.data('tip', 'Odpowiedni tekst')|.
 \item Okna dialogowe zastępujące standardowe funkcje typu \kod|alert|, \kod|confirm|, \kod|prompt|. Pojawiające się w~obrębie strony okno można dowolnie modyfikować.
+\item Szczególnym przypadkiem są hasła w~esperanto, które mogą być dostosowane do różnych schematów: z~podsekcją \emph{pochodne}, z~podsekcją \emph{pokrewne} lub z~oboma. Dla wyrazów w~tym języku aplikacja monitoruje stan pola \emph{znaczenia} i~na tej podstawie może dynamicznie aktywować lub dezaktywować odpowiednie podsekcje (np. ciąg znaków \kod@{{morfem|@ oznacza, że sekcja \emph{pochodne} powinna być aktywna).
 \end{itemize}
 
 \subsection{Parsowanie i~drukowanie wikitekstu}
@@ -762,6 +763,15 @@ W~projektach Wikimedia ważnym elementem edycji hasła jest uzupełnienie tzw. o
 \section{Wdrożenie i~dalszy rozwój}
 \label{sec:impl-deploy}
 
+Po testach aplikację można uznać za gotową do użycia. W~momencie zakończenia niniejszej pracy kilku redaktorów używało jej z~powodzeniem w~codziennej pracy przy Wikisłowniku. Należy jednak zauważyć, że włączenie jej jako domyślny sposób edycji danych dla nowych użytkowników wymaga dużych zmian w~systemie pomocy, który dokładnie opisuje proces tworzenia hasła za pomocą starego edytora. Strony pomocy muszą opisywać także nową aplikację --- tylko wtedy uniknie się skonfundowania wśród redaktorów. Jest to praca, która wymaga dość dużo wysiłku od całej społeczności Wikisłownika. Ponadto do czasu uruchomienia aplikacji w~pełni należy wyeliminować pewne problemy, które powstają podczas pracy ze ściśle określonymi przeglądarkami i~systemami, utrudniające korzystanie z~formularza dość małej procentowo, jednak wciąż istotnej grupie użytkowników.
 
-%licencja
-%IE < Win7 :(
+Kod aplikacji zgodnie z~regułami panującymi w~projektach Fundacji udostępniono na stronach Wikisłownika na licencjach GFDL~1.2 i~CC\dywiz{}BY\dywiz{}SA~3.0. Dzięki temu każdy zaawansowany technicznie użytkownik będzie mógł dowolnie modyfikować aplikację, dostosowywać ją do własnych potrzeb czy poprawiać dotąd nieodkryte krytyczne błędy w~działaniu. Ponieważ administratorzy Wikisłownika mają możliwość edycji wszystkich stron w~tym projekcie, praktycznie niemożliwa jest sytuacja, w~której na poprawę błędu czeka się bardzo długo.
+
+Dzięki modułowej budowie dalsze udoskonalanie aplikacji nie nastręcza trudności. Formularz edycyjny przybrał formę, którą można uznać za stabilną --- dlatego kolejne funkcje prawdopodobnie będą rozszerzać zakres automatyzacji aplikacji. Dzięki łatwości korzystania z~API MediaWiki możliwości są pod tym względem naprawdę duże. Oto informacje, które mogłyby również być pobierane w~sposób automatyczny z~innych projektów lub samego polskiego Wikisłownika:
+\begin{itemize}
+\item tłumaczenia słów z~polskiego na inne języki (w~hasłach opisujących polskie wyrazy),
+\item synonimy, antonimy, kolokacje i~związki frazeologiczne --- w~sposób podobny jak przykłady użycia,
+\item ilustracje także z~haseł w~polskim Wikisłowniku, będących tłumaczeniami danego terminu na inne języki.
+\end{itemize}
+
+Wikisłownik, jak każdy tego typu projekt, ma płynne zasady, zmieniające się co pewien czas. Powstają też nowe rozwiązania techniczne usprawniające pracę. Przykładowo w~końcowej fazie implementacji aplikacji zaczęto w~Wikisłowniku na szerszą skalę stosować szablony odmiany --- koniugacja i~deklinacja są teraz podawany w~zupełnie inny sposób niż do tej pory. Warto zadbać, aby kolejna wersja formularza edycyjnego wspomagała używanie tych szablonów. Praca przy aplikacji nie została bynajmniej zakończona --- będzie kontynuowana w~sposób ciągły. Udało się jednak zamknąć kluczowy etap jej rozwoju i~stworzyć produkt wysokiej jakości.
