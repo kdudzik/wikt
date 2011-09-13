@@ -126,53 +126,10 @@ Zrzut ekranu~\ref{fig:newform} przedstawia podstawowe elementy interfejsu nowego
 Sekcje językowe oznaczone są kodami ISO stosowanymi powszechnie w~Wikisłowniku. Oczywiście nie wszystkie kody są intuicyjne, dlatego po najechaniu myszą na każdą zakładkę pojawia się dokładna podpowiedź na temat danej sekcji.
 
 Do zakładek językowych dodane są także zakładki o~specjalnej funkcji: pierwsza z~nich pozwala na edycję sekcji wstępnej (zawierającej m.in. interwiki), druga umożliwia dodanie nowej sekcji (pojawia się wówczas okno dialogowe z~zapytaniem o~język nowej sekcji).
-\item Podręczna klawiaturka umożliwiająca wprowadzanie dużej liczby różnych znaków specjalnych do obecnie edytowanego pola. Podobna klawiaturka znajduje się w~starym edytorze --- została oznaczona kolorem żółtym na ilustracji~\ref{fig:edit-bottom}. W~nowym formularzu narzędzie to zostało usprawnione. Udało się wykorzystać istniejące już skrypty i~zintegrować z~aplikacją. Listing~\ref{code:specialchars} przedstawia moduł \kod|ESpecialChars|, odpowiadający za przemieszczanie elementów HTML pomiędzy nowym a~starym formularzem.
+\item Podręczna klawiaturka umożliwiająca wprowadzanie dużej liczby różnych znaków specjalnych do obecnie edytowanego pola. Podobna klawiaturka znajduje się w~starym edytorze --- została oznaczona kolorem żółtym na ilustracji~\ref{fig:edit-bottom}. W~nowym formularzu narzędzie to zostało usprawnione. Udało się wykorzystać istniejące już skrypty i~zintegrować z~aplikacją --- za przemieszczanie elementów HTML pomiędzy nowym a~starym formularzem odpowiada moduł \kod|ESpecialChars|.
 \item Przyciski pod poszczególnymi polami formularza pozwalają na automatyzację pewnych akcji. Ich działanie opisano w~podrozdziale~\ref{sec:impl-auto}.
 \end{enumerate}
 
-\begin{jscode}{code:specialchars}{Moduł \kod|ESpecialChars|}
-ESpecialChars = {
-	/* element HTML zawierajacy klawiaturke */
-	obj : undefined,
-	/* dotychczasowy element-rodzic klawiaturki */
-	formerParent : undefined,
-	detached : 0,
-
-	/* odlaczenie klawiaturki od starego edytora i dodanie do elementu keyboard_keys w nowym formularzu */
-	detach : function () {
-		var container;
-		if (ESpecialChars.detached) {
-			return;
-		}
-		container = $('#keyboard_keys');
-		ESpecialChars.obj = $('#editpage-specialchars');
-		ESpecialChars.formerParent = ESpecialChars.obj.parent();
-		ESpecialChars.obj.detach();
-
-		container.append(ESpecialChars.obj);
-		ESpecialChars.detached = 1;
-	},
-
-	/* ponowne przylaczenie klawiaturki do starego rodzica */
-	attach : function () {
-		if (!ESpecialChars.detached) {
-			return;
-		}
-		EKeyboard.hide();
-		ESpecialChars.obj.detach();
-		ESpecialChars.formerParent.append(ESpecialChars.obj);
-		ESpecialChars.detached = 0;
-	},
-
-	toggle : function () {
-		if (ESpecialChars.detached) {
-			ESpecialChars.attach();
-		} else {
-			ESpecialChars.detach();
-		}
-	}
-};
-\end{jscode}
 
 Na ilustracji~\ref{fig:keyboard} pokazano działanie klawiaturki ekranowej w~nowym formularzu. Klawiaturę włącza się i~wyłącza kliknięciem w~ikonę z~klawiaturą, widoczną pod aktywnym właśnie polem tekstowym. Oprócz zawartości dostępnej w~starym formularzu można też wybrać jeden z~najczęściej używanych znaków. Ta funkcja znacząco usprawniła proces tworzenia haseł w~językach używających innych alfabetów lub znaków diakrytycznych. Stan klawiatury ekranowej (włączona/wyłączona) zapamiętywany jest w~ciasteczku przeglądarki, zostaje więc zachowany na kolejnych stronach.
 
@@ -182,46 +139,8 @@ Na ilustracji~\ref{fig:keyboard} pokazano działanie klawiaturki ekranowej w~now
 	\label{fig:keyboard}
 \end{illustration}
 
-Ciekawym problemem było ułożenie pól formularza w~taki sposób, by zajmował możliwie mało miejsca, a przy tym pozostał przejrzysty. Każda sekcja językowa składa się z~kilkunastu podsekcji, dlatego należało dobrze rozmieścić kilkanaście pól tekstowych, przy czym te mogły zawierać bardzo dużo tekstu (np. podsekcja \emph{tłumaczenia} w~popularnych polskich hasłach) albo i~pozostawać puste. Najprostszym, standardowym rozwiązaniem byłoby ustawienie stałej wysokości (np. równej 3~wierszom) dla każdego pola, które byłoby wyposażone w~zwykły pasek przewijania. Takie pola w~większości przypadków zajmowałyby jednak o~wiele za dużo miejsca, przy tym formularz z~dużymi białymi plamami jest niezbyt estetyczny. Zdecydowano się na rozwiązanie spotykane czasem w~portalach internetowych, najlepiej znane z~Facebooka --- pola tekstowe zmieniają swój rozmiar w~trakcie wpisywania kolejnych znaków. Istnieje kilka wtyczek do jQuery o~podobnej funkcjonalności, jednak na potrzeby aplikacji konieczne było stworzenie takiej, która łączy cechy kilku z~nich. Problemem okazała się też wydajność, ponieważ niektóre hasła mają w~trybie edycji nawet ponad sto pól dynamicznie dostosowujących swój rozmiar. Rozwiązaniem jest dołączenie do strony ukrytego elementu \kod|<div>|, do którego na bieżąco kopiowana jest zawartość ukrytego pola tekstowego --- na podstawie jego wysokości ustawiana jest wysokość pola. Kod przedstawiony jest na listingu~\ref{code:autoresize}.
+Ciekawym problemem było ułożenie pól formularza w~taki sposób, by zajmował możliwie mało miejsca, a przy tym pozostał przejrzysty. Każda sekcja językowa składa się z~kilkunastu podsekcji, dlatego należało dobrze rozmieścić kilkanaście pól tekstowych, przy czym te mogły zawierać bardzo dużo tekstu (np. podsekcja \emph{tłumaczenia} w~popularnych polskich hasłach) albo i~pozostawać puste. Najprostszym, standardowym rozwiązaniem byłoby ustawienie stałej wysokości (np. równej 3~wierszom) dla każdego pola, które byłoby wyposażone w~zwykły pasek przewijania. Takie pola w~większości przypadków zajmowałyby jednak o~wiele za dużo miejsca, przy tym formularz z~dużymi białymi plamami jest niezbyt estetyczny. Zdecydowano się na rozwiązanie spotykane czasem w~portalach internetowych, najlepiej znane z~Facebooka --- pola tekstowe zmieniają swój rozmiar w~trakcie wpisywania kolejnych znaków. Istnieje kilka wtyczek do jQuery o~podobnej funkcjonalności, jednak na potrzeby aplikacji konieczne było stworzenie takiej, która łączy cechy kilku z~nich. Problemem okazała się też wydajność, ponieważ niektóre hasła mają w~trybie edycji nawet ponad sto pól dynamicznie dostosowujących swój rozmiar. Rozwiązaniem jest dołączenie do strony ukrytego elementu \kod|<div>|, do którego na bieżąco kopiowana jest zawartość ukrytego pola tekstowego --- na podstawie jego wysokości ustawiana jest wysokość pola. Kod, który za to odpowiada, znajduje się w~pliku \kod|jquery.autoresize.js|.
 
-\begin{jscode}{code:autoresize}{Wtyczka jQuery odpowiadająca za zmianę rozmiaru pól tekstowych}
-/* wzorowane na https://github.com/jaz303/jquery-grab-bag/raw/master/javascripts/jquery.autogrow-textarea.js */
-(function ($) {
-	$.fn.autoresize = function () {
-		var shadow = $('<div/>').css({
-				position: 'absolute',
-				top: -10000,
-				left: -10000,
-				resize: 'none'
-			}).appendTo(document.body);
-
-		this.filter('textarea').each(function () {
-			var $this = $(this), minHeight = 25, maxHeight = 500,
-				prevHeight = 0, nowHeight = 0;
-			var update = function () {
-				var val = this.value.replace(/[<>&]/g, 'w').replace(/\n$/, '<br/>&nbsp;').replace(/\n/g, '<br/>');
-				shadow.html(val);
-				nowHeight = Math.min(Math.max(shadow.height(), minHeight), maxHeight);
-				if (nowHeight !== prevHeight) {
-					$(this).css('height', nowHeight);
-					EKeyboard.updatePosition($(this));
-					prevHeight = nowHeight;
-				}
-			};
-
-			shadow.css({
-				width: $(this).width() - parseInt($this.css('paddingLeft'), 10) - parseInt($this.css('paddingRight'), 10),
-				fontSize: $this.css('fontSize'),
-				fontFamily: $this.css('fontFamily'),
-				lineHeight: $this.css('lineHeight')
-			});
-			$(this).keyup(update).blur(update).focus(update);
-			update.apply(this);
-		});
-		return this;
-	};
-}(jQuery));
-\end{jscode}%$
 
 Innymi usprawnieniami interfejsu użytkownika w~aplikacji są np.:
 \begin{itemize}
@@ -294,39 +213,27 @@ Aby ustalić, który wzorzec wybrać, trzeba wziąć pod uwagę wiele warunków.
 \begin{jscode}{code:whitespace}{Funkcja \kod|EPrinter.adequateWhitespace|}
 adequateWhitespace : function (subsection) {
 	var str = subsection.content;
-	/*
-	 * Teksty zaczynajace sie od dwukropka, gwiazdki, zaczynajace sie od "<references", "{{litera|", "{{kolor|", szablony zaczynajace sie na "{{zch-", linki do grafiki (file:, grafika: image: media: plik:, to samo duza litera, mozliwe biale znaki miedzy nawiasami kwadratowymi a tym slowem),...
-	 */
+	/* Teksty zaczynajace sie od dwukropka, gwiazdki, zaczynajace sie od "<references", "{{litera|", "{{kolor|", szablony zaczynajace sie na "{{zch-", linki do grafiki (file:, grafika: image: media: plik:, to samo duza litera, mozliwe biale znaki miedzy nawiasami kwadratowymi a tym slowem),... */
 	if (str.search(/[:\*#]|<references|\{\{(litera|kolor)\||\{\{zch-|\[\[(file|image|grafika|plik|media):/i) === 0) {
 		return '\n';
 	}
-	/*
-	 * ...teksty w polach "znaczenia", "przyklady" oraz "tlumaczenia" nie moga wystepowac zaraz po szablonie, jesli wystepuja, musza byc przeniesione bez dodawania dwukropka.
-	 */
+	/* ...teksty w polach "znaczenia", "przyklady" oraz "tlumaczenia" nie moga wystepowac zaraz po szablonie, jesli wystepuja, musza byc przeniesione bez dodawania dwukropka. */
 	if (EConstants.SUBSECTIONS_WITH_NL.indexOf(subsection.title) !== -1) {
 		return '\n';
 	}
-	/*
-	 * Inne teksty skladajace sie z wiecej niz jednej linii powinny byc przeniesione z dodaniem dwukropka i spacji na poczatku pierwszej linii
-	 */
+	/* Inne teksty skladajace sie z wiecej niz jednej linii powinny byc przeniesione z dodaniem dwukropka i spacji na poczatku pierwszej linii */
 	if (str.indexOf('\n') !== -1 && str.search(/[:\*#]/) !== 0) {
 		return '\n: ';
 	}
-	/*
-	 * Wpp: dla wypelnionych przed edycja pol zachowujemy istniejace formatowanie, o ile dane pole juz bylo niepuste.
-	*/
+	/* Wpp: dla wypelnionych przed edycja pol zachowujemy istniejace formatowanie, o ile dane pole juz bylo niepuste. */
 	if (subsection.initcontent) {
 		return subsection.initmultiline ? '\n: ' : ' ';
 	}
-	/*
-	 * w polach pustych przed edycja: w sekcjach "wymowa", "transliteracja", "transkrypcja", "ortografie", "klucz", "kreski", "czytania", "hanja-kreski" defaultem jest pisanie bezposrednio po szablonie (po spacji)...
-	 */
+	/* w polach pustych przed edycja: w sekcjach "wymowa", "transliteracja", "transkrypcja", "ortografie", "klucz", "kreski", "czytania", "hanja-kreski" defaultem jest pisanie bezposrednio po szablonie (po spacji)... */
 	if (EConstants.SUBSECTIONS_WITHOUT_NL.indexOf(subsection.title) !== -1) {
 		return ' ';
 	}
-	/*
-	 * a w pozostalych od nastepnej linii (jesli nie jest to "znaczenie" ani pierwsza sekcja ani "przyklady", ani "tlumaczenia", a tekst nie zaczyna sie od dwukropka lub gwiazdki, to program powinien sam dodac dwukropek i spacje)
-	 */
+	/* a w pozostalych od nastepnej linii (jesli nie jest to "znaczenie" ani pierwsza sekcja ani "przyklady", ani "tlumaczenia", a tekst nie zaczyna sie od dwukropka lub gwiazdki, to program powinien sam dodac dwukropek i spacje) */
 	return '\n: ';
 }
 \end{jscode}
@@ -342,87 +249,9 @@ Automatyzacja edytowania Wikisłownika (jak i~innych projektów Fundacji) byłab
 
 Ponieważ analogiczną funkcję ma każdy projekt Wikimedia, możliwe jest zautomatyzowane pobieranie informacji nawet z~kilkudziesięciu edycji językowych równocześnie. Przeszkodą w~przetwarzaniu tak pobieranych danych jest \emph{Same Origin Policy}, czyli koncepcja ograniczająca pobieranie danych za pomocą skryptów pomiędzy różnymi stronami internetowymi~\cite{mozilla:sop}. Z~tego powodu niemożliwe jest wykorzystanie większości formatów, w~tym XML. Aby obejść niektóre ograniczenia, konieczne jest zastosowanie tzw. JSONP (lub: \hbox{JSON-P})~\cite{jsonp}. Jest to sposób użycia istniejących technologii, który umożliwia pobieranie danych w~JS z~innego serwera. Dane w~formacie JSON uzupełniane są na zdalnym serwerze o~wywołanie funkcji zdefiniowanej w~parametrze, z~którym skrypt został wywołany.
 
-Istnieje kilka bibliotek, które mają ułatwiać operacje na API MediaWiki. Żadna z~nich jednak nie spełnia swojej roli w~odpowiedni sposób --- utrudnione jest dokonywanie kilku zapytań równocześnie, biblioteki bywają też przeładowane funkcjami, które nie są potrzebne w~projekcie dla Wikisłownika. Dlatego na jego potrzeby napisano od podstaw moduł \kod|EApi| (w~pliku \kod|ed.api.js|), będący integralną częścią aplikacji. Najistotniejsze funkcje modułu przedstawiono na listingu~\ref{code:api}.
+Istnieje kilka bibliotek, które mają ułatwiać operacje na API MediaWiki. Żadna z~nich jednak nie spełnia swojej roli w~odpowiedni sposób --- utrudnione jest dokonywanie kilku zapytań równocześnie, biblioteki bywają też przeładowane funkcjami, które nie są potrzebne w~projekcie dla Wikisłownika. Dlatego na jego potrzeby napisano od podstaw moduł \kod|EApi| (w~pliku \kod|ed.api.js|), będący integralną częścią aplikacji. Za pomocą wywołania jednej funkcji jest teraz możliwe wysłanie zapytań do kilkudziesięciu różnych projektów Fundacji.
 
-\begin{jscode}{code:api}{Moduł \kod|EApi|}
-EApi = {
-	/* Zwraca adres URL dla danego jezyka i projektu */
-	url : function (lang, project) {
-		if (lang === undefined) {
-			lang = 'pl';
-		}
-		if (project === undefined) {
-			project = EConstants.WIKTIONARY;
-		}
-		return 'http://' + lang + '.' + project + '.org/w/api.php?';
-	},
-
-	/* Wykonanie zapytania pod danym adresem. Do podanych pol dolaczane sa standardowe */
-	ask__prv : function (query, url) {
-		if (url === undefined) {
-			url = EApi.url();
-		}
-		query.action = 'query';
-		query.format = 'json';
-		query.meta = 'siteinfo';
-		query.callback = 'EApi.callback';
-		url += $.param(query);
-		mw.loader.load(url);
-	},
-
-	/* Wykonanie pojedynczego zapytania */
-	ask : function (query, callback, url) {
-		if (EApi.waiting) {
-			jAlert(EStr.WAITING_FOR_API);
-			return -1;
-		}
-		EApi.waitingName = callback;
-		EApi.waiting = 1;
-		EApi.ask__prv(query, url);
-		return 0;
-	},
-
-	/* Wykonanie kilku zapytan naraz */
-	askMore : function (queries, callback) {
-		var i, count = 0;
-
-		if (EApi.waiting) {
-			jAlert(EStr.WAITING_FOR_API);
-			return -1;
-		}
-		EApi.waitingName = callback;
-
-		for (i in queries) {
-			if (queries.hasOwnProperty(i)) {
-				count += 1;
-			}
-		}
-		EApi.waiting = count;
-		$.each(queries, function (url, query) {
-			EApi.ask__prv(query, url);
-		});
-		return 0;
-	},
-
-	/* Funkcja wywolywana po nadejsciu pojedynczego rezultatu. Wynik zapytania dodawany jest do tablicy waitingResults. Jesli wszystkie rezultaty juz sie pojawily, wykonywana jest funkcja o nazwie zapisanej przedtem w zmiennej waitingName z argumentem waitingResults */
-	callback : function (res) {
-		var tmp = String(EApi.waitingName);
-		EApi.waitingResults.push(res);
-		EApi.waiting -= 1;
-		if (!EApi.waiting) {
-			EApi.waitingName = '';
-			EUtil.executeFn(tmp, window, EApi.waitingResults);
-			EApi.waitingResults = [];
-		}
-	},
-
-	waiting : 0,
-	waitingName : '',
-	waitingResults : []
-};
-\end{jscode}
-
-Najprostsze użycie modułu \kod|EApi| jest już nieskomplikowane: pozostaje zdefiniować dwie funkcje, z~których pierwsza odpowiada za przygotowanie i~wysłanie zapytania do wybranych projektów, druga zaś za przetworzenie i~wyświetlenie wyników. Wszystkie tego typu funkcje zebrano w~module \kod|EAutomator|. W~przyszłości możliwe jest podzielenie tego modułu na mniejsze, z~których każdy odpowiadałby konkretnemu zastosowaniu API MediaWiki. Funkcje przygotowane w~ramach opisywanej aplikacji opisano bardziej szczegółowo na kolejnych stronach.
+Najprostsze użycie modułu \kod|EApi| jest nieskomplikowane: należy zdefiniować dwie funkcje, z~których pierwsza odpowiada za przygotowanie i~wysłanie zapytania do wybranych projektów, druga zaś za przetworzenie i~wyświetlenie wyników. Wszystkie tego typu funkcje zebrano w~module \kod|EAutomator|. W~przyszłości możliwe będzie podzielenie tego modułu na mniejsze, z~których każdy odpowiadałby konkretnemu zastosowaniu API MediaWiki. Funkcje przygotowane w~ramach opisywanej aplikacji opisano bardziej szczegółowo na kolejnych stronach.
 
 \subsection{Funkcje automatyzujące edycję haseł}
 
