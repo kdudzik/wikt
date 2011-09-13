@@ -124,16 +124,11 @@ Ilustracja~\ref{fig:plhaslo-edit} przedstawia wygląd przykładowej strony po pr
 	\label{fig:plhaslo-edit}
 \end{illustration}
 
-Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której polski Wikisłownik jest jednolity. Poniżej zostały omówione wszystkie podsekcje występujące w~artykułach, w~jedynej przyjętej jako poprawną kolejności. Duża ich część pojawia się jedynie w~niektórych językach, dlatego choć lista podsekcji jest dość długa, to każde hasło będzie miało ich o~wiele mniej. Szablony podsekcji zebrane są na stronie \url{http://pl.wiktionary.org/wiki/Kategoria:Szablony_szablonów_haseł}.
-
-\subsubsection{Podsekcje występujące w~hasłach polskiego Wikisłownika}
-\label{wikt:subsections}
-\input{01-wikislownik-podsekcje}
-
+Każda z~podsekcji w~hasłach ma ściśle określoną funkcję, dzięki której polski Wikisłownik jest jednolity. W~dodatku~\ref{wikt:subsections} omówione zostały wszystkie podsekcje występujące w~artykułach, w~jedynej uznanej za poprawną kolejności. Duża ich część pojawia się jedynie w~niektórych językach, dlatego choć lista podsekcji jest dość długa, to każde hasło będzie miało ich o~wiele mniej. Szablony podsekcji zebrane są na stronie \url{http://pl.wiktionary.org/wiki/Kategoria:Szablony_szablonów_haseł}. Szczególną uwagę należy zwrócić na takie podsekcje jak \emph{wymowa}, \emph{znaczenia} czy \emph{przykłady}, należące do najczęściej uzupełnianych.
 
 \subsection{Wady dotychczasowych rozwiązań}
 \label{wikt:drawbacks}
-W~dotychczasowym systemie edycji w~Wikisłowniku przedstawiona wyżej regularna struktura nie jest wykorzystywana w~wystarczającym stopniu. W~dużej mierze wiąże się to z~pierwotnym założeniem, jakim jest oparcie projektu na silniku MediaWiki. Każde hasło przechowywane jest w~bazie danych jako jeden ciąg znaków, a~ich struktura jest wymuszona dopiero przez społeczność --- brakuje jakichkolwiek mechanizmów, które pomagałyby w~utrzymywaniu haseł zgodnie ze standardem.
+W~dotychczasowym systemie edycji w~Wikisłowniku przedstawiona regularna struktura nie jest wykorzystywana w~wystarczającym stopniu. W~dużej mierze wiąże się to z~pierwotnym założeniem, jakim jest oparcie projektu na silniku MediaWiki. Każde hasło przechowywane jest w~bazie danych jako jeden ciąg znaków, a~ich struktura jest wymuszona dopiero przez społeczność --- brakuje jakichkolwiek mechanizmów, które pomagałyby w~utrzymywaniu haseł zgodnie ze standardem.
 
 Baza Wikisłownika nie zachowuje nawet pierwszej postaci normalnej~\cite{book:introduction} --- hasła nie są przecież danymi atomowymi. To duża wada projektu takiego jak słownik internetowy, w~którym dane powinny być prezentowane możliwie jednolicie. Postaci normalne pozwalają też na łatwiejszą modyfikację i~obróbkę danych. Niestety niemożliwa jest zmiana silnika MediaWiki, dlatego należy dbać o~standaryzację artykułów za pomocą innych środków. Aby pomieścić i~logicznie powiązać informacje w~każdym haśle, konieczne jest użycie omówionej struktury --- sekcji i~podsekcji, z~zastosowaniem licznych szablonów. Edycja takiego hasła (p.~ilustracja~\ref{fig:plhaslo-edit} na str.~\pageref{fig:plhaslo-edit}) będzie bardzo trudna dla początkującego redaktora Wikisłownika. Jeszcze większe problemy występują przy tworzeniu nowych haseł. Ilustracja~\ref{fig:plnew} pokazuje ekran służący do tego celu (wywoływany np. po kliknięciu w~czerwony link w~dowolnym haśle, oznaczający nieistniejący do tej pory artykuł).
 
