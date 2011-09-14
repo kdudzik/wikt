@@ -146,6 +146,19 @@
 \singlespacing
 \lstset{language=JavaScript, label=#1, caption=#2}}
 {}
+\newenvironment{dedication}
+{
+   \cleardoublepage
+   \thispagestyle{empty}
+   \vspace*{\stretch{8}}
+   \hfill\begin{minipage}[t]{0.85\textwidth}
+   \raggedright
+}%
+{
+   \end{minipage}
+   \vspace*{\stretch{2}}
+   \clearpage
+}
 
 % POCZĄTEK DOKUMENTU
 \begin{document}
@@ -155,4 +168,11 @@
   Tematem pracy jest aplikacja służąca do ułatwienia pracy autorów haseł w~polskim Wikisłowniku. Jej funkcje mają w~maksymalny możliwy sposób ułatwić tworzenie i~edytowanie haseł osobom bez wiedzy informatycznej i~technicznej przy zachowaniu kompatybilności z~istniejącym obecnie edytorem, a~także automatyzować możliwie wiele rutynowych czynności wykonywanych przy redagowaniu hasła, jak tworzenie łącz do haseł powiązanych, wyszukiwanie w~innych wersjach językowych zapisów i~nagrań wymowy, ilustracji, kopiowanie przykładów użycia~itp. Dodatkowo aplikacja może przejąć część funkcji realizowanych obecnie za~pomocą botów.
 \end{abstract}
 
+\begin{dedication}
+\emph{Dziękuję} \\
+\emph{Panu Profesorowi Jerzemu Tyszkiewiczowi --- za ogromną życzliwość i~cenne uwagi} \\
+\emph{Społeczności Wikisłownika --- za wytrwałe testowanie i~idealną współpracę} \\
+\emph{Rodzicom i~Przyjaciołom --- za nieocenione wsparcie}
+
+\end{dedication}
 \tableofcontents
